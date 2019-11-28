@@ -12,6 +12,9 @@
 import unittest
 
 from inyoka.markup import Parser, nodes
+from inyoka.portal.models import Linkmap
+from inyoka.markup.nodes import InterWikiLink
+from inyoka.utils.urls import href
 
 
 def parse(code):
@@ -201,3 +204,26 @@ class TestParser(unittest.TestCase):
             nodes.Link('http://example.org', [nodes.Text(':blub:')]),
             nodes.Link('?action=edit'), nodes.Link('http://[bla')
         ]))
+
+    def test_interwiki_links(self):
+        """Test external interwiki links."""
+        Linkmap.objects.create(token=u'github', url=u'https://github.test/')
+        Linkmap.objects.create(token=u'page', url=u'https://PAGE.test/')
+
+        iwl = InterWikiLink(u'github', u'inyokaproject')
+        iwl.prepare_html()
+        self.assertEqual(iwl.resolve_interwiki_link(),
+                         u'https://github.test/inyokaproject')
+
+        iwl = InterWikiLink(u'not_existing', u'foo')
+        self.assertIsNone(iwl.resolve_interwiki_link())
+
+        iwl = InterWikiLink(u'user', u'foo')
+        self.assertEqual(iwl.resolve_interwiki_link(), href('portal', 'user', u'foo'))
+
+        iwl = InterWikiLink(u'attachment', u'foo')
+        self.assertEqual(iwl.resolve_interwiki_link(), href('wiki', '_attachment', target=u'foo'))
+
+        iwl = InterWikiLink(u'page', u'foo')
+        self.assertEqual(iwl.resolve_interwiki_link(), u'https://foo.test/')
+

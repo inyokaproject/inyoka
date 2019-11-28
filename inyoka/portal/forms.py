@@ -32,7 +32,7 @@ from django.core.validators import validate_email
 from django.db.models import CharField, Count, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
-from django.forms import HiddenInput
+from django.forms import HiddenInput, modelformset_factory
 from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -43,7 +43,7 @@ from guardian.shortcuts import assign_perm, remove_perm, get_perms
 
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.models import Forum
-from inyoka.portal.models import StaticFile, StaticPage
+from inyoka.portal.models import StaticFile, StaticPage, Linkmap
 from inyoka.portal.user import (
     User,
     UserPage,
@@ -66,6 +66,7 @@ from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
 
+
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
     'forum': ('forum', 'topic'),
@@ -73,7 +74,7 @@ GLOBAL_PRIVILEGE_MODELS = {
     'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
-    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage'),
+    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage', 'linkmap'),
 }
 
 NOTIFY_BY_CHOICES = (
@@ -86,6 +87,9 @@ NOTIFICATION_CHOICES = (
     ('topic_split', ugettext_lazy(u'A subscribed topic was split')),
     ('pm_new', ugettext_lazy(u'I received a message'))
 )
+
+
+LinkMapFormset = modelformset_factory(Linkmap, fields=('token', 'url', 'icon'), extra=3, can_delete=True)
 
 
 class LoginForm(forms.Form):
@@ -700,6 +704,8 @@ class GroupGlobalPermissionForm(forms.Form):
         'portal.add_staticpage',
         'portal.add_storage',
         'portal.delete_storage',
+        'portal.add_linkmap',
+        'portal.delete_linkmap',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
@@ -1123,11 +1129,6 @@ class ConfigurationForm(forms.Form):
         except KeyError:
             raise forms.ValidationError(_(u'Invalid substitution pattern.'))
         return data
-
-
-class EditStyleForm(forms.Form):
-    styles = forms.CharField(label=ugettext_lazy(u'Styles'), widget=forms.Textarea(
-                             attrs={'rows': 20}), required=False)
 
 
 class TokenForm(forms.Form):

@@ -109,6 +109,12 @@ INYOKA_GET_UBUNTU_LINK = u'%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
                                                       BASE_DOMAIN_NAME)
 INYOKA_GET_UBUNTU_DESCRIPTION = u'Downloads'
 
+# path of the dynamically generated css for the linkmap. It gives each interwikilink an icon.
+# Normally, the path should be on MEDIA, so that the CSS is served from a webserver
+# and not a django worker
+# {hash} in the path will be replaced by a hash of the content
+INYOKA_INTERWIKI_CSS_PATH = join(MEDIA_ROOT, 'linkmap/linkmap-{hash}.css')
+
 # inyoka should deliver the statics
 INYOKA_HOST_STATICS = False
 

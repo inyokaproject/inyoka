@@ -13,7 +13,6 @@ from shutil import rmtree
 from django.core import management
 
 from inyoka.portal.models import StaticPage
-from inyoka.utils.storage import storage
 from inyoka.utils.test import TestCase
 
 
@@ -21,7 +20,6 @@ class TestAdminCommands(TestCase):
 
     def setUp(self):
         StaticPage.objects.create(key='lizenz', title='Lizenz', content='(c) Meine Lizenz')
-        storage['markup_styles'] = ''
         management.call_command('collectstatic', '--noinput', '--link', verbosity=0)
 
     def tearDown(self):

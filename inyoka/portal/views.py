@@ -9,6 +9,9 @@
     :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import csv
+from functools import partial
+
 from datetime import date, datetime, timedelta
 from icalendar import Calendar as iCal, Event as iEvent
 from time import time
@@ -46,7 +49,6 @@ from inyoka.portal.forms import (
     EditFileForm,
     EditGroupForm,
     EditStaticPageForm,
-    EditStyleForm,
     EditUserGroupsForm,
     EditUserProfileForm,
     EditUserStatusForm,
@@ -67,6 +69,7 @@ from inyoka.portal.forms import (
     UserCPSettingsForm,
     UserMailForm,
     WikiFeedSelectorForm,
+    LinkMapFormset
 )
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
@@ -75,6 +78,7 @@ from inyoka.portal.models import (
     StaticFile,
     StaticPage,
     Subscription,
+    Linkmap
 )
 from inyoka.portal.user import (
     User,
@@ -208,17 +212,6 @@ def index(request):
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': countdown_image_url,
     }
-
-
-def markup_styles(request):
-    """
-    This function returns a CSS file that's used for formatting wiki markup.
-    Its content is editable in the admin panel.
-    """
-    from django.utils.cache import patch_response_headers
-    response = HttpResponse(storage['markup_styles'], content_type='text/css')
-    patch_response_headers(response, 60 * 15)
-    return response
 
 
 @templated('portal/whoisonline.html')
@@ -1296,7 +1289,6 @@ def group_edit_global_permissions(request, name):
         'form': form,
     }
 
-
 @login_required
 @permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_forum_permissions.html')
@@ -1635,23 +1627,6 @@ def page_edit(request, page=None):
     }
 
 
-@login_required
-@permission_required('portal.change_staticpage', raise_exception=True)
-@templated('portal/styles.html')
-def styles(request):
-    key = 'markup_styles'
-    if request.method == 'POST':
-        form = EditStyleForm(request.POST)
-        if form.is_valid():
-            storage[key] = form.data['styles']
-            messages.success(request, _(u'The stylesheet was saved successfully.'))
-    else:
-        form = EditStyleForm(initial={'styles': storage.get(key, u'')})
-    return {
-        'form': form
-    }
-
-
 def ikhaya_redirect(request, id):
     article = get_object_or_404(Article, pk=int(id))
     return HttpResponseRedirect(url_for(article))
@@ -1664,3 +1639,34 @@ def csrf_failure(request, reason=None):
     }
 
     return TemplateResponse('errors/403_csrf.html', context, 403)
+
+
+@login_required
+@permission_required('portal.change_linkmap', raise_exception=True)
+@templated('portal/linkmap.html')
+def linkmap_edit(request):
+    formset = partial(LinkMapFormset, queryset=Linkmap.objects.order_by('token'))
+
+    if request.method == 'POST':
+        formset = formset(request.POST, request.FILES)
+        if formset.is_valid():
+            formset.save()
+            Linkmap.objects.flush_cache()
+            return HttpResponseRedirect(href('portal', 'linkmap'))
+    else:
+        formset = formset()
+    return {
+        'formset': formset
+    }
+
+
+def linkmap_export(request):
+    """Exports all current links of the Linkmap. Useful f.e. for InyokaEdit."""
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="linkmap.csv"'
+
+    writer = csv.writer(response)
+    rows = Linkmap.objects.values_list('token', 'url')
+    writer.writerows(rows)
+
+    return response

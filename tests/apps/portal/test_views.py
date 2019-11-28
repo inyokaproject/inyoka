@@ -26,7 +26,7 @@ from inyoka.portal.models import (
     PrivateMessage,
     PrivateMessageEntry,
     Subscription,
-    StaticPage)
+    StaticPage, Linkmap)
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
 from inyoka.utils.test import InyokaClient, TestCase
@@ -74,6 +74,68 @@ class TestViews(TestCase):
                 % _(u'The group name contains invalid chars'),
                 response.content.decode('utf-8')
             )
+
+    def test_linkmap__without_permission(self):
+        """Test if the link map throws 403 without permission"""
+        self.client.login(username='user', password='user')
+        response = self.client.get('/linkmap/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_linkmap__with_permission(self):
+        """Test if the link map site is reachable"""
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_linkmap', registered_group)
+
+        self.client.login(username='user', password='user')
+        response = self.client.get('/linkmap/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_linkmap__post_valid(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_linkmap', registered_group)
+        self.client.login(username='user', password='user')
+
+        data = {
+            'form-TOTAL_FORMS': '3',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+
+            'form-0-token': 'uu',
+            'form-0-url': 'https://uu.test/',
+            'form-0-icon': '',
+        }
+        response = self.client.post('/linkmap/', data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Linkmap.objects.count(), 1)
+
+        css_name = Linkmap.objects.get_css_basename()
+        self.assertIsNotNone(css_name)
+
+    def test_linkmap__post_invalid(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_linkmap', registered_group)
+        self.client.login(username='user', password='user')
+
+        data = {
+            'form-TOTAL_FORMS': '3',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+
+            'form-0-token': 'uu',
+            'form-0-url': 'apt://uu.test/',  # invalid protocol
+            'form-0-icon': '',
+        }
+        response = self.client.post('/linkmap/', data=data)
+        self.assertIn('Enter a valid URL.', response.content)
+
+    def test_linkmap_export(self):
+        Linkmap.objects.create(token='uu', url='https://uu.test/')
+
+        response = self.client.get('/linkmap/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, 'uu,https://uu.test/\r\n')
 
     def test_subscribe_user(self):
         """Test if it is possible to subscribe to users."""

@@ -29,9 +29,8 @@ from django.utils.translation import activate
 from werkzeug import url_unquote
 
 from inyoka.portal.user import User
-from inyoka.portal.models import StaticPage
+from inyoka.portal.models import StaticPage, Linkmap
 from inyoka.utils.http import templated
-from inyoka.utils.storage import storage
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
@@ -131,6 +130,7 @@ class Command(BaseCommand):
         settings.DEBUG = False
         return {
             'page': page,
+            'linkmap_css': Linkmap.objects.get_css_basename(),
             'USER': kwargs.get('user', None),
             'SETTINGS': settings
         }
@@ -146,6 +146,7 @@ class Command(BaseCommand):
             'content': q.content_rendered,
             'key': q.key,
             'page': q,
+            'linkmap_css': Linkmap.objects.get_css_basename(),
             'USER': kwargs.get('user', None),
             'SETTINGS': settings
         }
@@ -216,16 +217,6 @@ class Command(BaseCommand):
     def handle_meta_link(self, soup, pre, is_main_page, page_name):
 
         def _handle_style(tag):
-            if tag['href'].startswith(href('portal', 'markup.css')):
-                hash_code = sha1(force_unicode('dyn.css').encode('utf-8')).hexdigest()
-                rel_path = path.join('_', '%s.css' % hash_code)
-                abs_path = path.join(FOLDER, 'files', rel_path)
-                if not path.isfile(abs_path):
-                    with open(abs_path, 'w+') as fobj:
-                        fobj.write(storage['markup_styles'].encode('utf-8'))
-                tag['href'] = u'%s%s' % (pre, rel_path)
-                return
-
             rel_path = self.save_file(tag['href'], is_main_page, True)
             if not rel_path:
                 tag.extract()
