@@ -245,8 +245,8 @@ class LostPasswordForm(auth_forms.PasswordResetForm):
             subject = loader.render_to_string(subject_template_name, c)
             # Email subject *must not* contain newlines
             subject = ''.join(subject.splitlines())
-            email = loader.render_to_string(email_template_name, c)
-            send_mail(subject, email, from_email, [user.email])
+            body = loader.render_to_string(email_template_name, c)
+            send_mail(subject, body, from_email, [user.email])
 
 
 class ChangePasswordForm(forms.Form):
