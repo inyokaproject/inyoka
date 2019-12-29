@@ -8,7 +8,7 @@
     and will all rights to modify e.g. users or user content (e.g forum,
     ikhaya, wiki, etc.)
 
-    :copyright: (c) 2011-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from __future__ import print_function
