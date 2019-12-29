@@ -7,7 +7,7 @@
     Creates a snapshot of all wiki pages in HTML format. Requires
     BeautifulSoup4 to be installed.
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from __future__ import print_function

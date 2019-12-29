@@ -5,7 +5,7 @@
 
     Models that are only used within tests.
 
-    :copyright: (c) 2011-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.db import models

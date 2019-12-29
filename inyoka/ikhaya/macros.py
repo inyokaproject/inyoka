@@ -5,7 +5,7 @@
 
     Macros for Ikhaya.
 
-    :copyright: (c) 2012-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os

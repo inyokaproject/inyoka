@@ -7,7 +7,7 @@
     MoinMoin wiki engine and some other diff/udiff stuff.
 
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :copyright: (c) by Florian Festi.
     :license: BSD, see LICENSE for more details.
 """

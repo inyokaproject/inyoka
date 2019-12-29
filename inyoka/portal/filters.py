@@ -5,7 +5,7 @@
 
     `QuerySet` filter based on `django-filters <https://github.com/alex/django-filter>`_
 
-    :copyright: (c) 2011-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from itertools import chain
