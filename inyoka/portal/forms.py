@@ -294,6 +294,8 @@ class UserCPSettingsForm(forms.Form):
         label=ugettext_lazy(u'Highlight search'))
     mark_read_on_logout = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Mark all forums as “read” on logout'))
+    reduce_motion = forms.BooleanField(required=False, label=ugettext_lazy('Reduced motion'),
+                                        help_text=ugettext_lazy('If enabled, less animations are used.'))
 
     def __init__(self, *args, **kwargs):
         super(UserCPSettingsForm, self).__init__(*args, **kwargs)

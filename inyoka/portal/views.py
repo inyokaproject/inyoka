@@ -589,7 +589,8 @@ def usercp_settings(request):
             'show_preview': settings.get('show_preview', False),
             'show_thumbnails': settings.get('show_thumbnails', False),
             'highlight_search': settings.get('highlight_search', True),
-            'mark_read_on_logout': settings.get('mark_read_on_logout', False)
+            'mark_read_on_logout': settings.get('mark_read_on_logout', False),
+            'reduce_motion': settings.get('reduce_motion', False)
         }
         form = UserCPSettingsForm(initial=values)
     return {
