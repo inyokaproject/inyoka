@@ -229,6 +229,9 @@ msgstr "Icon"
 msgid "Identifier"
 msgstr "Bezeichner"
 
+msgid "If enabled, less animations are used."
+msgstr "Aktiviert werden weniger Animationen verwendet."
+
 msgid "If not given, the last changes will be displayed."
 msgstr "Wenn nicht angegeben, werden die letzten Änderungen angezeigt"
 
@@ -385,6 +388,9 @@ msgstr "Lesen"
 
 msgid "Read posts"
 msgstr "Gelesene Beiträge"
+
+msgid "Reduced motion"
+msgstr "Weniger Animationen"
 
 msgid "Release date"
 msgstr "Veröffentlichungsdatum"
