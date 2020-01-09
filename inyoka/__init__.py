@@ -118,4 +118,4 @@ import socket
 socket.setdefaulttimeout(10.0)
 
 # Inyoka version is updated through bumpversion and can stay hardcoded here.
-INYOKA_VERSION = "v0.21.0"
+INYOKA_VERSION = "v0.21.1"
