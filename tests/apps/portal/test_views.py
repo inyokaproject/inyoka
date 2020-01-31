@@ -554,12 +554,6 @@ class TestPrivMsgViews(TestCase):
         response = self.client.get('/privmsg/42/')
         self.assertEqual(response.status_code, 404)
 
-        response = self.client.get('/privmsg/', {'flavour': 'mobile'})
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get('/privmsg/42/', {'flavour': 'mobile'})
-        self.assertEqual(response.status_code, 200)
-
     def test_delete_many(self):
         user2 = User.objects.register_user('user2', 'user2@example.com', 'user', False)
         pm1 = PrivateMessage.objects.create(author=user2, subject='Subject',
