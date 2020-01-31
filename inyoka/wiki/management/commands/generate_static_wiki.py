@@ -279,17 +279,19 @@ class Command(BaseCommand):
             if tag.parent.name == 'a':
                 tag.parent.unwrap()
 
+        transparent_pixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+
         if not INCLUDE_IMAGES:
             for img in soup.find_all('img'):
-                img['src'] = u'%s%s' % (pre, path.join('img', '1px.png'))
+                img['src'] = transparent_pixel
                 _remove_link(img)
         else:
             for img in soup.find_all('img'):
                 try:
                     rel_path = self.save_file(img['src'], is_main_page,
-                                         img['src'].startswith(href('static')))
+                                              img['src'].startswith(href('static')))
                     if not rel_path:
-                        img['src'] = u'%s%s' % (pre, path.join('img', '1px.png'))
+                        img['src'] = transparent_pixel
                     else:
                         img['src'] = u'%s%s' % (pre, rel_path)
                     _remove_link(img)
@@ -368,7 +370,6 @@ class Command(BaseCommand):
                         img('favicon.ico'),
                         img('wiki.svg'),
                         img('anchor.png'),
-                        img('1px.png'),
                         img('main-sprite.png'))
 
         for pth in static_paths:
