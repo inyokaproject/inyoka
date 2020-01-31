@@ -10,6 +10,7 @@
 """
 from shutil import rmtree
 
+from django.conf import settings
 from django.core import management
 
 from inyoka.portal.models import StaticPage
@@ -20,6 +21,7 @@ class TestAdminCommands(TestCase):
 
     def setUp(self):
         StaticPage.objects.create(key='lizenz', title='Lizenz', content='(c) Meine Lizenz')
+        rmtree(settings.STATIC_ROOT, ignore_errors=True)
         management.call_command('collectstatic', '--noinput', '--link', verbosity=0)
 
     def tearDown(self):
