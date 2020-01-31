@@ -200,20 +200,6 @@ class Command(BaseCommand):
             for x in soup.find_all(*args):
                 x.extract()
 
-    def handle_pathbar(self, soup, pre, is_main_page, page_name):
-        pathbar = soup.find('div', 'pathbar')
-        pathbar.find('form').decompose()
-        children = list(pathbar.children)
-        if len(children) > 4:
-            # 4 because, the form and div leave a \n behind
-            # remove the ubuntuusers.de link
-            children = children[5:]
-            pathbar.clear()
-            for child in children:
-                pathbar.append(child)
-        else:
-            pathbar.decompose()
-
     def handle_meta_link(self, soup, pre, is_main_page, page_name):
 
         def _handle_style(tag):
@@ -350,7 +336,6 @@ class Command(BaseCommand):
         page.append(t2.find('meta'))
 
     HANDLERS = [handle_removals,
-                handle_pathbar,
                 handle_meta_link,
                 handle_title,
                 handle_logo,
