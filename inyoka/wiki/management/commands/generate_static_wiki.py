@@ -239,7 +239,7 @@ class Command(BaseCommand):
         soup.find('title').string = page_name + u' › ubuntuusers statisches Wiki'
 
     def handle_logo(self, soup, pre, is_main_page, page_name):
-        tag = soup.find('div', 'header').find('h1').find('a')
+        tag = soup.find('header', 'header').find('h1').find('a')
         tag['href'] = UU_PORTAL
         tag.find('span').string = u'ubuntuusers.de'
 
@@ -301,11 +301,9 @@ class Command(BaseCommand):
             a['href'] = u'%s%s.html' % (pre, settings.WIKI_MAIN_PAGE.lower())
 
     def handle_footer(self, soup, pre, is_main_page, page_name):
-        for li in soup.find('div', 'footer').find_all('li'):
+        for li in soup.find('footer', 'footer').find_all('li'):
             key = li['class'][0]
             if key == 'license':
-                li.find('a', 'flavour_switch').extract()
-                li.find('br').extract()
                 for a in li.find_all('a', href=PORTAL_RE):
                     if a['href'].endswith('lizenz/'):
                         a['href'] = path.join(pre, self.license_file)
@@ -314,8 +312,7 @@ class Command(BaseCommand):
                                           a['href'][len(href('portal')):])
             elif key == 'poweredby':
                 tag = BeautifulSoup(CREATED_MESSAGE)
-                li.clear()
-                li.append(tag.find('li'))
+                li.replace_with(tag)
 
     def handle_non_wiki_link(self, soup, pre, is_main_page, page_name):
         for a in soup.find_all('a', href=NON_WIKI_RE):
@@ -323,10 +320,10 @@ class Command(BaseCommand):
 
     def handle_snapshot_message(self, soup, pre, is_main_page, page_name):
         tag = BeautifulSoup(SNAPSHOT_MESSAGE % path.join(UU_WIKI, page_name))
-        soup.find('div', 'appheader').insert_after(tag.find('div'))
+        soup.find(id='main').insert(0, tag)
 
     def handle_redirect_page(self, soup, pre, target):
-        page = soup.find('div', id='page')
+        page = soup.find(id='page')
         page.clear()
         t1 = BeautifulSoup(REDIRECT_MESSAGE % (self.fix_path(target, pre), target))
         page.append(t1.find('p'))
@@ -363,15 +360,13 @@ class Command(BaseCommand):
 
         img = partial(path.join, settings.STATIC_ROOT, 'img')
         static_paths = ((img('icons'), 'icons'),
-                        (img('wiki'), 'wiki'),
                         (img('interwiki'), 'interwiki'),
+                        (img('head'), 'head'),
+                        (img('ubuntu-logo-set-web-svg'), 'ubuntu-logo-set-web-svg'),
+                        (img('circle-of-friends-web'), 'circle-of-friends-web'),
                         img('logo.png'),
                         img('favicon.ico'),
-                        img('float-left.jpg'),
-                        img('float-right.jpg'),
-                        img('float-top.jpg'),
-                        img('head.jpg'),
-                        img('head-right.png'),
+                        img('wiki.svg'),
                         img('anchor.png'),
                         img('1px.png'),
                         img('main-sprite.png'))
