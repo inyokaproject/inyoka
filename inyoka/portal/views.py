@@ -910,8 +910,6 @@ def admin_resend_activation_mail(request):
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
     if folder is None:
-        if get_flavour() == 'mobile':
-            return {'folder': None}
         if entry_id is None:
             return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
         else:
