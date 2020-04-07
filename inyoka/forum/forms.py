@@ -118,8 +118,8 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
 
     It's used together with `AddAttachmentForm` in general.
     """
-    title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60}),
-                            max_length=100)
+    title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60, 'spellcheck': 'true'}),
+                              max_length=100)
     text = StrippedCharField(widget=forms.Textarea)
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
