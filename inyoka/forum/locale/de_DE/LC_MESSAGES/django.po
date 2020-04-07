@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"POT-Creation-Date: 2019-08-19 17:15+0200\n"
 "PO-Revision-Date: 2017-04-15 00:22+0200\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -155,14 +155,11 @@ msgstr "Kein Beitrag ausgewählt."
 msgid "No recent topics within this forum."
 msgstr "Es existieren keine neueren Themen in diesem Forum."
 
-msgid "No topic with this slug found."
-msgstr "Ein Thema mit diesem Slug existiert nicht"
-
 msgid "No topics selected."
 msgstr "Keine Themen ausgewählt."
 
-msgid "Not specified"
-msgstr "keine Angabe"
+msgid "No Ubuntu"
+msgstr "Kein Ubuntu"
 
 msgid "Notifications on new posts in this topic will be sent to you."
 msgstr "Du wirst ab nun über neue Beiträge in diesem Thema benachrichtigt."
@@ -213,6 +210,10 @@ msgstr "Beiträge der letzten %(n)d Stunden"
 
 msgid "Reason"
 msgstr "Grund"
+
+#, python-format
+msgid "Reported post: “%(post)s”"
+msgstr "Gemeldeter Beitrag: „%(post)s“"
 
 #, python-format
 msgid "Reported topic: “%(topic)s”"
@@ -470,4 +471,3 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
-

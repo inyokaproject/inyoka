@@ -18,7 +18,6 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.contrib.auth.models import Group
-from django.core import signing
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
@@ -63,6 +62,7 @@ from inyoka.portal.forms import (
     PrivateMessageIndexForm,
     RegisterForm,
     SubscriptionForm,
+    TokenForm,
     UserCPProfileForm,
     UserCPSettingsForm,
     UserMailForm,
@@ -80,10 +80,7 @@ from inyoka.portal.user import (
     User,
     UserBanned,
     deactivate_user,
-    reactivate_user,
-    reset_email,
     send_activation_mail,
-    set_new_email,
 )
 from inyoka.portal.utils import (
     abort_access_denied,
@@ -115,13 +112,6 @@ AUTOBAN_SPAMMER_WORDS = (
     ('Sprachaustausch', 'gesundheitlich', 'immediately'),
 )
 # autoban gets active if all words of a tuple match
-
-
-CONFIRM_ACTIONS = {
-    'reactivate_user': (reactivate_user, settings.USER_REACTIVATION_LIMIT,),
-    'set_new_email': (set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT,),
-    'reset_email': (reset_email, settings.USER_RESET_EMAIL_LIMIT,),
-}
 
 
 page_delete = generic.DeleteView.as_view(model=StaticPage,
@@ -1515,27 +1505,24 @@ def confirm(request, action):
         messages.error(request, _(u'You cannot reactivate an account while '
                                   u'you are logged in.'))
         return abort_access_denied(request)
-    elif action in ['set_new_email', 'reset_email'] and \
-            request.user.is_anonymous:
+    elif action in ['set_new_email', 'reset_email'] and request.user.is_anonymous:
         messages.error(request, _(u'You need to be logged in before you can continue.'))
         return abort_access_denied(request)
 
-    func, lifetime = CONFIRM_ACTIONS.get(action)
-    data = request.POST.get('data', u'').strip()
-    if not data:
-        return {'action': action}
+    if request.method == 'POST':
+        form = TokenForm(request.POST, action=action)
 
-    try:
-        salt = 'inyoka.action.%s' % action
-        data = signing.loads(data, max_age=lifetime * 24 * 60 * 60, salt=salt)
-    except (ValueError, signing.BadSignature):
-        return {
-            'failed': _(u'The entered data is invalid or has expired.'),
-        }
+        if form.is_valid():
+            messages.success(request, form.cleaned_data['token'])
+            if request.user.is_authenticated:
+                return HttpResponseRedirect(href('portal', 'usercp'))
+            else:
+                return HttpResponseRedirect(href('portal'))
+    else:
+        form = TokenForm(initial={'token': request.GET.get('token', u'')})
 
-    r = func(**data)
-    r['action'] = action
-    return r
+    return {'action': action,
+            'form': form}
 
 
 @login_required
@@ -1566,7 +1553,7 @@ def config(request):
                     default_storage.delete(storage['team_icon'])
                 icon = Image.open(data['team_icon'])
                 fn = 'portal/global_team_icon.%s' % icon.format.lower()
-                default_storage.save(fn, data['team_icon'])
+                default_storage.save(fn, data['team_icon'], max_length=100)
                 storage['team_icon'] = team_icon = fn
 
             if not data['countdown_date']:

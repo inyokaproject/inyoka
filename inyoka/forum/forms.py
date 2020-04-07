@@ -8,17 +8,14 @@
     :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import urllib
-import urlparse
-
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
 from inyoka.forum.constants import get_distro_choices, get_version_choices
-from inyoka.forum.models import Forum, Topic
-from inyoka.utils.forms import MultiField, StrippedCharField
+from inyoka.forum.models import Forum
+from inyoka.utils.forms import MultiField, StrippedCharField, TopicField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 from inyoka.utils.text import slugify
@@ -186,7 +183,7 @@ class SplitTopicForm(forms.Form):
     """
     action = forms.ChoiceField(choices=(('add', ''), ('new', '')))
     new_title = forms.CharField(max_length=200)
-    topic_to_move = forms.CharField(max_length=200)
+    topic_to_move = TopicField()
     #: version info. defaults to the values set in the old topic.
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
@@ -208,23 +205,6 @@ class SplitTopicForm(forms.Form):
             self._errors.pop('new_title', None)
             self._errors.pop('forum', None)
         return data
-
-    def clean_topic_to_move(self):
-        slug = self.cleaned_data.get('topic_to_move')
-        if slug:
-            # Allow URL based Slugs
-            try:
-                slug = urlparse.urlparse(slug)[2].split('/')[2]
-            except IndexError:
-                slug = urllib.unquote(slug)
-
-            try:
-                topic_to_move = Topic.objects.get(slug=slug)
-            except Topic.DoesNotExist:
-                raise forms.ValidationError(_(u'No topic with this '
-                                              u'slug found.'))
-            return topic_to_move
-        return slug
 
     def clean_forum(self):
         forum = Forum.objects.get(id=self.cleaned_data.get('forum'))
@@ -252,11 +232,13 @@ class AddAttachmentForm(forms.Form):
     `description`
         The description of the attachment as textarea.
     """
-    attachment = forms.FileField(required=True)
+    attachment = forms.FileField()
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
     comment = forms.CharField(label=ugettext_lazy(u'Description'), required=False,
                   widget=forms.TextInput(attrs={'size': '60'}))
+
+    use_required_attribute = False
 
 
 class AddPollForm(forms.Form):

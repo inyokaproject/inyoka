@@ -356,6 +356,9 @@ msgstr "Bitte gebe nicht eine E-Mail-Adresse als Benutzernamen ein."
 msgid "Please enter at least one receiver."
 msgstr "Bitte gib mindestens einen Empfänger an."
 
+msgid "Please enter the string which was sent to you by email below"
+msgstr "Bitte gib die Zeichenkette, welche dir per E-Mail zugesandt wurde, hier ein"
+
 msgid "Please note the details on the maximum size below."
 msgstr "Bitte beachte die untenstehenden Angaben zur Maximalgröße"
 

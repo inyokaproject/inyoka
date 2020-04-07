@@ -1150,7 +1150,7 @@ class Post(models.Model, LockableObject):
 class Attachment(models.Model):
     """Represents an attachment associated to a post."""
 
-    file = models.FileField(upload_to='forum/attachments/temp')
+    file = models.FileField(upload_to='forum/attachments/temp', max_length=250)
     name = models.CharField(max_length=255)
     comment = models.TextField(null=True, blank=True)
     mimetype = models.CharField(max_length=100, null=True)

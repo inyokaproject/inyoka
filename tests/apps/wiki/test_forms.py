@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.wiki.test_forms
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    Test some gravatar url creation features.
+
+    :copyright: (c) 2011-2019 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+"""
+
 from functools import partial
 
 from mock import patch
@@ -49,3 +60,25 @@ class TestNewArticleForm(TestCase):
         self.data['name'] = 'Howto/new'
         self._post_form()
 
+
+class TestManageDiscussionForm(TestCase):
+
+    def setUp(self):
+        super(TestManageDiscussionForm, self).setUp()
+
+        # globally the storage table would not exist
+        from inyoka.wiki.forms import ManageDiscussionForm
+        self.form = ManageDiscussionForm
+
+    def test_no_topic(self):
+        form = self.form(data={'topic': ''})
+
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['topic'], None)
+
+    def test_not_existing_topic(self):
+        form = self.form(data={'topic': 'not_existing'})
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors,
+                         {'topic': [u'This topic does not exist.']})

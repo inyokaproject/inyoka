@@ -23,6 +23,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
+from django.core import signing
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -47,6 +48,9 @@ from inyoka.portal.user import (
     User,
     UserPage,
     send_new_email_confirmation,
+    set_new_email,
+    reactivate_user,
+    reset_email
 )
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
@@ -1124,3 +1128,34 @@ class ConfigurationForm(forms.Form):
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=ugettext_lazy(u'Styles'), widget=forms.Textarea(
                              attrs={'rows': 20}), required=False)
+
+
+class TokenForm(forms.Form):
+    token = forms.CharField(
+        label=ugettext_lazy(u'Please enter the string which was sent to you by email'),
+        widget=forms.Textarea())
+
+    def __init__(self, *args, **kwargs):
+        if 'action' in kwargs:
+            self.action = kwargs.pop('action')
+        super(TokenForm, self).__init__(*args, **kwargs)
+
+    def clean_token(self):
+        def get_action_and_limit():
+            if self.action == 'reactivate_user':
+                return reactivate_user, settings.USER_REACTIVATION_LIMIT
+            elif self.action == 'set_new_email':
+                return set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT
+            elif self.action == 'reset_email':
+                return reset_email, settings.USER_RESET_EMAIL_LIMIT
+
+        salt = 'inyoka.action.%s' % self.action
+        token = self.cleaned_data['token']
+        func, lifetime = get_action_and_limit()
+        try:
+            token = signing.loads(token,
+                                  max_age=lifetime * 24 * 60 * 60,
+                                  salt=salt)
+        except (ValueError, signing.BadSignature):
+            raise forms.ValidationError(_(u'The entered token is invalid or has expired.'))
+        return func(**token)
