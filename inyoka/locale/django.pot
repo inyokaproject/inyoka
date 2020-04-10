@@ -98,8 +98,7 @@ msgstr ""
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr ""
 
-#, python-format
-msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible."
+msgid "Your submission needs approval by a team member and is hidden meanwhile. Please be patient, we will get to it as soon as possible."
 msgstr ""
 
 msgid "counting..."
