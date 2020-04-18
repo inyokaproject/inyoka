@@ -28,7 +28,6 @@ from django.utils import six, translation
 from django.utils.encoding import force_text
 from django.utils.functional import Promise
 from django.utils.timesince import timesince
-from django_mobile import get_flavour
 from jinja2 import (
     Environment,
     FileSystemLoader,
@@ -131,7 +130,6 @@ def populate_context_defaults(context, flash=False):
         context.update(
             CURRENT_URL=request.build_absolute_uri(),
             USER=user,
-            MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_text(csrf(request)['csrf_token']),
             special_day_css=check_special_day(),
             LANGUAGE_CODE=settings.LANGUAGE_CODE
@@ -160,9 +158,7 @@ def populate_context_defaults(context, flash=False):
 def load_template(template_name):
     # if available, use dedicated mobile template
     mobile_template_name = template_name
-    if get_flavour() == 'mobile':
-        path = os.path.splitext(template_name)
-        mobile_template_name = '{0}m'.join(path).format(os.extsep)
+
     try:
         tmpl = jinja_env.get_template(mobile_template_name)
     except TemplateNotFound:

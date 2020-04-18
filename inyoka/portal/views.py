@@ -31,7 +31,6 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.views.decorators.http import require_POST
-from django_mobile import get_flavour
 from PIL import Image
 
 from inyoka.forum.models import Forum
@@ -916,8 +915,6 @@ def admin_resend_activation_mail(request):
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
     if folder is None:
-        if get_flavour() == 'mobile':
-            return {'folder': None}
         if entry_id is None:
             return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
         else:
