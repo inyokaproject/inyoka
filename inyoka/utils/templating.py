@@ -5,7 +5,7 @@
 
     This module contains functions for template-related things.
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import json
@@ -13,6 +13,7 @@ import os
 import sys
 from importlib import import_module
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
@@ -125,12 +126,14 @@ def populate_context_defaults(context, flash=False):
             global_message = None
 
     if request:
+        linkmap_model = apps.get_model(app_label='portal', model_name='Linkmap')
         context.update(
             CURRENT_URL=request.build_absolute_uri(),
             USER=user,
             MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_unicode(csrf(request)['csrf_token']),
             special_day_css=check_special_day(),
+            linkmap_css=linkmap_model.objects.get_css_basename(),
             LANGUAGE_CODE=settings.LANGUAGE_CODE
         )
 

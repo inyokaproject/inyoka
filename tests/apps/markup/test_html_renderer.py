@@ -5,21 +5,28 @@
 
     Here we test the HTML rendering.
 
-    :copyright: (c) 2013-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2013-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
 from django.test import override_settings
 
 from inyoka.markup.base import Parser, RenderContext
+from inyoka.markup.transformers import SmileyInjector
 from inyoka.utils.urls import href
 
 
-def render(source):
+def render(source, transformers=None):
     """Parse source and render it to html."""
-    tree = Parser(source, []).parse()
+    if not transformers:
+        transformers = []
+    tree = Parser(source, transformers).parse()
     html = tree.render(RenderContext(), 'html')
     return html
+
+
+def render_smilies(source):
+    return render(source, [SmileyInjector()])
 
 
 class TestHtmlRenderer(unittest.TestCase):
@@ -95,3 +102,23 @@ class TestHtmlRenderer(unittest.TestCase):
         link = u'<a href="{url}" class="internal missing">foo (Abschnitt \u201eanchor\u201c)</a>'
         link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
         self.assertEqual(html, link)
+
+    def test_heading_contains_arrow(self):
+        html = render_smilies('= => g =')
+        self.assertEqual(html, u'<h2 id="g">\u21d2 g<a href="#g" class="headerlink">\xb6</a></h2>')
+
+    def test_arrows(self):
+        html = render_smilies('a => this')
+        self.assertEqual(html, u'a \u21d2 this')
+
+    def test_list_with_arrow(self):
+        html = render_smilies(' - -> this')
+        self.assertEqual(html, u'<ul><li>\u2192 this</li></ul>')
+
+    def test_strikethrough_with_dash(self):
+        html = render_smilies('a -- --(dvdfv)--')
+        self.assertEqual(html, u'a \u2013 <del>dvdfv</del>')
+
+    def test_arrow_in_bracket(self):
+        html = render_smilies('(-> d)')
+        self.assertEqual(html, u'(\u2192 d)')

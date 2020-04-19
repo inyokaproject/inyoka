@@ -14,7 +14,7 @@
     The purpose of this module is to allow functions to access request data
     in the context of a request without explicitly passing the request object.
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from werkzeug import Local, LocalManager

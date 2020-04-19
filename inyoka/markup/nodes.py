@@ -15,13 +15,14 @@
     a required by the `DeferredNode`.
 
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from urlparse import urlparse, urlunparse
 
+from django.apps import apps
 from django.conf import settings
-from django.utils.html import escape
+from django.utils.html import escape, smart_urlquote
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.markup.machine import NodeRenderer, NodeCompiler, NodeQueryInterface
@@ -478,24 +479,23 @@ class InternalLink(Element):
 
 class InterWikiLink(Element):
     """
-    Link to other wikis.
+    Link to user pages, attachments or external sites.
     """
 
     allowed_in_signatures = True
 
-    def __init__(self, wiki, page, children=None, anchor=None,
+    def __init__(self, token, page, children=None, anchor=None,
                  id=None, style=None, class_=None):
         if not children:
             children = [Text(page)]
         Element.__init__(self, children, id, style, class_)
-        self.wiki = wiki
+        self.token = token
         self.page = page
         self.anchor = anchor
 
     def prepare_html(self):
-        # Circular imports
-        from inyoka.wiki.utils import resolve_interwiki_link
-        target = resolve_interwiki_link(self.wiki, self.page)
+        target = self.resolve_interwiki_link()
+
         if target is None:
             for item in Element.prepare_html(self):
                 yield item
@@ -506,12 +506,37 @@ class InterWikiLink(Element):
             href=target,
             id=self.id,
             style=self.style,
-            classes=(u'interwiki', u'interwiki-' + self.wiki,
+            classes=(u'interwiki', u'interwiki-' + self.token,
                      self.class_)
         )
         for item in Element.prepare_html(self):
             yield item
         yield u'</a>'
+
+    def resolve_interwiki_link(self):
+        """
+        Resolve an interwiki link. If the token does not exist, the return value
+        will be `None`.
+        """
+        if self.token == 'user':
+            return href('portal', 'user', self.page)
+        if self.token == 'attachment':
+            return href('wiki', '_attachment', target=self.page)
+
+        Linkmap = apps.get_model(app_label='portal', model_name='Linkmap')
+        inter_wiki_map = Linkmap.objects.get_linkmap()
+
+        if self.token not in inter_wiki_map:
+            return None
+        rule = inter_wiki_map[self.token]
+
+        quoted_page = smart_urlquote(self.page)
+        to_replace = 'PAGE'
+        if to_replace not in rule:
+            link = rule + quoted_page
+        else:
+            link = rule.replace(to_replace, quoted_page)
+        return link
 
 
 class Link(Element):

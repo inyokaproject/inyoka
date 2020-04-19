@@ -5,12 +5,19 @@
 
     Models for the portal.
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import os
+import glob
+import gzip
+import hashlib
+
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
+from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
 from werkzeug import cached_property
@@ -322,6 +329,99 @@ class Subscription(models.Model):
             return has_perm
 
         return self.is_accessible_for_user
+
+
+class LinkmapManager(models.Manager):
+
+    def flush_cache(self):
+        """
+        Removes all cache entries for the Linkmap model.
+        This should be called, if entries of Linkmap were edited.
+        """
+        cache.delete_many((Linkmap.CACHE_KEY_MAP, Linkmap.CACHE_KEY_CSS))
+
+    def get_linkmap(self):
+        """
+        Return a token-to-url-mapping as dictionary for our interwiki links.
+        """
+
+        def callback():
+            return dict(self.get_queryset().values_list('token', 'url'))
+
+        return cache.get_or_set(Linkmap.CACHE_KEY_MAP, callback, timeout=None)
+
+    def get_css_basename(self):
+        """
+        Returns the current basename (which includes a changing hash) of the
+        current linkmap css. It will also trigger the creation of the css on
+        startup or after a change to the linkmap (as the cache key should be
+        deleted).
+
+        This method is mainly intended the be used for the template context.
+        """
+        return cache.get_or_set(Linkmap.CACHE_KEY_CSS, self.generate_css, timeout=None)
+
+    def generate_css(self):
+        """
+        Generates for each token with icon in Linkmap a piece of css. Latter will
+        display the icon near an interwiki link.
+
+        The css is saved at `settings.INYOKA_INTERWIKI_CSS_PATH`. Furthermore, a
+        gzip-compressed version with the same content will be saved at the same
+        place with a '.gz' postfix.
+
+        A md5-hashsum is used to ensure that browser caches are flushed, if the
+        content of the file changed.
+
+        Returns the basename of the current css file.
+        """
+        css = '/* linkmap for inter wiki links \n :license: BSD*/'
+
+        token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
+        for token in token_with_icons:
+            css += 'a.interwiki-{token} {{' \
+                   'padding-left: 20px; ' \
+                   'background-image: url("{icon_url}"); }}'.format(token=token.token,
+                                                                    icon_url=token.icon.url)
+
+        md5_css = hashlib.md5(css).hexdigest()
+        path = settings.INYOKA_INTERWIKI_CSS_PATH.format(hash=md5_css)
+
+        existing_files = glob.glob(settings.INYOKA_INTERWIKI_CSS_PATH.format(hash='*'))
+        if path in existing_files:
+            return os.path.basename(path)
+
+        directory = os.path.dirname(path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        with open(path, 'w') as f, gzip.open(path + '.gz', 'wb') as compressed:
+            f.write(css)
+            compressed.write(css)
+
+        for f in existing_files:
+            os.remove(f)
+            os.remove(f + '.gz')
+
+        return os.path.basename(path)
+
+
+class Linkmap(models.Model):
+    """
+    Provides an mapping for the interwikilinks from token to urls.
+    """
+    CACHE_KEY_MAP = 'portal:linkmap'
+    CACHE_KEY_CSS = 'portal:linkmap:css-filname'
+
+    token_validator = RegexValidator(regex=r'^[a-z\-_]+[1-9]*$',
+                                     message=ugettext_lazy(u'Only lowercase letters, - and _ allowed. Numbers as postfix.'))
+
+    token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True,
+                             validators=[token_validator])
+    url = models.URLField(ugettext_lazy(u'Link'))
+    icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to='linkmap/icons', blank=True)
+
+    objects = LinkmapManager()
 
 
 class Storage(models.Model):

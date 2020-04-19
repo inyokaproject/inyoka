@@ -5,7 +5,7 @@
 
     The urls for the main portal (index page, error pages, login page etc.)
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -16,7 +16,6 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index),
-    url(r'^markup.css', views.markup_styles),
     url(r'^login/$', views.login),
     url(r'^logout/$', views.logout),
     url(r'^users/$', views.memberlist),
@@ -71,7 +70,8 @@ urlpatterns = [
     url(r'^calendar/(?P<slug>.*?)/ics/$', views.calendar_ical),
     url(r'^calendar/(?P<slug>.*?)/$', views.calendar_detail),
     url(r'^config/$', views.config),
-    url(r'^styles/$', views.styles),
+    url(r'^linkmap/$', views.linkmap_edit),
+    url(r'^linkmap/export/$', views.linkmap_export),
     # shortcuts
     url(r'^ikhaya/(\d+)/$', views.ikhaya_redirect),
     # static files

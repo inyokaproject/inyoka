@@ -100,7 +100,7 @@
         diffing yet but allows to download pastes.
 
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 # Secure XML libraries till a python solution exists.
@@ -118,4 +118,4 @@ import socket
 socket.setdefaulttimeout(10.0)
 
 # Inyoka version is updated through bumpversion and can stay hardcoded here.
-INYOKA_VERSION = "v0.20.0"
+INYOKA_VERSION = "v0.22.1"

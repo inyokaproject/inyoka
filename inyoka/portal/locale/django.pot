@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.17.6\n"
+"Project-Id-Version: Inyoka Project v0.20.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"POT-Creation-Date: 2019-08-26 20:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -222,6 +222,9 @@ msgstr ""
 msgid "I received a message"
 msgstr ""
 
+msgid "Icon"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -279,6 +282,9 @@ msgstr ""
 msgid "License note"
 msgstr ""
 
+msgid "Link"
+msgstr ""
+
 msgid "Location of new wiki pages"
 msgstr ""
 
@@ -328,6 +334,9 @@ msgstr ""
 msgid "Only introduction"
 msgstr ""
 
+msgid "Only lowercase letters, - and _ allowed. Numbers as postfix."
+msgstr ""
+
 msgid "Only title"
 msgstr ""
 
@@ -355,7 +364,7 @@ msgstr ""
 msgid "Please enter at least one receiver."
 msgstr ""
 
-msgid "Please enter the string which was sent to you by email below"
+msgid "Please enter the string which was sent to you by email"
 msgstr ""
 
 msgid "Please note the details on the maximum size below."
@@ -418,9 +427,6 @@ msgstr ""
 msgid "Static pages"
 msgstr ""
 
-msgid "Styles"
-msgstr ""
-
 msgid "Subject"
 msgstr ""
 
@@ -456,13 +462,13 @@ msgstr ""
 msgid "The email with the activation key was resent."
 msgstr ""
 
-msgid "The entered data is invalid or has expired."
-msgstr ""
-
 msgid "The entered password did not match your old password."
 msgstr ""
 
 msgid "The entered password is wrong."
+msgstr ""
+
+msgid "The entered token is invalid or has expired."
 msgstr ""
 
 #, python-format
@@ -538,9 +544,6 @@ msgstr ""
 msgid "The state of “%(username)s” was successfully changed."
 msgstr ""
 
-msgid "The stylesheet was saved successfully."
-msgstr ""
-
 msgid "The user is not banned"
 msgstr ""
 
@@ -596,6 +599,9 @@ msgid "Title"
 msgstr ""
 
 msgid "To"
+msgstr ""
+
+msgid "Token"
 msgstr ""
 
 msgid "Topic"
