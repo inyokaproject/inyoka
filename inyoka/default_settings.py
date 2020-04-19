@@ -422,6 +422,17 @@ PASSWORD_HASHERS = (
 
 TEMPLATES = [
     {
+        'NAME': 'django',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': False,
+        'OPTIONS': {
+            'loaders': [
+                'inyoka.utils.templating.DjangoLoader',
+            ]
+        },
+    },
+    {
         'NAME': 'jinja',
         'BACKEND': 'inyoka.utils.templating.Jinja2Templates',
         'DIRS': [],
