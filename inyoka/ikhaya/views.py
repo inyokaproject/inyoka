@@ -117,6 +117,7 @@ event_delete = generic.DeleteView.as_view(model=Event,
 def index(request, year=None, month=None, category_slug=None, page=1,
           full=False):
     """Shows a few articles by different criteria"""
+    page = int(page)
 
     category = None
     can_read = request.user.has_perm('ikhaya.view_unpublished_article')
