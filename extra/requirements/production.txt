@@ -23,7 +23,7 @@ Pillow==6.2.2
 psycopg2==2.7.3.2
 pyasn1_modules==0.1.5
 pyasn1==0.3.7
-Pygments==2.2.0
+Pygments==2.5.2
 python-dateutil==2.6.1
 python-magic==0.4.13
 pytz==2017.3
