@@ -95,7 +95,7 @@ class TestLinkmapManager(TestCase):
             self.assertEqual(f.read(), css % href('media', 'example.png'))
 
     def test_generate_css__generates_gzip_file(self):
-        with open(self.full_path) as f, gzip.open(self.full_path + '.gz') as gzip_f:
+        with open(self.full_path) as f, gzip.open(self.full_path + '.gz', 'rt') as gzip_f:
             self.assertEqual(gzip_f.read(), f.read())
 
     def test_generate_css__deletes_old_files(self):

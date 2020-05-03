@@ -384,7 +384,7 @@ class LinkmapManager(models.Manager):
                    'background-image: url("{icon_url}"); }}'.format(token=token.token,
                                                                     icon_url=token.icon.url)
 
-        md5_css = hashlib.md5(css).hexdigest()
+        md5_css = hashlib.md5(css.encode()).hexdigest()
         path = settings.INYOKA_INTERWIKI_CSS_PATH.format(hash=md5_css)
 
         existing_files = glob.glob(settings.INYOKA_INTERWIKI_CSS_PATH.format(hash='*'))
@@ -395,7 +395,7 @@ class LinkmapManager(models.Manager):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        with open(path, 'w') as f, gzip.open(path + '.gz', 'wb') as compressed:
+        with open(path, 'w') as f, gzip.open(path + '.gz', 'wt') as compressed:
             f.write(css)
             compressed.write(css)
 
