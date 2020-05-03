@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-04-12 20:37+0200\n"
+"POT-Creation-Date: 2019-08-26 20:50+0200\n"
 "PO-Revision-Date: 2019-01-25 20:45+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -223,8 +223,14 @@ msgstr "Suchwörter hervorheben"
 msgid "I received a message"
 msgstr "Ich eine Nachricht erhalten habe"
 
+msgid "Icon"
+msgstr "Icon"
+
 msgid "Identifier"
 msgstr "Bezeichner"
+
+msgid "If enabled, less animations are used."
+msgstr "Aktiviert werden weniger Animationen verwendet."
 
 msgid "If not given, the last changes will be displayed."
 msgstr "Wenn nicht angegeben, werden die letzten Änderungen angezeigt"
@@ -280,6 +286,9 @@ msgstr "Launchpad-Benutzername"
 msgid "License note"
 msgstr "Lizenzhinweis"
 
+msgid "Link"
+msgstr "Link"
+
 msgid "Location of new wiki pages"
 msgstr "Ort neuer Wiki-Seiten"
 
@@ -329,6 +338,9 @@ msgstr "Altes Passwort"
 msgid "Only introduction"
 msgstr "Nur Einleitung"
 
+msgid "Only lowercase letters, - and _ allowed. Numbers as postfix."
+msgstr "Nur Kleinbuchstaben, - und _ erlaubt. Nummern nur als Suffix."
+
 msgid "Only title"
 msgstr "Nur Titel"
 
@@ -356,8 +368,8 @@ msgstr "Bitte gebe nicht eine E-Mail-Adresse als Benutzernamen ein."
 msgid "Please enter at least one receiver."
 msgstr "Bitte gib mindestens einen Empfänger an."
 
-msgid "Please enter the string which was sent to you by email below"
-msgstr "Bitte gib die Zeichenkette, welche dir per E-Mail zugesandt wurde, hier ein"
+msgid "Please enter the string which was sent to you by email"
+msgstr "Bitte gib hier die Zeichenkette ein, die per E-Mail zugeschickt wurde."
 
 msgid "Please note the details on the maximum size below."
 msgstr "Bitte beachte die untenstehenden Angaben zur Maximalgröße"
@@ -376,6 +388,9 @@ msgstr "Lesen"
 
 msgid "Read posts"
 msgstr "Gelesene Beiträge"
+
+msgid "Reduced motion"
+msgstr "Weniger Animationen"
 
 msgid "Release date"
 msgstr "Veröffentlichungsdatum"
@@ -419,9 +434,6 @@ msgstr "Statische Seite"
 msgid "Static pages"
 msgstr "Statische Seiten"
 
-msgid "Styles"
-msgstr "Stile"
-
 msgid "Subject"
 msgstr "Betreff"
 
@@ -457,14 +469,14 @@ msgstr "Die E-Mail an „%(username)s“ wurde erfolgreich versendet."
 msgid "The email with the activation key was resent."
 msgstr "Die Aktivierungsmail wurde erneut versendet."
 
-msgid "The entered data is invalid or has expired."
-msgstr "Die eingegebenen Daten sind ungültig."
-
 msgid "The entered password did not match your old password."
 msgstr "Das eingegebene Passwort stimmt nicht mit deinem alten Passwort überein"
 
 msgid "The entered password is wrong."
 msgstr "Das eingegebene Passwort ist falsch"
+
+msgid "The entered token is invalid or has expired."
+msgstr "Das eingegebene Einmalpasswort ist ungültig oder abgelaufen."
 
 #, python-format
 msgid "The given email address is already in use. If you forgot your password, you can <a href=\"%(link)s\">restore it</a>."
@@ -539,9 +551,6 @@ msgstr "Die Einstellungen von „%(username)s“ wurden erfolgreich aktualisiert
 msgid "The state of “%(username)s” was successfully changed."
 msgstr "Der Status von „%(username)s“ wurde erfolgreich aktualisiert."
 
-msgid "The stylesheet was saved successfully."
-msgstr "Das Stylesheet wurde erfolgreich gespeichert."
-
 msgid "The user is not banned"
 msgstr "Der Benutzer ist nicht gesperrt"
 
@@ -598,6 +607,9 @@ msgstr "Titel"
 
 msgid "To"
 msgstr "An"
+
+msgid "Token"
+msgstr "Kürzel"
 
 msgid "Topic"
 msgstr "Thema"
@@ -761,4 +773,3 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
-

@@ -5,7 +5,7 @@
 
     Test Ikhaya views.
 
-    :copyright: (c) 2012-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import datetime
@@ -210,5 +210,5 @@ class TestEventView(TestCase):
             events(request)
 
     def test_queries_needed(self):
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             self.client.get('/events/')

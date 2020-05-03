@@ -9,16 +9,14 @@
     might be useful for the pastebin too.
 
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.shortcuts import redirect
-from django.utils.html import smart_urlquote
 
-from inyoka.utils.urls import href, url_for
+from inyoka.utils.urls import url_for
 from inyoka.wiki.exceptions import CaseSensitiveException, CircularRedirectException
 from inyoka.wiki.models import Page
-from inyoka.wiki.storage import storage
 
 
 def case_sensitive_redirect(function):
@@ -41,26 +39,6 @@ def has_conflicts(text):
     if isinstance(text, str):
         text = parse(text)
     return text.query.all.by_type(nodes.ConflictMarker).has_any
-
-
-def resolve_interwiki_link(wiki, page):
-    """
-    Resolve an interwiki link. If no such wiki exists the return value
-    will be `None`.
-    """
-    if wiki == 'user':
-        return href('portal', 'user', page)
-    if wiki == 'attachment':
-        return href('wiki', '_attachment', target=page)
-    rule = storage.interwiki.get(wiki)
-    if rule is None:
-        return
-    quoted_page = smart_urlquote(page)
-    if '$PAGE' not in rule:
-        link = rule + quoted_page
-    else:
-        link = rule.replace('$PAGE', quoted_page)
-    return link
 
 
 def quote_text(text, author=None, item_url=None):

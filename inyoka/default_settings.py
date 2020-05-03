@@ -5,7 +5,7 @@
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
@@ -110,6 +110,12 @@ INYOKA_SIGNATURE_MAXIMUM_LINES = 4  # <= -1 → no restriction
 INYOKA_GET_UBUNTU_LINK = '%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
                                                       BASE_DOMAIN_NAME)
 INYOKA_GET_UBUNTU_DESCRIPTION = 'Downloads'
+
+# path of the dynamically generated css for the linkmap. It gives each interwikilink an icon.
+# Normally, the path should be on MEDIA, so that the CSS is served from a webserver
+# and not a django worker
+# {hash} in the path will be replaced by a hash of the content
+INYOKA_INTERWIKI_CSS_PATH = join(MEDIA_ROOT, 'linkmap/linkmap-{hash}.css')
 
 # inyoka should deliver the statics
 INYOKA_HOST_STATICS = False
@@ -501,6 +507,12 @@ SMILIES = OrderedDict([
     (']:-)', '😈'),
     ('O:-)', '😇'),
     (':->', '😊'),
+    # arrows
+    ('->', '→'),
+    ('<-', '←'),
+    ('=>', '⇒'),
+    ('<=', '⇐'),
+    ('--', '–'),
     # text smilies
     (':!:', '❗'),
     (':arrow:', '▶'),

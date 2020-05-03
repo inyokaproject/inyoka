@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from os.path import dirname, join
+from os.path import dirname
 
 from django.conf import settings
 
@@ -90,49 +90,3 @@ class TestACLStorage(StorageTest):
         acl = [(sub, pos, neg) for ptrn, sub, pos, neg in storage.acl]
         self.assertEqual(sorted(acl), [('admin', 0, 63), ('admin', 63, 0),
                                        ('hacker', 0, 63), ('hacker', 63, 0)])
-
-
-class TestInterwikiStorage(StorageTest):
-
-    def test_single_valid(self):
-        self._create_page('IWM',
-                          '#X-Behave: Interwiki-Map\n'
-                          '{{{\n'
-                          'github = https://github.com/\n'
-                          '}}}')
-        self.assertEqual(storage.interwiki.get('github'),
-                         'https://github.com/')
-
-    def test_multiple_valid(self):
-        self._create_page('IWM',
-                          '#X-Behave: Interwiki-Map\n'
-                          '{{{\n'
-                          'github = https://github.com/\n'
-                          '}}}')
-
-        self._create_page('IWM2',
-                          '#X-Behave: Interwiki-Map\n'
-                          '{{{\n'
-                          'google = https://www.google.com/search?q=\n'
-                          '}}}')
-
-        self.assertEqual(storage.interwiki.get('github'),
-                         'https://github.com/')
-        self.assertEqual(storage.interwiki.get('google'),
-                         'https://www.google.com/search?q=')
-
-    def test_single_invalid(self):
-        self._create_page('IWM',
-                          '#X-Behave: Interwiki-Map\n'
-                          '{{{\n'
-                          'github = https://github.com/\n'
-                          '}}}')
-
-        self._create_page('IWM/Evil',
-                          '#X-Behave: Interwiki-Map\n'
-                          '{{{\n'
-                          'github = http://evil.com/'
-                          '}}}')
-
-        self.assertEqual(storage.interwiki.get('github'),
-                         'http://evil.com/')

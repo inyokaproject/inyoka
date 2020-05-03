@@ -9,20 +9,12 @@
     then processed by a storage class and converted into a list of tuples or
     a dict, or something different, depending what the class wants to have.
 
-    This is used for similies, interwiki links, access control and much more.
+    This is used for access control.
     If a page is a storage container is determined by the special 'X-Behave'
     metadata header.  There can be multiple pages with the same behave header,
     the contents of those pages are combined afterwards.
 
     The following behave headers are known so far:
-
-    ``X-Behave: Smiley-Map``
-        this page must contain a pre block that binds smiley codes to their
-        image location.  If the link is relative it's assumed to be a link to
-        an attachment, otherwise a full url.
-
-    ``X-Behave: Interwiki-Map``
-        Binds shortnames to wiki URLs.
 
     ``X-Behave: Access-Control-List``
         This storage contains ACL information
@@ -36,19 +28,17 @@
     problems.
 
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
-from collections import OrderedDict
-from urllib.parse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
 
 from inyoka.utils.local import local as local_cache
 from inyoka.utils.text import normalize_pagename
-from inyoka.wiki.models import MetaData, Page
+from inyoka.wiki.models import MetaData
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 
@@ -135,41 +125,6 @@ class BaseStorage(object):
         return objects
 
 
-class DictStorage(BaseStorage):
-    """
-    Helper for storing dicts.
-    """
-
-    _line_re = re.compile(r'(?<!!)=')
-    multi_key = False
-
-    def extract_data(self, text):
-        for line in text.splitlines():
-            if self.multi_key:
-                bits = self._line_re.split(line)
-                if len(bits) > 1:
-                    for key in bits[:-1]:
-                        yield key.strip(), bits[-1].strip()
-            else:
-                bits = self._line_re.split(line, 1)
-                if len(bits) == 2:
-                    yield bits[0].strip(), bits[1].strip()
-
-    def combine_data(self, objects):
-        result = {}
-        for obj in objects:
-            for key, value in obj:
-                result[key] = value
-        return result
-
-
-class InterwikiMap(DictStorage):
-    """
-    Map shortnames to full interwiki links.
-    """
-    behavior_key = 'Interwiki-Map'
-
-
 class AccessControlList(BaseStorage):
     """
     This storage holds the access control lists for the whole wiki.  The rules
@@ -231,6 +186,5 @@ class AccessControlList(BaseStorage):
 
 
 storage = StorageManager(
-    interwiki=InterwikiMap,
     acl=AccessControlList
 )

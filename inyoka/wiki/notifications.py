@@ -5,7 +5,7 @@
 
     Utilities for wiki notifications.
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -30,7 +30,8 @@ def send_edit_notifications(user, rev, old_rev):
         'unsubscribe_url': url_for(rev.page, action='unsubscribe'),
         'diff_url': url_for(rev.page, action='diff', revision=old_rev.id,
                             new_revision=rev.id),
-        'changes_url': url_for(rev.page, action='diff', revision=old_rev.id)
+        'changes_url': url_for(rev.page, action='diff', revision=old_rev.id),
+        'page_url': rev.page.get_absolute_url(),
         }
 
     subject = _('The page “{name}” was changed').format(name=data.get('page_title'))

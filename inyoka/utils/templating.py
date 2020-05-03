@@ -5,11 +5,12 @@
 
     This module contains functions for template-related things.
 
-    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import json
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
@@ -111,11 +112,13 @@ def context_data(request):
         if timestamp_user_has_hidden_global_message > age_global_message:
             global_message = None
 
+    linkmap_model = apps.get_model(app_label='portal', model_name='Linkmap')
     context = {
         'CURRENT_URL': request.build_absolute_uri(),
         'USER': user,
         'special_day_css': check_special_day(),
         'LANGUAGE_CODE': settings.LANGUAGE_CODE,
+        'linkmap_css': linkmap_model.objects.get_css_basename(),
         'MESSAGES': messages.get_messages(request),
         'GLOBAL_MESSAGE': global_message,
         'pm_count': pms,
