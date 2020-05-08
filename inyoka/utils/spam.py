@@ -148,9 +148,9 @@ def check_form_field(form, text_field, needs_check, request, content_type):
         form._spam, form._spam_discard = is_spam(text, content_type)
         if form._spam:
             msg = _(
-                'Your text is considered spam and needs approval from one of '
-                'the administrators. Please be patient, we will get to it as '
-                'soon as possible.'
+                'Your submission needs approval by a team member and is hidden '
+                'meanwhile. Please be patient, we will get to it as soon as '
+                'possible.'
             )
             messages.info(request, msg)
     return text

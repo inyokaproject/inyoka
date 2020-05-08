@@ -98,8 +98,7 @@ msgstr "Dini Signatur beinhautet z viu verschachtleti Elemänt"
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr "Dini Signatur isch z läng, nur %(length)s Zeichä sy erloubt"
 
-#, python-format
-msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible."
+msgid "Your submission needs approval by a team member and is hidden meanwhile. Please be patient, we will get to it as soon as possible."
 msgstr "Di Post isch aus SPAM markiert wordä und mues zersch vomänä Administrator beguätachtet und dürägwunkä wärdä. Bitte heb Geduld, mir luägä das so baud as müglech ah."
 
 msgid "counting..."
