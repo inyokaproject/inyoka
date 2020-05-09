@@ -7,7 +7,7 @@ defusedxml==0.5.0
 django-filter==1.0.4
 django-guardian==1.4.9
 django-hosts==2.0
-django-redis==4.10.0
+django-redis==4.11.0
 Django==1.11.29
 dnspython==1.15.0
 feedparser==5.2.1
