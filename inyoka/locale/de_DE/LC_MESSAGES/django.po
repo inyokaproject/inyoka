@@ -105,8 +105,8 @@ msgstr "Deine Signatur enthält zu viele verschachtelte Elemente"
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
 
-msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible."
-msgstr "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern."
+msgid "Your submission needs approval by a team member and is hidden meanwhile. Please be patient, we will get to it as soon as possible."
+msgstr "Dein Beitrag muss von einem Teammitglied freigeschaltet werden und ist solange für andere Nutzer nicht sichtbar. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern."
 
 msgid "counting..."
 msgstr "Zähle..."
