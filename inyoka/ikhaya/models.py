@@ -495,7 +495,7 @@ class Event(models.Model):
         latitude = (self.location_lat > 0 and
                '%g_N' % self.location_lat or
                '%g_S' % -self.location_lat)
-        llongitude = (self.location_long > 0 and
+        longitude = (self.location_long > 0 and
                 '%g_E' % self.location_long or
                 '%g_W' % -self.location_long)
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
