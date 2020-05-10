@@ -363,7 +363,6 @@ class TestAuthViews(TestCase):
         response = self.client.get('/register/')
         self.assertContains(response, '<img src="' + href('portal', __service__='portal.get_captcha'))
 
-    @skip("Should be fixed with https://github.com/inyokaproject/inyoka/issues/971")
     def test_lost_password(self):
         """Test the “lost password” feature.
 
