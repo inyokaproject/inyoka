@@ -23,7 +23,6 @@ from inyoka.wiki.storage import storage
 from inyoka.wiki.models import Page
 
 
-@skip
 class TestViews(TestCase):
 
     client_class = InyokaClient
@@ -35,7 +34,7 @@ class TestViews(TestCase):
         self.client.login(username='admin', password='admin')
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
-    @patch('inyoka.wiki.actions.REVISIONS_PER_PAGE', 5)
+    @override_settings(WIKI_REVISIONS_PER_PAGE=5)
     def test_log(self):
         p50 = Page.objects.create('Testpage50', 'rev 0', user=self.admin, note='rev 0')
         p100 = Page.objects.create('Testpage100', 'rev 0', user=self.admin, note='rev 0')
@@ -53,23 +52,23 @@ class TestViews(TestCase):
             p250.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
         p250.save()
 
-        req = self.client.get("/Testpage50/a/log").content
-        self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 2)
-        req = self.client.get("/Testpage50/a/log/2")
+        req = self.client.get("/Testpage50/a/log", follow=True).content
+        self.assertEqual(req.count(b'<tr'), 2)
+        req = self.client.get("/Testpage50/a/log/2", follow=True)
         self.assertEqual(req.status_code, 404)
 
-        req = self.client.get("/Testpage100/a/log").content
-        self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 5)
-        req = self.client.get("/Testpage100/a/log/2")
+        req = self.client.get("/Testpage100/a/log", follow=True).content
+        self.assertEqual(req.count(b'<tr'), 5)
+        req = self.client.get("/Testpage100/a/log/2", follow=True)
         self.assertEqual(req.status_code, 404)
 
-        req = self.client.get("/Testpage250/a/log").content
-        self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 5)
-        req = self.client.get("/Testpage250/a/log/2").content
-        self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 5)
-        req = self.client.get("/Testpage250/a/log/3").content
-        self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 2)
-        req = self.client.get("/Testpage250/a/log/4")
+        req = self.client.get("/Testpage250/a/log", follow=True).content
+        self.assertEqual(req.count(b'<tr'), 5)
+        req = self.client.get("/Testpage250/a/log/2", follow=True).content
+        self.assertEqual(req.count(b'<tr'), 5)
+        req = self.client.get("/Testpage250/a/log/3", follow=True).content
+        self.assertEqual(req.count(b'<tr'), 2)
+        req = self.client.get("/Testpage250/a/log/4", follow=True)
         self.assertEqual(req.status_code, 404)
 
 
