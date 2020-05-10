@@ -129,6 +129,7 @@ pipeline {
           steps {
             sh """
             ${activate_venv}
+            python manage.py collectstatic --noinput
             coverage run --rcfile tests/bdd/settings/.coveragerc  manage.py behave --junit
             coverage html -d bdd_coverage --rcfile tests/bdd/settings/.coveragerc
             """
