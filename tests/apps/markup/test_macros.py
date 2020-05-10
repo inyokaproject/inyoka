@@ -8,13 +8,12 @@
     :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unittest
-
 from inyoka.markup.base import RenderContext, parse
+from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
 
 
-class TestMacros(unittest.TestCase):
+class TestMacros(TestCase):
 
     def test_missing_link_in_picture_ticket_635(self):
         page = Page(name='Something')
@@ -24,7 +23,7 @@ class TestMacros(unittest.TestCase):
         )
 
         result = '<a href="invalid-url" class="crosslink"><img alt="Bildname" loading="lazy" class="image-default" /></a>'
-        self.assertIn(result, html)
+        self.assertInHTML(result, html)
 
     def test_toc_indention_ticket_688(self):
         html = parse("""[[Inhaltsverzeichnis(10)]]
