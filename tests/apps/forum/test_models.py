@@ -122,7 +122,7 @@ class TestForumModel(ForumTestCase):
             '/forum/', self.forum.slug, '/',
             '?foo=val1&bar=val2'
         ])
-        self.assertEqual(forum_url, expected_url)
+        self.assertURLEqual(forum_url, expected_url)
 
 
 class TestPostModel(ForumTestCase):
