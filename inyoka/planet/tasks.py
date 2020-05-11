@@ -77,6 +77,9 @@ def sync():
         except urllib.error.URLError:
             logger.debug('URLError on %s' % blog.feed_url)
             continue
+        except socket.timeout:
+            logger.debug('socket.timeout on %s' % blog.feed_url)
+            continue
 
         blog_author = feed.get('author') or blog.name
         blog_author_detail = feed.get('author_detail')
