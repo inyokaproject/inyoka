@@ -361,7 +361,7 @@ class TestAuthViews(TestCase):
     def test_register_contains_captcha(self):
         """The captcha is rendered via an own `ImageCaptchaWidget`"""
         response = self.client.get('/register/')
-        self.assertContains(response, href('portal', __service__='portal.get_captcha'))
+        self.assertContains(response, "__service__=portal.get_captcha")
 
     def test_lost_password(self):
         """Test the “lost password” feature.
