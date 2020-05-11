@@ -14,6 +14,8 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+import urllib
+
 import socket
 # And further patch it so feedparser works :/
 import xml.sax
@@ -69,11 +71,11 @@ def sync():
         # but the bozo bit might be defined.
         try:
             feed = feedparser.parse(blog.feed_url)
-        except UnicodeDecodeError:
-            logger.debug('UnicodeDecodeError on %s' % blog.feed_url)
-            continue
         except LookupError:
             logger.debug('LookupError on %s' % blog.feed_url)
+            continue
+        except urllib.error.URLError:
+            logger.debug('URLError on %s' % blog.feed_url)
             continue
 
         blog_author = feed.get('author') or blog.name
