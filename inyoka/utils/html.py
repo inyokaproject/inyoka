@@ -99,8 +99,7 @@ def striptags(string):
     """Remove HTML tags from a string."""
     if string is None:
         return ''
-    if isinstance(string, str):
-        string = string.decode('utf8')
+
     return ' '.join(_strip_re.sub('', replace_entities(string)).split())
 
 
