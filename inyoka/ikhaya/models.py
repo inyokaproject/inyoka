@@ -73,7 +73,7 @@ class ArticleManager(models.Manager):
 
         related = ('author', 'category', 'icon', 'category__icon')
         objects = Article.objects.filter(slug__in=slugs, pub_date__in=dates) \
-                         .select_related(*related).order_by()
+                         .select_related(*related).defer('author__forum_read_status').order_by()
         new_cache_values = {}
         for article in objects:
             key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)

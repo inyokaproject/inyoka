@@ -407,6 +407,7 @@ class PageManager(models.Manager):
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
+                                      .defer('user__forum_read_status') \
                                       .filter(page__name__iexact=name) \
                                       .latest()
             except Revision.DoesNotExist:
@@ -638,6 +639,7 @@ class RevisionManager(models.Manager):
         # in CacheDebugProxy). No idea why that happens in the live sys.
         # FIXME: properly debug that...
         revisions = list(self.select_related('user', 'page')
+                             .defer('user__forum_read_status')
                              .filter(pk__in=revision_ids))
         cache.set(cache_key, revisions, 300)
         return revisions[:count]
