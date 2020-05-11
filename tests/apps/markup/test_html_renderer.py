@@ -8,11 +8,11 @@
     :copyright: (c) 2013-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unittest
 from django.test import override_settings
 
 from inyoka.markup.base import Parser, RenderContext
 from inyoka.markup.transformers import SmileyInjector
+from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
 
 
@@ -29,7 +29,7 @@ def render_smilies(source):
     return render(source, [SmileyInjector()])
 
 
-class TestHtmlRenderer(unittest.TestCase):
+class TestHtmlRenderer(TestCase):
     def test_simple_markup(self):
         """Test the simple markup."""
         html = render("''foo'', '''bar''', __baz__, ,,(foo),,, ^^(bar)^^")
@@ -73,7 +73,7 @@ class TestHtmlRenderer(unittest.TestCase):
     def test_topic_link_with_whitespace(self):
         """Test topic link rendering with whitespace in target and describtion."""
         html = render("[topic: with : whitespace ]")
-        self.assertEqual(html, (
+        self.assertHTMLEqual(html, (
             '<a href="http://forum.ubuntuusers.local:8080/topic/with/" class="crosslink topic">'
             'whitespace'
             '</a>'
