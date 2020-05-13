@@ -109,7 +109,7 @@ def do_show(request, name, rev=None, allow_redirect=True):
             the `rev` attribute points to the requested revision.  Note that
             deleted pages must not be handled in the template because the view
             automatically dispatches to `do_missing_page` if a revision is
-            maked as deleted.
+            marked as deleted.
     """
     try:
         if rev is None or not rev.isdigit():
