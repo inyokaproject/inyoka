@@ -28,7 +28,7 @@ class TestViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestViews, self).setUp()
+        super().setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
@@ -79,7 +79,7 @@ class TestDoCreate(TestCase):
     surge_protection_message = SurgeProtectionMixin.surge_protection_message
 
     def setUp(self):
-        super(TestDoCreate, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
         self.client.login(username='user', password='user')
@@ -137,7 +137,7 @@ class TestDoEdit(TestCase):
     surge_protection_message = SurgeProtectionMixin.surge_protection_message
 
     def setUp(self):
-        super(TestDoEdit, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
         self.client.login(username='user', password='user')
