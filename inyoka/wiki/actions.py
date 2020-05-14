@@ -800,8 +800,7 @@ def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     """Render a diff between two pages."""
     if old_rev is None:
         old_rev = Page.objects.get_head(name, -1)
-    if new_rev and not new_rev.isdigit():
-        raise Http404()
+
     diff = Page.objects.compare(name, old_rev, new_rev)
     if udiff:
         return HttpResponse(diff.udiff, content_type='text/plain; charset=utf-8')
