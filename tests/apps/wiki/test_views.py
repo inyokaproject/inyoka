@@ -9,7 +9,6 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
-from unittest import skip
 
 from django.conf import settings
 from django.test.utils import override_settings
@@ -166,3 +165,138 @@ class TestDoEdit(TestCase):
 
         response = self._edit_page('no_timeout')
         self.assertNotContains(response, self.surge_protection_message)
+
+
+class TestDoShow(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+
+        self.page_name = 'test_page'
+        page = Page.objects.create(user=self.user, name=self.page_name, remote_addr='', text=self.page_name)
+        self.url = page.get_absolute_url('show')
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_redirect(self):
+        text = '# X-Redirect: {page}\nfoobar content'.format(page=self.page_name)
+        redirect = Page.objects.create(user=self.user, name='redirect', remote_addr='', text=text)
+
+        response = self.client.get(redirect.get_absolute_url('show'), follow=True)
+        self.assertRedirects(response, self.url)
+        self.assertContains(
+            response,
+            '<a href="http://wiki.ubuntuusers.local:8080/redirect/no_redirect/">redirect</a>',
+            html=True
+        )
+
+    def test_redirect_loop(self):
+        name = 'redirect'
+        text = '# X-Redirect: {page}\nfoobar content'.format(page=name)
+        redirect = Page.objects.create(user=self.user, name=name, remote_addr='', text=text)
+
+        response = self.client.get(redirect.get_absolute_url('show'), follow=True)
+        self.assertRedirects(response, redirect.get_absolute_url('show_no_redirect'))
+
+
+class TestDoMetaExport(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        user = User.objects.register_user('user', 'user@example.test', 'user', False)
+
+        page_name = 'test_page'
+        Page.objects.create(user=user, name=page_name, remote_addr='', text=page_name)
+        self.url = href('wiki', page_name, 'a', 'export', 'meta')
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        # would need a celery task to run, to contain any content
+        self.assertEqual(b'', response.content)
+
+    def test_missing_page(self):
+        response = self.client.get(href('wiki', 'not_existing', 'a', 'export', 'meta'))
+        self.assertEqual(response.status_code, 404)
+
+
+class TestDoDiff(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+
+        self.page_name = 'test_page'
+        self.page = Page.objects.create(user=self.user, name=self.page_name, remote_addr='', text=self.page_name)
+        self.page.edit(text='new text', user=self.user)
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_diff__no_param(self):
+        url = self.page.get_absolute_url('diff')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_udiff__no_param(self):
+        url = self.page.get_absolute_url('udiff')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, b')\n@@ -1 +1 @@\n-test_page\n+new text')
+
+    def test_diff__only_old_revision(self):
+        url = self.page.get_absolute_url('diff', revision=Page.objects.get_head(self.page_name, -1))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_udiff__only_old_revision(self):
+        url = self.page.get_absolute_url('udiff', revision=Page.objects.get_head(self.page_name, -1))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, b')\n@@ -1 +1 @@\n-test_page\n+new text')
+
+    def test_diff__two_revisions(self):
+        self.page.edit(text='new text #2', user=self.user)
+        url = self.page.get_absolute_url(
+            'diff',
+            revision=Page.objects.get_head(self.page_name, -2),
+            new_revision=Page.objects.get_head(self.page_name, 0)
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_udiff__two_revisions(self):
+        self.page.edit(text='new text #2', user=self.user)
+        url = self.page.get_absolute_url(
+            'udiff',
+            revision=Page.objects.get_head(self.page_name, -2),
+            new_revision=Page.objects.get_head(self.page_name, 0)
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, b')\n@@ -1 +1 @@\n-test_page\n+new text #2')
+
+    def test_diff__invalid_new_revision(self):
+        url = self.page.get_absolute_url('diff', revision=1, new_revision='1a')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_udiff__invalid_new_revision(self):
+        url = self.page.get_absolute_url('udiff', revision=1, new_revision='a')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
