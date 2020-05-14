@@ -988,7 +988,7 @@ class Page(models.Model):
                 provided the text from the last revision is used.
 
             user
-                If this paramter is `None` the inoyka system user will be the
+                If this parameter is `None` the inyoka system user will be the
                 author of the created revision.  Otherwise it can either be a
                 User or an AnoymousUser object from the auth contrib module.
 
@@ -1014,7 +1014,7 @@ class Page(models.Model):
 
             deleted
                 If this is `True` the page is created as an deleted page.
-                This operation doesn't make sense and creates suprising
+                This operation doesn't make sense and creates surprising
                 displays in the revision log if the `note` is not changed to
                 something reasonable.
 
