@@ -90,6 +90,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     if not width and not height:
         raise ValueError('neither with nor height given')
 
+    location = str(location)
     if not is_safe_domain(location):
         return None
 
