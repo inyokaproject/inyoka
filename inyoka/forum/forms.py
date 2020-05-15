@@ -248,6 +248,8 @@ class AddPollForm(forms.Form):
     duration = forms.IntegerField(min_value=1, max_value=3650, required=False,
                                   widget=forms.TextInput(attrs={'size': '3'}))
 
+    use_required_attribute = False
+
 
 class ReportTopicForm(forms.Form):
     """
