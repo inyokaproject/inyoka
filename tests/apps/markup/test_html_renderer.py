@@ -33,7 +33,7 @@ class TestHtmlRenderer(TestCase):
     def test_simple_markup(self):
         """Test the simple markup."""
         html = render("''foo'', '''bar''', __baz__, ,,(foo),,, ^^(bar)^^")
-        self.assertEqual(html, (
+        self.assertHTMLEqual(html, (
             '<em>foo</em>, '
             '<strong>bar</strong>, '
             '<span class="underline">baz</span>, '
@@ -43,14 +43,14 @@ class TestHtmlRenderer(TestCase):
 
     def test_pre(self):
         """Check if pre renders correctly."""
-        self.assertEqual(render('{{{\n<em>blub</em>\n}}}'), (
+        self.assertHTMLEqual(render('{{{\n<em>blub</em>\n}}}'), (
             '<pre class="notranslate">&lt;em&gt;blub&lt;/em&gt;</pre>'
         ))
 
     def test_lists(self):
         """Check list rendering."""
         html = render(' * 1\n * 2\n  1. 3\n * 4')
-        self.assertEqual(html, (
+        self.assertHTMLEqual(html, (
             '<ul>'
             '<li>1</li>'
             '<li>2<ol class="arabic">'
@@ -63,7 +63,7 @@ class TestHtmlRenderer(TestCase):
     def test_blockquotes(self):
         """Test block quote rendering."""
         html = render("> ''foo\n> bar''\n>> nested")
-        self.assertEqual(html, (
+        self.assertHTMLEqual(html, (
             '<blockquote>'
             '<em>foo\nbar</em>'
             '<blockquote>nested</blockquote>'
@@ -82,7 +82,7 @@ class TestHtmlRenderer(TestCase):
     def test_wiki_link_with_whitespace(self):
         """Test wiki link rendering with whitespace in target."""
         html = render("[: page :]")
-        self.assertEqual(html, (
+        self.assertHTMLEqual(html, (
             '<a href="http://wiki.ubuntuusers.local:8080/page/" class="internal missing">'
             'page'
             '</a>'
@@ -93,7 +93,7 @@ class TestHtmlRenderer(TestCase):
 
         link = '<a href="{url}" class="internal missing">foo (section \u201canchor\u201d)</a>'
         link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
-        self.assertEqual(html, link)
+        self.assertHTMLEqual(html, link)
 
     @override_settings(LANGUAGE_CODE='de-DE')
     def test_localized_wikilink_with_anchor_no_description(self):
@@ -101,24 +101,24 @@ class TestHtmlRenderer(TestCase):
 
         link = '<a href="{url}" class="internal missing">foo (Abschnitt \u201eanchor\u201c)</a>'
         link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
-        self.assertEqual(html, link)
+        self.assertHTMLEqual(html, link)
 
     def test_heading_contains_arrow(self):
         html = render_smilies('= => g =')
-        self.assertEqual(html, u'<h2 id="g">\u21d2 g<a href="#g" class="headerlink">\xb6</a></h2>')
+        self.assertHTMLEqual(html, u'<h2 id="g">\u21d2 g<a href="#g" class="headerlink">\xb6</a></h2>')
 
     def test_arrows(self):
         html = render_smilies('a => this')
-        self.assertEqual(html, u'a \u21d2 this')
+        self.assertHTMLEqual(html, u'a \u21d2 this')
 
     def test_list_with_arrow(self):
         html = render_smilies(' - -> this')
-        self.assertEqual(html, u'<ul><li>\u2192 this</li></ul>')
+        self.assertHTMLEqual(html, u'<ul><li>\u2192 this</li></ul>')
 
     def test_strikethrough_with_dash(self):
         html = render_smilies('a -- --(dvdfv)--')
-        self.assertEqual(html, u'a \u2013 <del>dvdfv</del>')
+        self.assertHTMLEqual(html, u'a \u2013 <del>dvdfv</del>')
 
     def test_arrow_in_bracket(self):
         html = render_smilies('(-> d)')
-        self.assertEqual(html, u'(\u2192 d)')
+        self.assertHTMLEqual(html, u'(\u2192 d)')
