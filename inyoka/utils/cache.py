@@ -116,7 +116,7 @@ class QueryCounter(object):
 
     def decr(self, count=1):
         """
-        Decreace the counter by count.
+        Decrease the counter by count.
 
         Does nothing if the counter is not in the cache.
         """
@@ -127,9 +127,9 @@ class QueryCounter(object):
 
     def delete_cache(self):
         """
-        Delets the counter from the cache.
+        Deletes the counter from the cache.
 
-        This should only be used for debuging.
+        This should only be used for debugging.
         """
         cache.delete(self.cache_key)
 
