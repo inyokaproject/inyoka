@@ -783,9 +783,10 @@ def do_log(request, name, pagination_page=1):
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
                             settings.WIKI_REVISIONS_PER_PAGE, url)
+
     return {
         'page': page,
-        'revisions': pagination.get_queryset(),
+        'revisions': pagination.get_queryset().select_related('user'),
         'pagination': pagination,
         'deny_robots': True,
     }
