@@ -47,6 +47,45 @@ class TestHtmlRenderer(TestCase):
             '<pre class="notranslate">&lt;em&gt;blub&lt;/em&gt;</pre>'
         ))
 
+    def test_code_highlight(self):
+        html = render("""{{{#!code bash
+#!/bin/bash
+cp ~/.bash_profile ~/.bash_profile.back
+
+# autologin for user instead of root
+sed -i 's/root/arch/' $HOME/.bash_profile
+}}}""")
+        self.assertHTMLEqual(html, """<div class="code">
+        <table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+        2
+        3
+        4
+        5</pre></div></td><td class="code"><div class="notranslate syntax"><pre><span></span><span class="ch">#!/bin/bash</span>
+        cp ~/.bash_profile ~/.bash_profile.back
+
+        <span class="c1"># autologin for user instead of root</span>
+        sed -i <span class="s1">&39;s/root/arch/&39;</span> <span class="nv">$HOME</span>/.bash_profile
+        </pre></div>
+        </td></tr></table></div>""")
+
+    def test_csv_to_table(self):
+        html = render("""{{{#!csv
+Device,Clicks,Impressions,CTR,Position
+Desktop,12167283,120602930,10.09%,14.28
+Mobile,899256,20140779,4.46%,19.78
+Tablet,167759,1843644,9.1%,8.63
+}}}""")
+        self.assertHTMLEqual(html, """<table>
+        <tr><td>Device</td><td>Clicks</td><td>Impressions</td><td>CTR</td><td>Position</td></tr>
+        <tr><td>Desktop</td><td>12167283</td><td>120602930</td><td>10.09%</td><td>14.28</td></tr>
+        <tr><td>Mobile</td><td>899256</td><td>20140779</td><td>4.46%</td><td>19.78</td></tr>
+        <tr><td>Tablet</td><td>167759</td><td>1843644</td><td>9.1%</td><td>8.63</td></tr>
+        </table>""")
+
+    def test_invalid_parser(self):
+        html = render("{{{#!not_existing_parser_1233456767867899789\ncONTENT}}}")
+        self.assertHTMLEqual(html, '<pre class="notranslate">cONTENT</pre>')
+
     def test_lists(self):
         """Check list rendering."""
         html = render(' * 1\n * 2\n  1. 3\n * 4')

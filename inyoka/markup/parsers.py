@@ -29,7 +29,7 @@ from inyoka.utils.text import join_pagename, normalize_pagename
 
 
 def get_parser(name, args, kwargs, data):
-    """Instanciate a new parser or return `None` if it doesn't exist."""
+    """Instantiate a new parser or return `None` if it doesn't exist."""
     cls = ALL_PARSERS.get(name)
     if cls is None:
         return
@@ -105,7 +105,7 @@ class CSVParser(Parser):
 
     def build_node(self, context=None, format=None):
         from csv import reader
-        rows = reader(self.data.encode('utf-8').splitlines())
+        rows = reader(self.data.splitlines())
         result = nodes.Table()
         last_cells = []
         max_cells = 0
