@@ -176,7 +176,7 @@ class Renderer(object):
             if obj[0] == '!':
                 pos = obj.index('\0')
                 self.format = obj[1:pos]
-                self.instructions = [obj[pos + 1:].decode('utf-8')]
+                self.instructions = [obj[pos + 1:]]
             elif obj[0] == '@':
                 self.format, self.instructions = loads(obj[1:])
         else:
