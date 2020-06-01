@@ -44,7 +44,7 @@ class NodeCompiler(object):
             result.append(''.join(text_buffer))
 
         if not is_dynamic:
-            return '!%s\0%s' % (format, ''.join(result).encode('utf-8'))
+            return '!%s\0%s' % (format, ''.join(result))
         return '@' + dumps((format, result), HIGHEST_PROTOCOL)
 
 

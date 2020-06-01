@@ -161,3 +161,15 @@ Tablet,167759,1843644,9.1%,8.63
     def test_arrow_in_bracket(self):
         html = render_smilies('(-> d)')
         self.assertHTMLEqual(html, u'(\u2192 d)')
+
+    def test_compile(self):
+        """
+        Test alternative way to render with compile.
+        See __init__.py for more information.
+        """
+        from inyoka.markup.base import parse, render
+        node = parse("Hello World!\n\n''foo bar spam''")
+        code = node.compile('html')
+        html = render(code, RenderContext())
+        self.assertHTMLEqual(html,
+                             '<p>Hello World!</p><p><em>foo bar spam</em></p>')
