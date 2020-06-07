@@ -1320,6 +1320,14 @@ def mark_ham_spam(request, post_id, action='spam'):
 
     if action == 'ham':
         post.mark_ham()
+        # Authors are not subscribed to own posts if the post is detected as spam
+        # subscribe author after marking as ham
+        # https://github.com/inyokaproject/inyoka/issues/1119
+        author_subscribed = Subscription.objects.user_subscribed(post.author, topic)
+        if request.user.settings.get('autosubscribe', True) and not author_subscribed:
+            subscription = Subscription(user=post.author, content_object=topic)
+            subscription.save()
+
     elif action == 'spam':
         post.mark_spam(report=False, update_akismet=True)
     return HttpResponseRedirect(url_for(post))
