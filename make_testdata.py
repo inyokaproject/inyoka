@@ -22,6 +22,8 @@ from django.conf import settings
 if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
 
+django.setup()
+
 from jinja2.constants import LOREM_IPSUM_WORDS
 
 from inyoka.forum.models import Forum, Post, Topic
@@ -266,7 +268,6 @@ def make_planet():
 
 
 if __name__ == '__main__':
-    django.setup()
     page_names = ['Startseite', 'Welcome'] + list(create_names(WIKI_PAGES_COUNT))
     make_groups()
     make_users()
