@@ -9,6 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
+
+import jinja2
 from datetime import timedelta
 from os.path import dirname, join
 
@@ -74,11 +76,11 @@ STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = '//static.%s/' % BASE_DOMAIN_NAME
 
 # system user and group related settings
-INYOKA_SYSTEM_USER = u'ubuntuusers.de'
-INYOKA_IKHAYA_GROUP_NAME = u'ikhayateam'
-INYOKA_REGISTERED_GROUP_NAME = u'registered'
-INYOKA_TEAM_GROUP_NAME = u'team'
-INYOKA_ANONYMOUS_GROUP_NAME = u'anonymous'
+INYOKA_SYSTEM_USER = 'ubuntuusers.de'
+INYOKA_IKHAYA_GROUP_NAME = 'ikhayateam'
+INYOKA_REGISTERED_GROUP_NAME = 'registered'
+INYOKA_TEAM_GROUP_NAME = 'team'
+INYOKA_ANONYMOUS_GROUP_NAME = 'anonymous'
 
 # E-Mail settings
 INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
@@ -105,9 +107,9 @@ INYOKA_SIGNATURE_MAXIMUM_CHARACTERS = 500  # <= -1 → no restriction
 INYOKA_SIGNATURE_MAXIMUM_LINES = 4  # <= -1 → no restriction
 
 # download link on the start page
-INYOKA_GET_UBUNTU_LINK = u'%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
+INYOKA_GET_UBUNTU_LINK = '%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
                                                       BASE_DOMAIN_NAME)
-INYOKA_GET_UBUNTU_DESCRIPTION = u'Downloads'
+INYOKA_GET_UBUNTU_DESCRIPTION = 'Downloads'
 
 # path of the dynamically generated css for the linkmap. It gives each interwikilink an icon.
 # Normally, the path should be on MEDIA, so that the CSS is served from a webserver
@@ -125,7 +127,7 @@ USE_ETAGS = True
 TAGCLOUD_SIZE = 100
 
 # prefix for the system mails
-EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME
+EMAIL_SUBJECT_PREFIX = '%s: ' % BASE_DOMAIN_NAME
 
 EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
@@ -234,8 +236,6 @@ MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.tz.TimezoneMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'inyoka.middlewares.common.MobileDetectionMiddleware',
-    'django_mobile.middleware.SetFlavourMiddleware',
     'django_hosts.middleware.HostsResponseMiddleware',
 )
 
@@ -259,7 +259,6 @@ INSTALLED_APPS = (
     'inyoka.pastebin.apps.PastebinAppConfig',
     'inyoka.planet.apps.PlanetAppConfig',
     'inyoka.markup.apps.MarkupAppConfig',
-    'django_mobile',
     'django_hosts',
     'guardian',
 )
@@ -427,14 +426,33 @@ PASSWORD_HASHERS = (
     'inyoka.utils.user.UnsaltedMD5PasswordHasher',
 )
 
-TEMPLATE_LOADERS = (
-    'inyoka.utils.templating.DjangoLoader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = ()
-
-TEMPLATE_DIRS = []
+TEMPLATES = [
+    {
+        'NAME': 'django',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': False,
+        'OPTIONS': {
+            'loaders': [
+                'inyoka.utils.templating.DjangoLoader',
+            ]
+        },
+    },
+    {
+        'NAME': 'jinja',
+        'BACKEND': 'inyoka.utils.templating.Jinja2Templates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'inyoka.utils.templating.environment',
+            'autoescape': False,
+            'extensions': ['jinja2.ext.i18n', 'jinja2.ext.do'],
+            'cache_size': -1,
+            'context_processors': ['inyoka.utils.templating.context_data'],
+            'undefined': jinja2.Undefined,
+        }
+    }
+]
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 
@@ -444,7 +462,7 @@ FORMAT_MODULE_PATH = 'inyoka.locale'
 COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
 
 # disable anonymous user creating in django-guardian
-ANONYMOUS_USER_NAME = u'anonymous'
+ANONYMOUS_USER_NAME = 'anonymous'
 
 # disable guardian monkey patching, for custom user model support
 GUARDIAN_MONKEY_PATCH = False
@@ -453,83 +471,83 @@ GUARDIAN_MONKEY_PATCH = False
 RAVEN_PUBLIC_DSN = None
 
 SMILIES = OrderedDict([
-    (u':?:', u'❓'),  # has to come before :?
-    (u':???:', u'⁇'),  # has to come before :?
+    (':?:', '❓'),  # has to come before :?
+    (':???:', '⁇'),  # has to come before :?
     # normal smilies
-    (u':-)', u'☺'),
-    (u':)', u'☺'),
-    (u':-(', u'☹'),
-    (u':(', u'☹'),
-    (u';-)', u'😉'),
-    (u';)', u'😉'),
-    (u':-P', u'😛'),
-    (u':P', u'😛'),
-    (u':-D', u'😀'),
-    (u':D', u'😀'),
-    (u':-o', u'😮'),
-    (u':-O', u'😮'),
-    (u':o', u'😮'),
-    (u':-?', u'😕'),
-    (u':?', u'😕'),
-    (u':-x', u'😠'),
-    (u':x', u'😠'),
-    (u'8-)', u'😎'),
-    (u'# 8)', u'😎'),
-    (u':-$', u'😳'),
-    (u'<3', u'♥'),
-    (u':[]', u'😬'),
-    (u':-[]', u'😬'),
-    (u'§)', u'🤓'),
-    (u'8-o', u'😲'),
-    (u'8-}', u'🐸'),
-    (u':-|', u'😐'),
-    (u':|', u'😐'),
-    (u';-(', u'😢'),
-    (u']:-(', u'👿'),
-    (u']:-)', u'😈'),
-    (u'O:-)', u'😇'),
-    (u':->', u'😊'),
+    (':-)', '☺'),
+    (':)', '☺'),
+    (':-(', '☹'),
+    (':(', '☹'),
+    (';-)', '😉'),
+    (';)', '😉'),
+    (':-P', '😛'),
+    (':P', '😛'),
+    (':-D', '😀'),
+    (':D', '😀'),
+    (':-o', '😮'),
+    (':-O', '😮'),
+    (':o', '😮'),
+    (':-?', '😕'),
+    (':?', '😕'),
+    (':-x', '😠'),
+    (':x', '😠'),
+    ('8-)', '😎'),
+    ('# 8)', '😎'),
+    (':-$', '😳'),
+    ('<3', '♥'),
+    (':[]', '😬'),
+    (':-[]', '😬'),
+    ('§)', '🤓'),
+    ('8-o', '😲'),
+    ('8-}', '🐸'),
+    (':-|', '😐'),
+    (':|', '😐'),
+    (';-(', '😢'),
+    (']:-(', '👿'),
+    (']:-)', '😈'),
+    ('O:-)', '😇'),
+    (':->', '😊'),
     # arrows
-    ('->', u'→'),
-    ('<-', u'←'),
-    ('=>', u'⇒'),
-    ('<=', u'⇐'),
-    ('--', u'–'),
+    ('->', '→'),
+    ('<-', '←'),
+    ('=>', '⇒'),
+    ('<=', '⇐'),
+    ('--', '–'),
     # text smilies
-    (u':!:', u'❗'),
-    (u':arrow:', u'▶'),
-    (u':backarrow:', u'◀'),
-    (u':cool:', u'😎'),
-    (u':cry:', u'😢'),
-    (u':eek:', u'😮'),
-    (u':ente:', u'🦆'),
-    (u':grin:', u'😀'),
-    (u':idea:', u'💡'),
-    (u':lol:', u'🤣'),
-    (u':mad:', u'😠'),
-    (u':mrgreen:', u'😀'),
-    (u':neutral:', u'😐'),
-    (u':oops:', u'😳'),
-    (u':razz:', u'😛'),
-    (u':roll:', u'🙄'),
-    (u':sad:', u'☹'),
-    (u':shock:', u'😲'),
-    (u':smile:', u'☺'),
-    (u':thumbsup:', u'👍'),
-    (u':wink:', u'😉'),
-    (u'{dl}', u'⮷'),
+    (':!:', '❗'),
+    (':arrow:', '▶'),
+    (':backarrow:', '◀'),
+    (':cool:', '😎'),
+    (':cry:', '😢'),
+    (':eek:', '😮'),
+    (':ente:', '🦆'),
+    (':grin:', '😀'),
+    (':idea:', '💡'),
+    (':lol:', '🤣'),
+    (':mad:', '😠'),
+    (':mrgreen:', '😀'),
+    (':neutral:', '😐'),
+    (':oops:', '😳'),
+    (':razz:', '😛'),
+    (':roll:', '🙄'),
+    (':sad:', '☹'),
+    (':shock:', '😲'),
+    (':smile:', '☺'),
+    (':thumbsup:', '👍'),
+    (':wink:', '😉'),
+    ('{dl}', '⮷'),
     # icons (with no equivalent in unicode)
-    (u'# <8-} ', u'css-class:icon-frog-xmas'),
-    (u':tux:', u'css-class:icon-tux'),
-    (u'{*}', u'css-class:icon-ubuntu'),
-    (u'{g}', u'css-class:icon-ubuntugnome'),
-    (u'{k}', u'css-class:icon-kubuntu'),
-    (u'{l}', u'css-class:icon-lubuntu'),
-    (u'{ma}', u'css-class:icon-ubuntumate'),
-    (u'{m}', u'css-class:icon-mythbuntu'),
-    (u'{ut}', u'css-class:icon-ubuntutouch'),
-    (u'{x}', u'css-class:icon-xubuntu'),
-    (u'{Übersicht}', u'css-class:icon-overview')
+    ('# <8-} ', 'css-class:icon-frog-xmas'),
+    (':tux:', 'css-class:icon-tux'),
+    ('{*}', 'css-class:icon-ubuntu'),
+    ('{g}', 'css-class:icon-ubuntugnome'),
+    ('{k}', 'css-class:icon-kubuntu'),
+    ('{l}', 'css-class:icon-lubuntu'),
+    ('{ma}', 'css-class:icon-ubuntumate'),
+    ('{m}', 'css-class:icon-mythbuntu'),
+    ('{ut}', 'css-class:icon-ubuntutouch'),
+    ('{x}', 'css-class:icon-xubuntu'),
+    ('{Übersicht}', 'css-class:icon-overview')
 ])
 
 # export only uppercase keys

@@ -2,8 +2,8 @@ from behave import given, step
 from django.conf import settings
 from django.core.cache import cache
 
-from form import do_form_fill_out
-from navigation import navigate_to_page
+from tests.bdd.steps.form import do_form_fill_out
+from tests.bdd.steps.navigation import navigate_to_page
 
 
 @given('The user "{username}" exits')

@@ -93,13 +93,13 @@ def suggest(request):
             text = render_template('mails/planet_suggest.txt',
                                    form.cleaned_data)
             for user in users:
-                send_mail(_(u'A new blog was suggested.'), text,
+                send_mail(_('A new blog was suggested.'), text,
                           settings.INYOKA_SYSTEM_USER_EMAIL,
                           [user.email])
             if not users:
-                messages.error(request, _(u'No user is registered as a planet administrator.'))
+                messages.error(request, _('No user is registered as a planet administrator.'))
                 return HttpResponseRedirect(href('planet'))
-            messages.success(request, _(u'The blog “%(title)s” was suggested.')
+            messages.success(request, _('The blog “%(title)s” was suggested.')
                              % {'title': escape(form.cleaned_data['name'])})
             return HttpResponseRedirect(href('planet'))
     else:
@@ -113,7 +113,7 @@ def suggest(request):
 @atom_feed(name='planet_feed')
 def feed(request, mode='short', count=10):
     """show the feeds for the planet"""
-    title = _(u'%(sitename)s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
+    title = _('%(sitename)s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
     feed = AtomFeed(title, url=href('planet'),
                     feed_url=request.build_absolute_uri(),
                     id=href('planet'),
@@ -139,7 +139,7 @@ def feed(request, mode='short', count=10):
         else:
             kwargs['author'] = entry.author
 
-        feed.add(title=entry.title or _(u'No title given'),
+        feed.add(title=entry.title or _('No title given'),
                  url=entry.url,
                  id=smart_urlquote(entry.guid),
                  updated=entry.updated,
@@ -156,16 +156,16 @@ def hide_entry(request, id):
     entry = Entry.objects.get(id=id)
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            messages.info(request, _(u'Canceled'))
+            messages.info(request, _('Canceled'))
         else:
             entry.hidden = False if entry.hidden else True
             if entry.hidden:
                 entry.hidden_by = request.user
             entry.save()
             if entry.hidden:
-                msg = _(u'The entry “%(title)s” was successfully hidden.')
+                msg = _('The entry “%(title)s” was successfully hidden.')
             else:
-                msg = _(u'The entry “%(title)s” was successfully restored.')
+                msg = _('The entry “%(title)s” was successfully restored.')
             messages.success(request, msg % {'title': entry.title})
     else:
         messages.info(request, render_template('planet/hide_entry.html',

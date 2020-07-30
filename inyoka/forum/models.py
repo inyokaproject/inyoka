@@ -8,9 +8,9 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import division
 
-import cPickle
+
+import pickle
 import os
 import re
 from datetime import datetime
@@ -27,7 +27,7 @@ from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.db import models, transaction
 from django.db.models import F, Count, Max
-from django.utils.encoding import DjangoUnicodeDecodeError, force_unicode
+from django.utils.encoding import DjangoUnicodeDecodeError, force_text
 from django.utils.html import escape, format_html
 from django.utils.translation import ugettext as _
 from django.utils.translation import pgettext, ugettext_lazy
@@ -97,7 +97,7 @@ class ForumManager(models.Manager):
         # To cache the result we use the slug as it's used in the forum view too
         slugs = self.get_slugs()
 
-        if isinstance(ident, (int, float, long)):
+        if isinstance(ident, (int, float)):
             ident = slugs.get(ident)
 
         if ident is None:
@@ -113,7 +113,7 @@ class ForumManager(models.Manager):
         it is stored in the cache afterwards.
         """
         slugs = self.get_slugs()
-        reverted = {str(y): x for x, y in slugs.iteritems()}
+        reverted = {str(y): x for x, y in slugs.items()}
         cache_keys = ['forum/forums/%s' % s for s in reverted]
         forums = cache.get_many(cache_keys)
 
@@ -141,15 +141,15 @@ class ForumManager(models.Manager):
         if slug:
             # we only select one forum and query only one if it's
             # not cached yet.
-            forum = cache.get(u'forum/forums/{}'.format(slug))
+            forum = cache.get('forum/forums/{}'.format(slug))
             if forum is None:
                 forum = super(ForumManager, self).get(slug=slug)
                 if forum:
                     forum.__dict__.pop('last_post', None)
-                    cache.set(u'forum/forums/{}'.format(slug), forum, 300)
+                    cache.set('forum/forums/{}'.format(slug), forum, 300)
             return forum
         # return all forums instead
-        return self.get_all_forums_cached().values()
+        return list(self.get_all_forums_cached().values())
 
     def get_forums_filtered(self, user, priv='forum.view_forum', reverse=False, sort=False):
         """Return all forums the `user` has proper privileges for.
@@ -311,8 +311,8 @@ class Forum(models.Model):
     welcome_read_users = models.ManyToManyField(User)
 
     class Meta:
-        verbose_name = ugettext_lazy(u'Forum')
-        verbose_name_plural = ugettext_lazy(u'Forums')
+        verbose_name = ugettext_lazy('Forum')
+        verbose_name_plural = ugettext_lazy('Forums')
         permissions = (
             ('delete_topic_forum', 'Can delete Topics from Forum'),
             ('view_forum', 'Can view Forum'),
@@ -439,7 +439,7 @@ class Forum(models.Model):
 
     def invalidate_topic_cache(self):
         cache.delete_many(
-            u'forum/topics/{}/{}'.format(self.id, page + 1)
+            'forum/topics/{}/{}'.format(self.id, page + 1)
             for page in range(CACHE_PAGES_COUNT))
 
     @staticmethod
@@ -455,7 +455,7 @@ class Forum(models.Model):
         """
         if isinstance(parent, Forum):
             parent = parent.id
-        matched_forums = filter(lambda f: f.parent_id == parent, forums)
+        matched_forums = [f for f in forums if f.parent_id == parent]
         for f in matched_forums:
             yield offset, f
             for l in Forum.get_children_recursive(forums, f, offset + 1):
@@ -467,7 +467,7 @@ class Forum(models.Model):
         else:
             return self.support_group.user_set.all()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):
@@ -548,8 +548,8 @@ class Topic(models.Model):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = ugettext_lazy(u'Topic')
-        verbose_name_plural = ugettext_lazy(u'Topics')
+        verbose_name = ugettext_lazy('Topic')
+        verbose_name_plural = ugettext_lazy('Topics')
         permissions = (
             ('manage_reported_topic', 'Can manage reported Topics'),
         )
@@ -676,24 +676,24 @@ class Topic(models.Model):
         else None.
         """
         if self.ubuntu_version:
-            version = filter(lambda v: v.number == self.ubuntu_version, get_ubuntu_versions())
+            version = [v for v in get_ubuntu_versions() if v.number == self.ubuntu_version]
             if len(version) > 0:
                 return version[0]
             return ''
 
     def get_version_info(self, default=None):
         if default is None:
-            default = _(u'Not specified')
+            default = _('Not specified')
         if not (self.ubuntu_version or self.ubuntu_distro):
             return default
-        if self.ubuntu_distro == u'none':
-            return _(u'No Ubuntu')
+        if self.ubuntu_distro == 'none':
+            return _('No Ubuntu')
         out = []
         if self.ubuntu_distro:
             out.append(UBUNTU_DISTROS[self.ubuntu_distro])
-        if self.ubuntu_version and self.ubuntu_version != u'none':
-            out.append(force_unicode(self.get_ubuntu_version()))
-        return u' '.join(force_unicode(x) for x in out)
+        if self.ubuntu_version and self.ubuntu_version != 'none':
+            out.append(force_text(self.get_ubuntu_version()))
+        return ' '.join(force_text(x) for x in out)
 
     def get_read_status(self, user):
         if user.is_anonymous:
@@ -721,7 +721,7 @@ class Topic(models.Model):
             query=self.posts.all(),
             use_task=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def __repr__(self):
@@ -765,7 +765,7 @@ class PostManager(models.Manager):
             last_posts = query.filter(id__in=ids) \
                 .select_related('author') \
                 .only('id', 'pub_date', 'author__username').all()
-            last_post_map = dict(map(lambda post: (post.id, post), last_posts))
+            last_post_map = dict([(post.id, post) for post in last_posts])
         return last_post_map
 
 
@@ -787,8 +787,8 @@ class Post(models.Model, LockableObject):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = ugettext_lazy(u'Post')
-        verbose_name_plural = ugettext_lazy(u'Posts')
+        verbose_name = ugettext_lazy('Post')
+        verbose_name_plural = ugettext_lazy('Posts')
 
     def get_text(self):
         if self.is_plaintext:
@@ -808,7 +808,7 @@ class Post(models.Model, LockableObject):
         position, slug = post.position, post.topic.slug
         page = max(0, position) // POSTS_PER_PAGE + 1
         url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))
-        return u''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
+        return ''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
 
     def edit(self, text, is_plaintext=False):
         """
@@ -896,7 +896,7 @@ class Post(models.Model, LockableObject):
             # django_redis has a bug, that delete_many does not work with
             # empty generators. See:
             # https://github.com/niwinz/django-redis/pull/162
-            cache.delete_many(u'forum/forums/{}'.format(f.slug) for f in parent_forums)
+            cache.delete_many('forum/forums/{}'.format(f.slug) for f in parent_forums)
 
         return super(Post, self).delete()
 
@@ -950,7 +950,7 @@ class Post(models.Model, LockableObject):
                 # New topic. First post must get the position 0
                 maxpos = -1
 
-            post_ids = map(lambda p: p.id, posts)
+            post_ids = [p.id for p in posts]
             Post.objects.filter(pk__in=post_ids).update(topic=new_topic)
             for post in posts:
                 maxpos += 1
@@ -1041,8 +1041,8 @@ class Post(models.Model, LockableObject):
     def grouped_attachments(self):
         def expr(v):
             if not v.mimetype.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
-                return u''
-            return _(u'Pictures')
+                return ''
+            return _('Pictures')
 
         if hasattr(self, '_attachments_cache'):
             attachments = sorted(self._attachments_cache, key=expr)
@@ -1101,7 +1101,7 @@ class Post(models.Model, LockableObject):
                 topic.reporter = User.objects.get_system_user()
 
                 notify_reported_topic_subscribers(
-                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                    _('Reported topic: “%(topic)s”') % {'topic': topic.title},
                     {'topic': topic, 'text': topic.reported})
 
                 cache.delete('forum/reported_topic_count')
@@ -1126,14 +1126,14 @@ class Post(models.Model, LockableObject):
                     topic.reporter = User.objects.get_system_user()
 
                 notify_reported_topic_subscribers(
-                    _(u'Reported post: “%(post)s”') % {'post': self.pk},
+                    _('Reported post: “%(post)s”') % {'post': self.pk},
                     {'topic': topic, 'text': msg})
 
                 cache.delete('forum/reported_topic_count')
 
             topic.save(update_fields=['reported', 'reporter'])
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s - %s' % (
             self.topic.title,
             self.text[0:20]
@@ -1182,7 +1182,7 @@ class Attachment(models.Model):
         """
         name = secure_filename(name)
         # check whether an attachment with the same name already exists
-        existing = filter(lambda a: a.name == name, attachments)
+        existing = [a for a in attachments if a.name == name]
         exists = bool(existing)
         if exists:
             existing = existing[0]
@@ -1265,10 +1265,10 @@ class Attachment(models.Model):
         """
         Returns the path to the thumbnail file.
         """
-        thumbnail_path = self.file.name.encode('utf-8')
+        thumbnail_path = self.file.name
         img_path = path.join(settings.MEDIA_ROOT,
                              'forum/thumbnails/%s-%s' % (self.id, thumbnail_path.split('/')[-1]))
-        return get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+        return get_thumbnail(self.file.path, img_path, *settings.FORUM_THUMBNAIL_SIZE)
 
     @property
     def html_representation(self):
@@ -1311,30 +1311,30 @@ class Attachment(models.Model):
             thumb = thumbnail()
             if thumb:
                 return format_html(
-                    u'<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
+                    '<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
                     url, thumb, self.comment, self.comment,
                 )
             else:
                 linktext = pgettext(
                     'Link text to an image attachment',
-                    u'View %(name)s'
+                    'View %(name)s'
                 ) % {'name': self.name}
                 return format_html(
-                    u'<a href="{}" type="{}" title="{}">{}</a>',
+                    '<a href="{}" type="{}" title="{}">{}</a>',
                     url, self.mimetype, self.comment, linktext
                 )
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:
                 try:
-                    highlighted = highlight_code(force_unicode(contents), mimetype=self.mimetype)
-                    return format_html(u'<div class="code">{}</div>', highlighted)
+                    highlighted = highlight_code(force_text(contents), mimetype=self.mimetype)
+                    return format_html('<div class="code">{}</div>', highlighted)
                 except DjangoUnicodeDecodeError:
                     pass
 
         linktext = pgettext('Link text to download an attachment',
-            u'Download %(name)s') % {'name': self.name}
-        return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
+            'Download %(name)s') % {'name': self.name}
+        return format_html('<a href="{}" type="{}" title="{}">{}</a>',
                            url, self.mimetype, self.comment, linktext)
 
     def get_absolute_url(self, action=None):
@@ -1399,12 +1399,12 @@ class ReadStatus(object):
     """
 
     def __init__(self, serialized_data):
-        self.data = cPickle.loads(str(serialized_data)) if serialized_data else {}
+        self.data = pickle.loads(serialized_data) if serialized_data else {}
 
     def __call__(self, item):
         """
         Determine the read status for a forum or topic. If the topic
-        was allready read by the user, True is returned.
+        was already read by the user, True is returned.
         """
         forum_id, post_id = None, None
         is_forum = isinstance(item, Forum)
@@ -1415,7 +1415,7 @@ class ReadStatus(object):
         else:
             raise ValueError('Can\'t determine read status of an unknown type')
         row = self.data.get(forum_id, (None, []))
-        if row[0] >= post_id:
+        if row[0] and row[0] >= post_id:
             return True
         elif is_forum:
             return False
@@ -1474,7 +1474,7 @@ class ReadStatus(object):
         self.data[parent_forum_id] = row
 
     def serialize(self):
-        return cPickle.dumps(self.data)
+        return pickle.dumps(self.data)
 
 
 def mark_all_forums_read(user):

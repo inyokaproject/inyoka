@@ -31,15 +31,15 @@ class EntryManager(models.Manager):
 
 
 class Blog(models.Model):
-    name = models.CharField(ugettext_lazy(u'Name of the blog'), max_length=40)
-    description = models.TextField(ugettext_lazy(u'Description'), blank=True, null=True)
-    blog_url = models.URLField(ugettext_lazy(u'URL of the blog'))
-    feed_url = models.URLField(ugettext_lazy(u'URL of the feed'))
-    user = models.ForeignKey(User, verbose_name=ugettext_lazy(u'User'),
+    name = models.CharField(ugettext_lazy('Name of the blog'), max_length=40)
+    description = models.TextField(ugettext_lazy('Description'), blank=True, null=True)
+    blog_url = models.URLField(ugettext_lazy('URL of the blog'))
+    feed_url = models.URLField(ugettext_lazy('URL of the feed'))
+    user = models.ForeignKey(User, verbose_name=ugettext_lazy('User'),
                              blank=True, null=True)
-    icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to='planet/icons', blank=True)
+    icon = models.ImageField(ugettext_lazy('Icon'), upload_to='planet/icons', blank=True)
     last_sync = models.DateTimeField(blank=True, null=True)
-    active = models.BooleanField(ugettext_lazy(u'Index the blog'), default=True)
+    active = models.BooleanField(ugettext_lazy('Index the blog'), default=True)
 
     @property
     def icon_url(self):
@@ -51,7 +51,7 @@ class Blog(models.Model):
         self.icon.delete(save=False)
         super(Blog, self).delete()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self, action='show'):
@@ -87,8 +87,8 @@ class Entry(models.Model):
     hidden_by = models.ForeignKey(User, blank=True, null=True,
                                   related_name='hidden_planet_posts')
 
-    def __unicode__(self):
-        return u'%s / %s' % (
+    def __str__(self):
+        return '%s / %s' % (
             self.blog,
             self.title
         )
@@ -113,8 +113,8 @@ class Entry(models.Model):
         super(Entry, self).delete()
 
     class Meta:
-        verbose_name = ugettext_lazy(u'Entry')
-        verbose_name_plural = ugettext_lazy(u'Entries')
+        verbose_name = ugettext_lazy('Entry')
+        verbose_name_plural = ugettext_lazy('Entries')
         get_latest_by = 'pub_date'
         ordering = ('-pub_date',)
         permissions = (

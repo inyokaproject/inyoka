@@ -23,7 +23,7 @@ TOPICS_PER_PAGE = 30
 CACHE_PAGES_COUNT = 5
 
 UBUNTU_DISTROS = {
-    'none': ugettext_lazy(u'No Ubuntu'),
+    'none': ugettext_lazy('No Ubuntu'),
     'edubuntu': ugettext_lazy('Edubuntu'),
     'kubuntu': ugettext_lazy('Kubuntu'),
     'server': ugettext_lazy('Server'),
@@ -46,4 +46,4 @@ def get_version_choices():
 
 
 def get_distro_choices():
-    return [('', ugettext_lazy('Distribution'))] + UBUNTU_DISTROS.items()
+    return [('', ugettext_lazy('Distribution'))] + list(UBUNTU_DISTROS.items())

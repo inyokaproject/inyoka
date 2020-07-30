@@ -29,20 +29,18 @@ from inyoka.utils.text import join_pagename, normalize_pagename
 
 
 def get_parser(name, args, kwargs, data):
-    """Instanciate a new parser or return `None` if it doesn't exist."""
+    """Instantiate a new parser or return `None` if it doesn't exist."""
     cls = ALL_PARSERS.get(name)
     if cls is None:
         return
     return cls(data, args, kwargs)
 
 
-class Parser(object):
+class Parser(object, metaclass=ArgumentCollector):
     """
     baseclass for parsers.  Concrete parsers should either subclass this or
     implement the same attributes and methods.
     """
-
-    __metaclass__ = ArgumentCollector
 
     #: if a parser is static this has to be true.
     is_static = False
@@ -59,7 +57,7 @@ class Parser(object):
     def render(self, context, format):
         """Dispatch to the correct render method."""
         rv = self.build_node(context, format)
-        if isinstance(rv, basestring):
+        if isinstance(rv, str):
             return rv
         return rv.render(context, format)
 
@@ -77,7 +75,7 @@ class PygmentsParser(Parser):
 
     is_static = True
     arguments = (
-        ('syntax', unicode, 'text'),
+        ('syntax', str, 'text'),
     )
 
     def __init__(self, data, syntax):
@@ -107,7 +105,7 @@ class CSVParser(Parser):
 
     def build_node(self, context=None, format=None):
         from csv import reader
-        rows = reader(self.data.encode('utf-8').splitlines())
+        rows = reader(self.data.splitlines())
         result = nodes.Table()
         last_cells = []
         max_cells = 0
@@ -154,7 +152,7 @@ class TemplateParser(Parser):
             self.template = None
             self.context = None
             return
-        items = kwargs.items()
+        items = list(kwargs.items())
         for idx, arg in enumerate(args[1:] + (data,)):
             items.append(('arguments.%d' % idx, arg))
         self.template = join_pagename(settings.WIKI_TEMPLATE_BASE,

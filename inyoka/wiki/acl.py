@@ -77,7 +77,7 @@ class PrivilegeTest(object):
     current page.
     """
 
-    jinja_allowed_attributes = privilege_map.keys()
+    jinja_allowed_attributes = list(privilege_map.keys())
 
     def __init__(self, user, page_name):
         self._user = user
@@ -164,7 +164,7 @@ def get_privilege_flags(user, page_name, groups=None):
     """
     if user is None:
         user = User.objects.get_anonymous_user()
-    elif isinstance(user, basestring):
+    elif isinstance(user, str):
         user = User.objects.get(username__iexact=user)
     if groups is None:
         groups = GroupContainer(user, page_name)
@@ -193,7 +193,7 @@ def get_privileges(user, page_name, groups=None):
     """
     result = {}
     flags = get_privilege_flags(user, page_name, groups)
-    for name, flag in privilege_map.iteritems():
+    for name, flag in privilege_map.items():
         result[name] = (flags & flag) != 0
     return result
 
@@ -207,7 +207,7 @@ def has_privilege(user, page_name, privilege, groups=None):
 
     :param groups: used internally by the `MultiPrivilegeTest`
     """
-    if isinstance(privilege, basestring):
+    if isinstance(privilege, str):
         privilege = privilege_map[privilege]
     return (get_privilege_flags(user, page_name, groups) & privilege) != 0
 
@@ -247,7 +247,7 @@ def test_changes_allowed(user, page_name, old_text, new_text):
     old = set()
     new = set()
     for tree, metadata in (old_text, old), (new_text, new):
-        if isinstance(tree, basestring):
+        if isinstance(tree, str):
             tree = parse(tree)
         for node in tree.query.by_type(MetaData):
             if node.key.startswith('X-') and \

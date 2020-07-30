@@ -11,7 +11,7 @@
 """
 import time
 from hashlib import md5
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -64,8 +64,8 @@ def get_group_autocompletion(request):
 @dispatcher.register()
 def get_captcha(request):
     captcha = Captcha()
-    h = md5(settings.SECRET_KEY)
-    h.update(captcha.solution)
+    h = md5(settings.SECRET_KEY.encode())
+    h.update(captcha.solution.encode())
     request.session['captcha_solution'] = h.hexdigest()
     response = captcha.get_response()
     # Save the solution for easier testing

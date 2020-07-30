@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import django.db.models.deletion
 from django.conf import settings
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             name='Attachment',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('file', models.FileField(upload_to=b'wiki/attachments/%S/%W')),
+                ('file', models.FileField(upload_to='wiki/attachments/%S/%W')),
             ],
             options={
             },
@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('value', inyoka.utils.database.InyokaMarkupField(simplify=False, force_existing=False)),
                 ('hash', models.CharField(unique=True, max_length=40, db_index=True)),
-                ('html_render_instructions_old', models.TextField(null=True, db_column=b'html_render_instructions')),
+                ('html_render_instructions_old', models.TextField(null=True, db_column='html_render_instructions')),
             ],
             options={
             },

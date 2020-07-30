@@ -11,7 +11,7 @@
     :copyright: (c) 2011-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import print_function
+
 
 from getpass import getpass
 
@@ -34,9 +34,9 @@ class Command(BaseCommand):
         email = options['email']
         password = options['password']
         while not username:
-            username = raw_input('username: ')
+            username = input('username: ')
         while not email:
-            email = raw_input('email: ')
+            email = input('email: ')
         if not password:
             while not password:
                 password = getpass('password: ')

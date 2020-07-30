@@ -8,13 +8,13 @@
     :copyright: (c) 2011-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import division, print_function
+
 
 import math
 import os
 import time
 from datetime import datetime
-from itertools import izip
+
 from random import choice, randint
 
 import django
@@ -117,7 +117,7 @@ def sentences(min=5, max=35, markup=True):
 
 
 def title():
-    return u''.join(w for w in words(2, 3, markup=False) if '\n' not in w)
+    return ''.join(w for w in words(2, 3, markup=False) if '\n' not in w)
 
 
 def intro(markup=True):
@@ -131,7 +131,7 @@ def randtime():
 def make_groups():
     print('Creating groups')
     pb = ProgressBar(40)
-    for percent, name in izip(percentize(GROUPS_COUNT), create_names(GROUPS_COUNT)):
+    for percent, name in zip(percentize(GROUPS_COUNT), create_names(GROUPS_COUNT)):
         groups.append(Group(name=name))
         groups[-1].save()
         pb.update(percent)
@@ -142,7 +142,7 @@ def make_users():
     print('Creating users')
     pb = ProgressBar(40)
     registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-    for percent, name in izip(percentize(USERS_COUNT), create_names(USERS_COUNT)):
+    for percent, name in zip(percentize(USERS_COUNT), create_names(USERS_COUNT)):
         u = User.objects.register_user(
             name, '%s@ubuntuusers.local' % name, name, False)
         u.date_joined = randtime()
@@ -155,7 +155,7 @@ def make_users():
         u.signature = words()
         u.occupation = word(markup=False)
         u.interests = word(markup=False)
-        u.website = u'http://%s.de' % word(markup=False)
+        u.website = 'http://%s.de' % word(markup=False)
         if not randint(0, 3):
             u.status = 0
         u.save()
@@ -169,7 +169,7 @@ def make_users():
 def make_forum():
     print('Creating forum test data')
     pb = ProgressBar(40)
-    for percent, name in izip(percentize(FORUMS_COUNT), create_names(FORUMS_COUNT, title)):
+    for percent, name in zip(percentize(FORUMS_COUNT), create_names(FORUMS_COUNT, title)):
         parent = None
         if randint(1, 6) != 6:
             try:
@@ -194,10 +194,10 @@ def make_forum():
                     p.save()
         pb.update(percent)
     # all about the wiki - forum (and diskussions subforum)
-    f = Forum(name=u'Rund ums Wiki', parent=None)
+    f = Forum(name='Rund ums Wiki', parent=None)
     f.save()
     forums.append(f)
-    d = Forum(name=u'Diskussionen', slug=settings.WIKI_DISCUSSION_FORUM, parent=f)
+    d = Forum(name='Diskussionen', slug=settings.WIKI_DISCUSSION_FORUM, parent=f)
     d.save()
     forums.append(d)
     show('\n')
@@ -206,7 +206,7 @@ def make_forum():
 def make_ikhaya():
     print('Creating ikhaya test data')
     pb = ProgressBar(40)
-    for percent, name in izip(percentize(IKHAYA_CATEGORY_COUNT), create_names(IKHAYA_CATEGORY_COUNT, title)):
+    for percent, name in zip(percentize(IKHAYA_CATEGORY_COUNT), create_names(IKHAYA_CATEGORY_COUNT, title)):
         c = Category(name=name)
         c.save()
         for subject in create_names(6, title):
@@ -240,7 +240,7 @@ def make_ikhaya():
 def make_wiki():
     print('Creating wiki pages')
     pb = ProgressBar(40)
-    for percent, name in izip(percentize(len(page_names) - 1), page_names):
+    for percent, name in zip(percentize(len(page_names) - 1), page_names):
         p = Page.objects.create(name, sentences(min=10, max=20), choice(users), note=title())
         for i in range(randint(0, MAX_WIKI_REVISIONS)):
             text = sentences(min=10, max=20, markup=False)
@@ -256,8 +256,8 @@ def make_wiki():
 def make_planet():
     print("Creating planet test data")
     pb = ProgressBar(40)
-    for percent, (name, (blogurl, feedurl)) in izip(percentize(len(BLOGS) - 1),
-                                                    BLOGS.iteritems()):
+    for percent, (name, (blogurl, feedurl)) in zip(percentize(len(BLOGS) - 1),
+                                                    iter(BLOGS.items())):
         Blog(name=name, blog_url=blogurl, feed_url=feedurl, description=sentences(min=3, max=10)).save()
         pb.update(percent)
     # Syncing once

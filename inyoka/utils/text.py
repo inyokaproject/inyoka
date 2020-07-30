@@ -22,22 +22,22 @@ _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')
 _unsupported_re = re.compile(r'[\x00-\x19#%?]+')
 _slugify_replacement_table = {
-    u'\xdf': 'ss',
-    u'\xe4': 'ae',
-    u'\xe6': 'ae',
-    u'\xf0': 'dh',
-    u'\xf6': 'oe',
-    u'\xfc': 'ue',
-    u'\xfe': 'th',
+    '\xdf': 'ss',
+    '\xe4': 'ae',
+    '\xe6': 'ae',
+    '\xf0': 'dh',
+    '\xf6': 'oe',
+    '\xfc': 'ue',
+    '\xfe': 'th',
 }
-_slugify_word_re = re.compile(ur'[^a-zA-Z0-9%s]+' %
-    u''.join(re.escape(c) for c in _slugify_replacement_table.keys()))
+_slugify_word_re = re.compile(r'[^a-zA-Z0-9%s]+' %
+    ''.join(re.escape(c) for c in list(_slugify_replacement_table.keys())))
 _wiki_slug_allowed_chars = set(ascii_lowercase + digits + '_+-/.()')
 _wiki_slug_replace_chars = {
-    u'¹': u'1',
-    u'²': u'2',
-    u'³': u'3',
-    u' ': u'_'
+    '¹': '1',
+    '²': '2',
+    '³': '3',
+    ' ': '_'
 }
 
 
@@ -48,27 +48,27 @@ def increment_string(s):
         next = str(int(m.group(1)) + 1)
         start, end = m.span(1)
         if start or end:
-            return u'{0}-{1}{2}'.format(
+            return '{0}-{1}{2}'.format(
                 s[:max(end - len(next), start)],
                 next,
                 s[end:])
-    return s + u'-2'
+    return s + '-2'
 
 
 def slugify(string, convert_lowercase=True):
     """Slugify a string."""
-    if isinstance(string, str):
+    if isinstance(string, bytes):
         string = string.decode(settings.DEFAULT_CHARSET)
     result = []
     if convert_lowercase:
         string = string.lower()
     for word in _slugify_word_re.split(string.strip()):
         if word:
-            for search, replace in _slugify_replacement_table.iteritems():
+            for search, replace in _slugify_replacement_table.items():
                 word = word.replace(search, replace)
             word = normalize('NFKD', word)
-            result.append(word.encode('ascii', 'ignore'))
-    return u'-'.join(result) or u'-'
+            result.append(word)
+    return '-'.join(result) or '-'
 
 
 def join_pagename(name1, name2):
@@ -87,9 +87,9 @@ def join_pagename(name1, name2):
     """
     if name1 is None or name2 is None:
         return name1 or name2 or ''
-    if not isinstance(name1, basestring):
+    if not isinstance(name1, str):
         name1 = name1.name
-    if not isinstance(name2, basestring):
+    if not isinstance(name2, str):
         name2 = name2.name
     if '/' in name2 and not _path_crop.match(name2):
         name2 = '/' + name2
@@ -109,7 +109,7 @@ def normalize_pagename(name, strip_location_markers=True):
     left unnormalized to a part but will be fully normalized after a
     `join_pagename` call.
     """
-    name = u'_'.join(_unsupported_re.sub('', name).split()).rstrip('/')
+    name = '_'.join(_unsupported_re.sub('', name).split()).rstrip('/')
     if not strip_location_markers:
         return name
     name = name.lstrip('/')
@@ -122,12 +122,12 @@ def wiki_slugify(name):
     an internal representation of a wiki pagename, helpful if someone
     links a wiki pages with little differences like accents.
     """
-    if isinstance(name, str):
+    if isinstance(name, bytes):
         name = name.decode(settings.DEFAULT_CHARSET)
     name = name.lower()
-    for rchar, replacement in _wiki_slug_replace_chars.iteritems():
+    for rchar, replacement in _wiki_slug_replace_chars.items():
         name = name.replace(rchar, replacement)
-    name = unicode(normalize('NFD', name).encode('ascii', 'ignore'))
+    name = str(normalize('NFD', name))
     existing_chars = set(name)
     disallowed_chars = existing_chars - _wiki_slug_allowed_chars
     for char in disallowed_chars:
@@ -144,7 +144,7 @@ def get_pagetitle(name, full=True):
     name = normalize_pagename(name)
     if not full:
         name = name.rsplit('/', 1)[-1]
-    return u' '.join(x for x in name.split('_') if x)
+    return ' '.join(x for x in name.split('_') if x)
 
 
 def human_number(value, gender=None):
@@ -157,7 +157,7 @@ def human_number(value, gender=None):
     lang = get_language()
     if value == 1 and gender and 'en' not in lang.lower():
         return {
-            'masculine': pgettext('masculine', u'one'),
-            'feminine': pgettext('feminine', u'one'),
-            'neuter': pgettext('neuter', u'one')}.get(gender, _(u'one'))
+            'masculine': pgettext('masculine', 'one'),
+            'feminine': pgettext('feminine', 'one'),
+            'neuter': pgettext('neuter', 'one')}.get(gender, _('one'))
     return apnumber(value)

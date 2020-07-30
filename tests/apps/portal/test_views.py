@@ -53,26 +53,26 @@ class TestViews(TestCase):
         correctly.
         """
 
-        postdata = {u'name': u'Lorem'}
+        postdata = {'name': 'Lorem'}
         with translation.override('en-us'):
             response = self.client.post('/group/new/', postdata)
             self.assertEqual(response.status_code, 302)
 
-        postdata = {u'name': u'LOr3m'}
+        postdata = {'name': 'LOr3m'}
         with translation.override('en-us'):
             response = self.client.post('/group/Lorem/edit/', postdata)
             self.assertNotIn(
                 '<ul class="errorlist"><li>%s</li></ul>'
-                % _(u'The group name contains invalid chars'),
+                % _('The group name contains invalid chars'),
                 response.content.decode('utf-8')
             )
 
-        postdata = {u'name': u'£Ø®€m'}
+        postdata = {'name': '£Ø®€m'}
         with translation.override('en-us'):
             response = self.client.post('/group/LOr3m/edit/', postdata)
             self.assertIn(
                 '<ul class="errorlist"><li>%s</li></ul>'
-                % _(u'The group name contains invalid chars'),
+                % _('The group name contains invalid chars'),
                 response.content.decode('utf-8')
             )
 
@@ -129,14 +129,14 @@ class TestViews(TestCase):
             'form-0-icon': '',
         }
         response = self.client.post('/linkmap/', data=data)
-        self.assertIn('Enter a valid URL.', response.content)
+        self.assertIn(b'Enter a valid URL.', response.content)
 
     def test_linkmap_export(self):
         Linkmap.objects.create(token='uu', url='https://uu.test/')
 
         response = self.client.get('/linkmap/export/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, 'uu,https://uu.test/\r\n')
+        self.assertEqual(response.content, b'uu,https://uu.test/\r\n')
 
     def test_subscribe_user(self):
         """Test if it is possible to subscribe to users."""
@@ -144,7 +144,7 @@ class TestViews(TestCase):
             response = self.client.post('/user/user/subscribe/', follow=True)
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/user/user/')
         self.assertIn(
-            u'You will now be notified about activities of “user”.',
+            'You will now be notified about activities of “user”.',
             response.content.decode('utf-8'),
         )
         self.assertTrue(Subscription.objects.user_subscribed(self.admin, self.user))
@@ -164,7 +164,7 @@ class TestViews(TestCase):
             response = self.client.post('/user/user/unsubscribe/', follow=True)
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/user/user/')
         self.assertIn(
-            u'From now on you won’t be notified anymore about activities of “user”.',
+            'From now on you won’t be notified anymore about activities of “user”.',
             response.content.decode('utf-8'),
         )
         self.assertFalse(Subscription.objects.user_subscribed(self.admin, self.user))
@@ -185,17 +185,16 @@ class TestAuthViews(TestCase):
             response = self.client.post('/login/', postdata, follow=True)
             self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
             self.assertInHTML('<div class="message success">%s</div>'
-                              % _(u'You have successfully logged in.'),
-                              response.content, count=1)
+                              % _('You have successfully logged in.'),
+                              response.content.decode(), count=1)
 
-            self.assertTrue(response.client.session
-                            .get_expire_at_browser_close())
+            self.assertTrue(response.client.session.get_expire_at_browser_close())
 
             response = self.client.get('/login/', follow=True)
             self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
             self.assertInHTML('<div class="message error">%s</div>'
-                              % _(u'You are already logged in.'),
-                              response.content, count=1)
+                              % _('You are already logged in.'),
+                              response.content.decode(), count=1)
 
     def test_login_with_permanent_flag(self):
         """Test the “stay logged in” function."""
@@ -274,15 +273,15 @@ class TestAuthViews(TestCase):
         self.client.login(username='user', password='user')
         # Trigger a request to / to properly fill up the session.
         response = self.client.get('/')
-        self.assertIn('_auth_user_id', self.client.session.keys())
-        self.assertIn('_auth_user_backend', self.client.session.keys())
+        self.assertIn('_auth_user_id', list(self.client.session.keys()))
+        self.assertIn('_auth_user_backend', list(self.client.session.keys()))
 
         next = 'http://%s/login/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/logout/', {'next': next})
 
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/login/')
-        self.assertNotIn('_auth_user_id', self.client.session.keys())
-        self.assertNotIn('_auth_user_backend', self.client.session.keys())
+        self.assertNotIn('_auth_user_id', list(self.client.session.keys()))
+        self.assertNotIn('_auth_user_backend', list(self.client.session.keys()))
 
     def test_logout_safe_redirects(self):
         """External redirects are not allowed after logout.
@@ -346,7 +345,7 @@ class TestAuthViews(TestCase):
             self.client.post('/register/', postdata)
         self.assertEqual(1, len(mail.outbox))
         subject = mail.outbox[0].subject
-        self.assertIn(u'Activation of the user “apollo13”', subject)
+        self.assertIn('Activation of the user “apollo13”', subject)
 
     def test_register_deactivated(self):
         """Test the process of registering a new account.
@@ -357,9 +356,13 @@ class TestAuthViews(TestCase):
             with translation.override('en-us'):
                 response = self.client.get('/register/', follow=True)
         self.assertRedirects(response, href('portal'))
-        self.assertContains(response, u'User registration is currently disabled.')
+        self.assertContains(response, 'User registration is currently disabled.')
 
-    @skip("Should be fixed with https://github.com/inyokaproject/inyoka/issues/971")
+    def test_register_contains_captcha(self):
+        """The captcha is rendered via an own `ImageCaptchaWidget`"""
+        response = self.client.get('/register/')
+        self.assertContains(response, "__service__=portal.get_captcha")
+
     def test_lost_password(self):
         """Test the “lost password” feature.
 
@@ -372,7 +375,7 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/lost_password/', postdata)
         subject = mail.outbox[0].subject
-        self.assertIn(u'New password for “user”', subject)
+        self.assertIn('New password for “user”', subject)
         body = mail.outbox[0].body
         link = re.search(r'(/lost_password/.*)\n', body).groups()[0]
         with translation.override('en-us'):
@@ -416,7 +419,7 @@ class TestAuthViews(TestCase):
         self.assertFalse(self.client.user.is_authenticated)
 
         subject = mail.outbox[0].subject
-        self.assertIn(u'Deactivation of your account “user”', subject)
+        self.assertIn('Deactivation of your account “user”', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
@@ -446,7 +449,7 @@ class TestAuthViews(TestCase):
 
         # Perform invalid mail change
         subject = mail.outbox[0].subject
-        self.assertIn(u'Confirm email address', subject)
+        self.assertIn('Confirm email address', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
@@ -463,7 +466,7 @@ class TestAuthViews(TestCase):
 
         # Perform invalid mail reset
         subject = mail.outbox[1].subject
-        self.assertIn(u'Email address changed', subject)
+        self.assertIn('Email address changed', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[1].body).group(0).strip()
         postdata = {'token': code}
@@ -503,20 +506,20 @@ class TestRegister(TestCase):
         form = self.post_username(' ?')
 
         self.assertEqual(form.errors['username'],
-                         [u'Your username contains invalid characters. '
-                          u'Only alphanumeric chars and \u201c-\u201d are allowed.'])
+                         ['Your username contains invalid characters. '
+                          'Only alphanumeric chars and \u201c-\u201d are allowed.'])
 
     def test_username__exists_already(self):
         form = self.post_username(self.username)
 
         self.assertEqual(form.errors['username'],
-                         [u'This username is not available, please try another one.'])
+                         ['This username is not available, please try another one.'])
 
     def test_username__exists_different_case(self):
         form = self.post_username(self.username.lower())
 
         self.assertEqual(form.errors['username'],
-                         [u'This username is not available, please try another one.'])
+                         ['This username is not available, please try another one.'])
 
     def test_username__partly_same_exists(self):
         form = self.post_username(self.username[:-1])
@@ -527,7 +530,7 @@ class TestRegister(TestCase):
         form = self.post_username('foobar@inyoka.test')
 
         self.assertEqual(form.errors['username'],
-                         [u'Please do not enter an email address as username.'])
+                         ['Please do not enter an email address as username.'])
 
 
 class TestPrivMsgViews(TestCase):
@@ -608,15 +611,15 @@ class TestStaticPageView(TestCase):
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def test_content(self):
-        page = StaticPage.objects.create(key='foo', title=u'foo')
+        page = StaticPage.objects.create(key='foo', title='foo')
         response = self.client.get(page.get_absolute_url())
 
         self.assertEqual(response.tmpl_context['title'], page.title)
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def test_title(self):
-        content = u'some random text'
-        page = StaticPage.objects.create(key='foo', title=u'foo', content=content)
+        content = 'some random text'
+        page = StaticPage.objects.create(key='foo', title='foo', content=content)
         response = self.client.get(page.get_absolute_url())
 
         self.assertIn(content, response.tmpl_context['content'])
@@ -629,7 +632,7 @@ class TestStaticPageEdit(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
 
-        self.page = StaticPage.objects.create(key='foo', title=u'foo')
+        self.page = StaticPage.objects.create(key='foo', title='foo')
 
     def test_status_code_with_permissions(self):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
@@ -682,7 +685,7 @@ class TestStaticPageEdit(TestCase):
                                      'content': 'My great content'},
                                     follow=True)
 
-        msg = u'The page “{}” was created successfully.'.format('foo2')
+        msg = 'The page “{}” was created successfully.'.format('foo2')
         self.assertContains(response, msg)
 
     def test_edit_page__success_message(self):
@@ -695,7 +698,7 @@ class TestStaticPageEdit(TestCase):
                                      'content': 'My great content',
                                      'key': self.page.key}, follow=True)
 
-        msg = u'The page “{}” was changed successfully.'.format(new_title)
+        msg = 'The page “{}” was changed successfully.'.format(new_title)
         self.assertContains(response, msg)
 
     def test_edit_page__redirect_url(self):

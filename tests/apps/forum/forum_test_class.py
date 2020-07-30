@@ -8,7 +8,7 @@ from inyoka.utils.test import TestCase
 class ForumTestCase(TestCase):
 
     def setUp(self):
-        super(ForumTestCase, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum.objects.create(
@@ -34,7 +34,7 @@ class ForumTestCase(TestCase):
             topic = self.topic
 
         for post_id in range(number):
-            post = Post(text=u'test%s' % post_id, author=self.user, topic=topic)
+            post = Post(text='test%s' % post_id, author=self.user, topic=topic)
             post.save()
             yield post
 
@@ -42,7 +42,7 @@ class ForumTestCase(TestCase):
 class ForumTestCaseWithSecondItems(ForumTestCase):
 
     def setUp(self):
-        super(ForumTestCaseWithSecondItems, self).setUp()
+        super().setUp()
 
         self.other_forum = Forum(name='forum2')
         self.other_forum.user_count_posts = False

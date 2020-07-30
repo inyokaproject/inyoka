@@ -28,7 +28,7 @@ from inyoka.utils.urls import href
 
 
 def trigger_fix_errors_message(request):
-    messages.error(request, _(u'Errors occurred, please fix them.'))
+    messages.error(request, _('Errors occurred, please fix them.'))
 
 
 class TemplateResponseMixin(base.TemplateResponseMixin):
@@ -56,11 +56,11 @@ class EditMixin(object):
         model = self.model or self.queryset.query.model
         response = super(EditMixin, self).form_valid(form)
         format_args = {'verbose_name': model._meta.verbose_name,
-                       'object_name': escape(unicode(self.object))}
+                       'object_name': escape(str(self.object))}
         if self.create:
-            message = _(u'{verbose_name} “{object_name}” was successfully created.')
+            message = _('{verbose_name} “{object_name}” was successfully created.')
         else:
-            message = _(u'{verbose_name} “{object_name}” was successfully changed.')
+            message = _('{verbose_name} “{object_name}” was successfully changed.')
 
         messages.success(self.request, message.format(**format_args))
         return response
@@ -77,14 +77,14 @@ class FilterMixin(object):
 
     def render_to_response(self, context, **kwargs):
         req = self.request
-        filters = [filter(req.GET or None) for filter in self.filtersets]
+        filters = [f(req.GET or None) for f in self.filtersets]
         context['filtersets'] = filters
         return TemplateResponseMixin.render_to_response(self, context, **kwargs)
 
     def get_queryset(self):
         qs = super(FilterMixin, self).get_queryset()
-        for filter in self.filtersets:
-            instance = filter(self.request.GET or None, queryset=qs)
+        for f in self.filtersets:
+            instance = f(self.request.GET or None, queryset=qs)
             qs = instance.qs
         return qs
 
@@ -126,7 +126,7 @@ class UpdateView(PermissionRequiredMixin, TemplateResponseMixin, EditMixin,
         try:
             obj = queryset.get()
         except ObjectDoesNotExist:
-            raise Http404(_(u"No %(verbose_name)s found matching the query") %
+            raise Http404(_("No %(verbose_name)s found matching the query") %
                           {'verbose_name': queryset.model._meta.verbose_name})
         return obj
 
@@ -153,7 +153,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
-    message = ugettext_lazy(u'{verbose_name} “{object_name}” was deleted successfully!')
+    message = ugettext_lazy('{verbose_name} “{object_name}” was deleted successfully!')
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url
@@ -176,7 +176,7 @@ class BaseDeleteView(edit.BaseDeleteView):
             super(BaseDeleteView, self).post(request, *args, **kwargs)
             format_args = {
                 'verbose_name': self.model._meta.verbose_name,
-                'object_name': escape(unicode(self.object)),
+                'object_name': escape(str(self.object)),
             }
             messages.success(request, self.message.format(**format_args))
         return HttpResponseRedirect(self.redirect_url)

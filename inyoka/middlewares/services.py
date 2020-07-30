@@ -40,7 +40,7 @@ class ServiceMiddleware(object):
             if isinstance(response, HttpResponse):
                 retval = response
             else:
-                data = json.dumps(response, encoding='utf-8')
+                data = json.dumps(response)
                 retval = HttpResponse(data, content_type=JSON_CONTENTTYPE)
             if getattr(call, '__never_cache__', False):
                 add_never_cache_headers(response)

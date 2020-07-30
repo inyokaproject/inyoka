@@ -20,18 +20,18 @@ class TestLexer(unittest.TestCase):
 
     def test_inline_markup(self):
         expect = lexer.tokenize(
-            u"''foo''"
-            u"'''foo'''"
-            u"__foo__"
-            u',,(foo),,'
-            u'^^(foo)^^'
-            u'--(foo)--'
-            u'`foo`'
-            u'``foo``'
-            u'~-(foo)-~'
-            u'~+(foo)+~'
-            u'((foo))'
-            u'[color=red]foo[/color]'
+            "''foo''"
+            "'''foo'''"
+            "__foo__"
+            ',,(foo),,'
+            '^^(foo)^^'
+            '--(foo)--'
+            '`foo`'
+            '``foo``'
+            '~-(foo)-~'
+            '~+(foo)+~'
+            '((foo))'
+            '[color=red]foo[/color]'
         ).expect
 
         for element in ('emphasized', 'strong', 'underline', 'sub', 'sup',
@@ -50,8 +50,8 @@ class TestLexer(unittest.TestCase):
 
     def test_extra(self):
         expect = lexer.tokenize(
-            u'--------------------\n'
-            u'foo'
+            '--------------------\n'
+            'foo'
         ).expect
 
         expect('ruler')
@@ -60,7 +60,7 @@ class TestLexer(unittest.TestCase):
 
     def test_escape(self):
         expect = lexer.tokenize(
-            u'\\__test\\__\\\\foo'
+            '\\__test\\__\\\\foo'
         ).expect
 
         expect('text', '__test__\\\\foo')
@@ -68,12 +68,12 @@ class TestLexer(unittest.TestCase):
 
     def test_links(self):
         expect = lexer.tokenize(
-            u'[:foo:]'
-            u'[:foo:bar]'
-            u'[foo:bar:baz]'
-            u'[?action=edit]'
-            u'[http://example.com example]'
-            u'[http://example.com] ]'
+            '[:foo:]'
+            '[:foo:bar]'
+            '[foo:bar:baz]'
+            '[?action=edit]'
+            '[http://example.com example]'
+            '[http://example.com] ]'
         ).expect
 
         expect('wiki_link_begin')
@@ -108,7 +108,7 @@ class TestLexer(unittest.TestCase):
 
     def test_link_wiki_anchor_simple(self):
         expect = lexer.tokenize(
-            u'[:foo#anchor:]'
+            '[:foo#anchor:]'
         ).expect
 
         expect('wiki_link_begin')
@@ -119,7 +119,7 @@ class TestLexer(unittest.TestCase):
 
     def test_link_wiki_anchor_custom_label(self):
         expect = lexer.tokenize(
-            u'[:foo#anchor:bar]'
+            '[:foo#anchor:bar]'
         ).expect
 
         expect('wiki_link_begin')
@@ -131,7 +131,7 @@ class TestLexer(unittest.TestCase):
 
     def test_link_interwiki_custom_label(self):
         expect = lexer.tokenize(
-            u'[foo:bar#anchor:baz]'
+            '[foo:bar#anchor:baz]'
         ).expect
 
         expect('wiki_link_begin')
@@ -143,8 +143,8 @@ class TestLexer(unittest.TestCase):
 
     def test_meta(self):
         expect = lexer.tokenize(
-            u'## This is a comment\n'
-            u'# This: is metadata'
+            '## This is a comment\n'
+            '# This: is metadata'
         ).expect
 
         expect('metadata_begin')
@@ -155,8 +155,8 @@ class TestLexer(unittest.TestCase):
 
     def test_pre(self):
         expect = lexer.tokenize(
-            u'{{{\nfoo\nbar\n}}}\n'
-            u'{{{#!bar foo, blub=blah\nfoo\n}}}'
+            '{{{\nfoo\nbar\n}}}\n'
+            '{{{#!bar foo, blub=blah\nfoo\n}}}'
         ).expect
 
         expect('pre_begin')
@@ -179,11 +179,11 @@ class TestLexer(unittest.TestCase):
 
     def test_pre_quote_mixture(self):
         expect = lexer.tokenize('\n'.join((
-            u'foo',
-            u'{{{',
-            u'> foo',
-            u'}}}',
-            u'bar'
+            'foo',
+            '{{{',
+            '> foo',
+            '}}}',
+            'bar'
         ))).expect
         expect('text', 'foo\n')
         expect('pre_begin')
@@ -194,9 +194,9 @@ class TestLexer(unittest.TestCase):
 
     def test_table(self):
         expect = lexer.tokenize(
-            u'||1||2||3||\n'
-            u'||4||5||6||\n\n'
-            u'||<42 foo=bar>1||'
+            '||1||2||3||\n'
+            '||4||5||6||\n\n'
+            '||<42 foo=bar>1||'
         ).expect
 
         expect('table_row_begin')
@@ -230,8 +230,8 @@ class TestLexer(unittest.TestCase):
 
     def test_box(self):
         expect = lexer.tokenize(
-            u'{{|\nfoo\n|}}\n'
-            u'{{|<1 foo=2>\nfoo\n|}}'
+            '{{|\nfoo\n|}}\n'
+            '{{|<1 foo=2>\nfoo\n|}}'
         ).expect
 
         expect('box_begin')
@@ -259,7 +259,7 @@ class TestLexer(unittest.TestCase):
             ' a. foo'
         ).expect
 
-        for x in xrange(4):
+        for x in range(4):
             expect('list_item_begin')
             expect('text', 'foo')
             expect('list_item_end')
@@ -288,18 +288,18 @@ class TestLexer(unittest.TestCase):
     def test_broken_old_bbcode_handling(self):
         # See http://log.apolloner.eu/group/151
         expect = lexer.tokenize('[url=http://plangin.de]Plangin.de[/url]').expect
-        expect('text', u'[url=')
-        expect('free_link', u'http://plangin.de')
-        expect('text', u']Plangin.de[/url]')
+        expect('text', '[url=')
+        expect('free_link', 'http://plangin.de')
+        expect('text', ']Plangin.de[/url]')
 
         expect = lexer.tokenize('[url=http://digital-jockeys.de]Digital Jockeys[/url]').expect
-        expect('text', u'[url=')
-        expect('free_link', u'http://digital-jockeys.de')
-        expect('text', u']Digital Jockeys[/url]')
+        expect('text', '[url=')
+        expect('free_link', 'http://digital-jockeys.de')
+        expect('text', ']Digital Jockeys[/url]')
 
     def test_basic_unicode_handling(self):
-        expect = lexer.tokenize(u'some @¹“”¹unicod€ stuff'.encode('utf-8')).expect
-        expect('text', u'some @¹“”¹unicod€ stuff')
+        expect = lexer.tokenize('some @¹“”¹unicod€ stuff').expect
+        expect('text', 'some @¹“”¹unicod€ stuff')
 
     def test_escaped_code(self):
         expect = lexer.tokenize('``text`text``').expect

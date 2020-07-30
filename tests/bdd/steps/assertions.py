@@ -45,7 +45,7 @@ def step_impl(context, inactive_type):
     assert messages[inactive_type] in error.text
 
 
-@then(u'I should see a link to "{link}"')
+@then('I should see a link to "{link}"')
 def step_impl(context, link):
     link = link.replace('BASE_DOMAIN_NAME', context.base_url[7:])
     assert context.browser.find_element_by_css_selector("[href*='%(link)s']" % {'link': link})

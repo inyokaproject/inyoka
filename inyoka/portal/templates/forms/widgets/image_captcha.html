@@ -1,0 +1,12 @@
+{# uses django template engine #}
+{% load i18n %}
+
+<img src="{{ widget.captcha_url }}" class="captcha" alt="{% trans 'CAPTCHA' %}" />
+<input type="submit" name="renew_captcha" value="{% trans 'Generate new code' %}" />
+
+<br>
+
+{% include "django/forms/widgets/input.html" %}
+<p class="note">
+  {% trans 'Please type in the code from the graphic above' %}
+</p>

@@ -66,6 +66,9 @@ def is_safe_domain(url):
     a different host and uses a safe scheme).
     Always returns ``False`` on an empty url.
     """
+    if isinstance(url, bytes):
+        url = url.decode()
+
     services = (host.regex for host in get_host_patterns())
     # service > service.domain.tld:
     safe_hostnames = ['{}.{}'.format(service, settings.BASE_DOMAIN_NAME).lstrip('.') for service in services]

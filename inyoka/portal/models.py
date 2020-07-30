@@ -79,10 +79,10 @@ class SubscriptionManager(ContentTypeManager):
 
 
 PRIVMSG_FOLDERS_DATA = (
-    (0, 'sent', ugettext_lazy(u'Send')),
-    (1, 'inbox', ugettext_lazy(u'Inbox')),
-    (2, 'trash', ugettext_lazy(u'Trash')),
-    (3, 'archive', ugettext_lazy(u'Archive')))
+    (0, 'sent', ugettext_lazy('Send')),
+    (1, 'inbox', ugettext_lazy('Inbox')),
+    (2, 'trash', ugettext_lazy('Trash')),
+    (3, 'archive', ugettext_lazy('Archive')))
 
 
 PRIVMSG_FOLDERS = {}
@@ -96,9 +96,9 @@ class PrivateMessage(models.Model):
     This model represent one of these messages.
     """
     author = models.ForeignKey(User)
-    subject = models.CharField(ugettext_lazy(u'Title'), max_length=255)
-    pub_date = models.DateTimeField(ugettext_lazy(u'Date'))
-    text = InyokaMarkupField(verbose_name=ugettext_lazy(u'Text'), application='portal')
+    subject = models.CharField(ugettext_lazy('Title'), max_length=255)
+    pub_date = models.DateTimeField(ugettext_lazy('Date'))
+    text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='portal')
 
     class Meta:
         ordering = ('-pub_date',)
@@ -111,7 +111,7 @@ class PrivateMessage(models.Model):
         PrivateMessageEntry(message=self, user=self.author, read=True,
                             folder=PRIVMSG_FOLDERS['sent'][0]).save()
         for recipient in recipients:
-            cache.delete(u'portal/pm_count/{}'.format(recipient.id))
+            cache.delete('portal/pm_count/{}'.format(recipient.id))
             PrivateMessageEntry(message=self, user=recipient, read=False,
                                 folder=PRIVMSG_FOLDERS['inbox'][0]).save()
 
@@ -146,8 +146,8 @@ class PrivateMessageEntry(models.Model):
     """
     message = models.ForeignKey('PrivateMessage')
     user = models.ForeignKey(User)
-    read = models.BooleanField(ugettext_lazy(u'Read'), default=False)
-    folder = models.SmallIntegerField(ugettext_lazy(u'Folder'),
+    read = models.BooleanField(ugettext_lazy('Read'), default=False)
+    folder = models.SmallIntegerField(ugettext_lazy('Folder'),
         null=True,
         choices=[(f[0], f[1]) for f in PRIVMSG_FOLDERS_DATA])
 
@@ -220,21 +220,21 @@ class StaticPage(models.Model):
     """
     Stores static pages (imprint, license, etc.)
     """
-    key = models.SlugField(ugettext_lazy(u'Key'),
+    key = models.SlugField(ugettext_lazy('Key'),
         max_length=25, primary_key=True,
         unique=True, db_index=True,
-        help_text=ugettext_lazy(u'Will be used to generate the URL. '
-                                u'Cannot be changed later.'))
-    title = models.CharField(ugettext_lazy(u'Title'), max_length=200)
+        help_text=ugettext_lazy('Will be used to generate the URL. '
+                                'Cannot be changed later.'))
+    title = models.CharField(ugettext_lazy('Title'), max_length=200)
     content = InyokaMarkupField(
-        verbose_name=ugettext_lazy(u'Content'),
-        help_text=ugettext_lazy(u'Inyoka syntax required.'),
+        verbose_name=ugettext_lazy('Content'),
+        help_text=ugettext_lazy('Inyoka syntax required.'),
         application='portal',
     )
 
     class Meta:
-        verbose_name = ugettext_lazy(u'Static page')
-        verbose_name_plural = ugettext_lazy(u'Static pages')
+        verbose_name = ugettext_lazy('Static page')
+        verbose_name_plural = ugettext_lazy('Static pages')
 
     def __repr__(self):
         return '<%s:%s "%s">' % (
@@ -243,7 +243,7 @@ class StaticPage(models.Model):
             self.title,
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def get_absolute_url(self, action='show'):
@@ -259,16 +259,16 @@ class StaticFile(models.Model):
         max_length=100, unique=True, db_index=True)
     file = models.FileField(ugettext_lazy('File'), upload_to='portal/files')
     is_ikhaya_icon = models.BooleanField(
-        ugettext_lazy(u'Is Ikhaya icon'),
+        ugettext_lazy('Is Ikhaya icon'),
         default=False,
-        help_text=ugettext_lazy(u'Choose this if the file should appear '
-                                u'as a article or category icon possibility'))
+        help_text=ugettext_lazy('Choose this if the file should appear '
+                                'as a article or category icon possibility'))
 
     class Meta:
         verbose_name = ugettext_lazy('Static file')
-        verbose_name_plural = ugettext_lazy(u'Static files')
+        verbose_name_plural = ugettext_lazy('Static files')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.identifier
 
     def delete(self):
@@ -384,7 +384,7 @@ class LinkmapManager(models.Manager):
                    'background-image: url("{icon_url}"); }}'.format(token=token.token,
                                                                     icon_url=token.icon.url)
 
-        md5_css = hashlib.md5(css).hexdigest()
+        md5_css = hashlib.md5(css.encode()).hexdigest()
         path = settings.INYOKA_INTERWIKI_CSS_PATH.format(hash=md5_css)
 
         existing_files = glob.glob(settings.INYOKA_INTERWIKI_CSS_PATH.format(hash='*'))
@@ -395,7 +395,7 @@ class LinkmapManager(models.Manager):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        with open(path, 'w') as f, gzip.open(path + '.gz', 'wb') as compressed:
+        with open(path, 'w') as f, gzip.open(path + '.gz', 'wt') as compressed:
             f.write(css)
             compressed.write(css)
 

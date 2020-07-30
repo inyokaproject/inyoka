@@ -34,14 +34,14 @@ class TestNewArticleForm(TestCase):
 
         storage['wiki_newpage_root'] = 'prefix'
 
-        self._create_page(u'ACL',
-                          u'#X-Behave: Access-Control-List\n'
-                          u'{{{\n'
-                          u'[*]\n'
-                          u'user=none\n'
-                          u'[prefix/*]\n'
-                          u'user=all\n'
-                          u'}}}')
+        self._create_page('ACL',
+                          '#X-Behave: Access-Control-List\n'
+                          '{{{\n'
+                          '[*]\n'
+                          'user=none\n'
+                          '[prefix/*]\n'
+                          'user=all\n'
+                          '}}}')
 
     def _create_page(self, name, text, **kwargs):
         return Page.objects.create(name, text, user=self.user, note='comment', **kwargs)
@@ -81,4 +81,4 @@ class TestManageDiscussionForm(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors,
-                         {'topic': [u'This topic does not exist.']})
+                         {'topic': ['This topic does not exist.']})

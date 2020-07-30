@@ -29,11 +29,11 @@ def add(request):
         form = AddPasteForm(request.POST)
         if form.is_valid():
             entry = form.save(request.user)
-            description = _(u'Your entry was successfully saved. You can use '
-                            u'the following code to include it in your post:')
-            example = u'<code>[paste:%(id)d:%(title)s]</code>' % {
+            description = _('Your entry was successfully saved. You can use '
+                            'the following code to include it in your post:')
+            example = '<code>[paste:%(id)d:%(title)s]</code>' % {
                       'id': entry.id, 'title': entry.title}
-            messages.success(request, (u' '.join([description, example])))
+            messages.success(request, (' '.join([description, example])))
             return HttpResponseRedirect(href('pastebin', entry.id))
     else:
         form = AddPasteForm()
@@ -63,10 +63,10 @@ def delete(request, entry_id):
 
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            messages.info(request, _(u'The deletion was canceled'))
+            messages.info(request, _('The deletion was canceled'))
         else:
             entry.delete()
-            messages.success(request, _(u'The entry in the pastebin was deleted.'))
+            messages.success(request, _('The entry in the pastebin was deleted.'))
             return HttpResponseRedirect(href('pastebin'))
     else:
         messages.info(request, render_template('pastebin/delete_entry.html',

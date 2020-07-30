@@ -36,7 +36,7 @@ class TestPostSplitNewTopic(TestCase):
 
         self.t1_posts = {}
         for i in range(10):
-            self.t1_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
+            self.t1_posts[i] = Post(text='post-1-%d' % i, author=self.user,
                     position=i, topic=self.topic1)
             self.t1_posts[i].save()
 
@@ -76,7 +76,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[8].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
 
-        post_ids = [p.id for k, p in self.t1_posts.items()][:-1]
+        post_ids = [p.id for k, p in list(self.t1_posts.items())][:-1]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = [self.t1_posts[9].id]
@@ -116,7 +116,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[7].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
 
-        post_ids = [p.id for k, p in self.t1_posts.items()][:-2]
+        post_ids = [p.id for k, p in list(self.t1_posts.items())][:-2]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = [self.t1_posts[8].id, self.t1_posts[9].id]
@@ -156,7 +156,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[3].id)
 
-        ids = [p.id for k, p in self.t1_posts.items()]
+        ids = [p.id for k, p in list(self.t1_posts.items())]
         post_ids = ids[:3] + ids[4:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
@@ -199,7 +199,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[6].id)
 
-        ids = [p.id for k, p in self.t1_posts.items()]
+        ids = [p.id for k, p in list(self.t1_posts.items())]
         post_ids = ids[:5] + ids[7:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
@@ -242,7 +242,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
 
-        ids = [p.id for k, p in self.t1_posts.items()]
+        ids = [p.id for k, p in list(self.t1_posts.items())]
         post_ids = ids[0:2] + ids[3:4] + ids[5:8] + ids[9:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
@@ -286,7 +286,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
 
-        ids = [p.id for k, p in self.t1_posts.items()]
+        ids = [p.id for k, p in list(self.t1_posts.items())]
         post_ids = ids[0:2] + ids[4:6] + ids[9:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 

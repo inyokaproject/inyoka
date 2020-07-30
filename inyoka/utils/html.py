@@ -9,14 +9,14 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import division
+
 
 import re
-from htmlentitydefs import name2codepoint
+from html.entities import name2codepoint
 from xml.sax.saxutils import quoteattr
 
 import lxml.html.clean
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from html5lib import HTMLParser, treebuilders, treewalkers
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
 from html5lib.serializer import HTMLSerializer
@@ -46,21 +46,21 @@ class XHTMLSerializer(HTMLSerializer):
 
 def _build_html_tag(tag, attrs):
     """Build an HTML opening tag."""
-    attrs = u' '.join(iter(
-        u'%s=%s' % (k, quoteattr(unicode(v)))
-        for k, v in attrs.iteritems()
+    attrs = ' '.join(iter(
+        '%s=%s' % (k, quoteattr(str(v)))
+        for k, v in attrs.items()
         if v is not None))
 
-    return u'<%s%s%s>' % (
+    return '<%s%s%s>' % (
         tag, attrs and ' ' + attrs or '',
         tag in empty_tags and ' /' or '',
-    ), tag not in empty_tags and u'</%s>' % tag or u''
+    ), tag not in empty_tags and '</%s>' % tag or ''
 
 
 def build_html_tag(tag, class_=None, classes=None, **attrs):
     """Build an HTML opening tag."""
     if classes:
-        class_ = u' '.join(x for x in classes if x)
+        class_ = ' '.join(x for x in classes if x)
     if class_:
         attrs['class'] = class_
     return _build_html_tag(tag, attrs)[0]
@@ -69,18 +69,18 @@ def build_html_tag(tag, class_=None, classes=None, **attrs):
 def _handle_match(match):
     name = match.group(1)
     if name in html_entities:
-        return unichr(html_entities[name])
+        return chr(html_entities[name])
     if name[:2] in ('#x', '#X'):
         try:
-            return unichr(int(name[2:], 16))
+            return chr(int(name[2:], 16))
         except ValueError:
-            return u''
+            return ''
     elif name.startswith('#'):
         try:
-            return unichr(int(name[1:]))
+            return chr(int(name[1:]))
         except ValueError:
-            return u''
-    return u''
+            return ''
+    return ''
 
 
 def replace_entities(string):
@@ -91,17 +91,16 @@ def replace_entities(string):
     u'foo & bar \\xbb foo'
     """
     if string is None:
-        return u''
+        return ''
     return _entity_re.sub(_handle_match, string)
 
 
 def striptags(string):
     """Remove HTML tags from a string."""
     if string is None:
-        return u''
-    if isinstance(string, str):
-        string = string.decode('utf8')
-    return u' '.join(_strip_re.sub('', replace_entities(string)).split())
+        return ''
+
+    return ' '.join(_strip_re.sub('', replace_entities(string)).split())
 
 
 def parse_html(string, fragment=True):
@@ -120,8 +119,8 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
                  update_anchor_links=True, make_xhtml=False):
     """Clean up some html and convert it to HTML/XHTML."""
     if not string.strip():
-        return u''
-    string = force_unicode(string)
+        return ''
+    string = force_text(string)
     if sanitize:
         string = lxml.html.clean.clean_html(string)
     tree = parse_html(string, fragment)
@@ -140,7 +139,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
-    return force_unicode(''.join(rv))
+    return force_text(b''.join(rv))
 
 
 class CleanupFilter(object):
@@ -155,7 +154,7 @@ class CleanupFilter(object):
         'strike': ('del', None)
     }
 
-    end_tags = {key: value[0] for key, value in tag_conversions.iteritems()}
+    end_tags = {key: value[0] for key, value in tag_conversions.items()}
     end_tags['font'] = 'span'
 
     def __init__(self, source, id_prefix=None, update_anchor_links=False):
@@ -172,7 +171,7 @@ class CleanupFilter(object):
             result = stream
         else:
             result = list(stream)
-            for target_id, link in deferred_links.iteritems():
+            for target_id, link in deferred_links.items():
                 if target_id in id_map:
                     for idx, (key, value) in enumerate(link['data']):
                         if key == 'href':
@@ -190,7 +189,7 @@ class CleanupFilter(object):
                 if not isinstance(attrs, dict):
                     attrs = dict(reversed(attrs))
                 # The attributes are namespaced -- we don't care about that, add them back later
-                attrs = {k: v for (_, k), v in attrs.iteritems()}
+                attrs = {k: v for (_, k), v in attrs.items()}
                 if token['name'] in self.tag_conversions:
                     new_tag, new_style = self.tag_conversions[token['name']]
                     token['name'] = new_tag
@@ -245,8 +244,8 @@ class CleanupFilter(object):
                     attrs['id'] = element_id
                     id_map[original_id] = element_id
                 token['data'] = {}
-                for k, v in attrs.iteritems():
-                    token['data'][(None, force_unicode(k))] = force_unicode(v)  # None is the namespace
+                for k, v in attrs.items():
+                    token['data'][(None, force_text(k))] = force_text(v)  # None is the namespace
             elif token['type'] == 'EndTag' and token['name'] in self.end_tags:
                 token['name'] = self.end_tags[token['name']]
             yield token

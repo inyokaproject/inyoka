@@ -18,7 +18,7 @@ class TestPageManager(TestCase):
 
     def test_get_by_name_cache_case_sensitive_set(self):
         """
-        Tests that get_by_name creates the correkt cache.
+        Tests that get_by_name creates the correct cache.
         """
         Page.objects.create('Test', 'test content')
 

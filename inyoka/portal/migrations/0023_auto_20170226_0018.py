@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 from django.conf import settings
@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='icon',
-            field=models.FilePathField(blank=True, path=os.path.join(settings.MEDIA_ROOT,'portal/team_icons'), null=True, verbose_name='Group icon', match=b'.*\\.png'),
+            field=models.FilePathField(blank=True, path=os.path.join(settings.MEDIA_ROOT,'portal/team_icons'), null=True, verbose_name='Group icon', match='.*\\.png'),
         ),
     ]
