@@ -199,16 +199,16 @@ class Picture(Layer):
     """
 
     def __init__(self, picture):
-        self.image = Image.open(picture)
+        self._picture = picture
         self.offset = (random.random(), random.random())
 
     def render(self, image):
-        tile = self.image
-        for j in range(-1, int(image.size[1] / tile.size[1]) + 1):
-            for i in range(-1, int(image.size[0] / tile.size[0]) + 1):
-                dest = (int((self.offset[0] + i) * tile.size[0]),
-                        int((self.offset[1] + j) * tile.size[1]))
-                image.paste(tile, dest)
+        with Image.open(self._picture) as tile:
+            for j in range(-1, int(image.size[1] / tile.size[1]) + 1):
+                for i in range(-1, int(image.size[0] / tile.size[0]) + 1):
+                    dest = (int((self.offset[0] + i) * tile.size[0]),
+                            int((self.offset[1] + j) * tile.size[1]))
+                    image.paste(tile, dest)
         return image
 
 

@@ -105,13 +105,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     # get the source stream. If we are operating on a wiki page we load the
     # most recent revision and get the attachment as stream.
     try:
-        src = open(os.path.join(settings.MEDIA_ROOT, location), 'rb')
-    except IOError:
-        return
-
-    try:
-        with closing(src) as src:
-            img = Image.open(src)
+        with Image.open(os.path.join(settings.MEDIA_ROOT, location)) as img:
             img = fix_colorspace(img)
             box = _get_box(img, width, height)
             if img.size > box:

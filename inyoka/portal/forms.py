@@ -394,14 +394,14 @@ class UserCPProfileForm(forms.ModelForm):
             return
 
         # Resize the image if needed.
-        image = Image.open(avatar)
-        format = image.format
-        max_size = (settings.INYOKA_AVATAR_MAXIMUM_WIDTH,
-                    settings.INYOKA_AVATAR_MAXIMUM_HEIGHT)
-        if any(length > max_length for max_length, length in zip(max_size, image.size)):
-            image = image.resize(max_size)
-        out = io.StringIO()
-        image.save(out, format)
+        with Image.open(avatar) as image:
+            format = image.format
+            max_size = (settings.INYOKA_AVATAR_MAXIMUM_WIDTH,
+                        settings.INYOKA_AVATAR_MAXIMUM_HEIGHT)
+            if any(length > max_length for max_length, length in zip(max_size, image.size)):
+                image = image.resize(max_size)
+            out = io.StringIO()
+            image.save(out, format)
         self.change_avatar = True
         return ContentFile(out.getvalue(), 'avatar.' + format.lower())
 
