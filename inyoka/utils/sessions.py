@@ -26,10 +26,9 @@ SESSION_DELTA = 300
 def set_session_info(request):
     """Set the session info."""
 
-    # Prevent extra queries for markup.css and jsi18n since they are loaded
-    # with every request, in development this also prevents extra queries for
-    # static files. In production these files are served by another server.
-    if request.path in ('/markup.css/', '/jsi18n/') or request.subdomain in ('static', 'media'):
+    # Prevent extra queries in development for static files. In
+    # production these files are served by another server.
+    if request.subdomain in ('static', 'media'):
         return
 
     # if the session is new we don't add an entry.  It could be that
