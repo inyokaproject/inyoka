@@ -352,7 +352,6 @@ class UserCPProfileForm(forms.ModelForm):
         self.change_avatar = False
         super(UserCPProfileForm, self).__init__(*args, **kwargs)
 
-
     def clean_gpgkey(self):
         gpgkey = self.cleaned_data.get('gpgkey', '').upper()
         if gpgkey.startswith('0X'):
@@ -375,7 +374,7 @@ class UserCPProfileForm(forms.ModelForm):
     def clean_icon(self):
         icon = self.cleaned_data.get('icon')
         if icon:
-            return os.path.relpath(icon,settings.MEDIA_ROOT)
+            return os.path.relpath(icon, settings.MEDIA_ROOT)
         else:
             return icon
 
@@ -407,7 +406,7 @@ class UserCPProfileForm(forms.ModelForm):
 
     def save(self, request, commit=True):
         data = self.cleaned_data
-        user = super(UserCPProfileForm, self).save(commit=False)
+        user = super().save(commit=False)
 
         user.icon = data['icon']
 
