@@ -692,11 +692,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             if not form._spam:
                 send_discussion_notification(request.user, page)
 
-        if not form._spam:
-            subscribed = Subscription.objects.user_subscribed(request.user, topic)
-            if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
-                subscription = Subscription(user=request.user, content_object=topic)
-                subscription.save()
+        if not form._spam and not post_id:
+            Subscription.create_auto_subscription(request.user, topic)
 
         messages.success(request, _(u'The post was saved successfully.'))
         if newtopic:
@@ -1320,6 +1317,11 @@ def mark_ham_spam(request, post_id, action='spam'):
 
     if action == 'ham':
         post.mark_ham()
+        # Authors are not subscribed to own posts if the post is detected as spam
+        # subscribe author after marking as ham
+        # https://github.com/inyokaproject/inyoka/issues/1119
+        Subscription.create_auto_subscription(post.author, topic)
+
     elif action == 'spam':
         post.mark_spam(report=False, update_akismet=True)
     return HttpResponseRedirect(url_for(post))
