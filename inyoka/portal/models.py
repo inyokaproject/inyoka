@@ -334,7 +334,8 @@ class Subscription(models.Model):
     def create_auto_subscription(cls, user, topic):
         """
         Subscribes a user to the topic if the user has autosubscription enabled.
-        Has no effect if the user does not have the 'autosubscribe' setting off.
+        Has no effect, if the user has the 'autosubscribe' setting off or is
+        subscribed already.
 
         Parameters
         ----------
