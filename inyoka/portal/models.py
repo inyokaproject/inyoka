@@ -330,6 +330,27 @@ class Subscription(models.Model):
 
         return self.is_accessible_for_user
 
+    @classmethod
+    def create_auto_subscription(cls, user, topic):
+        """
+        Subscribes a user to the topic if the user has autosubscription enabled.
+        Has no effect if the user does not have the 'autosubscribe' setting off.
+
+        Parameters
+        ----------
+        user : User
+            The user to subscribe.
+        topic : Topic
+            The topic to subscribe the user to.
+
+        Returns
+        -------
+        None.
+        """
+        subscribed = cls.objects.user_subscribed(user, topic)
+        if user.settings.get('autosubscribe', True) and not subscribed:
+             cls.objects.create(user=user, content_object=topic)
+
 
 class LinkmapManager(models.Manager):
 
