@@ -120,9 +120,6 @@ INYOKA_INTERWIKI_CSS_PATH = join(MEDIA_ROOT, 'linkmap/linkmap-{hash}.css')
 # inyoka should deliver the statics
 INYOKA_HOST_STATICS = False
 
-# use etags
-USE_ETAGS = True
-
 # maximal number of tags shown in the tag cloud
 TAGCLOUD_SIZE = 100
 
