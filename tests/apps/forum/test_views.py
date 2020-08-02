@@ -603,9 +603,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="message info">Your text is considered spam '
-                          'and needs approval from one of the administrators. '
-                          'Please be patient, we will get to it as soon as possible.</div>',
+        self.assertInHTML('<div class="message info">Your submission needs approval '
+                          'by a team member and is hidden meanwhile. Please be patient, '
+                          'we will get to it as soon as possible.</div>',
                           response.content, count=1)
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
                           response.content, count=1)
@@ -633,7 +633,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('Your text is considered spam', response.content, count=0)
+        self.assertInHTML('Your submission needs approval by a team member', response.content, count=0)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -656,7 +656,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertContains(response, 'Your text is considered spam', count=0)
+        self.assertContains(response, 'Your submission needs approval by a team member', count=0)
 
     def test_newtopic_with_file(self):
         TEST_ATTACHMENT = 'test_attachment.png'
@@ -888,9 +888,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="message info">Your text is considered spam '
-                          'and needs approval from one of the administrators. '
-                          'Please be patient, we will get to it as soon as possible. </div>',
+        self.assertInHTML('<div class="message info">Your submission needs approval by a '
+                          'team member and is hidden meanwhile. Please be patient, we will '
+                          'get to it as soon as possible. </div>',
                           response.content, count=1)
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
@@ -918,7 +918,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('Your text is considered spam', response.content, count=0)
+        self.assertInHTML('Your submission needs approval by a team member', response.content, count=0)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -942,7 +942,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertContains(response, 'Your text is considered spam', count=0)
+        self.assertContains(response, 'Your submission needs approval by a team member', count=0)
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
     def test_new_post_with_file(self):
@@ -1127,7 +1127,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertContains(response, 'Your text is considered spam', count=0)
+        self.assertContains(response, 'Your submission needs approval by a team member', count=0)
         self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
 
     def test_edit_post_remove_attachments(self):
@@ -1309,7 +1309,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertContains(response, 'Your text is considered spam', count=0)
+        self.assertContains(response, 'Your submission needs approval by a team member', count=0)
         self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
 
     def test_edit_first_post_remove_polls(self):
