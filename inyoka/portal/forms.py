@@ -352,7 +352,6 @@ class UserCPProfileForm(forms.ModelForm):
         self.change_avatar = False
         super(UserCPProfileForm, self).__init__(*args, **kwargs)
 
-
     def clean_gpgkey(self):
         gpgkey = self.cleaned_data.get('gpgkey', '').upper()
         if gpgkey.startswith('0X'):
@@ -375,7 +374,7 @@ class UserCPProfileForm(forms.ModelForm):
     def clean_icon(self):
         icon = self.cleaned_data.get('icon')
         if icon:
-            return os.path.relpath(icon,settings.MEDIA_ROOT)
+            return os.path.relpath(icon, settings.MEDIA_ROOT)
         else:
             return icon
 
@@ -394,20 +393,20 @@ class UserCPProfileForm(forms.ModelForm):
             return
 
         # Resize the image if needed.
-        image = Image.open(avatar)
-        format = image.format
-        max_size = (settings.INYOKA_AVATAR_MAXIMUM_WIDTH,
-                    settings.INYOKA_AVATAR_MAXIMUM_HEIGHT)
-        if any(length > max_length for max_length, length in zip(max_size, image.size)):
-            image = image.resize(max_size)
-        out = io.StringIO()
-        image.save(out, format)
+        with Image.open(avatar) as image:
+            format = image.format
+            max_size = (settings.INYOKA_AVATAR_MAXIMUM_WIDTH,
+                        settings.INYOKA_AVATAR_MAXIMUM_HEIGHT)
+            if any(length > max_length for max_length, length in zip(max_size, image.size)):
+                image = image.resize(max_size)
+            out = io.BytesIO()
+            image.save(out, format)
         self.change_avatar = True
         return ContentFile(out.getvalue(), 'avatar.' + format.lower())
 
     def save(self, request, commit=True):
         data = self.cleaned_data
-        user = super(UserCPProfileForm, self).save(commit=False)
+        user = super().save(commit=False)
 
         user.icon = data['icon']
 

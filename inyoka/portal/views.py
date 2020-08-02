@@ -1541,8 +1541,8 @@ def config(request):
             if data['team_icon']:
                 if storage['team_icon']:
                     default_storage.delete(storage['team_icon'])
-                icon = Image.open(data['team_icon'])
-                fn = 'portal/global_team_icon.%s' % icon.format.lower()
+                with Image.open(data['team_icon']) as icon:
+                    fn = 'portal/global_team_icon.%s' % icon.format.lower()
                 default_storage.save(fn, data['team_icon'], max_length=100)
                 storage['team_icon'] = team_icon = fn
 

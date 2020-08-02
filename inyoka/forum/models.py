@@ -1486,5 +1486,3 @@ def mark_all_forums_read(user):
     user.forum_read_status = user._readstatus.serialize()
     user.save(update_fields=('forum_read_status',))
 
-
-# Circular imports
