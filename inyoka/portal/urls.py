@@ -10,7 +10,6 @@
 """
 from django.conf import settings
 from django.conf.urls import include, url
-from django.views.i18n import javascript_catalog
 
 from . import views
 
@@ -84,16 +83,6 @@ urlpatterns = [
     url(r'^pages/$', views.pages),
     url(r'^page/new/$', views.page_edit),
 ]
-
-
-js_info_dict = {
-    'packages': ('inyoka.portal', 'inyoka.wiki', 'inyoka.pastebin',
-                 'inyoka.ikhaya', 'inyoka.planet', 'inyoka.forum'),
-}
-
-urlpatterns.append(
-    url(r'jsi18n/$', javascript_catalog, js_info_dict)
-)
 
 urlpatterns.extend([
     url(r'^([^/]+)/$', views.static_page),
