@@ -11,7 +11,7 @@ import sys
 import zmq
 import certifi
 from django.conf import settings
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand, CommandError
 from sleekxmpp import ClientXMPP
 
 from inyoka.utils.logger import logger
@@ -69,14 +69,17 @@ class JabberBot(ClientXMPP):
         self.zmq = zmq.Context()
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     """
     Custom Management Command for our Jabber Bot Service. Requires no arguments and logs
     everything with django logging.
     """
     help = 'Jabberbot Service'
 
-    def handle_noargs(self, *args, **kwargs):
+    def handle(self, *args, **kwargs):
+        if args:
+            raise CommandError("Command doesn't accept any arguments")
+
         if not (settings.JABBER_ID and settings.JABBER_PASSWORD and settings.JABBER_BIND):
             logger.warning('Jabberbot Configuration missing or incomplete.')
             raise SystemExit(1)
