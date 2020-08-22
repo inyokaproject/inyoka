@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('author', models.CharField(max_length=50)),
                 ('author_homepage', models.URLField(null=True, blank=True)),
                 ('hidden', models.BooleanField(default=False)),
-                ('blog', models.ForeignKey(to='planet.Blog')),
+                ('blog', models.ForeignKey(to='planet.Blog', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('-pub_date',),

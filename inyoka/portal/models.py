@@ -95,7 +95,7 @@ class PrivateMessage(models.Model):
     Private messages allow users to communicate with each other privately.
     This model represent one of these messages.
     """
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     subject = models.CharField(ugettext_lazy('Title'), max_length=255)
     pub_date = models.DateTimeField(ugettext_lazy('Date'))
     text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='portal')
@@ -144,8 +144,8 @@ class PrivateMessageEntry(models.Model):
     message.  This entry can be moved between folders and stores the
     read status flag.
     """
-    message = models.ForeignKey('PrivateMessage')
-    user = models.ForeignKey(User)
+    message = models.ForeignKey('PrivateMessage', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     read = models.BooleanField(ugettext_lazy('Read'), default=False)
     folder = models.SmallIntegerField(ugettext_lazy('Folder'),
         null=True,
@@ -286,13 +286,13 @@ class StaticFile(models.Model):
 
 class Subscription(models.Model):
     objects = SubscriptionManager()
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     notified = models.BooleanField(
         ugettext_lazy('User was already notified'),
         default=False)
     ubuntu_version = models.CharField(max_length=5, null=True)
 
-    content_type = models.ForeignKey(ContentType, null=True)
+    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(null=True, db_index=True)
     content_object = GenericForeignKey('content_type', 'object_id')
 

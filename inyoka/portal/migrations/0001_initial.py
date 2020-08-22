@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
                 ('location_lat', models.FloatField(null=True, verbose_name='Degree of latitude', blank=True)),
                 ('location_long', models.FloatField(null=True, verbose_name='Degree of longitude', blank=True)),
                 ('visible', models.BooleanField(default=False)),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'portal_event',
@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
                 ('subject', models.CharField(max_length=255, verbose_name='Title')),
                 ('pub_date', models.DateTimeField(verbose_name='Date')),
                 ('text', inyoka.utils.database.InyokaMarkupField(simplify=False, verbose_name='Text', force_existing=False)),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('-pub_date',),
@@ -120,8 +120,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('read', models.BooleanField(default=False, verbose_name='Read')),
                 ('folder', models.SmallIntegerField(null=True, verbose_name='Folder', choices=[(0, 'sent'), (1, 'inbox'), (2, 'trash'), (3, 'archive')])),
-                ('message', models.ForeignKey(to='portal.PrivateMessage')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('message', models.ForeignKey(to='portal.PrivateMessage', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -189,8 +189,8 @@ class Migration(migrations.Migration):
                 ('notified', models.BooleanField(default=False, verbose_name='User was already notified')),
                 ('ubuntu_version', models.CharField(max_length=5, null=True)),
                 ('object_id', models.PositiveIntegerField(null=True, db_index=True)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType', null=True)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', null=True, on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -202,7 +202,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('content', inyoka.utils.database.InyokaMarkupField(simplify=False, force_existing=False)),
                 ('content_rendered_old', models.TextField(db_column='content_rendered')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -215,7 +215,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='_primary_group',
-            field=models.ForeignKey(related_name='primary_users_set', db_column='primary_group_id', blank=True, to='portal.Group', null=True),
+            field=models.ForeignKey(related_name='primary_users_set', db_column='primary_group_id', blank=True, to='portal.Group', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

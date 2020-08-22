@@ -54,25 +54,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='privilege',
             name='forum',
-            field=models.ForeignKey(to='forum.Forum'),
+            field=models.ForeignKey(to='forum.Forum', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='privilege',
             name='group',
-            field=models.ForeignKey(to='portal.Group', null=True),
+            field=models.ForeignKey(to='portal.Group', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='privilege',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='postrevision',
             name='post',
-            field=models.ForeignKey(related_name='revisions', to='forum.Post'),
+            field=models.ForeignKey(related_name='revisions', to='forum.Post', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -90,25 +90,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pollvote',
             name='poll',
-            field=models.ForeignKey(related_name='votings', to='forum.Poll'),
+            field=models.ForeignKey(related_name='votings', to='forum.Poll', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='pollvote',
             name='voter',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='polloption',
             name='poll',
-            field=models.ForeignKey(related_name='options', to='forum.Poll'),
+            field=models.ForeignKey(related_name='options', to='forum.Poll', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='poll',
             name='topic',
-            field=models.ForeignKey(related_name='polls', to='forum.Topic', null=True),
+            field=models.ForeignKey(related_name='polls', to='forum.Topic', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -132,7 +132,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='attachment',
             name='post',
-            field=models.ForeignKey(related_name='attachments', to='forum.Post', null=True),
+            field=models.ForeignKey(related_name='attachments', to='forum.Post', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

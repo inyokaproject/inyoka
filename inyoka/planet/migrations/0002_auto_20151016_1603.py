@@ -16,13 +16,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entry',
             name='hidden_by',
-            field=models.ForeignKey(related_name='hidden_planet_posts', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='hidden_planet_posts', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='blog',
             name='user',
-            field=models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

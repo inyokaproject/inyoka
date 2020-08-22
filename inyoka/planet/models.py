@@ -36,7 +36,7 @@ class Blog(models.Model):
     blog_url = models.URLField(ugettext_lazy('URL of the blog'))
     feed_url = models.URLField(ugettext_lazy('URL of the feed'))
     user = models.ForeignKey(User, verbose_name=ugettext_lazy('User'),
-                             blank=True, null=True)
+                             blank=True, null=True, on_delete=models.CASCADE)
     icon = models.ImageField(ugettext_lazy('Icon'), upload_to='planet/icons', blank=True)
     last_sync = models.DateTimeField(blank=True, null=True)
     active = models.BooleanField(ugettext_lazy('Index the blog'), default=True)
@@ -74,7 +74,7 @@ class Blog(models.Model):
 
 class Entry(models.Model):
     objects = EntryManager()
-    blog = models.ForeignKey(Blog)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     guid = models.CharField(max_length=200, unique=True, db_index=True)
     title = models.CharField(max_length=140)
     url = models.URLField()
@@ -85,7 +85,7 @@ class Entry(models.Model):
     author_homepage = models.URLField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
     hidden_by = models.ForeignKey(User, blank=True, null=True,
-                                  related_name='hidden_planet_posts')
+                                  related_name='hidden_planet_posts', on_delete=models.CASCADE)
 
     def __str__(self):
         return '%s / %s' % (
