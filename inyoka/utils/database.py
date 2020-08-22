@@ -154,8 +154,8 @@ class JSONField(models.TextField):
             value = self.dumps(value)
         return value
 
-    def contribute_to_class(self, cls, name, private_only=False, virtual_only=None):
-        super().contribute_to_class(cls, name, private_only, virtual_only)
+    def contribute_to_class(self, cls, name, private_only=False):
+        super().contribute_to_class(cls, name, private_only)
         setattr(cls, self.name, SimpleDescriptor(self))
 
 
