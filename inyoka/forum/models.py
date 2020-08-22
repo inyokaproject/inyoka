@@ -740,7 +740,7 @@ class PostRevision(models.Model):
 
     text = InyokaMarkupField(application='forum')
     store_date = models.DateTimeField(default=datetime.utcnow)
-    post = models.ForeignKey('forum.Post', related_name='revisions')
+    post = models.ForeignKey('forum.Post', related_name='revisions', on_delete=models.CASCADE)
 
     def get_absolute_url(self, action='restore'):
         return href('forum', 'revision', self.id, 'restore')
@@ -1155,7 +1155,7 @@ class Attachment(models.Model):
     comment = models.TextField(null=True, blank=True)
     mimetype = models.CharField(max_length=100, null=True)
 
-    post = models.ForeignKey(Post, null=True, related_name='attachments')
+    post = models.ForeignKey(Post, null=True, related_name='attachments', on_delete=models.CASCADE)
 
     @staticmethod
     def create(name, uploaded_file, mime, attachments, override=False, **kwargs):
@@ -1342,7 +1342,7 @@ class Attachment(models.Model):
 
 
 class PollOption(models.Model):
-    poll = models.ForeignKey('forum.Poll', related_name='options')
+    poll = models.ForeignKey('forum.Poll', related_name='options', on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
     votes = models.IntegerField(default=0)
 
@@ -1355,8 +1355,8 @@ class PollOption(models.Model):
 
 
 class PollVote(models.Model):
-    voter = models.ForeignKey(User)
-    poll = models.ForeignKey('forum.Poll', related_name='votings')
+    voter = models.ForeignKey(User, on_delete=models.CASCADE)
+    poll = models.ForeignKey('forum.Poll', related_name='votings', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'forum_voter'
@@ -1368,7 +1368,7 @@ class Poll(models.Model):
     end_time = models.DateTimeField(null=True)
     multiple_votes = models.BooleanField(default=False)
 
-    topic = models.ForeignKey(Topic, null=True, db_index=True, related_name='polls')
+    topic = models.ForeignKey(Topic, null=True, db_index=True, related_name='polls', on_delete=models.CASCADE)
 
     @deferred
     def votes(self):

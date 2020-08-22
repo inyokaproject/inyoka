@@ -549,7 +549,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
 
 class UserPage(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     content = InyokaMarkupField()
 
 

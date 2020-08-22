@@ -58,8 +58,8 @@ class Migration(migrations.Migration):
                 ('note', models.CharField(max_length=512)),
                 ('deleted', models.BooleanField(default=False)),
                 ('remote_addr', models.CharField(max_length=200, null=True)),
-                ('attachment', models.ForeignKey(blank=True, to='wiki.Attachment', null=True)),
-                ('page', models.ForeignKey(related_name='revisions', to='wiki.Page')),
+                ('attachment', models.ForeignKey(blank=True, to='wiki.Attachment', null=True, on_delete=models.CASCADE)),
+                ('page', models.ForeignKey(related_name='revisions', to='wiki.Page', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-change_date'],
@@ -82,19 +82,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='revision',
             name='text',
-            field=models.ForeignKey(related_name='revisions', to='wiki.Text'),
+            field=models.ForeignKey(related_name='revisions', to='wiki.Text', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='revision',
             name='user',
-            field=models.ForeignKey(related_name='wiki_revisions', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='wiki_revisions', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='page',
             name='last_rev',
-            field=models.ForeignKey(related_name='+', to='wiki.Revision', null=True),
+            field=models.ForeignKey(related_name='+', to='wiki.Revision', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='metadata',
             name='page',
-            field=models.ForeignKey(to='wiki.Page'),
+            field=models.ForeignKey(to='wiki.Page', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

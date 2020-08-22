@@ -198,7 +198,7 @@ class Article(models.Model, LockableObject):
     updated = models.DateTimeField(ugettext_lazy('Last change'), blank=True,
                 null=True, db_index=True)
     author = models.ForeignKey(User, related_name='article_set',
-                               verbose_name=ugettext_lazy('Author'))
+                               verbose_name=ugettext_lazy('Author'), on_delete=models.CASCADE)
     subject = models.CharField(ugettext_lazy('Headline'), max_length=180)
     category = models.ForeignKey(Category, verbose_name=ugettext_lazy('Category'),
                                  on_delete=models.PROTECT)
@@ -344,9 +344,9 @@ class Article(models.Model, LockableObject):
 
 
 class Report(models.Model):
-    article = models.ForeignKey(Article, null=True)
+    article = models.ForeignKey(Article, null=True, on_delete=models.CASCADE)
     text = InyokaMarkupField(application='ikhaya')
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
     solved = models.BooleanField(null=False, default=False)
@@ -367,7 +367,7 @@ class Suggestion(models.Model):
 
     objects = SuggestionManager()
 
-    author = models.ForeignKey(User, related_name='suggestion_set')
+    author = models.ForeignKey(User, related_name='suggestion_set', on_delete=models.CASCADE)
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
     title = models.CharField(ugettext_lazy('Title'), max_length=100)
     text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='ikhaya')
@@ -378,7 +378,7 @@ class Suggestion(models.Model):
         default='',
         application='ikhaya')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
-                              null=True, blank=True)
+                              null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = ugettext_lazy('Article suggestion')
@@ -392,9 +392,9 @@ class Comment(models.Model):
 
     objects = CommentManager()
 
-    article = models.ForeignKey(Article, null=True)
+    article = models.ForeignKey(Article, null=True, on_delete=models.CASCADE)
     text = InyokaMarkupField(application='ikhaya')
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
 
@@ -429,7 +429,7 @@ class Event(models.Model):
     enddate = models.DateField(blank=True, null=True)  # None
     endtime = models.TimeField(blank=True, null=True)  # None -> whole day
     description = InyokaMarkupField(blank=True, application='ikhaya')
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=128, blank=True)
     location_town = models.CharField(max_length=56, blank=True)
     location_lat = models.FloatField(ugettext_lazy('Degree of latitude'),

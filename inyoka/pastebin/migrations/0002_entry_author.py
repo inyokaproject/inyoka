@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entry',
             name='author',
-            field=models.ForeignKey(verbose_name='Author', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(verbose_name='Author', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]
