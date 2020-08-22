@@ -69,7 +69,7 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
         duration = request.watch.duration
         if duration < 5.0:
             logger.debug('Request Duration', extra=logger_extras)
-        if duration >= 5.0 and duration < 10.0:
+        if 5.0 <= duration < 10.0:
             logger.info('Slow Request', extra=logger_extras)
         if duration >= 10.0:
             logger.warn('Very Slow Request', extra=logger_extras)
