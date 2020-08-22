@@ -24,7 +24,7 @@ class InyokaAuthBackend(object):
     * anonymous permissions
     """
 
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         """
         Authenticate a user with `username` (which can also be the email
         address) and `password`.
