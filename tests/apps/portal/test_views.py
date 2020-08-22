@@ -379,7 +379,7 @@ class TestAuthViews(TestCase):
         body = mail.outbox[0].body
         link = re.search(r'(/lost_password/.*)\n', body).groups()[0]
         with translation.override('en-us'):
-            response = self.client.get(link)
+            response = self.client.get(link, follow=True)
         self.assertContains(response, 'You can set a new password')
 
     def test_lost_password_as_authenticated_user(self):

@@ -19,7 +19,7 @@ from time import time
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -319,18 +319,21 @@ def lost_password(request):
     if request.user.is_authenticated:
         messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(href('portal'))
-    return password_reset(request,
-        post_reset_redirect=href('portal', 'login'),
+
+    return PasswordResetView.as_view(
         template_name='portal/lost_password.html',
         email_template_name='mails/new_user_password.txt',
         subject_template_name='mails/new_user_password_subject.txt',
-        password_reset_form=LostPasswordForm)
+        form_class=LostPasswordForm,
+        success_url=href('portal', 'login')
+    )(request)
 
 
 def set_new_password(request, uidb36, token):
-    response = password_reset_confirm(request, uidb36, token,
-        post_reset_redirect=href('portal', 'login'),
-        template_name='portal/set_new_password.html')
+    response = PasswordResetConfirmView.as_view(
+        success_url=href('portal', 'login'),
+        template_name='portal/set_new_password.html'
+    )(request, uidb64=uidb36, token=token)
 
     if isinstance(response, HttpResponseRedirect):
         messages.success(request,
