@@ -12,6 +12,8 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.views.static import serve as view
 
+from inyoka.utils.http import global_not_found, server_error
+
 urlpatterns = [
     url(r'^(?P<path>.*)$', view, {'document_root': settings.MEDIA_ROOT}),
 ]
@@ -22,5 +24,5 @@ if settings.DEBUG:
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )
 
-handler404 = 'inyoka.utils.http.global_not_found'
-handler500 = 'inyoka.utils.http.server_error'
+handler404 = global_not_found
+handler500 = server_error
