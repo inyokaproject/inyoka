@@ -32,7 +32,7 @@ class SessionMiddleware(middleware.SessionMiddleware):
     """
 
     def process_request(self, request):
-        super(SessionMiddleware, self).process_request(request)
+        super().process_request(request)
         # Force creation of a session key so every browser is id-able.
         if not 'sid' in request.session:
             request.session['sid'] = str(uuid.uuid4())
@@ -63,4 +63,4 @@ class SessionMiddleware(middleware.SessionMiddleware):
                 # Require a session drop on browser close.
                 request.session.set_expiry(0)
 
-        return super(SessionMiddleware, self).process_response(request, response)
+        return super().process_response(request, response)
