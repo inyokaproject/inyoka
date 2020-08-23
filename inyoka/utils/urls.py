@@ -74,6 +74,6 @@ def is_safe_domain(url):
     safe_hostnames = ['{}.{}'.format(service, settings.BASE_DOMAIN_NAME).lstrip('.') for service in services]
     # Only one successfully matching is_safe_url() must match:
     for hostname in safe_hostnames:
-        if is_safe_url(url, hostname):
+        if is_safe_url(url, allowed_hosts=hostname):
             return True
     return False

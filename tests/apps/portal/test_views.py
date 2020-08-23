@@ -545,8 +545,7 @@ class TestPrivMsgViews(TestCase):
 
     def test_access(self):
         response = self.client.get('/privmsg/', follow=True)
-        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/privmsg/inbox/',
-                             host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/privmsg/inbox/')
         self.assertEqual(response.status_code, 200)
 
         response = self.client.get('/privmsg/inbox/')

@@ -4,7 +4,7 @@ from inyoka.default_settings import *
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'bdd_{}'.format(uuid1()),
         'USER': 'postgres',
         'HOST': '',
