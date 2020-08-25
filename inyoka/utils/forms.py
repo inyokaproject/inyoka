@@ -261,7 +261,7 @@ class ImageCaptchaWidget(TextInput):
     template_name = 'forms/widgets/image_captcha.html'
 
     def get_context(self, name, value, attrs):
-        context = super(Input, self).get_context(name, value, attrs)
+        context = super().get_context(name, value, attrs)
         context['widget']['captcha_url'] = href('portal', __service__='portal.get_captcha',
                                                 rnd=randrange(1, sys.maxsize))
         return context
