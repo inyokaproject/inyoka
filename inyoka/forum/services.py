@@ -9,7 +9,7 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from urllib import unquote
+from urllib.parse import unquote
 
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST, require_GET
@@ -48,7 +48,7 @@ def get_post(request):
 
 @dispatcher.register()
 def toggle_categories(request):
-    if request.user.is_anonymous():
+    if request.user.is_anonymous:
         return False
     hidden_categories = set()
     for id in request.GET.getlist('hidden[]'):
@@ -66,7 +66,7 @@ def toggle_categories(request):
 
 @dispatcher.register()
 def toggle_category(request):
-    if request.user.is_anonymous():
+    if request.user.is_anonymous:
         return False
     try:
         category_id = int(request.GET.get('id'))
@@ -109,7 +109,7 @@ def subscription_action(request, action=None):
     else:
         forum = obj
 
-    if request.user.is_anonymous() \
+    if request.user.is_anonymous \
        or not request.user.has_perm('forum.view_forum', forum):
         return abort_access_denied(request)
     try:
@@ -130,7 +130,7 @@ def change_status(request, solved=None):
         return
     topic = Topic.objects.get(slug=request.POST['slug'])
     can_read = request.user.has_perm('forum.view_forum', topic.forum)
-    if request.user.is_anonymous() or not can_read:
+    if request.user.is_anonymous or not can_read:
         return abort_access_denied(request)
     if solved is not None:
         topic.solved = solved

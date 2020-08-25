@@ -7,7 +7,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from itertools import ifilter
+
 
 acceptable_css_properties = frozenset((
     'azimuth', 'background-color', 'border-bottom-color',
@@ -55,9 +55,9 @@ def filter_style(css):
     if css is None:
         return None
 
-    css = _css_url_re.sub(u' ', css)
+    css = _css_url_re.sub(' ', css)
     if _css_sanity_check_re.match(css) is None:
-        return u''
+        return ''
 
     clean = []
     for prop, value in _css_pair_re.findall(css):
@@ -73,7 +73,7 @@ def filter_style(css):
                     break
             else:
                 clean.append('%s: %s' % (prop, value))
-    return u'; '.join(clean)
+    return '; '.join(clean)
 
 
 class ArgumentCollector(type):
@@ -108,7 +108,7 @@ class ArgumentCollector(type):
                     is_default = True
                 else:
                     is_default = False
-                    if typedef in (int, float, unicode):
+                    if typedef in (int, float, str):
                         try:
                             value = typedef(value)
                         except:
@@ -149,11 +149,11 @@ def debug_repr(obj):
 
 def join_array(array, delimiter):
     if not isinstance(array.value, (tuple, list)):
-        return u''
+        return ''
     result = []
     for key in array.value:
-        result.append(unicode(key))
-    return unicode(delimiter).join(result)
+        result.append(str(key))
+    return str(delimiter).join(result)
 
 
 def has_key(mapping, search):
@@ -185,7 +185,7 @@ def simple_filter(pattern, iterable, case_sensitive=True):
     only special thing is that "*" is a wildcard.  The return value is an
     iterator, not a list.
     """
-    return ifilter(re.compile('^%s$%s' % (
+    return filter(re.compile('^%s$%s' % (
         re.escape(pattern).replace('\\*', '.*?'),
         not case_sensitive and '(?i)' or ''
     )).match, iterable)

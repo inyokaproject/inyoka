@@ -22,7 +22,7 @@ class CachedStorage(object):
     def get(self, key, default=None, timeout=None):
         """get *key* from the cache or if not exist return *default*"""
         from inyoka.portal.models import Storage
-        value = cache.get(u'storage/{}'.format(key))
+        value = cache.get('storage/{}'.format(key))
         if value is not None:
             return value
 
@@ -69,7 +69,7 @@ class CachedStorage(object):
         from inyoka.portal.models import Storage
         objects = cache.get_many(['storage/%s' % key for key in keys])
         values = {}
-        for key, value in objects.iteritems():
+        for key, value in objects.items():
             values[key[8:]] = value
         #: a list of keys that aren't yet in the cache.
         #: They are queried using a database call.
@@ -92,8 +92,8 @@ class CachedStorage(object):
         self.set(key, value)
 
     def _update_cache(self, key, value, timeout=None):
-        cache.set(u'storage/{}'.format(key), value, timeout)
-        cache.delete(u'storage/{}_rendered'.format(key))
+        cache.set('storage/{}'.format(key), value, timeout)
+        cache.delete('storage/{}_rendered'.format(key))
 
 
 storage = CachedStorage()

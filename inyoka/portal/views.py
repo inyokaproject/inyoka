@@ -34,7 +34,6 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.views.decorators.http import require_POST
-from django_mobile import get_flavour
 from PIL import Image
 
 from inyoka.forum.models import Forum
@@ -169,7 +168,7 @@ def index(request):
     countdown_image_url = storage_values.get('countdown_image_url', None)
     if countdown_active and countdown_date:
         release_date = None
-        if isinstance(countdown_date, basestring):
+        if isinstance(countdown_date, str):
             release_date = datetime.strptime(countdown_date, '%Y-%m-%d').date()
         else:
             release_date = None
@@ -180,9 +179,9 @@ def index(request):
                 countdown_active = False
             elif countdown_remaining > 0:
                 # Format it with a leading zero
-                countdown_remaining = u'%02d' % countdown_remaining
+                countdown_remaining = '%02d' % countdown_remaining
             elif countdown_remaining <= 0:
-                countdown_remaining = u'soon'
+                countdown_remaining = 'soon'
         else:
             countdown_active = False
     else:
@@ -238,8 +237,8 @@ def register(request):
 
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
         else href('portal'))
-    if request.user.is_authenticated():
-        messages.error(request, _(u'You are already logged in.'))
+    if request.user.is_authenticated:
+        messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
     if request.method == 'POST' and 'renew_captcha' not in request.POST:
@@ -253,9 +252,9 @@ def register(request):
                 password=data['password'])
 
             messages.success(request,
-                _(u'The username “%(username)s” was successfully registered. '
-                  u'An email with the activation key was sent to '
-                  u'“%(email)s”.') % {
+                _('The username “%(username)s” was successfully registered. '
+                  'An email with the activation key was sent to '
+                  '“%(email)s”.') % {
                       'username': escape(user.username),
                       'email': escape(user.email)})
 
@@ -277,15 +276,15 @@ def activate(request, action='', username='', activation_key=''):
         user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         messages.error(request,
-            _(u'The user “%(username)s” does not exist.') % {
-                u'username': escape(username)})
+            _('The user “%(username)s” does not exist.') % {
+                'username': escape(username)})
         return HttpResponseRedirect(href('portal'))
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request,
-            _(u'You cannot enter an activation key when you are logged in.'))
+            _('You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
 
     if action not in ('delete', 'activate'):
@@ -294,13 +293,13 @@ def activate(request, action='', username='', activation_key=''):
     if action == 'delete':
         if check_activation_key(user, activation_key):
             if not user.is_active:
-                messages.success(request, _(u'Your account was anonymized.'))
+                messages.success(request, _('Your account was anonymized.'))
             else:
                 messages.error(request,
-                    _(u'The account of “%(username)s” was already activated.') %
+                    _('The account of “%(username)s” was already activated.') %
                     {'username': escape(username)})
         else:
-            messages.error(request, _(u'Your activation key is invalid.'))
+            messages.error(request, _('Your activation key is invalid.'))
         return HttpResponseRedirect(href('portal'))
     else:
         if check_activation_key(user, activation_key) and user.is_inactive:
@@ -308,17 +307,17 @@ def activate(request, action='', username='', activation_key=''):
             user.save()
             user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
             messages.success(request,
-                _(u'Your account was successfully activated. You can now '
-                  u'login.'))
+                _('Your account was successfully activated. You can now '
+                  'login.'))
             return HttpResponseRedirect(redirect)
         else:
-            messages.error(request, _(u'Your activation key is invalid.'))
+            messages.error(request, _('Your activation key is invalid.'))
             return HttpResponseRedirect(href('portal'))
 
 
 def lost_password(request):
-    if request.user.is_authenticated():
-        messages.error(request, _(u'You are already logged in.'))
+    if request.user.is_authenticated:
+        messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(href('portal'))
     return password_reset(request,
         post_reset_redirect=href('portal', 'login'),
@@ -335,8 +334,8 @@ def set_new_password(request, uidb36, token):
 
     if isinstance(response, HttpResponseRedirect):
         messages.success(request,
-            _(u'You successfully changed your password and are now '
-              u'able to login.'))
+            _('You successfully changed your password and are now '
+              'able to login.'))
 
     return response
 
@@ -346,8 +345,8 @@ def login(request):
     """Login dialog that supports permanent logins"""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
         else href('portal'))
-    if request.user.is_authenticated():
-        messages.error(request, _(u'You are already logged in.'))
+    if request.user.is_authenticated:
+        messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
     failed = inactive = banned = False
@@ -367,7 +366,7 @@ def login(request):
                     if data['permanent']:
                         make_permanent(request)
                     # username matches password and user is active
-                    messages.success(request, _(u'You have successfully logged in.'))
+                    messages.success(request, _('You have successfully logged in.'))
                     auth.login(request, user)
                     return HttpResponseRedirect(redirect)
                 inactive = True
@@ -395,14 +394,14 @@ def logout(request):
     successfull or not (e.g if the user wasn't logged in)."""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
         else href('portal'))
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
                 forum.mark_read(request.user)
         auth.logout(request)
-        messages.success(request, _(u'You have successfully logged out.'))
+        messages.success(request, _('You have successfully logged out.'))
     else:
-        messages.error(request, _(u'You were not logged in.'))
+        messages.error(request, _('You were not logged in.'))
     return HttpResponseRedirect(redirect)
 
 
@@ -444,14 +443,14 @@ def user_mail(request, username):
                 'from': request.user.username,
             })
             send_mail(
-                _(u'%(sitename)s - Message from %(username)s') % {
+                _('%(sitename)s - Message from %(username)s') % {
                     'sitename': settings.BASE_DOMAIN_NAME,
                     'username': request.user.username},
                 message,
                 settings.INYOKA_SYSTEM_USER_EMAIL,
                 [user.email])
             messages.success(request,
-                _(u'The email to “%(username)s” was sent successfully.')
+                _('The email to “%(username)s” was sent successfully.')
                 % {'username': escape(username)})
             return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
         else:
@@ -475,7 +474,7 @@ def subscribe_user(request, username):
         # there's no such subscription yet, create a new one
         Subscription(user=request.user, content_object=user).save()
         messages.info(request,
-            _(u'You will now be notified about activities of “%(username)s”.')
+            _('You will now be notified about activities of “%(username)s”.')
             % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
@@ -491,15 +490,15 @@ def unsubscribe_user(request, username):
         if request.method == 'POST':
             subscription.delete()
             messages.info(request,
-                _(u'From now on you won’t be notified anymore about activities of '
-                    u'“%(username)s”.') % {'username': user.username})
+                _('From now on you won’t be notified anymore about activities of '
+                    '“%(username)s”.') % {'username': user.username})
         else:
             # ask for confirmation with form in case of GET (CSRF)
             messages.info(request, render_template('confirm_action_flash.html', {
-                    'message': _(u'Do you want to unsubscribe from the user '
-                                 u'“%(username)s”?') % {'username': user.username},
-                    'confirm_label': _(u'Unsubscribe'),
-                    'cancel_label': _(u'Cancel'),
+                    'message': _('Do you want to unsubscribe from the user '
+                                 '“%(username)s”?') % {'username': user.username},
+                    'confirm_label': _('Unsubscribe'),
+                    'cancel_label': _('Cancel'),
                     'action_url': request.build_absolute_uri(),
                 }, flash=True))
 
@@ -529,7 +528,7 @@ def usercp_profile(request):
         form = UserCPProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             user = form.save(request)
-            messages.success(request, _(u'Your profile information were updated successfully.'))
+            messages.success(request, _('Your profile information were updated successfully.'))
             return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
             generic.trigger_fix_errors_message(request)
@@ -563,13 +562,13 @@ def usercp_settings(request):
                 elif version not in new_versions and version in old_versions:
                     Subscription.objects.filter(user=request.user,
                                                 ubuntu_version=version).delete()
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 request.user.settings[key] = data[key]
                 if key == 'timezone':
                     timezone.activate(data[key])
                     request.session['django_timezone'] = data[key]
             request.user.save(update_fields=['settings'])
-            messages.success(request, _(u'Your settings were successfully changed.'))
+            messages.success(request, _('Your settings were successfully changed.'))
         else:
             generic.trigger_fix_errors_message(request)
     else:
@@ -610,11 +609,11 @@ def usercp_password(request):
             user = request.user
             if not user.check_password(data['old_password']):
                 form.errors['old_password'] = ErrorList(
-                    [_(u'The entered password did not match your old password.')])
+                    [_('The entered password did not match your old password.')])
         if form.is_valid():
             user.set_password(data['new_password'])
             user.save()
-            messages.success(request, _(u'Your password was changed successfully.'))
+            messages.success(request, _('Your password was changed successfully.'))
             auth.update_session_auth_hash(request, user)
             return HttpResponseRedirect(href('portal', 'usercp', 'password'))
         else:
@@ -644,8 +643,8 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
     def get_queryset(self):
         qs = self.request.user.subscription_set.all()
         qs = qs.filter(ubuntu_version__isnull=True)
-        for filter in self.filtersets:
-            instance = filter(self.request.GET or None, queryset=qs)
+        for f in self.filtersets:
+            instance = f(self.request.GET or None, queryset=qs)
             qs = instance.qs
         return qs
 
@@ -654,7 +653,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
         subscriptions = self.get_queryset()
 
         if 'delete' in request.POST:
-            form.fields['select'].choices = [(s.id, u'') for s in subscriptions]
+            form.fields['select'].choices = [(s.id, '') for s in subscriptions]
             if form.is_valid():
                 d = form.cleaned_data
                 Subscription.objects.delete_list(request.user.id, d['select'])
@@ -664,7 +663,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
                 messages.success(request, msg % {'n': len(d['select'])})
 
         if 'mark_read' in request.POST:
-            form.fields['select'].choices = [(s.id, u'') for s in subscriptions]
+            form.fields['select'].choices = [(s.id, '') for s in subscriptions]
             if form.is_valid():
                 d = form.cleaned_data
                 Subscription.objects.mark_read_list(request.user.id, d['select'])
@@ -692,12 +691,12 @@ def usercp_deactivate(request):
             check = data['password_confirmation']
             if not request.user.check_password(check):
                 form.errors['password_confirmation'] = ErrorList(
-                    [_(u'The entered password is wrong.')])
+                    [_('The entered password is wrong.')])
 
         if form.is_valid():
             deactivate_user(request.user)
             auth.logout(request)
-            messages.success(request, _(u'Your account was deactivated.'))
+            messages.success(request, _('Your account was deactivated.'))
             return HttpResponseRedirect(href('portal'))
         else:
             generic.trigger_fix_errors_message(request)
@@ -739,7 +738,7 @@ def user_edit_profile(request, username):
         if form.is_valid():
             user = form.save(request)
             messages.success(request,
-                _(u'The profile of “%(username)s” was changed successfully')
+                _('The profile of “%(username)s” was changed successfully')
                 % {'username': escape(user.username)})
             # redirect to the new username if given
             if user.username != username:
@@ -794,11 +793,11 @@ def user_edit_settings(request, username):
                 elif version not in new_versions and version in old_versions:
                     Subscription.objects.filter(user=user,
                                                 ubuntu_version=version).delete()
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 user.settings[key] = data[key]
             user.save()
             messages.success(request,
-                _(u'The setting of “%(username)s” were successfully changed.')
+                _('The setting of “%(username)s” were successfully changed.')
                 % {'username': escape(user.username)})
     return {
         'user': user,
@@ -823,7 +822,7 @@ def user_edit_status(request, username):
             if user.status != User.STATUS_ACTIVE:
                 user.groups.clear()
             messages.success(request,
-                _(u'The state of “%(username)s” was successfully changed.')
+                _('The state of “%(username)s” was successfully changed.')
                 % {'username': escape(user.username)})
     if not user.is_inactive:
         activation_link = None
@@ -852,7 +851,7 @@ def user_edit_groups(request, username):
         if form.is_valid():
             form.save()
             messages.success(request,
-                _(u'The groups of “%(username)s” were successfully changed.')
+                _('The groups of “%(username)s” were successfully changed.')
                 % {'username': escape(user.username)})
         else:
             generic.trigger_fix_errors_message(request)
@@ -876,8 +875,8 @@ def user_new(request):
                 password=data['password'],
                 send_mail=data['authenticate'])
             messages.success(request,
-                _(u'The user “%(username)s” was successfully created. '
-                  u'You can now edit more details.')
+                _('The user “%(username)s” was successfully created. '
+                  'You can now edit more details.')
                 % {'username': escape(data['username'])})
             return HttpResponseRedirect(href('portal', 'user',
                         escape(data['username']), 'edit'))
@@ -896,12 +895,12 @@ def admin_resend_activation_mail(request):
     user = User.objects.get(username__iexact=request.GET.get('user'))
     if not user.is_inactive:
         messages.error(request,
-            _(u'The account of “%(username)s” was already activated.')
+            _('The account of “%(username)s” was already activated.')
             % {'username': user.username})
     else:
         send_activation_mail(user)
         messages.success(request,
-            _(u'The email with the activation key was resent.'))
+            _('The email with the activation key was resent.'))
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
@@ -922,7 +921,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
             except KeyError:
                 raise Http404
 
-    if folder not in PRIVMSG_FOLDERS.keys():
+    if folder not in list(PRIVMSG_FOLDERS.keys()):
         raise Http404
 
     entries = PrivateMessageEntry.objects.filter(
@@ -933,7 +932,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     if request.method == 'POST':
         # POST is only send by the "delete marked messages" button
         form = PrivateMessageIndexForm(request.POST)
-        form.fields['delete'].choices = [(pm.id, u'') for pm in entries]
+        form.fields['delete'].choices = [(pm.id, '') for pm in entries]
         if form.is_valid():
             d = form.cleaned_data
             PrivateMessageEntry.delete_list(request.user.id, d['delete'])
@@ -941,8 +940,8 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                             '%(n)d messages were deleted.',
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})
-            entries = filter(lambda s: str(s.id) not in d['delete'], entries)
-            cache.delete(u'portal/pm_count/{}'.format(request.user.id))
+            entries = [s for s in entries if str(s.id) not in d['delete']]
+            cache.delete('portal/pm_count/{}'.format(request.user.id))
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
 
@@ -953,7 +952,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         if not entry.read:
             entry.read = True
             entry.save()
-            cache.delete(u'portal/pm_count/{}'.format(request.user.id))
+            cache.delete('portal/pm_count/{}'.format(request.user.id))
         action = request.GET.get('action')
         if action:
             if request.method == 'POST':
@@ -962,35 +961,35 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                         folder, entry.id))
                 if action == 'archive':
                     if entry.archive():
-                        messages.success(request, _(u'The messages was moved into you archive.'))
+                        messages.success(request, _('The messages was moved into you archive.'))
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'restore':
                     if entry.restore():
-                        messages.success(request, _(u'The message was restored.'))
+                        messages.success(request, _('The message was restored.'))
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'delete':
-                    msg = _(u'The message was deleted.') if \
+                    msg = _('The message was deleted.') if \
                         entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
-                        _(u'The message was moved in the trash.')
+                        _('The message was moved in the trash.')
                     if entry.delete():
                         messages.success(request, msg)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
             else:
                 if action == 'archive':
-                    msg = _(u'Do you want to archive the message?')
+                    msg = _('Do you want to archive the message?')
                     # confirm_label = pgettext('the verb "to archive", not the '
                     #                         'noun.', 'Archive')
-                    confirm_label = _(u'Archive it')
+                    confirm_label = _('Archive it')
                 elif action == 'restore':
-                    msg = _(u'Do you want to restore the message?')
-                    confirm_label = _(u'Restore')
+                    msg = _('Do you want to restore the message?')
+                    confirm_label = _('Restore')
                 elif action == 'delete':
-                    msg = _(u'Do you really want to delete the message?')
-                    confirm_label = _(u'Delete')
+                    msg = _('Do you really want to delete the message?')
+                    confirm_label = _('Delete')
                 messages.info(request, render_template('confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
-                    'cancel_label': _(u'Cancel'),
+                    'cancel_label': _('Cancel'),
                 }, flash=True))
     else:
         message = None
@@ -1029,16 +1028,16 @@ def privmsg_new(request, username=None):
 
             for group in AUTOBAN_SPAMMER_WORDS:
                 t = d['text']
-                if all(map(lambda x: x in t, group)):
+                if all([x in t for x in group]):
                     if '>' in t:
                         continue  # User quoted, most likely a forward and no spam
                     request.user.status = User.STATUS_BANNED
                     request.user.banned_until = None
                     request.user.save(update_fields=['status', 'banned_until'])
                     messages.info(request,
-                        _(u'You were automatically banned because we suspect '
-                          u'you are sending spam. If this ban is not '
-                          u'justified, contact us at %(email)s')
+                        _('You were automatically banned because we suspect '
+                          'you are sending spam. If this ban is not '
+                          'justified, contact us at %(email)s')
                         % {'email': settings.INYOKA_CONTACT_EMAIL})
                     auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
@@ -1051,7 +1050,7 @@ def privmsg_new(request, username=None):
             recipients = set()
 
             if d.get('group_recipient', None) and not request.user.has_perm('portal.send_group_privatemessage'):
-                messages.error(request, _(u'You cannot send messages to groups.'))
+                messages.error(request, _('You cannot send messages to groups.'))
                 return HttpResponseRedirect(href('portal', 'privmsg'))
 
             for group in group_recipient_names:
@@ -1061,7 +1060,7 @@ def privmsg_new(request, username=None):
                     recipients.update(users)
                 except Group.DoesNotExist:
                     messages.error(request,
-                        _(u'The group “%(group)s” does not exist.')
+                        _('The group “%(group)s” does not exist.')
                         % {'group': escape(group)})
                     return HttpResponseRedirect(href('portal', 'privmsg'))
 
@@ -1070,23 +1069,23 @@ def privmsg_new(request, username=None):
                     user = User.objects.get(username__iexact=recipient)
                     if user.id == request.user.id:
                         recipients = None
-                        messages.error(request, _(u'You cannot send messages to yourself.'))
+                        messages.error(request, _('You cannot send messages to yourself.'))
                         break
                     elif user in (User.objects.get_system_user(),
                                   User.objects.get_anonymous_user()):
                         recipients = None
-                        messages.error(request, _(u'You cannot send messages to system users.'))
+                        messages.error(request, _('You cannot send messages to system users.'))
                         break
                     elif not user.is_active:
                         recipients = None
-                        messages.error(request, (_(u'You cannot send messages to this user.')))
+                        messages.error(request, (_('You cannot send messages to this user.')))
                         break
                     else:
                         recipients.add(user)
             except User.DoesNotExist:
                 recipients = None
                 messages.error(request,
-                    _(u'The user “%(username)s” does not exist.')
+                    _('The user “%(username)s” does not exist.')
                     % {'username': escape(recipient)})
 
             if recipients:
@@ -1103,14 +1102,14 @@ def privmsg_new(request, username=None):
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
                         send_notification(recipient, 'new_pm',
-                            _(u'New private message from %(username)s: %(subject)s')
+                            _('New private message from %(username)s: %(subject)s')
                             % {'username': request.user.username, 'subject': d['subject']},
                             {'user': recipient,
                              'sender': request.user,
                              'subject': d['subject'],
                              'entry': entry})
 
-                messages.success(request, _(u'The message was sent successfully.'))
+                messages.success(request, _('The message was sent successfully.'))
 
             return HttpResponseRedirect(href('portal', 'privmsg'))
     else:
@@ -1131,12 +1130,12 @@ def privmsg_new(request, username=None):
                 data['subject'] = msg.subject
                 if reply_to or reply_to_all:
                     data['recipient'] = msg.author.username
-                    if not data['subject'].lower().startswith(u're: '):
-                        data['subject'] = u'Re: %s' % data['subject']
+                    if not data['subject'].lower().startswith('re: '):
+                        data['subject'] = 'Re: %s' % data['subject']
                 if reply_to_all:
                     data['recipient'] += ';' + ';'.join(x.username for x in msg.recipients if x != request.user)
-                if forward and not data['subject'].lower().startswith(u'fw: '):
-                    data['subject'] = u'Fw: %s' % data['subject']
+                if forward and not data['subject'].lower().startswith('fw: '):
+                    data['subject'] = 'Fw: %s' % data['subject']
                 data['text'] = quote_text(msg.text, msg.author) + '\n'
                 form = PrivateMessageForm(initial=data)
             except (PrivateMessageEntry.DoesNotExist):
@@ -1160,14 +1159,14 @@ class MemberlistView(generic.ListView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.has_perm('portal.change_user'):
-            messages.error(request, _(u'You need to be logged in before you can continue.'))
+            messages.error(request, _('You need to be logged in before you can continue.'))
             return abort_access_denied(request)
         name = request.POST.get('user')
         try:
             user = User.objects.get_by_username_or_email(name)
         except User.DoesNotExist:
             messages.error(request,
-                _(u'The user “%(username)s” does not exist.')
+                _('The user “%(username)s” does not exist.')
                 % {'username': escape(name)})
             return HttpResponseRedirect(request.build_absolute_uri())
         else:
@@ -1232,7 +1231,7 @@ def group_new(request):
         if form.is_valid():
             group = form.save()
             messages.success(request,
-                _(u'The group “%s” was created successfully.') % group.name)
+                _('The group “%s” was created successfully.') % group.name)
             return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
     return {
         'form': form,
@@ -1247,7 +1246,7 @@ def group_edit(request, name):
         group = Group.objects.get(name=name)
     except Group.DoesNotExist:
         messages.error(request,
-            _(u'The group “%(group)s” does not exist.')
+            _('The group “%(group)s” does not exist.')
             % {'group': escape(name)})
         return HttpResponseRedirect(href('portal', 'groups'))
 
@@ -1256,7 +1255,7 @@ def group_edit(request, name):
         if form.is_valid():
             form.save()
             messages.success(request,
-                _(u'The group “%s” was changed successfully.') % group.name)
+                _('The group “%s” was changed successfully.') % group.name)
             return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
     else:
         form = EditGroupForm(instance=group)
@@ -1278,7 +1277,7 @@ def group_edit_global_permissions(request, name):
         if form.is_valid():
             form.save()
             messages.success(request,
-                _(u'The group “%s” was changed successfully.') % group.name)
+                _('The group “%s” was changed successfully.') % group.name)
             return HttpResponseRedirect(href('portal', 'group', group.name, 'edit', 'global_permissions'))
     else:
         form = GroupGlobalPermissionForm(instance=group)
@@ -1299,7 +1298,7 @@ def group_edit_forum_permissions(request, name):
         if form.is_valid():
             form.save()
             messages.success(request,
-                _(u'The group “%s” was changed successfully.') % group.name)
+                _('The group “%s” was changed successfully.') % group.name)
             return HttpResponseRedirect(href('portal', 'group', group.name, 'edit', 'forum_permissions'))
     else:
         form = GroupForumPermissionForm(instance=group)
@@ -1311,7 +1310,7 @@ def group_edit_forum_permissions(request, name):
 
 
 def usermap(request):
-    messages.info(request, _(u'The user map was temporarily disabled.'))
+    messages.info(request, _('The user map was temporarily disabled.'))
     return HttpResponseRedirect(href('portal'))
 
 
@@ -1336,17 +1335,17 @@ def feedselector(request, app=None):
     if forms['forum'] is not None:
         anonymous_user = User.objects.get_anonymous_user()
         forums = [forum for forum in Forum.objects.get_cached() if anonymous_user.has_perm('forum.view_forum', forum)]
-        forms['forum'].fields['forum'].choices = [('', _(u'Please choose'))] + \
+        forms['forum'].fields['forum'].choices = [('', _('Please choose'))] + \
             [(f.slug, f.name) for f in forums]
     if forms['ikhaya'] is not None:
-        forms['ikhaya'].fields['category'].choices = [('*', _(u'All'))] + \
+        forms['ikhaya'].fields['category'].choices = [('*', _('All'))] + \
             [(c.slug, c.name) for c in Category.objects.all()]
     if forms['wiki'] is not None:
         wiki_pages = cache.get('feedselector/wiki/pages')
         if not wiki_pages:
             wiki_pages = WikiPage.objects.get_page_list()
             cache.set('feedselector/wiki/pages', wiki_pages)
-        forms['wiki'].fields['page'].choices = [('*', _(u'All'))] + \
+        forms['wiki'].fields['page'].choices = [('*', _('All'))] + \
             [(p, p) for p in wiki_pages]
 
     if request.method == 'POST':
@@ -1403,7 +1402,7 @@ def calendar_month(request, year, month):
     if year < 1900 or month < 1 or month > 12:
         raise Http404
     days = calendar_entries_for_month(year, month)
-    days = [(date(year, month, day), events) for day, events in days.items()]
+    days = [(date(year, month, day), events) for day, events in list(days.items())]
 
     return {
         'days': days,
@@ -1434,7 +1433,7 @@ def calendar_detail(request, slug):
         event = Event.objects.get(slug=slug)
         if not event.visible:
             if request.user.has_perm('portal.change_event'):
-                messages.info(request, _(u'This event is not visible for regular users.'))
+                messages.info(request, _('This event is not visible for regular users.'))
             else:
                 raise Http404()
     except Event.DoesNotExist:
@@ -1477,7 +1476,7 @@ def calendar_ical(request, slug):
     if event.description:
         ievent.add('description', event.description)
 
-    location = u'%s%s%s' % ((event.location and event.location + ', ' or ''), (event.location_town and event.location_town + ', ' or ''), (event.simple_coordinates != 'None;None' and event.simple_coordinates + ', ' or ''))
+    location = '%s%s%s' % ((event.location and event.location + ', ' or ''), (event.location_town and event.location_town + ', ' or ''), (event.simple_coordinates != 'None;None' and event.simple_coordinates + ', ' or ''))
 
     ievent.add('location', location.rstrip(', '))
 
@@ -1492,12 +1491,12 @@ def calendar_ical(request, slug):
 
 @templated('portal/confirm.html')
 def confirm(request, action):
-    if action == 'reactivate_user' and request.user.is_authenticated():
-        messages.error(request, _(u'You cannot reactivate an account while '
-                                  u'you are logged in.'))
+    if action == 'reactivate_user' and request.user.is_authenticated:
+        messages.error(request, _('You cannot reactivate an account while '
+                                  'you are logged in.'))
         return abort_access_denied(request)
-    elif action in ['set_new_email', 'reset_email'] and request.user.is_anonymous():
-        messages.error(request, _(u'You need to be logged in before you can continue.'))
+    elif action in ['set_new_email', 'reset_email'] and request.user.is_anonymous:
+        messages.error(request, _('You need to be logged in before you can continue.'))
         return abort_access_denied(request)
 
     if request.method == 'POST':
@@ -1505,12 +1504,12 @@ def confirm(request, action):
 
         if form.is_valid():
             messages.success(request, form.cleaned_data['token'])
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 return HttpResponseRedirect(href('portal', 'usercp'))
             else:
                 return HttpResponseRedirect(href('portal'))
     else:
-        form = TokenForm(initial={'token': request.GET.get('token', u'')})
+        form = TokenForm(initial={'token': request.GET.get('token', '')})
 
     return {'action': action,
             'form': form}
@@ -1542,9 +1541,9 @@ def config(request):
             if data['team_icon']:
                 if storage['team_icon']:
                     default_storage.delete(storage['team_icon'])
-                icon = Image.open(data['team_icon'])
-                fn = 'portal/global_team_icon.%s' % icon.format.lower()
-                default_storage.save(fn, data['team_icon'])
+                with Image.open(data['team_icon']) as icon:
+                    fn = 'portal/global_team_icon.%s' % icon.format.lower()
+                default_storage.save(fn, data['team_icon'], max_length=100)
                 storage['team_icon'] = team_icon = fn
 
             if not data['countdown_date']:
@@ -1552,11 +1551,11 @@ def config(request):
             else:
                 storage['countdown_date'] = str(data['countdown_date'])
 
-            messages.success(request, _(u'Your settings have been changed successfully.'))
+            messages.success(request, _('Your settings have been changed successfully.'))
         else:
             generic.trigger_fix_errors_message(request)
     else:
-        storage['distri_versions'] = storage['distri_versions'] or u'[]'
+        storage['distri_versions'] = storage['distri_versions'] or '[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
                                                 ['global_message', 'countdown_date']))
 
@@ -1611,9 +1610,9 @@ def page_edit(request, page=None):
             if 'send' in request.POST:
                 page = form.save()
                 if new:
-                    msg = _(u'The page “%(page)s” was created successfully.')
+                    msg = _('The page “%(page)s” was created successfully.')
                 else:
-                    msg = _(u'The page “%(page)s” was changed successfully.')
+                    msg = _('The page “%(page)s” was changed successfully.')
                 messages.success(request, msg % {'page': page.title})
                 return HttpResponseRedirect(href('portal', page.key))
     else:

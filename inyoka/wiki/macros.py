@@ -40,11 +40,11 @@ class PageCount(macros.Macro):
     """
     Return the number of existing pages.
     """
-    names = (u'PageCount', 'Seitenzahl')
+    names = ('PageCount', 'Seitenzahl')
     allowed_context = ['wiki']
 
     def build_node(self, context, format):
-        return nodes.Text(unicode(Page.objects.get_page_count()))
+        return nodes.Text(str(Page.objects.get_page_count()))
 
 
 class PageList(macros.Macro):
@@ -54,7 +54,7 @@ class PageList(macros.Macro):
     names = ('PageList', 'Seitenliste')
     is_block_tag = True
     arguments = (
-        ('pattern', unicode, ''),
+        ('pattern', str, ''),
         ('case_sensitive', bool, True),
         ('shorten_title', bool, False)
     )
@@ -87,7 +87,7 @@ class AttachmentList(macros.Macro):
     names = ('AttachmentList', 'Anhänge')
     is_block_tag = True
     arguments = (
-        ('page', unicode, ''),
+        ('page', str, ''),
         ('shorten_title', bool, False)
     )
     allowed_context = ['wiki']
@@ -110,7 +110,7 @@ class OrphanedPages(macros.Macro):
     """
     Return a list of orphaned pages.
     """
-    names = (u'OrphanedPages', u'VerwaisteSeiten')
+    names = ('OrphanedPages', 'VerwaisteSeiten')
     is_block_tag = True
     allowed_context = ['wiki']
 
@@ -128,7 +128,7 @@ class RedirectPages(macros.Macro):
     """
     Return a list of pages that redirect to somewhere.
     """
-    names = (u'RedirectPages', u'Weiterleitungen')
+    names = ('RedirectPages', 'Weiterleitungen')
     is_block_tag = True
     allowed_context = ['wiki']
 
@@ -142,7 +142,7 @@ class RedirectPages(macros.Macro):
                                       force_existing=True)
             title = [nodes.Text(get_pagetitle(target, True))]
             target = nodes.InternalLink(target, title)
-            result.children.append(nodes.ListItem([link, nodes.Text(u' \u2794 '),
+            result.children.append(nodes.ListItem([link, nodes.Text(' \u2794 '),
                                                    target]))
         return result
 
@@ -152,10 +152,10 @@ class SimilarPages(macros.Macro):
     Show a list of pages similar to the page name given or the
     page from the render context.
     """
-    names = (u'SimilarPages', u'ÄhnlicheSeiten')
+    names = ('SimilarPages', 'ÄhnlicheSeiten')
     is_block_tag = True
     arguments = (
-        ('page', unicode, ''),
+        ('page', str, ''),
     )
     allowed_context = ['wiki']
 
@@ -171,9 +171,9 @@ class SimilarPages(macros.Macro):
             name = self.page_name
             ignore = None
         if not name:
-            msg = _(u'You must apply a page name because the macro is being '
-                    u'called outside the wiki context.')
-            return nodes.error_box(_(u'Invalid arguments'), msg)
+            msg = _('You must apply a page name because the macro is being '
+                    'called outside the wiki context.')
+            return nodes.error_box(_('Invalid arguments'), msg)
         result = nodes.List('unordered')
         for page in Page.objects.get_similar(name):
             if page == ignore:
@@ -189,10 +189,10 @@ class TagList(macros.Macro):
     """
     Show a taglist.
     """
-    names = ('TagList', u'TagListe')
+    names = ('TagList', 'TagListe')
     is_block_tag = True
     arguments = (
-        ('tag', unicode, ''),
+        ('tag', str, ''),
     )
     allowed_context = ['wiki']
 
@@ -218,7 +218,7 @@ class TagList(macros.Macro):
                 )
                 result.children.append(nodes.ListItem([link]))
         head = nodes.Headline(2, children=[
-            nodes.Text(_(u'Pages with tag “%(name)s”') % {
+            nodes.Text(_('Pages with tag “%(name)s”') % {
                 'name': self.active_tag
             })
         ], class_='head')
@@ -231,10 +231,10 @@ class Include(macros.Macro):
     Include a page.  This macro works dynamically thus the included headlines
     do not appear in the TOC.
     """
-    names = (u'Include', u'Einbinden')
+    names = ('Include', 'Einbinden')
     is_block_tag = True
     arguments = (
-        ('page', unicode, ''),
+        ('page', str, ''),
         ('silent', bool, False)
     )
     allowed_context = ['wiki']
@@ -252,15 +252,15 @@ class Include(macros.Macro):
         except Page.DoesNotExist:
             if self.silent:
                 return nodes.Text('')
-            msg = _(u'The page “%(name)s” was not found') % {
+            msg = _('The page “%(name)s” was not found') % {
                 'name': self.page}
-            return nodes.error_box(_(u'Page not found'), msg)
+            return nodes.error_box(_('Page not found'), msg)
         except CaseSensitiveException as e:
             page = e.page
         context.kwargs.setdefault('included_pages', set())
         if page.name in context.kwargs['included_pages']:
-            msg = _(u'Detected a circular include macro call')
-            return nodes.error_box(_(u'Circular import'), msg)
+            msg = _('Detected a circular include macro call')
+            return nodes.error_box(_('Circular import'), msg)
         context.kwargs['included_pages'].add(page.name)
         return page.rev.text.render(context=context, format=format)
 
@@ -270,10 +270,10 @@ class FilterByMetaData(macros.Macro):
     Filter pages by their metadata
     """
 
-    names = (u'FilterByMetaData', u'MetaFilter')
+    names = ('FilterByMetaData', 'MetaFilter')
     is_block_tag = True
     arguments = (
-        ('filters', unicode, ''),
+        ('filters', str, ''),
     )
     allowed_context = ['wiki']
 
@@ -288,12 +288,12 @@ class FilterByMetaData(macros.Macro):
                 continue
             key = part.split(':')[0].strip()
             values = [x.strip() for x in part.split(':')[1].split(',')]
-            mapping.extend(map(lambda x: (key, x), values))
+            mapping.extend([(key, x) for x in values])
         mapping = MultiMap(mapping)
 
         pages = set()
 
-        for key in mapping.keys():
+        for key in list(mapping.keys()):
             values = list(flatten_iterator(mapping[key]))
             includes = [x for x in values if not x.startswith('NOT ')]
             kwargs = {'key': key, 'value__in': includes}
@@ -307,7 +307,7 @@ class FilterByMetaData(macros.Macro):
 
         # filter the pages with `AND`
         res = set()
-        for key in mapping.keys():
+        for key in list(mapping.keys()):
             for page in pages:
                 e = [x[4:] for x in mapping[key] if x.startswith('NOT ')]
                 i = [x for x in mapping[key] if not x.startswith('NOT ')]
@@ -322,9 +322,9 @@ class FilterByMetaData(macros.Macro):
         names = sorted(names, key=lambda s: s.lower())
 
         if not names:
-            return nodes.error_box(_(u'No result'),
-                _(u'The metadata filter has found no results. Query: %(query)s') % {
-                    'query': u'; '.join(self.filters)})
+            return nodes.error_box(_('No result'),
+                _('The metadata filter has found no results. Query: %(query)s') % {
+                    'query': '; '.join(self.filters)})
 
         # build the node
         result = nodes.List('unordered')
@@ -342,21 +342,21 @@ class PageName(macros.Macro):
     knows about that.  This is only useful when rendered from
     a wiki page.
     """
-    names = (u'PageName', u'Seitenname')
+    names = ('PageName', 'Seitenname')
     allowed_context = ['wiki']
 
     def build_node(self, context, format):
         wiki_page = context.kwargs.get('wiki_page', None)
         if wiki_page:
             return nodes.Text(wiki_page.title)
-        return nodes.Text(_(u'Unknown page'))
+        return nodes.Text(_('Unknown page'))
 
 
 class Template(macros.Macro):
     """
     Include a page as template and expand it.
     """
-    names = (u'Template', u'Vorlage')
+    names = ('Template', 'Vorlage')
     has_argument_parser = True
     is_static = True
     allowed_context = ['forum', 'ikhaya', 'wiki']
@@ -367,7 +367,7 @@ class Template(macros.Macro):
             self.context = []
             return
 
-        items = kwargs.items()
+        items = list(kwargs.items())
         for idx, arg in enumerate(args[1:]):
             items.append(('arguments.%d' % idx, arg))
         # TODO: kill WIKI_ prefix here
@@ -385,10 +385,10 @@ class Attachment(macros.Macro):
     """
     This macro displays a download link for an attachment.
     """
-    names = (u'Attachment', u'Anhang')
+    names = ('Attachment', 'Anhang')
     arguments = (
-        ('attachment', unicode, u''),
-        ('text', unicode, u''),
+        ('attachment', str, ''),
+        ('text', str, ''),
     )
     allowed_context = ['wiki']
 
@@ -424,13 +424,13 @@ class Picture(macros.Macro):
     by the fact that the parser does not know at parse time on which page
     it is operating.
     """
-    names = (u'Picture', u'Bild')
+    names = ('Picture', 'Bild')
     arguments = (
-        ('picture', unicode, u''),
-        ('size', unicode, u''),
-        ('align', unicode, u''),
-        ('alt', unicode, None),
-        ('title', unicode, None)
+        ('picture', str, ''),
+        ('size', str, ''),
+        ('align', str, ''),
+        ('alt', str, None),
+        ('title', str, None)
     )
     allowed_context = ['ikhaya', 'wiki']
 
@@ -449,9 +449,9 @@ class Picture(macros.Macro):
         ret_ = build_picture_node.send(sender=self,
                                        context=context,
                                        format=format)
-        ret = filter(None, itertools.chain(
-            map(operator.itemgetter(1), ret_)
-        ))
+        ret = [_f for _f in itertools.chain(
+            list(map(operator.itemgetter(1), ret_))
+        ) if _f]
 
         if ret:
             assert len(ret) == 1, "There must not be more than one node tree per context"

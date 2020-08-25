@@ -24,7 +24,7 @@ class InyokaAuthBackend(object):
     * anonymous permissions
     """
 
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         """
         Authenticate a user with `username` (which can also be the email
         address) and `password`.
@@ -96,7 +96,7 @@ class InyokaAuthBackend(object):
         if obj is not None:
             return False
 
-        if not (user_obj.is_active or user_obj.is_anonymous()):
+        if not (user_obj.is_active or user_obj.is_anonymous):
             return False
 
         return perm in self.get_all_permissions(user_obj, obj)
@@ -108,7 +108,7 @@ class InyokaAuthBackend(object):
         Inactive Users, except anonymous, always get back `False` for security
         reasons.
         """
-        if not (user_obj.is_active or user_obj.is_anonymous()):
+        if not (user_obj.is_active or user_obj.is_anonymous):
             return False
 
         for perm in self.get_all_permissions(user_obj):

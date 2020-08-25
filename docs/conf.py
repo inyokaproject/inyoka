@@ -41,8 +41,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Inyoka'
-copyright = u'2007 - %d by the Inyoka Team, see AUTHORS for more details' % datetime.date.today().year
+project = 'Inyoka'
+copyright = '2007 - %d by the Inyoka Team, see AUTHORS for more details' % datetime.date.today().year
 
 # Show todo notes
 todo_include_todos = True

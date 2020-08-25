@@ -57,12 +57,12 @@ def reactivate_user(id, email, status):
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
-        msg = _(u'This e-mail address is used by another user.')
+        msg = _('This e-mail address is used by another user.')
         raise ValidationError(msg)
 
     user = User.objects.get(id=id)
     if not user.is_deleted:
-        raise ValidationError(_(u'The account “%(name)s” was already reactivated.') %
+        raise ValidationError(_('The account “%(name)s” was already reactivated.') %
                               {'name': escape(user.username)},)
 
     user.email = email
@@ -81,8 +81,8 @@ def reactivate_user(id, email, status):
     if user.status == User.STATUS_ACTIVE:
         user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
 
-    return _(u'The account “%(name)s” was reactivated. Please use the '
-             u'password recovery function to set a new password.') % {'name': escape(user.username)}
+    return _('The account “%(name)s” was reactivated. Please use the '
+             'password recovery function to set a new password.') % {'name': escape(user.username)}
 
 
 def deactivate_user(user):
@@ -98,7 +98,7 @@ def deactivate_user(user):
         'status': user.status,
     }
 
-    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') % {
+    subject = _('Deactivation of your account “%(name)s” on %(sitename)s') % {
         'name': escape(user.username),
         'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
@@ -128,7 +128,7 @@ def send_new_email_confirmation(user, email):
         'user': user,
         'token': signing.dumps(data, salt='inyoka.action.set_new_email'),
     })
-    subject = _(u'%(sitename)s – Confirm email address') % {
+    subject = _('%(sitename)s – Confirm email address') % {
         'sitename': settings.BASE_DOMAIN_NAME
     }
     send_mail(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL, [email])
@@ -150,14 +150,14 @@ def set_new_email(id, email):
         'new_email': email,
         'token': signing.dumps(data, salt='inyoka.action.reset_email'),
     })
-    subject = _(u'%(sitename)s – Email address changed') % {
+    subject = _('%(sitename)s – Email address changed') % {
         'sitename': settings.BASE_DOMAIN_NAME
     }
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
     user.email = email
     user.save()
-    return _(u'Your new email address was saved.')
+    return _('Your new email address was saved.')
 
 
 def reset_email(id, email):
@@ -165,7 +165,7 @@ def reset_email(id, email):
     user.email = email
     user.save()
 
-    return _(u'Your email address was reset.')
+    return _('Your email address was reset.')
 
 
 def send_activation_mail(user):
@@ -175,7 +175,7 @@ def send_activation_mail(user):
         'email': user.email,
         'activation_key': gen_activation_key(user)
     })
-    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') % {
+    subject = _('%(sitename)s – Activation of the user “%(name)s”') % {
         'sitename': settings.BASE_DOMAIN_NAME,
         'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -260,50 +260,50 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     STATUS_BANNED = 2
     STATUS_DELETED = 3
     STATUS_CHOICES = (
-        (STATUS_INACTIVE, ugettext_lazy(u'not yet activated')),
-        (STATUS_ACTIVE, ugettext_lazy(u'active')),
-        (STATUS_BANNED, ugettext_lazy(u'banned')),
-        (STATUS_DELETED, ugettext_lazy(u'deleted himself')),
+        (STATUS_INACTIVE, ugettext_lazy('not yet activated')),
+        (STATUS_ACTIVE, ugettext_lazy('active')),
+        (STATUS_BANNED, ugettext_lazy('banned')),
+        (STATUS_DELETED, ugettext_lazy('deleted himself')),
     )
     #: Assign the `username` field
     USERNAME_FIELD = 'username'
 
     objects = UserManager()
 
-    username = models.CharField(verbose_name=ugettext_lazy(u'Username'),
+    username = models.CharField(verbose_name=ugettext_lazy('Username'),
                                 max_length=30, unique=True, db_index=True)
-    email = models.EmailField(verbose_name=ugettext_lazy(u'Email address'),
+    email = models.EmailField(verbose_name=ugettext_lazy('Email address'),
                               unique=True, db_index=True)
-    status = models.IntegerField(verbose_name=ugettext_lazy(u'Activation status'),
+    status = models.IntegerField(verbose_name=ugettext_lazy('Activation status'),
                                  default=STATUS_INACTIVE,
                                  choices=STATUS_CHOICES)
-    date_joined = models.DateTimeField(verbose_name=ugettext_lazy(u'Member since'),
+    date_joined = models.DateTimeField(verbose_name=ugettext_lazy('Member since'),
                                        default=datetime.utcnow)
 
-    banned_until = models.DateTimeField(verbose_name=ugettext_lazy(u'Banned until'),
+    banned_until = models.DateTimeField(verbose_name=ugettext_lazy('Banned until'),
                                         null=True, blank=True,
-                                        help_text=ugettext_lazy(u'leave empty to ban permanent'))
+                                        help_text=ugettext_lazy('leave empty to ban permanent'))
 
     # profile attributes
-    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
+    avatar = models.ImageField(ugettext_lazy('Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
-    jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
-    signature = InyokaMarkupField(verbose_name=ugettext_lazy(u'Signature'), blank=True)
-    location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG fingerprint'), max_length=255, blank=True)
-    website = models.URLField(ugettext_lazy(u'Website'), blank=True)
-    launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
-    settings = JSONField(ugettext_lazy(u'Settings'), default={})
+    jabber = models.CharField(ugettext_lazy('Jabber'), max_length=200, blank=True)
+    signature = InyokaMarkupField(verbose_name=ugettext_lazy('Signature'), blank=True)
+    location = models.CharField(ugettext_lazy('Residence'), max_length=200, blank=True)
+    gpgkey = models.CharField(ugettext_lazy('GPG fingerprint'), max_length=255, blank=True)
+    website = models.URLField(ugettext_lazy('Website'), blank=True)
+    launchpad = models.CharField(ugettext_lazy('Launchpad username'), max_length=50, blank=True)
+    settings = JSONField(ugettext_lazy('Settings'), default={})
 
     # forum attribute
-    forum_read_status = models.TextField(ugettext_lazy(u'Read posts'), blank=True)
+    forum_read_status = models.BinaryField(ugettext_lazy('Read posts'), blank=True)
 
     # member title
-    member_title = models.CharField(ugettext_lazy(u'Team affiliation / Member title'),
+    member_title = models.CharField(ugettext_lazy('Team affiliation / Member title'),
                                     blank=True, null=True, max_length=200)
 
     # member icon
-    icon = models.FilePathField(ugettext_lazy(u'Group icon'),
+    icon = models.FilePathField(ugettext_lazy('Group icon'),
                             path=os.path.join(inyoka_settings.MEDIA_ROOT,'portal/team_icons'),
                             match='.*\.png', blank=True, null=True)
 
@@ -316,7 +316,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         cache.delete_many(['portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.username
 
     @transaction.atomic
@@ -344,7 +344,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
             self.username = new_name
             self.save()
             if send_mail:
-                subject = _(u'Your user name on {sitename} has been changed to “{name}”') \
+                subject = _('Your user name on {sitename} has been changed to “{name}”') \
                     .format(name=escape(self.username), sitename=settings.BASE_DOMAIN_NAME)
                 text = render_template('mails/account_rename.txt', {
                     'user': self,
@@ -355,11 +355,13 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         else:
             return False
 
+    @property
     def is_anonymous(self):
         return self.username == settings.ANONYMOUS_USER_NAME
 
+    @property
     def is_authenticated(self):
-        return not self.is_anonymous()
+        return not self.is_anonymous
 
     @property
     def is_active(self):
@@ -379,7 +381,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     @property
     def is_team_member(self):
-        if self.is_anonymous():
+        if self.is_anonymous:
             return False
         return self.groups.filter(name=settings.INYOKA_TEAM_GROUP_NAME).exists()
 
@@ -401,7 +403,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     @property
     def launchpad_url(self):
-        return u'http://launchpad.net/~%s' % escape(self.launchpad)
+        return 'http://launchpad.net/~%s' % escape(self.launchpad)
 
     @property
     def has_avatar(self):
@@ -421,7 +423,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     @property
     def jabber_url(self):
-        return u'xmpp:%s' % escape(self.jabber)
+        return 'xmpp:%s' % escape(self.jabber)
 
     @property
     def icon_url(self):
@@ -547,7 +549,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
 
 class UserPage(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     content = InyokaMarkupField()
 
 

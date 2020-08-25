@@ -14,13 +14,12 @@ from django import forms
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import StackExhaused, parse
+from inyoka.markup.base import StackExhaused, parse
 from inyoka.utils.diff3 import merge
 from inyoka.utils.forms import DateWidget, UserField, TopicField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.text import join_pagename, normalize_pagename
-from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege, test_changes_allowed
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import has_conflicts
@@ -29,11 +28,11 @@ from inyoka.wiki.utils import has_conflicts
 class NewArticleForm(SurgeProtectionMixin, forms.Form):
     """Form for creating new wiki articles."""
     name = forms.CharField(widget=forms.TextInput(), required=True,
-                           label=_(u'The title of the article you want to '
-                                   u'create.'))
+                           label=ugettext_lazy('The title of the article you want to '
+                                   'create.'))
     template = forms.ChoiceField(required=False,
-                                 label=_(u'The template that this new article '
-                                         u'should be using.'))
+                                 label=ugettext_lazy('The template that this new article '
+                                         'should be using.'))
 
     def __init__(self, user=None, reserved_names=[], template_choices=[],
                  data=None):
@@ -59,25 +58,25 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
         # If user has no right to create the article, alter the name to include
         # the "construction" prefix.
         if not has_privilege(self.user, name, 'create'):
-            name = join_pagename(storage['wiki_newpage_root'], u'./' + name)
+            name = join_pagename(storage['wiki_newpage_root'], './' + name)
             # See if the user now has the right to create this page.
             if not has_privilege(self.user, name, 'create'):
                 # This could mean that the page exists and was previously
                 # marked as deleted.
-                raise forms.ValidationError(_(u'You do not have permission to '
-                                              u'create this page.'),
+                raise forms.ValidationError(_('You do not have permission to '
+                                              'create this page.'),
                                             code='requires_privilege')
 
         # make sure the name does not conflict with basic wiki views, such as
         # create, edit, last_changes etc.
         if name in self.reserved_names:
-                raise forms.ValidationError(_(u'You can not create a page '
-                                              u'with a reserved name.'),
+                raise forms.ValidationError(_('You can not create a page '
+                                              'with a reserved name.'),
                                             code='reserved_name')
 
         # See if the page already exists.
         if Page.objects.filter(name__iexact=name).exists():
-            raise forms.ValidationError(_(u'The page %(name)s already exists.'),
+            raise forms.ValidationError(_('The page %(name)s already exists.'),
                                         code='page_exists',
                                         params={'name': name})
         return name
@@ -91,8 +90,8 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
 
         if not has_privilege(self.user, template, 'read'):
             # Honestly, this should never happen.
-            raise forms.ValidationError(_(u'You do not have permission to read '
-                                          u'this template.'),
+            raise forms.ValidationError(_('You do not have permission to read '
+                                          'this template.'),
                                         code='require_read_privilege')
         return template
 
@@ -118,7 +117,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         revision.
     """
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 50}))
-    note = forms.CharField(label=ugettext_lazy(u'Edit summary'),
+    note = forms.CharField(label=ugettext_lazy('Edit summary'),
                            widget=forms.TextInput(attrs={'size': 50}),
                            max_length=512, required=True,
                            help_text=storage['wiki_edit_note_rendered'])
@@ -163,35 +162,35 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
                                  new=data['text'])
             data['edit_time'] = datetime.utcnow()
             self.data = data
-            self.add_error('text', _(u'Somebody else edited the page while you '
-                                     u'were making your changes. We tried to '
-                                     u'merge the text automatically. Please '
-                                     u'confirm that everything is ok.'))
+            self.add_error('text', _('Somebody else edited the page while you '
+                                     'were making your changes. We tried to '
+                                     'merge the text automatically. Please '
+                                     'confirm that everything is ok.'))
 
     def clean_text(self):
         text = self.cleaned_data['text']
 
         if text == self.old_rev.text.value:
-            raise forms.ValidationError(_(u'You have not made any changes.'),
+            raise forms.ValidationError(_('You have not made any changes.'),
                                         code='unchanged')
 
         try:
             tree = parse(text, catch_stack_errors=False)
         except StackExhaused:
-            raise forms.ValidationError(_(u'The text contains too many nested '
-                                          u'elements.'),
+            raise forms.ValidationError(_('The text contains too many nested '
+                                          'elements.'),
                                         code='stack_exhausted')
 
         if has_conflicts(tree):
-            raise forms.ValidationError(_(u'The text contains conflict markers.'),
+            raise forms.ValidationError(_('The text contains conflict markers.'),
                                         code='contains_conflicts')
 
         if not test_changes_allowed(self.user,
                                     self.name,
                                     self.old_rev.text.value,
                                     text):
-            raise forms.ValidationError(_(u'You are not permitted to make '
-                                          u'this change.'),
+            raise forms.ValidationError(_('You are not permitted to make '
+                                          'this change.'),
                                         code='require_privilege')
 
         return text
@@ -222,16 +221,16 @@ class AddAttachmentForm(forms.Form):
     attachment = forms.FileField(required=True)
 
     filename = forms.CharField(max_length=512, required=False,
-                help_text=ugettext_lazy(u'Rename the file after upload'))
+                help_text=ugettext_lazy('Rename the file after upload'))
 
-    override = forms.BooleanField(label=ugettext_lazy(u'Overwrite existing file with same name'),
+    override = forms.BooleanField(label=ugettext_lazy('Overwrite existing file with same name'),
                                   required=False)
 
-    text = forms.CharField(label=ugettext_lazy(u'Description of attachment'),
+    text = forms.CharField(label=ugettext_lazy('Description of attachment'),
                            widget=forms.Textarea,
                            required=False)
 
-    note = forms.CharField(label=ugettext_lazy(u'Edit summary'), max_length=512, required=False)
+    note = forms.CharField(label=ugettext_lazy('Edit summary'), max_length=512, required=False)
 
 
 class EditAttachmentForm(forms.Form):
@@ -240,10 +239,10 @@ class EditAttachmentForm(forms.Form):
     description, have a look at the AddAttachmentForm.
     """
     attachment = forms.FileField(required=False)
-    text = forms.CharField(label=ugettext_lazy(u'Description of attachment'),
+    text = forms.CharField(label=ugettext_lazy('Description of attachment'),
                            widget=forms.Textarea,
                            required=False)
-    note = forms.CharField(label=ugettext_lazy(u'Edit summary'),
+    note = forms.CharField(label=ugettext_lazy('Edit summary'),
                            max_length=512, required=False)
 
 
@@ -254,8 +253,8 @@ class ManageDiscussionForm(forms.Form):
 
 class MvBaustelleForm(forms.Form):
     """Move page to the "Baustelle"""
-    new_name = forms.CharField(label=ugettext_lazy(u'New page name'), required=True)
+    new_name = forms.CharField(label=ugettext_lazy('New page name'), required=True)
     user = UserField(label=ugettext_lazy('Edited by'), required=True)
-    completion_date = forms.DateField(label=ugettext_lazy(u'Completion date'),
+    completion_date = forms.DateField(label=ugettext_lazy('Completion date'),
                                       required=False, widget=DateWidget,
                                       localize=True)

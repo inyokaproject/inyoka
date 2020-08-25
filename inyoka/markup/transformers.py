@@ -18,7 +18,7 @@
 import re
 
 from django.conf import settings
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
 
 from inyoka.markup import nodes
@@ -57,7 +57,7 @@ class AutomaticParagraphs(Transformer):
 
         def flush_text_buf():
             if text_buf:
-                text = u''.join(text_buf)
+                text = ''.join(text_buf)
                 if text:
                     yield nodes.Text(text)
                 del text_buf[:]
@@ -90,7 +90,7 @@ class AutomaticParagraphs(Transformer):
                 blockiter = iter(_paragraph_re.split(child.text))
                 for block in blockiter:
                     try:
-                        is_paragraph = blockiter.next()
+                        is_paragraph = next(blockiter)
                     except StopIteration:
                         is_paragraph = False
                     if block:
@@ -157,16 +157,16 @@ class SmileyInjector(Transformer):
         these regional indicators as flags.
         See https://en.wikipedia.org/wiki/Regional_Indicator_Symbol
         """
-        country_code = unicode.lower(country_code)
+        country_code = str.lower(country_code)
 
         # reproduces the legacy behaviour, that {en} displayed the british flag
-        if country_code == u'en':
-            country_code = u'gb'
+        if country_code == 'en':
+            country_code = 'gb'
 
         def to_regional_indicator(char):
-            return unichr(ord(char) - ord(u'a') + ord(u'🇦'))
+            return chr(ord(char) - ord('a') + ord('🇦'))
 
-        return u''.join(to_regional_indicator(char) for char in country_code)
+        return ''.join(to_regional_indicator(char) for char in country_code)
 
     def _new_smiley_node(self, match):
         if match.group('country_code'):
@@ -187,12 +187,12 @@ class SmileyInjector(Transformer):
         As DEFAULT_TRANSFORMERS instances this class and it's passed around,
         this property will be cached until the python process dies.
         """
-        helper = u'|'.join(re.escape(smart_unicode(s)) for s in self.smilies)
-        helper += u'|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
+        helper = '|'.join(re.escape(smart_text(s)) for s in self.smilies)
+        helper += '|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
         regex = (
-            u'(?<![\d\w])'  # don't precede smileys with alnum chars
-            u'({helper})'
-            u'(?![\d\w])'.format(helper=helper))
+            '(?<![\d\w])'  # don't precede smileys with alnum chars
+            '({helper})'
+            '(?![\d\w])'.format(helper=helper))
         return re.compile(regex, re.UNICODE)
 
 
@@ -237,7 +237,7 @@ class FootnoteSupport(Transformer):
             container = nodes.List('unordered', class_='footnotes')
             for footnote in footnotes:
                 backlink = nodes.Link('#bfn-%d' % footnote.id,
-                                      [nodes.Text(unicode(footnote.id))],
+                                      [nodes.Text(str(footnote.id))],
                                       id='fn-%d' % footnote.id)
                 node = nodes.ListItem([backlink, nodes.Text(': ')] +
                                       footnote.children)

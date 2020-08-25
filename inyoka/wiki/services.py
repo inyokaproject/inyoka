@@ -19,7 +19,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 
 from inyoka.forum.models import Post as ForumPost
-from inyoka.markup import parse, RenderContext
+from inyoka.markup.base import RenderContext, parse
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.wiki.models import Page
 from inyoka.wiki.exceptions import CaseSensitiveException

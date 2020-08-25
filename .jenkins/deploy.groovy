@@ -20,7 +20,7 @@ pipeline {
         if ${REBUILD_VENV}
         then
           rm -rf venv
-          virtualenv --no-download venv
+          virtualenv --python=python3 --no-download venv
           . /srv/local/ubuntuusers/${params.DEPLOY_SITE}/venv/bin/activate
           pip install --upgrade pip --no-cache-dir
           pip install -r inyoka/extra/requirements/development.txt

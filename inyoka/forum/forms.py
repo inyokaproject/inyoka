@@ -50,7 +50,7 @@ class ForumField(forms.ChoiceField):
             if f.is_category:
                 choices.append((f.name, []))
             else:
-                title = f.name[0] + u' ' + (u'   ' * offset) + f.name
+                title = f.name[0] + ' ' + ('   ' * offset) + f.name
                 choices[-1][1].append((f.id, title))
         self.choices = choices
 
@@ -170,8 +170,8 @@ class MoveTopicForm(forms.Form):
     def clean_forum(self):
         new_forum_id = self.cleaned_data['forum']
         if new_forum_id == self.current_forum.id:
-            raise forms.ValidationError(_(u'The topic is already in this '
-                                          u'forum'))
+            raise forms.ValidationError(_('The topic is already in this '
+                                          'forum'))
 
         return Forum.objects.get(id=new_forum_id)
 
@@ -209,8 +209,8 @@ class SplitTopicForm(forms.Form):
     def clean_forum(self):
         forum = Forum.objects.get(id=self.cleaned_data.get('forum'))
         if forum.is_category:
-            raise forms.ValidationError(_(u'You cannot move a topic into a '
-                                          u'category. Please choose a forum.'))
+            raise forms.ValidationError(_('You cannot move a topic into a '
+                                          'category. Please choose a forum.'))
         return forum
 
 
@@ -232,11 +232,13 @@ class AddAttachmentForm(forms.Form):
     `description`
         The description of the attachment as textarea.
     """
-    attachment = forms.FileField(required=True)
+    attachment = forms.FileField()
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
-    comment = forms.CharField(label=ugettext_lazy(u'Description'), required=False,
+    comment = forms.CharField(label=ugettext_lazy('Description'), required=False,
                   widget=forms.TextInput(attrs={'size': '60'}))
+
+    use_required_attribute = False
 
 
 class AddPollForm(forms.Form):
@@ -246,6 +248,8 @@ class AddPollForm(forms.Form):
     duration = forms.IntegerField(min_value=1, max_value=3650, required=False,
                                   widget=forms.TextInput(attrs={'size': '3'}))
 
+    use_required_attribute = False
+
 
 class ReportTopicForm(forms.Form):
     """
@@ -253,7 +257,7 @@ class ReportTopicForm(forms.Form):
     It's only field is a text field where the user can write why he thinks
     that the moderators should have a look at this topic.
     """
-    text = forms.CharField(label=ugettext_lazy(u'Reason'), widget=forms.Textarea)
+    text = forms.CharField(label=ugettext_lazy('Reason'), widget=forms.Textarea)
 
 
 class ReportListForm(forms.Form):
@@ -283,19 +287,19 @@ class EditForumForm(forms.ModelForm):
     def clean_welcome_title(self):
         data = self.cleaned_data
         if data.get('welcome_text') and not data.get('welcome_title'):
-            raise forms.ValidationError(ugettext_lazy(u'You must enter a title '
-                u'in order to set the welcome message'))
+            raise forms.ValidationError(ugettext_lazy('You must enter a title '
+                'in order to set the welcome message'))
         return data['welcome_title']
 
     def clean_welcome_msg_text(self):
         data = self.cleaned_data
         if data.get('welcome_title') and not data.get('welcome_text'):
-            raise forms.ValidationError(ugettext_lazy(u'You must enter a text '
-                u'in order to set the welcome message'))
+            raise forms.ValidationError(ugettext_lazy('You must enter a text '
+                'in order to set the welcome message'))
         return data['welcome_text']
 
     def clean_slug(self):
         data = slugify(self.cleaned_data['slug'])
         if data == 'new':
-            raise forms.ValidationError(ugettext_lazy(u'“new” is not a valid forum slug'))
+            raise forms.ValidationError(ugettext_lazy('“new” is not a valid forum slug'))
         return data

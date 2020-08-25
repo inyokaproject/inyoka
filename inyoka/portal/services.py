@@ -11,7 +11,7 @@
 """
 import time
 from hashlib import md5
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -64,8 +64,8 @@ def get_group_autocompletion(request):
 @dispatcher.register()
 def get_captcha(request):
     captcha = Captcha()
-    h = md5(settings.SECRET_KEY)
-    h.update(captcha.solution)
+    h = md5(settings.SECRET_KEY.encode())
+    h.update(captcha.solution.encode())
     request.session['captcha_solution'] = h.hexdigest()
     response = captcha.get_response()
     # Save the solution for easier testing
@@ -102,7 +102,7 @@ def get_calendar_entry(request):
 
 @dispatcher.register()
 def toggle_sidebar(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return False
     component = request.GET.get('component')
     if component not in ('ikhaya', 'planet', 'admin'):
@@ -118,7 +118,7 @@ def toggle_sidebar(request):
 
 @dispatcher.register()
 def hide_global_message(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         request.user.settings['global_message_hidden'] = time.time()
         request.user.save(update_fields=['settings'])
         return True

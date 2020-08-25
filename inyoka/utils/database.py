@@ -15,7 +15,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.signals import post_save as model_post_save_signal
 
-from inyoka.markup import RenderContext, parse
+from inyoka.markup.base import RenderContext, parse
 from inyoka.utils.highlight import highlight_code
 
 MAX_SLUG_INCREMENT = 999
@@ -53,7 +53,7 @@ def find_next_increment(model, column, string, **query_opts):
     filter.update(query_opts)
     if not model.objects.filter(**filter).exists():
         return slug
-    filter = {'%s__startswith' % column: slug + u'-'}
+    filter = {'%s__startswith' % column: slug + '-'}
     filter.update(query_opts)
     existing = model.objects.filter(**filter).values_list(column, flat=True)
     # strip of the common prefix
@@ -110,7 +110,7 @@ class LockableObject(object):
     lock_key_base = None
 
     def _get_lock_key(self):
-        return u'/'.join((self.lock_key_base.strip('/'), unicode(self.id)))
+        return '/'.join((self.lock_key_base.strip('/'), str(self.id)))
 
     def lock(self, request):
         """Lock for 15 Minutes"""
@@ -132,7 +132,7 @@ class SimpleDescriptor(object):
     def __get__(self, obj, owner):
         value = obj.__dict__[self.field.name]
         # we don't try to deserialize empty strings
-        if value and isinstance(value, basestring):
+        if value and isinstance(value, str):
             value = self.field.loads(value)
             obj.__dict__[self.field.name] = value
         return value
@@ -148,14 +148,14 @@ class JSONField(models.TextField):
     def dumps(self, obj):
         return json.dumps(obj, cls=DjangoJSONEncoder)
 
-    def pre_save(self, obj, create):
+    def pre_save(self, obj, add):
         value = obj.__dict__[self.name]
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             value = self.dumps(value)
         return value
 
-    def contribute_to_class(self, cls, name):
-        super(JSONField, self).contribute_to_class(cls, name)
+    def contribute_to_class(self, cls, name, private_only=False):
+        super().contribute_to_class(cls, name, private_only)
         setattr(cls, self.name, SimpleDescriptor(self))
 
 

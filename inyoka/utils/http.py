@@ -62,13 +62,13 @@ def does_not_exist_is_404(f):
     return patch_wrapper(proxy, f)
 
 
-def global_not_found(request, err_message=None):
+def global_not_found(request, err_message=None, exception=None):
     return TemplateResponse('errors/404.html', {
         'err_message': err_message,
     }, 404)
 
 
-def server_error(request):
+def server_error(request, exception=None):
     return render(request, 'errors/500.html', {'request' : request, 'dsn' : settings.RAVEN_PUBLIC_DSN}, status=500)
 
 

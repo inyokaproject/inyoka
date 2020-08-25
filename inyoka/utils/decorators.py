@@ -40,7 +40,7 @@ class deferred(object):
     @staticmethod
     def clear(obj):
         """Clear all deferred objects on that class."""
-        for key, value in obj.__class__.__dict__.iteritems():
+        for key, value in obj.__class__.__dict__.items():
             if getattr(value, '__class__', None) is deferred:
                 try:
                     delattr(obj, key)

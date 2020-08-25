@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import django.db.models.deletion
@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='privilege',
             name='group',
-            field=models.ForeignKey(to='auth.Group', null=True),
+            field=models.ForeignKey(to='auth.Group', null=True, on_delete=models.CASCADE),
         ),
     ]

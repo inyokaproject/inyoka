@@ -11,7 +11,8 @@
 """
 import unittest
 
-from inyoka.markup import Parser, nodes
+from inyoka.markup import nodes
+from inyoka.markup.base import Parser
 from inyoka.portal.models import Linkmap
 from inyoka.markup.nodes import InterWikiLink
 from inyoka.utils.urls import href

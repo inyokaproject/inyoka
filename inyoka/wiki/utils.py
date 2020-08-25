@@ -34,8 +34,9 @@ def case_sensitive_redirect(function):
 
 def has_conflicts(text):
     """Returns `True` if there are conflict markers in the text."""
-    from inyoka.markup import parse, nodes
-    if isinstance(text, basestring):
+    from inyoka.markup import nodes
+    from inyoka.markup.base import parse
+    if isinstance(text, str):
         text = parse(text)
     return text.query.all.by_type(nodes.ConflictMarker).has_any
 
@@ -52,13 +53,13 @@ def quote_text(text, author=None, item_url=None):
         pass
 
     if item_url:
-        by = author and (u'[user:%s:] [%s schrieb]:\n' % (author, item_url)) or u''
+        by = author and ('[user:%s:] [%s schrieb]:\n' % (author, item_url)) or ''
     else:
-        by = author and (u"[user:%s:] schrieb:\n" % author) or u''
-    return text and by + u'\n'.join(
+        by = author and ("[user:%s:] schrieb:\n" % author) or ''
+    return text and by + '\n'.join(
         '>' + (not line.startswith('>') and ' ' or '') + line
         for line in text.split('\n')
-    ) or u''
+    ) or ''
 
 
 def get_safe_redirect_target(target=None):

@@ -18,7 +18,7 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from urlparse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 
 from django.apps import apps
 from django.conf import settings
@@ -93,7 +93,7 @@ class BaseNode(object):
     is_raw = False
 
     #: the value of the node as text
-    text = u''
+    text = ''
 
     #: whether the node is just for creating line breaks
     is_linebreak_node = False
@@ -162,7 +162,7 @@ class Text(Node):
     is_text_node = True
     allowed_in_signatures = True
 
-    def __init__(self, text=u''):
+    def __init__(self, text=''):
         self.text = text
 
     def prepare_html(self):
@@ -176,7 +176,7 @@ class HTML(Node):
 
     allowed_in_signatures = True
 
-    def __init__(self, html=u'', block_level=True):
+    def __init__(self, html='', block_level=True):
         self.html = html
         self.is_block_tag = block_level
 
@@ -224,7 +224,7 @@ class Newline(Node):
         return '\n'
 
     def prepare_html(self):
-        yield u'<br />'
+        yield '<br />'
 
 
 class Ruler(Node):
@@ -235,7 +235,7 @@ class Ruler(Node):
     is_block_tag = True
 
     def prepare_html(self):
-        yield u'<hr />'
+        yield '<hr />'
 
 
 class ConflictMarker(Node):
@@ -250,13 +250,13 @@ class ConflictMarker(Node):
         self.type = type
 
     def prepare_html(self):
-        yield u'<div class="conflict conflict-%s">' % self.type
+        yield '<div class="conflict conflict-%s">' % self.type
         yield {
-            'left': _(u'<strong>Conflict</strong> – remote version'),
-            'middle': _(u'<strong>Conflict</strong> – local Version'),
-            'right': _(u'<strong>Conflict End</strong>')
+            'left': _('<strong>Conflict</strong> – remote version'),
+            'middle': _('<strong>Conflict</strong> – local Version'),
+            'right': _('<strong>Conflict End</strong>')
         }[self.type]
-        yield u'</div>'
+        yield '</div>'
 
 
 class Macro(Node):
@@ -318,7 +318,7 @@ class Image(Node):
         self.style = style
 
     def prepare_html(self):
-        yield build_html_tag(u'img', src=self.href, alt=self.alt, id=self.id,
+        yield build_html_tag('img', src=self.href, alt=self.alt, id=self.id,
                              class_=self.class_, style=self.style,
                              title=self.title, loading='lazy')
 
@@ -368,7 +368,7 @@ class Container(Node):
 
     @property
     def text(self):
-        return u''.join(x.text for x in self.children)
+        return ''.join(x.text for x in self.children)
 
     def prepare_html(self):
         for child in self.children:
@@ -427,14 +427,14 @@ class Span(Element):
         Element.__init__(self, children, id, style, class_)
 
     def prepare_html(self):
-        yield build_html_tag(u'span',
+        yield build_html_tag('span',
             id=self.id,
             style=self.style,
             class_=self.class_,
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</span>'
+        yield '</span>'
 
 
 class InternalLink(Element):
@@ -450,7 +450,7 @@ class InternalLink(Element):
         if not children:
             title = get_pagetitle(page)
             if anchor:
-                text = _(u'{title} (section “{anchor}”)').format(title=title, anchor=anchor)
+                text = _('{title} (section “{anchor}”)').format(title=title, anchor=anchor)
             else:
                 text = title
             children = [Text(text)]
@@ -466,15 +466,15 @@ class InternalLink(Element):
         url = href('wiki', self.page)
         if self.anchor:
             url += '#' + urlquote_plus(self.anchor)
-        yield build_html_tag(u'a',
+        yield build_html_tag('a',
             href=url,
             id=self.id,
             style=self.style,
-            classes=('internal', u'' if self.existing else u'missing', self.class_)
+            classes=('internal', '' if self.existing else 'missing', self.class_)
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</a>'
+        yield '</a>'
 
 
 class InterWikiLink(Element):
@@ -502,16 +502,16 @@ class InterWikiLink(Element):
             return
         if self.anchor:
             target += '#' + self.anchor
-        yield build_html_tag(u'a',
+        yield build_html_tag('a',
             href=target,
             id=self.id,
             style=self.style,
-            classes=(u'interwiki', u'interwiki-' + self.token,
+            classes=('interwiki', 'interwiki-' + self.token,
                      self.class_)
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</a>'
+        yield '</a>'
 
     def resolve_interwiki_link(self):
         """
@@ -595,7 +595,7 @@ class Link(Element):
             class_ = 'external'
             rel = 'nofollow'
 
-        yield build_html_tag(u'a',
+        yield build_html_tag('a',
             rel=rel,
             id=self.id,
             style=self.style,
@@ -605,7 +605,7 @@ class Link(Element):
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</a>'
+        yield '</a>'
 
 
 class Section(Element):
@@ -621,11 +621,11 @@ class Section(Element):
         class_ = 'section_%d' % self.level
         if self.class_:
             class_ += ' ' + self.class_
-        yield build_html_tag(u'section', id=self.id, style=self.style,
+        yield build_html_tag('section', id=self.id, style=self.style,
                              class_=class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</section>'
+        yield '</section>'
 
 
 class Paragraph(Element):
@@ -643,11 +643,11 @@ class Paragraph(Element):
         return Element.text.__get__(self).strip() + '\n\n'
 
     def prepare_html(self):
-        yield build_html_tag(u'p', id=self.id, style=self.style,
+        yield build_html_tag('p', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</p>'
+        yield '</p>'
 
 
 class Error(Element):
@@ -659,14 +659,14 @@ class Error(Element):
     allows_paragraphs = True
 
     def prepare_html(self):
-        yield build_html_tag(u'div',
+        yield build_html_tag('div',
             id=self.id,
             style=self.style,
             classes=('error', self.class_)
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</div>'
+        yield '</div>'
 
 
 class Footnote(Element):
@@ -678,18 +678,18 @@ class Footnote(Element):
 
     def prepare_html(self):
         if self.id is None:
-            yield build_html_tag(u'small',
+            yield build_html_tag('small',
                 id=self.id,
                 style=self.style,
                 classes=('note', self.class_)
             )
             for item in Element.prepare_html(self):
                 yield item
-            yield u'</small>'
+            yield '</small>'
         else:
-            yield u'<a href="#fn-%d" id="bfn-%d" class="footnote">' \
-                  u'<span class="paren">[</span>%d<span class="paren">]' \
-                  u'</span></a>' % (self.id, self.id, self.id)
+            yield '<a href="#fn-%d" id="bfn-%d" class="footnote">' \
+                  '<span class="paren">[</span>%d<span class="paren">]' \
+                  '</span></a>' % (self.id, self.id, self.id)
 
 
 class Quote(Element):
@@ -701,11 +701,11 @@ class Quote(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'blockquote', id=self.id, style=self.style,
+        yield build_html_tag('blockquote', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</blockquote>'
+        yield '</blockquote>'
 
 
 class Edited(Element):
@@ -717,7 +717,7 @@ class Edited(Element):
     allowed_in_signatures = False
 
     #: Title message for the edited box
-    msg = ugettext_lazy(u'Edited by')
+    msg = ugettext_lazy('Edited by')
 
     #: CSS Class used for styling
     css_class = 'edited'
@@ -728,21 +728,21 @@ class Edited(Element):
         self.username = username
 
     def prepare_html(self):
-        yield u'<div class="%s">' % self.css_class
-        yield u'<p><strong>%s <a class="crosslink user" href="%s">' \
-              u'%s</a>:</strong></p> ' % (self.msg,
+        yield '<div class="%s">' % self.css_class
+        yield '<p><strong>%s <a class="crosslink user" href="%s">' \
+              '%s</a>:</strong></p> ' % (self.msg,
                 href('portal', 'user', self.username),
                   self.username)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</div>'
+        yield '</div>'
 
 
 class Moderated(Edited):
     """
     Text that describes a moderation action.
     """
-    msg = ugettext_lazy(u'Moderated by')
+    msg = ugettext_lazy('Moderated by')
     css_class = 'moderated'
 
 
@@ -755,11 +755,11 @@ class Preformatted(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'pre', id=self.id, style=self.style,
+        yield build_html_tag('pre', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</pre>'
+        yield '</pre>'
 
 
 class Headline(Element):
@@ -775,15 +775,15 @@ class Headline(Element):
             self.id = slugify(self.text, convert_lowercase=False)
 
     def prepare_html(self):
-        yield build_html_tag(u'h%d' % (self.level + 1),
+        yield build_html_tag('h%d' % (self.level + 1),
             id=self.id,
             style=self.style,
             class_=self.class_
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'<a href="#%s" class="headerlink">¶</a>' % self.id
-        yield u'</h%d>' % (self.level + 1)
+        yield '<a href="#%s" class="headerlink">¶</a>' % self.id
+        yield '</h%d>' % (self.level + 1)
 
 
 class Strong(Element):
@@ -795,11 +795,11 @@ class Strong(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'strong', id=self.id, style=self.style,
+        yield build_html_tag('strong', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</strong>'
+        yield '</strong>'
 
 
 class Highlighted(Strong):
@@ -811,11 +811,11 @@ class Highlighted(Strong):
         classes = ['highlighted']
         if self.class_:
             classes.append(self._class)
-        yield build_html_tag(u'strong', id=self.id, style=self.style,
+        yield build_html_tag('strong', id=self.id, style=self.style,
                              classes=classes)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</strong>'
+        yield '</strong>'
 
 
 class Emphasized(Element):
@@ -827,11 +827,11 @@ class Emphasized(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'em', id=self.id, style=self.style,
+        yield build_html_tag('em', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</em>'
+        yield '</em>'
 
 
 class SourceLink(Element):
@@ -849,12 +849,12 @@ class SourceLink(Element):
         return '[%d]' % self.target
 
     def prepare_html(self):
-        yield build_html_tag(u'sup', id=self.id, style=self.style,
+        yield build_html_tag('sup', id=self.id, style=self.style,
                              class_=self.class_)
-        yield u'<a href="#source-%d">' % self.target
+        yield '<a href="#source-%d">' % self.target
         for item in Element.prepare_html(self):
             yield item
-        yield u'</a></sup>'
+        yield '</a></sup>'
 
 
 class Code(Element):
@@ -867,11 +867,11 @@ class Code(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'code', id=self.id, style=self.style,
+        yield build_html_tag('code', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</code>'
+        yield '</code>'
 
 
 class Underline(Element):
@@ -884,14 +884,14 @@ class Underline(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'span',
+        yield build_html_tag('span',
             id=self.id,
             style=self.style,
             classes=('underline', self.class_)
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</span>'
+        yield '</span>'
 
 
 class Stroke(Element):
@@ -902,11 +902,11 @@ class Stroke(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'del', id=self.id, style=self.style,
+        yield build_html_tag('del', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</del>'
+        yield '</del>'
 
 
 class Small(Element):
@@ -918,11 +918,11 @@ class Small(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'small', id=self.id, style=self.style,
+        yield build_html_tag('small', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</small>'
+        yield '</small>'
 
 
 class Big(Element):
@@ -933,11 +933,11 @@ class Big(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'big', id=self.id, style=self.style,
+        yield build_html_tag('big', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</big>'
+        yield '</big>'
 
 
 class Sub(Element):
@@ -948,11 +948,11 @@ class Sub(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'sub', id=self.id, style=self.style,
+        yield build_html_tag('sub', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</sub>'
+        yield '</sub>'
 
 
 class Sup(Element):
@@ -963,11 +963,11 @@ class Sup(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag(u'sup', id=self.id, style=self.style,
+        yield build_html_tag('sup', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</sup>'
+        yield '</sup>'
 
 
 class Color(Element):
@@ -986,14 +986,14 @@ class Color(Element):
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
         style += 'color: %s' % self.value
-        yield build_html_tag(u'span',
+        yield build_html_tag('span',
             id=self.id,
             style=style,
             class_=self.class_
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</span>'
+        yield '</span>'
 
 
 class Size(Element):
@@ -1010,14 +1010,14 @@ class Size(Element):
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
         style += 'font-size: %.2f%%' % self.size
-        yield build_html_tag(u'span',
+        yield build_html_tag('span',
             id=self.id,
             style=style,
             class_=self.class_
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</span>'
+        yield '</span>'
 
 
 class Font(Element):
@@ -1039,14 +1039,14 @@ class Font(Element):
             x in ('serif', 'sans-serif', 'fantasy') and x or "'%s'" % x
             for x in self.faces
         )
-        yield build_html_tag(u'span',
+        yield build_html_tag('span',
             id=self.id,
             style=style,
             class_=self.class_
         )
         for item in Element.prepare_html(self):
             yield item
-        yield u'</span>'
+        yield '</span>'
 
 
 class DefinitionList(Element):
@@ -1056,11 +1056,11 @@ class DefinitionList(Element):
     is_block_tag = True
 
     def prepare_html(self):
-        yield build_html_tag(u'dl', id=self.id, style=self.style,
+        yield build_html_tag('dl', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</dl>'
+        yield '</dl>'
 
 
 class DefinitionTerm(Element):
@@ -1076,14 +1076,14 @@ class DefinitionTerm(Element):
         self.term = term
 
     def prepare_html(self):
-        yield build_html_tag(u'dt', class_=self.class_, style=self.style,
+        yield build_html_tag('dt', class_=self.class_, style=self.style,
                              id=self.id)
         yield escape(self.term)
-        yield u'</dt>'
-        yield build_html_tag(u'dd', class_=self.class_)
+        yield '</dt>'
+        yield build_html_tag('dd', class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</dd>'
+        yield '</dd>'
 
 
 class List(Element):
@@ -1099,16 +1099,16 @@ class List(Element):
 
     def prepare_html(self):
         if self.type == 'unordered':
-            tag = u'ul'
+            tag = 'ul'
             cls = None
         else:
-            tag = u'ol'
+            tag = 'ol'
             cls = self.type
         yield build_html_tag(tag, id=self.id, style=self.style,
                              classes=(self.class_, cls))
         for item in Element.prepare_html(self):
             yield item
-        yield u'</%s>' % tag
+        yield '</%s>' % tag
 
 
 class ListItem(Element):
@@ -1119,11 +1119,11 @@ class ListItem(Element):
     allows_paragraphs = True
 
     def prepare_html(self):
-        yield build_html_tag(u'li', id=self.id, style=self.style,
+        yield build_html_tag('li', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</li>'
+        yield '</li>'
 
 
 class Box(Element):
@@ -1145,24 +1145,24 @@ class Box(Element):
     def prepare_html(self):
         style = []
         if self.align:
-            style.append(u'text-align: ' + self.align)
+            style.append('text-align: ' + self.align)
         if self.valign:
-            style.append(u'vertical-align: ' + self.valign)
+            style.append('vertical-align: ' + self.valign)
         if self.style:
             style.append(self.style)
-        yield build_html_tag(u'div',
+        yield build_html_tag('div',
             id=self.id,
-            style=style and u' '.join(style) or None,
+            style=style and ' '.join(style) or None,
             classes=(self.class_,)
         )
         if self.title is not None:
-            yield build_html_tag(u'h3', class_=self.class_)
+            yield build_html_tag('h3', class_=self.class_)
             yield escape(self.title)
-            yield u'</h3>'
-        yield build_html_tag(u'div', classes=(u'contents',))
+            yield '</h3>'
+        yield build_html_tag('div', classes=('contents',))
         for item in Element.prepare_html(self):
             yield item
-        yield u'</div></div>'
+        yield '</div></div>'
 
 
 class Layer(Element):
@@ -1174,11 +1174,11 @@ class Layer(Element):
     allows_paragraphs = True
 
     def prepare_html(self):
-        yield build_html_tag(u'div', id=self.id, style=self.style,
+        yield build_html_tag('div', id=self.id, style=self.style,
                              class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</div>'
+        yield '</div>'
 
 
 class Table(Element):
@@ -1191,11 +1191,11 @@ class Table(Element):
         Element.__init__(self, children, id, style, class_)
 
     def prepare_html(self):
-        yield build_html_tag(u'table', id=self.id, class_=self.class_,
+        yield build_html_tag('table', id=self.id, class_=self.class_,
                              style=self.style)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</table>'
+        yield '</table>'
 
 
 class TableRow(Element):
@@ -1209,11 +1209,11 @@ class TableRow(Element):
         Element.__init__(self, children, id, style, class_)
 
     def prepare_html(self):
-        yield build_html_tag(u'tr', id=self.id, class_=self.class_,
+        yield build_html_tag('tr', id=self.id, class_=self.class_,
                              style=self.style)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</tr>'
+        yield '</tr>'
 
 
 class TableCell(Element):
@@ -1234,23 +1234,23 @@ class TableCell(Element):
     def prepare_html(self):
         style = []
         if self.align:
-            style.append(u'text-align: ' + self.align)
+            style.append('text-align: ' + self.align)
         if self.valign:
-            style.append(u'vertical-align: ' + self.valign)
+            style.append('vertical-align: ' + self.valign)
         if self.style:
             style.append(self.style)
 
         yield build_html_tag(self._html_tag,
             colspan=self.colspan or None,
             rowspan=self.rowspan or None,
-            style=style and u'; '.join(style) or None,
+            style=style and '; '.join(style) or None,
             id=self.id,
             class_=self.class_
         )
 
         for item in Element.prepare_html(self):
             yield item
-        yield u'</%s>' % self._html_tag
+        yield '</%s>' % self._html_tag
 
 
 class TableHeader(TableCell):

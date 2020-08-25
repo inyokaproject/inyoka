@@ -1,22 +1,22 @@
 from behave import given, step
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.core.cache import cache
-from guardian.shortcuts import assign_perm
 
-from form import do_form_fill_out
-from inyoka.pastebin.models import Entry
-from inyoka.portal.user import User
-from navigation import navigate_to_page
+from tests.bdd.steps.form import do_form_fill_out
+from tests.bdd.steps.navigation import navigate_to_page
 
 
 @given('The user "{username}" exits')
 def step_impl(context, username):
+    from inyoka.portal.user import User
+
     User.objects.register_user(username, '%s@ubuntuusers.local' % username, 'test', False)
 
 
 @given('The user "{username}" with status "{status_string}" exists')
 def step_impl(context, username, status_string):
+    from inyoka.portal.user import User
+
     user = User.objects.register_user(username, '%s@ubuntuusers.local' % username, 'test', False)
 
     status_type = User.STATUS_ACTIVE
@@ -33,6 +33,8 @@ def step_impl(context, username, status_string):
 
 @given('I have the permission "{permission}"')
 def step_impl(context, permission):
+    from guardian.shortcuts import assign_perm
+
     group = context.user.groups.get_queryset()[0]
     assign_perm(permission, group)
     cache.delete_pattern('/acl/*')
@@ -48,10 +50,12 @@ def step_impl(context, item, caption):
     :param item: A string with the item's type at the moment only 'paste' is supported
     :param caption: The caption/title/keyword/... part of that item.
     """
+    from inyoka.portal.user import User
 
     default_user = User.objects.register_user("bdd", "mail", None, False)
 
     if item == 'paste':
+        from inyoka.pastebin.models import Entry
         context.test_item = Entry.objects.create(title=caption, author=default_user, code="TEST")
         context.test_item.save(update_fields=['code'])  # Note: needed because the code field only updates on save
 
@@ -68,6 +72,9 @@ def step_impl(context, username):
     :type context: behave.runner.Context
     :param username: string
     """
+
+    from django.contrib.auth.models import Group
+    from inyoka.portal.user import User
 
     if username == "anonymous":
         anonymous = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)

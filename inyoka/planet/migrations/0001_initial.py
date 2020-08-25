@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(null=True, verbose_name='Description', blank=True)),
                 ('blog_url', models.URLField(verbose_name='URL of the blog')),
                 ('feed_url', models.URLField(verbose_name='URL of the feed')),
-                ('icon', models.ImageField(upload_to=b'planet/icons', verbose_name='Icon', blank=True)),
+                ('icon', models.ImageField(upload_to='planet/icons', verbose_name='Icon', blank=True)),
                 ('last_sync', models.DateTimeField(null=True, blank=True)),
                 ('active', models.BooleanField(default=True, verbose_name='Index the blog')),
             ],
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('author', models.CharField(max_length=50)),
                 ('author_homepage', models.URLField(null=True, blank=True)),
                 ('hidden', models.BooleanField(default=False)),
-                ('blog', models.ForeignKey(to='planet.Blog')),
+                ('blog', models.ForeignKey(to='planet.Blog', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('-pub_date',),

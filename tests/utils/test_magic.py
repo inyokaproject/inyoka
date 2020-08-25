@@ -15,5 +15,5 @@ class TestMagic(unittest.TestCase):
         self.assertEqual(magic.from_file(self.filename, mime=True), 'application/pdf')
 
     def test_from_buffer(self):
-        with open(self.filename) as fobj:
+        with open(self.filename, 'rb') as fobj:
             self.assertEqual(magic.from_buffer(fobj.read(1024)), 'PDF document, version 1.4')

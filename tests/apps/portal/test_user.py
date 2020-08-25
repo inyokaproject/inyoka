@@ -41,12 +41,12 @@ class TestUserModel(TestCase):
 
     def test_email_exists(self):
         with self.assertRaisesMessage(ValidationError,
-                                      u'This e-mail address is used by another user.'):
+                                      'This e-mail address is used by another user.'):
             reactivate_user(self.user.id, self.user.email, self.user.status)
 
     def test_user_is_already_reactivated(self):
         with self.assertRaisesMessage(ValidationError,
-                                      'The account \u201ctesting\u201d was already reactivated.'):
+                                      'The account “testing” was already reactivated.'):
             reactivate_user(self.user.id, 'test@example.com', self.user.status)
 
     def test_user_reactivate_after_ban_exceeded(self):
@@ -82,7 +82,7 @@ class TestUserModel(TestCase):
     def test_rename_user(self):
         created_user = User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
         self.assertTrue(created_user.rename('testuser2', False))
-        self.assertEqual(unicode(created_user), 'testuser2')
+        self.assertEqual(str(created_user), 'testuser2')
 
     def test_rename_user_collision(self):
         User.objects.register_user('testuser3', 'test3@user.de', 'pwd', False)
@@ -91,7 +91,7 @@ class TestUserModel(TestCase):
 
     def test_rename_user_invalid(self):
         created_user = User.objects.register_user('testuser5', 'test5@user.de', 'pwd', False)
-        with self.assertRaisesRegexp(ValueError, 'invalid username'):
+        with self.assertRaisesRegex(ValueError, 'invalid username'):
             created_user.rename('**testuser**', False)
 
     def test_new_users_in_registered_group(self):

@@ -10,9 +10,9 @@
 """
 from django.conf import settings
 from django.conf.urls import include, url
-from django.views.i18n import javascript_catalog
 
 from . import views
+from ..utils.http import global_not_found, server_error
 
 urlpatterns = [
     url(r'^$', views.index),
@@ -85,16 +85,6 @@ urlpatterns = [
     url(r'^page/new/$', views.page_edit),
 ]
 
-
-js_info_dict = {
-    'packages': ('inyoka.portal', 'inyoka.wiki', 'inyoka.pastebin',
-                 'inyoka.ikhaya', 'inyoka.planet', 'inyoka.forum'),
-}
-
-urlpatterns.append(
-    url(r'jsi18n/$', javascript_catalog, js_info_dict)
-)
-
 urlpatterns.extend([
     url(r'^([^/]+)/$', views.static_page),
     url(r'^([^/]+)/edit/$', views.page_edit),
@@ -107,5 +97,5 @@ if settings.DEBUG:
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )
 
-handler404 = 'inyoka.utils.http.global_not_found'
-handler500 = 'inyoka.utils.http.server_error'
+handler404 = global_not_found
+handler500 = server_error

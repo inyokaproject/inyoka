@@ -9,12 +9,14 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+from django.views.static import serve as view
 
-urlpatterns = patterns('',
-    url(r'^(?P<path>.*)$', 'django.contrib.staticfiles.views.serve',
-        {'insecure': True}),
-)
+from inyoka.utils.http import global_not_found, server_error
+
+urlpatterns = [
+    url(r'^(?P<path>.*)$', view, {'document_root': settings.STATIC_ROOT}),
+]
 
 if settings.DEBUG:
     import debug_toolbar
@@ -22,6 +24,5 @@ if settings.DEBUG:
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )
 
-
-handler404 = 'inyoka.utils.http.global_not_found'
-handler500 = 'inyoka.utils.http.server_error'
+handler404 = global_not_found
+handler500 = server_error

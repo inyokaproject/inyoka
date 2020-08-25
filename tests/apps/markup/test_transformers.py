@@ -10,10 +10,10 @@
     :license: BSD, see LICENSE for more details.
 """
 import unittest
-
 from mock import patch
 
-from inyoka.markup import Parser, nodes, transformers
+from inyoka.markup import nodes, transformers
+from inyoka.markup.base import Parser
 from inyoka.markup.transformers import (
     AutomaticParagraphs,
     FootnoteSupport,
@@ -128,26 +128,26 @@ class TestSmileyInjector(unittest.TestCase):
 
         self.assertEqual(t('{de}{de}'), [('{de}', 'de'), ('{de}', 'de')])
 
-    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {u':)': u'☺'})
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {':)': '☺'})
     def test_smiley_between_text(self):
-        tree = parse(u'blah :) foo', SmileyInjector())
-        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'blah '),
-                                                         nodes.Text(text=u'☺'),
-                                                         nodes.Text(text=u' foo')]))
+        tree = parse('blah :) foo', SmileyInjector())
+        self.assertEqual(tree, nodes.Document(children=[nodes.Text(text='blah '),
+                                                         nodes.Text(text='☺'),
+                                                         nodes.Text(text=' foo')]))
 
     def test_flag_en(self):
         tree = parse('{en}', SmileyInjector())
-        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'🇬🇧')]))
+        self.assertEqual(tree, nodes.Document(children=[nodes.Text(text='🇬🇧')]))
 
     def test_flag_austria(self):
         tree = parse('{at}', SmileyInjector())
-        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'🇦🇹')]))
+        self.assertEqual(tree, nodes.Document(children=[nodes.Text(text='🇦🇹')]))
 
     def test_flag_american_samoa(self):
         tree = parse('{as}', SmileyInjector())
-        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'🇦🇸')]))
+        self.assertEqual(tree, nodes.Document(children=[nodes.Text(text='🇦🇸')]))
 
-    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {u':tux:': u'css-class:icon-tux'})
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {':tux:': 'css-class:icon-tux'})
     def test_fallback_with_span(self):
         tree = parse(':tux:', SmileyInjector())
-        self.assertEquals(tree, nodes.Document(children=[nodes.Span(class_=u'icon-tux')]))
+        self.assertEqual(tree, nodes.Document(children=[nodes.Span(class_='icon-tux')]))

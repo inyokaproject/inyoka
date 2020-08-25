@@ -24,7 +24,7 @@ from inyoka.utils.urls import href
 
 def abort_access_denied(request):
     """Abort with an access denied message or go to login."""
-    if request.user.is_anonymous():
+    if request.user.is_anonymous:
         args = {'next': '//%s%s' % (request.get_host(), request.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
     return AccessDeniedResponse()
@@ -37,7 +37,7 @@ def calendar_entries_for_month(year, month):
     """
     from inyoka.ikhaya.models import Event
     days = {}
-    month_range = range(1, calendar.monthrange(year, month)[1] + 1)
+    month_range = list(range(1, calendar.monthrange(year, month)[1] + 1))
     for i in month_range:
         days[i] = []
     start_date = date(year=year, month=month, day=month_range[0])
@@ -121,7 +121,7 @@ class UbuntuVersion(object):
         return self.active or self.current or self.dev
 
     def __str__(self):
-        return u'%s (%s)' % (self.number, self.name)
+        return '%s (%s)' % (self.number, self.name)
 
     def __eq__(self, other):
         return self.number == other.number
@@ -130,14 +130,14 @@ class UbuntuVersion(object):
         return not self.__eq__(other)
 
     def __lt__(self, other):
-        s = map(int, self.number.split('.'))
-        o = map(int, other.number.split('.'))
+        s = list(map(int, self.number.split('.')))
+        o = list(map(int, other.number.split('.')))
         #: Sort by major number and if they are the same, by minor version
         return s[0] < o[0] or s[0] == o[0] and s[1] < o[1]
 
     def __gt__(self, other):
-        s = map(int, self.number.split('.'))
-        o = map(int, other.number.split('.'))
+        s = list(map(int, self.number.split('.')))
+        o = list(map(int, other.number.split('.')))
         #: Sort by major number and if they are the same, by minor version
         return s[0] > o[0] or s[0] == o[0] and s[1] > o[1]
 

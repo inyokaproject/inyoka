@@ -56,9 +56,9 @@ class Command(BaseCommand):
         verbosity = int(options['verbosity'])
         rename_file = options['json']
         if rename_file is None:
-            self.stderr.write(_(u"No JSON file specified. Aborting..."))
+            self.stderr.write(_("No JSON file specified. Aborting..."))
             return
-        if isinstance(rename_file, basestring):
+        if isinstance(rename_file, str):
             with open(rename_file) as json_file:
                 data = json.load(json_file)
         else:
@@ -66,23 +66,23 @@ class Command(BaseCommand):
 
         for username in data:
             if verbosity >= 2:
-                self.stdout.write(_(u"Renaming {oldname} to {newname}...").format(
+                self.stdout.write(_("Renaming {oldname} to {newname}...").format(
                     oldname=username["oldname"],
                     newname=username["newname"]))
             try:
                 user = User.objects.get_by_username_or_email(username["oldname"])
             except User.DoesNotExist:
-                self.stderr.write(_(u"User '{oldname}' does not exist. Skipping...").format(
+                self.stderr.write(_("User '{oldname}' does not exist. Skipping...").format(
                     oldname=username["oldname"]))
             else:
                 try:
                     vacant = user.rename(username["newname"], notify)
                 except ValueError:
-                    self.stderr.write(_(u"New user name '{newname}' contains invalid characters. Skipping...").format(
+                    self.stderr.write(_("New user name '{newname}' contains invalid characters. Skipping...").format(
                         newname=username["newname"]))
                 else:
                     if not vacant:
-                        self.stderr.write(_(u"User name '{newname}' already exists. Skipping...").format(
+                        self.stderr.write(_("User name '{newname}' already exists. Skipping...").format(
                             newname=username["newname"]))
         if verbosity >= 1:
-            self.stdout.write(_(u"Renaming users complete."))
+            self.stdout.write(_("Renaming users complete."))

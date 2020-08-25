@@ -5,7 +5,7 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import unicode_literals
+
 
 from django.conf.locale.de.formats import *
 

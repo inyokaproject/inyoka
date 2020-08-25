@@ -55,7 +55,7 @@ pipeline {
             sh """
             if [ ! -d ${venv_path} ]
             then
-              virtualenv ${venv_path}
+              virtualenv --python=python3 ${venv_path}
               ${activate_venv}
               pip install -r extra/requirements/development.txt
             fi
@@ -93,11 +93,6 @@ pipeline {
             }
           }
         }
-        stage('Install npm tools for BDD') {
-          steps {
-            sh 'npm install phantomjs-prebuilt'
-          }
-        }
       }
     }
     stage('Link theme') {
@@ -125,12 +120,13 @@ pipeline {
         stage('Execute BDD tests'){
           environment {
             DJANGO_SETTINGS_MODULE = 'tests.bdd.settings.headless'
+            PATH = "$PATH:/usr/lib/chromium-browser/"
           }
           steps {
             sh """
             ${activate_venv}
             python manage.py collectstatic --noinput
-            coverage run --rcfile tests/bdd/settings/.coveragerc  manage.py behave --junit
+            coverage run --rcfile tests/bdd/settings/.coveragerc -m behave -f allure_behave.formatter:AllureFormatter -o allure-results --junit --tags=-skip
             coverage html -d bdd_coverage --rcfile tests/bdd/settings/.coveragerc
             """
           }
@@ -158,19 +154,11 @@ pipeline {
         }
       }
     }
-    stage('Analyse tests') {
-      steps {
-        junit 'sqlite.xml,postgresql.xml,reports/*.xml'
-        step([$class: 'CoberturaPublisher',
-              autoUpdateHealth: false,
-              autoUpdateStability: false,
-              coberturaReportFile: 'coverage*.xml',
-              failUnhealthy: false,
-              failUnstable: false,
-              maxNumberOfBuilds: 0,
-              onlyStable: false,
-              sourceEncoding: 'ASCII',
-              zoomCoverageChart: false])
+  }
+  post {
+    always {
+        junit 'sqlite.xml,postgresql.xml'
+        cobertura coberturaReportFile: 'coverage*.xml', onlyStable: false
         publishHTML([allowMissing: false,
                      alwaysLinkToLastBuild: false,
                      keepAll: false,
@@ -178,12 +166,7 @@ pipeline {
                      reportFiles: 'index.html',
                      reportName: 'BDD Coverage',
                      reportTitles: 'BDD Coverage'])
-      }
-    }
-  }
-  post {
-    failure {
-      archiveArtifacts allowEmptyArchive: true, artifacts: 'bdd_screenshots/**'
+      allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
     }
   }
 }
