@@ -24,6 +24,7 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 from mock import patch
 from guardian.shortcuts import assign_perm
+from unittest import skip
 
 from inyoka.forum import constants, views
 from inyoka.forum.models import (
@@ -58,7 +59,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
                 forum=self.forum2)
-        self.post = Post.objects.create(text=u'Post 1', author=self.user,
+        self.post = Post.objects.create(text='Post 1', author=self.user,
                 topic=self.topic, position=0)
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
@@ -80,19 +81,19 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
                                     author=self.user, position=0)
             t.first_post_id = p.id
             t.save()
-            for i in xrange(1, randint(2, 3)):
+            for i in range(1, randint(2, 3)):
                 posts.append(Post(
                     text="More Posts %s" % randint(1, 100000), topic=t,
                     author=self.user, position=i,
                 ))
-            for i in xrange(1, randint(2, 3)):
+            for i in range(1, randint(2, 3)):
                 posts.append(Post(
                     text="More Posts %s" % randint(1, 100000), topic=t,
                     author=self.admin, position=i,
                 ))
 
         self.num_topics_on_last_page = int(round(constants.TOPICS_PER_PAGE * 0.66))
-        for i in xrange(1, 4 * constants.TOPICS_PER_PAGE + self.num_topics_on_last_page):
+        for i in range(1, 4 * constants.TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
         Post.objects.bulk_create(posts)
 
@@ -110,7 +111,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         mock_send.assert_called_with(
             self.user,
             'topic_moved',
-            _(u'Your topic “%(topic)s” was moved.') % {'topic': 'A test Topic'},
+            _('Your topic “%(topic)s” was moved.') % {'topic': 'A test Topic'},
             {
                 'username': self.user.username,
                 'topic': self.topic,
@@ -174,12 +175,12 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     def test_service_splittopic(self):
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
                 author=self.user, forum=self.forum2)
-        p1 = Post.objects.create(text=u'Post 1', author=self.user,
+        p1 = Post.objects.create(text='Post 1', author=self.user,
                 topic=t1)
 
         t2 = Topic.objects.create(title='Another topic', author=self.user,
                 forum=self.forum2)
-        p2 = Post.objects.create(text=u'Post 1', author=self.user,
+        p2 = Post.objects.create(text='Post 1', author=self.user,
                 topic=t2)
 
         response = self.client.get('/', {
@@ -210,20 +211,20 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
         t1 = Topic.objects.create(title='Topic 1', slug='topic-1',
                 author=self.user, forum=self.forum2)
-        p11 = Post.objects.create(text=u'Post 1-1', author=self.user,
+        p11 = Post.objects.create(text='Post 1-1', author=self.user,
                 topic=t1, position=0)
-        p12 = Post.objects.create(text=u'Post 1-2', author=self.user,
+        p12 = Post.objects.create(text='Post 1-2', author=self.user,
                 topic=t1)
-        p13 = Post.objects.create(text=u'Post 1-3', author=self.user,
+        p13 = Post.objects.create(text='Post 1-3', author=self.user,
                 topic=t1)
 
         t2 = Topic.objects.create(title='Topic 2', slug='topic-2',
                 author=self.user, forum=self.forum2)
-        p21 = Post.objects.create(text=u'Post 2-1', author=self.user,
+        p21 = Post.objects.create(text='Post 2-1', author=self.user,
                 topic=t2, position=0)
-        p22 = Post.objects.create(text=u'Post 2-2', author=self.user,
+        p22 = Post.objects.create(text='Post 2-2', author=self.user,
                 topic=t2)
-        p23 = Post.objects.create(text=u'Post 2-3', author=self.user,
+        p23 = Post.objects.create(text='Post 2-3', author=self.user,
                 topic=t2)
 
         self.client.get('/', {
@@ -242,7 +243,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(valuelist(t1.pk), [p11.pk])
         self.assertEqual(valuelist(t2.pk), [p21.pk, p22.pk, p23.pk, p12.pk, p13.pk])
         self.assertEqual(valuelist(t1.pk, 'position'), [0])
-        self.assertEqual(valuelist(t2.pk, 'position'), list(xrange(0, 5)))
+        self.assertEqual(valuelist(t2.pk, 'position'), list(range(0, 5)))
 
         # We will now strip all posts beginning at p22 from t2
         self.client.get('/', {
@@ -261,7 +262,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(Post.objects.filter(topic_id=t2.pk).count(), 1)
         self.assertEqual(valuelist(t1.pk), [p11.pk, p22.pk, p23.pk, p12.pk, p13.pk])
         self.assertEqual(valuelist(t2.pk), [p21.pk])
-        self.assertEqual(valuelist(t1.pk, 'position'), list(xrange(0, 5)))
+        self.assertEqual(valuelist(t1.pk, 'position'), list(range(0, 5)))
         self.assertEqual(valuelist(t2.pk, 'position'), [0])
 
     @responses.activate
@@ -272,7 +273,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             hidden=True, reported='spam', reporter=self.system_user,
         )
         post = Post.objects.create(
-            text=u'Post 1', author=self.user, topic=topic, position=0, hidden=False
+            text='Post 1', author=self.user, topic=topic, position=0, hidden=False
         )
         self.make_valid_key()
         self.make_mark_ham()
@@ -292,7 +293,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             title='A test Topic', author=self.user, forum=self.forum2,
         )
         post = Post.objects.create(
-            text=u'Post 1', author=self.user, topic=topic, position=0,
+            text='Post 1', author=self.user, topic=topic, position=0,
         )
         self.make_valid_key()
         self.make_mark_spam()
@@ -316,7 +317,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             hidden=True, reported='spam', reporter=self.system_user
         )
         post = Post.objects.create(
-            text=u'Post 1', author=self.user, topic=topic, position=0
+            text='Post 1', author=self.user, topic=topic, position=0
         )
         self.make_valid_key()
         self.make_mark_ham()
@@ -338,7 +339,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             title='A test Topic', author=self.user, forum=self.forum2,
         )
         post = Post.objects.create(
-            text=u'Post 1', author=self.user, topic=topic, position=0
+            text='Post 1', author=self.user, topic=topic, position=0
         )
         self.make_valid_key()
         self.make_mark_spam()
@@ -354,7 +355,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_post_mark_ham_admin(self):
         post = Post.objects.create(
-            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=True
+            text='Post 2', author=self.user, topic=self.topic, position=1, hidden=True
         )
         self.make_valid_key()
         self.make_mark_ham()
@@ -368,7 +369,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_post_mark_spam_admin(self):
         post = Post.objects.create(
-            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=False
+            text='Post 2', author=self.user, topic=self.topic, position=1, hidden=False
         )
         self.make_valid_key()
         self.make_mark_spam()
@@ -385,7 +386,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.client.login(username='user', password='user')
 
         post = Post.objects.create(
-            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=True
+            text='Post 2', author=self.user, topic=self.topic, position=1, hidden=True
         )
         self.make_valid_key()
         self.make_mark_ham()
@@ -402,7 +403,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.client.login(username='user', password='user')
 
         post = Post.objects.create(
-            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=False
+            text='Post 2', author=self.user, topic=self.topic, position=1, hidden=False
         )
         self.make_valid_key()
         self.make_mark_spam()
@@ -536,11 +537,12 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'url': attachment.get_absolute_url(),
             'name': attachment.name,
             'pk': attachment.pk
-        }, response.content, count=1)
+        }, response.content.decode(), count=1)
 
     def assertPreviewInHTML(self, text, response):
         pattern = '<div class="preview_wrapper"><h2 class="title">Preview</h2><div class="preview"><p>%s</p></div></div>'
-        self.assertInHTML(pattern % text, response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML(pattern % text, content, count=1)
 
     def test_newtopic(self):
         self.client.login(username='admin', password='admin')
@@ -603,12 +605,13 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
+        content = response.content.decode()
         self.assertInHTML('<div class="message info">Your submission needs approval '
                           'by a team member and is hidden meanwhile. Please be patient, '
                           'we will get to it as soon as possible.</div>',
-                          response.content, count=1)
+                          content, count=1)
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
-                          response.content, count=1)
+                          content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -633,7 +636,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('Your submission needs approval by a team member', response.content, count=0)
+        self.assertInHTML('Your submission needs approval by a team member', response.content.decode(), count=0)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -689,10 +692,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', content, count=1)
         att = Attachment.objects.get()
         pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
-        self.assertInHTML(pattern % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name}, response.content, count=1)
+        self.assertInHTML(pattern % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name}, content, count=1)
 
     def test_newtopic_with_multiple_files(self):
         TEST_ATTACHMENT1 = 'test_attachment.png'
@@ -741,11 +745,12 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content.decode(), count=1)
         att1, att2 = Attachment.objects.all()
         pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
-        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
-        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, content, count=1)
+        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, content, count=1)
 
     def test_newtopic_with_poll(self):
         self.client.login(username='admin', password='admin')
@@ -758,7 +763,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, polls=1, polloptions=2)
         poll = Poll.objects.get()
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
-        self.assertInHTML(pattern % {'q': poll.question, 'pk': poll.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'q': poll.question, 'pk': poll.pk}, response.content.decode(), count=1)
 
         # Test preview
         postdata = {
@@ -776,13 +781,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content.decode(), count=1)
         poll = Poll.objects.get()
         opt1, opt2 = PollOption.objects.all()
         pattern = '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt_pk)d" value="%(opt_pk)d"/><label for="option_%(opt_pk)d">%(opt)s</label></td></tr>'
-        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll.question}, response.content, count=1)
-        self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt1.name, 'opt_pk': opt1.pk}, response.content, count=1)
-        self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt2.name, 'opt_pk': opt2.pk}, response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll.question}, content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt1.name, 'opt_pk': opt1.pk}, content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt2.name, 'opt_pk': opt2.pk}, content, count=1)
 
     def test_newtopic_with_multiple_polls(self):
         self.client.login(username='admin', password='admin')
@@ -807,8 +813,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Verify that the polls exist
         poll1, poll2 = Poll.objects.all()
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
-        self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, response.content, count=1)
-        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, content, count=1)
+        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, content, count=1)
 
         # Test preview
         postdata = {
@@ -826,7 +833,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
     def test_new_post(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         self.client.login(username='admin', password='admin')
         # Test preview
@@ -847,7 +854,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
     def test_new_post_user(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
         # Test preview
@@ -870,7 +877,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_new_post_user_spam(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -888,11 +895,12 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
+        content = response.content.decode()
         self.assertInHTML('<div class="message info">Your submission needs approval by a '
                           'team member and is hidden meanwhile. Please be patient, we will '
                           'get to it as soon as possible. </div>',
-                          response.content, count=1)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+                          content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -900,7 +908,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # frequent users (>100 posts) should be excluded from spam detection
         cache.set(self.user.post_count.cache_key, 100)
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -918,13 +926,13 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('Your submission needs approval by a team member', response.content, count=0)
+        self.assertInHTML('Your submission needs approval by a team member', response.content.decode(), count=0)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_new_post_user_spam_non_public(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -943,11 +951,12 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertContains(response, 'Your submission needs approval by a team member', count=0)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content.decode(),
+                          count=1)
 
     def test_new_post_with_file(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         TEST_ATTACHMENT = 'test_attachment.png'
         self.client.login(username='admin', password='admin')
@@ -977,14 +986,15 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', content, count=1)
         att = Attachment.objects.get()
         pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
-        self.assertInHTML(pattern % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name}, response.content, count=1)
+        self.assertInHTML(pattern % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name}, content, count=1)
 
     def test_new_post_with_multiple_files(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         TEST_ATTACHMENT1 = 'test_attachment.png'
         TEST_ATTACHMENT2 = 'test_attachment2.png'
@@ -1030,16 +1040,18 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content.decode(),
+                          count=1)
         att1, att2 = Attachment.objects.all()
         pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
-        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
-        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, content, count=1)
+        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, content, count=1)
 
     def test_edit_post(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
-        post = Post.objects.create(text=u'second post', author=self.admin, position=1, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text='second post', author=self.admin, position=1, topic=topic)
 
         self.client.login(username='admin', password='admin')
         # Test preview
@@ -1055,12 +1067,12 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content.decode(), count=1)
 
     def test_edit_post_user(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
-        post = Post.objects.create(text=u'second post', author=self.user, position=1, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text='second post', author=self.user, position=1, topic=topic)
 
         self.client.login(username='user', password='user')
         # Test preview
@@ -1076,15 +1088,15 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content.decode(), count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_post_user_spam(self):
         # Edited posts are never considered spam, not even from users
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
-        post = Post.objects.create(text=u'second post', author=self.user, position=1, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text='second post', author=self.user, position=1, topic=topic)
 
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -1102,14 +1114,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content.decode(), count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_post_user_spam_non_public(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
-        post = Post.objects.create(text=u'second post', author=self.user, position=1, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text='second post', author=self.user, position=1, topic=topic)
 
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -1128,7 +1140,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertContains(response, 'Your submission needs approval by a team member', count=0)
-        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content.decode(), count=1)
 
     def test_edit_post_remove_attachments(self):
         TEST_ATTACHMENT1 = 'test_attachment.png'
@@ -1136,8 +1148,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.client.login(username='admin', password='admin')
 
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
-        post = Post.objects.create(text=u'second post', author=self.admin, position=1, topic=topic)
+        Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text='second post', author=self.admin, position=1, topic=topic)
 
         basedir = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00')
         if not path.exists(basedir):
@@ -1177,7 +1189,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(Post.objects.count(), 2)
         self.assertEqual(Attachment.objects.count(), 1)
         self.assertTrue(Post.objects.get(pk=post.pk).has_attachments)
-        self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 1</textarea>', response.content)
+        self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 1</textarea>',
+                          response.content.decode())
         self.assertAttachmentInHTML(att2, response)
 
         # Test attachment deletion 2
@@ -1193,7 +1206,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(Post.objects.count(), 2)
         self.assertEqual(Attachment.objects.count(), 0)
         self.assertTrue(Post.objects.get(pk=post.pk).has_attachments)
-        self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 2</textarea>', response.content)
+        self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 2</textarea>',
+                          response.content.decode())
 
         postdata = {
             'text': 'edit 3',
@@ -1209,11 +1223,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>edit 3</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>edit 3</p></div>', response.content.decode(), count=1)
 
     def test_edit_first_post(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        post = Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
 
         self.client.login(username='admin', password='admin')
         # Test preview
@@ -1222,7 +1236,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
+        content = response.content.decode()
+        self.assertInHTML('<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />', content)
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1231,12 +1246,13 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
-        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML('<h2>edited title</h2>', content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text</p></div>', content, count=1)
 
     def test_edit_first_post_user(self):
         topic = Topic.objects.create(title='topic', author=self.user, forum=self.forum)
-        post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
+        post = Post.objects.create(text='first post', author=self.user, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
         # Test preview
@@ -1245,7 +1261,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+                          response.content.decode())
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1254,15 +1271,16 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
-        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML('<h2>edited title</h2>', content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text</p></div>', content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_first_post_user_spam(self):
         # Edited posts are never considered spam, not even from users
         topic = Topic.objects.create(title='topic', author=self.user, forum=self.public_forum)
-        post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
+        post = Post.objects.create(text='first post', author=self.user, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -1273,7 +1291,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+                          response.content.decode())
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1282,14 +1301,15 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
-        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML('<h2>edited title</h2>', content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text</p></div>', content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_first_post_user_spam_non_public(self):
         topic = Topic.objects.create(title='topic', author=self.user, forum=self.forum)
-        post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
+        post = Post.objects.create(text='first post', author=self.user, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -1300,7 +1320,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+                          response.content.decode())
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1310,11 +1331,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertContains(response, 'Your submission needs approval by a team member', count=0)
-        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content.decode(), count=1)
 
     def test_edit_first_post_remove_polls(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
-        post = Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
         poll1 = Poll.objects.create(question='some first question', topic=topic)
         poll2 = Poll.objects.create(question='some second question', topic=topic)
         PollOption.objects.create(poll=poll1, name='option11')
@@ -1326,8 +1347,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/post/%d/edit/' % post.pk)
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
-        self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, response.content, count=1)
-        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, content, count=1)
+        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, content, count=1)
 
         postdata = {
             'title': 'edited title',
@@ -1342,8 +1364,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(Poll.objects.count(), 1)
         self.assertEqual(PollOption.objects.count(), 2)
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
-        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
-        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
+        content = response.content.decode()
+        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, content, count=1)
+        self.assertInHTML('<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />', content)
 
         postdata = {
             'title': 'edited title 2',
@@ -1357,7 +1380,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(Poll.objects.count(), 0)
         self.assertEqual(PollOption.objects.count(), 0)
-        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title 2">', response.content)
+        self.assertInHTML('<input type="text" name="title" value="edited title 2" required maxlength="100" id="id_title" size="60" />',
+                          response.content.decode())
 
         postdata = {
             'title': 'edited title 3',
@@ -1377,8 +1401,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<h2>edited title 4</h2>', response.content, count=1)
-        self.assertInHTML('<div class="text"><p>edited text 4</p></div>', response.content, count=1)
+        content = response.content.decode()
+        self.assertInHTML('<h2>edited title 4</h2>', content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text 4</p></div>', content, count=1)
 
 
 class TestWelcomeMessageView(TestCase):

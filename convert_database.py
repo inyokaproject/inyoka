@@ -61,7 +61,7 @@ with transaction.atomic(using='pg'):
     pg_cursor.execute('TRUNCATE auth_group CASCADE')
     pg_cursor.execute('TRUNCATE portal_user CASCADE')
     for model in all_models:
-        print "transfering", model
+        print("transfering", model)
         table_name = '%s_%s' % (model._meta.app_label, model._meta.model_name.lower())
         if getattr(model._meta, 'db_table', None):
             table_name = model._meta.db_table
@@ -71,7 +71,7 @@ with transaction.atomic(using='pg'):
             existing_objects = model.objects.aggregate(max=models.Max('pk'))['max'] or 0
             start, end = 0, 1000
             while start < existing_objects:
-                print start
+                print(start)
                 model.objects.using('pg').bulk_create(model.objects.filter(pk__gte=start, pk__lt=end))
                 start = end
                 end += 1000
@@ -85,6 +85,6 @@ with transaction.atomic(using='pg'):
                 sq_name = seq_mapping[sq_name]
             pg_cursor.execute("SELECT setval('%s', %%s, true)" % sq_name, [max_val + 1])
 
-    print "Deleting broken data"
+    print("Deleting broken data")
     for q in del_queries:
         pg_cursor.execute(q)

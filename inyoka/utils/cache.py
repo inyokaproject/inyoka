@@ -8,7 +8,7 @@
     On top of the django cache client that speaks directly to either redis
     or caches in-memory we have a :class:`RequestCache` that caches
     redis-commands in a thread-local dictionary.  This saves a lot of
-    redis-commands in some szenarios.
+    redis-commands in some scenarios.
 
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
@@ -38,11 +38,11 @@ class QueryCounter(object):
         self.use_task = use_task
         self.timeout = timeout or settings.COUNTER_CACHE_TIMEOUT
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Returns the value or the unicode string "counting..."
         """
-        return unicode(self.value(default=_(u"counting...")))
+        return str(self.value(default=_("counting...")))
 
     def __call__(self, default=None):
         return self.value(default=default)
@@ -116,7 +116,7 @@ class QueryCounter(object):
 
     def decr(self, count=1):
         """
-        Decreace the counter by count.
+        Decrease the counter by count.
 
         Does nothing if the counter is not in the cache.
         """
@@ -127,9 +127,9 @@ class QueryCounter(object):
 
     def delete_cache(self):
         """
-        Delets the counter from the cache.
+        Deletes the counter from the cache.
 
-        This should only be used for debuging.
+        This should only be used for debugging.
         """
         cache.delete(self.cache_key)
 

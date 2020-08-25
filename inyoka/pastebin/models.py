@@ -24,7 +24,7 @@ class Entry(models.Model):
     code = PygmentsField(application='pastebin')
     pub_date = models.DateTimeField(ugettext_lazy('Date'), db_index=True,
                                     default=datetime.utcnow)
-    author = models.ForeignKey(User, verbose_name=ugettext_lazy('Author'))
+    author = models.ForeignKey(User, verbose_name=ugettext_lazy('Author'), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = ugettext_lazy('Entry')

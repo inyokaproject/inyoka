@@ -27,10 +27,9 @@ Preparation
 Getting access to the Inyoka repository
 ***************************************
 
-You need to contact `encbladexp <https://github.com/encbladexp>`_ who will
-give you access right to fork the project. Simply fork the
-`<https://github.com/inyokaproject/inyoka>`_ repository to create a new
-*private* fork of this repository.
+You need to a team member who will give you access right to fork the project.
+After that, simply fork the `<https://github.com/inyokaproject/inyoka>`_ repository
+to create a new *private* fork of this repository.
 
 Installation
 ============
@@ -42,10 +41,10 @@ For using Inyoka and its dependencies you need a lot of python and developer fil
 
 .. code-block:: console
 
-    $  sudo apt-get install git nodejs-legacy libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python2.7 libpython2.7-dev
+    $  sudo apt-get install git nodejs-legacy libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python3-dev
 
 
-Further you need a recent pip and virtualenv for Python 2.7:
+Further you need a recent pip and virtualenv for Python 3:
 
 .. code-block:: console
 
@@ -68,13 +67,13 @@ Now you can start the installation of inyoka:
 .. code-block:: console
 
     $ mkdir -p ~/.venvs/
-    $ virtualenv ~/.venvs/inyoka
+    $ virtualenv3 ~/.venvs/inyoka
     $ source ~/.venvs/inyoka/bin/activate
     $ pip install -r extra/requirements/development.txt
 
 Note: You need to cd to your inyoka directory for the last command to work.
 
-The last command downloads and installs all needed libraries pip packages. During
+The last command downloads and installs all needed libraries via pip packages. During
 the installation there might be some warning which you can ignore.
 
 At the end you need to edit your ``/etc/hosts`` with root privileges and add

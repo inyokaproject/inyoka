@@ -12,6 +12,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 
 from . import actions, views
+from ..utils.http import global_not_found, server_error
 
 urlpatterns = [
     url(r'^$', views.index),
@@ -69,5 +70,5 @@ urlpatterns.extend([
     url(r'^(?P<name>.+)/$', actions.do_show),
 ])
 
-handler404 = 'inyoka.utils.http.global_not_found'
-handler500 = 'inyoka.utils.http.server_error'
+handler404 = global_not_found
+handler500 = server_error

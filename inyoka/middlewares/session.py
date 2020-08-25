@@ -32,7 +32,7 @@ class SessionMiddleware(middleware.SessionMiddleware):
     """
 
     def process_request(self, request):
-        super(SessionMiddleware, self).process_request(request)
+        super().process_request(request)
         # Force creation of a session key so every browser is id-able.
         if not 'sid' in request.session:
             request.session['sid'] = str(uuid.uuid4())
@@ -50,7 +50,7 @@ class SessionMiddleware(middleware.SessionMiddleware):
         if surge_protection is not None:
             now = time()
             surge_protection = {key: timeout for key, timeout in
-                                surge_protection.iteritems() if timeout > now}
+                                surge_protection.items() if timeout > now}
             if surge_protection:
                 request.session['sp'] = surge_protection
             else:
@@ -63,4 +63,4 @@ class SessionMiddleware(middleware.SessionMiddleware):
                 # Require a session drop on browser close.
                 request.session.set_expiry(0)
 
-        return super(SessionMiddleware, self).process_response(request, response)
+        return super().process_response(request, response)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import django.db.models.deletion
 from django.conf import settings
@@ -18,37 +18,37 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='suggestion',
             name='author',
-            field=models.ForeignKey(related_name='suggestion_set', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='suggestion_set', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='suggestion',
             name='owner',
-            field=models.ForeignKey(related_name='owned_suggestion_set', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='owned_suggestion_set', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='report',
             name='article',
-            field=models.ForeignKey(to='ikhaya.Article', null=True),
+            field=models.ForeignKey(to='ikhaya.Article', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='report',
             name='author',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='comment',
             name='article',
-            field=models.ForeignKey(to='ikhaya.Article', null=True),
+            field=models.ForeignKey(to='ikhaya.Article', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='comment',
             name='author',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='article',
             name='author',
-            field=models.ForeignKey(related_name='article_set', verbose_name='Author', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='article_set', verbose_name='Author', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

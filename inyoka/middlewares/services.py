@@ -19,11 +19,12 @@ import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.cache import add_never_cache_headers
+from django.utils.deprecation import MiddlewareMixin
 
 JSON_CONTENTTYPE = 'application/json'
 
 
-class ServiceMiddleware(object):
+class ServiceMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         if request.path == '/' and '__service__' in request.GET:
@@ -40,7 +41,7 @@ class ServiceMiddleware(object):
             if isinstance(response, HttpResponse):
                 retval = response
             else:
-                data = json.dumps(response, encoding='utf-8')
+                data = json.dumps(response)
                 retval = HttpResponse(data, content_type=JSON_CONTENTTYPE)
             if getattr(call, '__never_cache__', False):
                 add_never_cache_headers(response)

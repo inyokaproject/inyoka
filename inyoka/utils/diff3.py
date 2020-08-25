@@ -53,15 +53,15 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
     :param allow_conflicts: to `False` which will get you a `DiffConflict`
     exception on the first encountered conflict.
     """
-    if isinstance(old, basestring):
+    if isinstance(old, str):
         old = old.splitlines()
     elif not isinstance(old, list):
         old = list(old)
-    if isinstance(other, basestring):
+    if isinstance(other, str):
         other = other.splitlines()
     elif not isinstance(other, list):
         other = list(other)
-    if isinstance(new, basestring):
+    if isinstance(new, str):
         new = new.splitlines()
     elif not isinstance(new, list):
         new = list(new)
@@ -313,21 +313,20 @@ def generate_udiff(old, new, old_title='', new_title='',
     used on the diff.  `context_lines` defaults to 5 and represents the
     number of lines used in an udiff around a changed line.
     """
-    # NOTE: difflib doesn't like unicode filenames!
     udiff = difflib.unified_diff(
         old.splitlines(),
         new.splitlines(),
-        fromfile=old_title.encode('utf-8'),
-        tofile=new_title.encode('utf-8'),
+        fromfile=old_title,
+        tofile=new_title,
         lineterm='',
         n=context_lines)
     try:
-        title_diff_1 = udiff.next().decode('utf-8')
-        title_diff_2 = udiff.next().decode('utf-8')
-        return u'\n'.join(itertools.chain([title_diff_1, title_diff_2], udiff))
+        title_diff_1 = next(udiff)
+        title_diff_2 = next(udiff)
+        return '\n'.join(itertools.chain([title_diff_1, title_diff_2], udiff))
     except StopIteration:
         # Content did't cange
-        return u''
+        return ''
 
 
 def prepare_udiff(udiff):
@@ -344,7 +343,7 @@ def process_line(line, start, end):
         tag = 'ins'
     else:
         tag = 'del'
-    line['line'] = u'%s<%s>%s</%s>%s' % (
+    line['line'] = '%s<%s>%s</%s>%s' % (
         line['line'][:start],
         tag,
         line['line'][start:last],
@@ -396,16 +395,16 @@ class DiffRenderer(object):
         lineiter = iter(self.lines)
         files = []
         try:
-            line = lineiter.next()
+            line = next(lineiter)
             while True:
                 # continue until we found the old file
                 if not line.startswith('--- '):
-                    line = lineiter.next()
+                    line = next(lineiter)
                     continue
 
                 chunks = []
                 filename, old_rev, new_rev = \
-                    self._extract_rev(line, lineiter.next())
+                    self._extract_rev(line, next(lineiter))
                 files.append({
                     'filename': filename,
                     'old_revision': old_rev,
@@ -413,7 +412,7 @@ class DiffRenderer(object):
                     'chunks': chunks,
                 })
 
-                line = lineiter.next()
+                line = next(lineiter)
                 while line:
                     match = self._chunk_re.match(line)
                     if not match:
@@ -428,7 +427,7 @@ class DiffRenderer(object):
                     new_line -= 1
                     old_end += old_line
                     new_end += new_line
-                    line = lineiter.next()
+                    line = next(lineiter)
 
                     while old_line < old_end or new_line < new_end:
                         if line:
@@ -452,12 +451,12 @@ class DiffRenderer(object):
                         old_line += affects_old
                         new_line += affects_new
                         lines.append({
-                            'old_lineno': affects_old and old_line or u'',
-                            'new_lineno': affects_new and new_line or u'',
+                            'old_lineno': affects_old and old_line or '',
+                            'new_lineno': affects_new and new_line or '',
                             'action': action,
                             'line': line,
                         })
-                        line = lineiter.next()
+                        line = next(lineiter)
 
         except StopIteration:
             pass
@@ -468,9 +467,9 @@ class DiffRenderer(object):
                 lineiter = iter(chunk)
                 try:
                     while True:
-                        line = lineiter.next()
+                        line = next(lineiter)
                         if line['action'] != 'unmod':
-                            nextline = lineiter.next()
+                            nextline = next(lineiter)
                             if nextline['action'] == 'unmod' or \
                                nextline['action'] == line['action']:
                                 continue

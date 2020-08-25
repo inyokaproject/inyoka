@@ -32,5 +32,5 @@ class TestVersions(unittest.TestCase):
         here if this ordering is correctly done.
         """
         order = ['5.04', '6.06', '6.10', '10.04', '10.10', '12.04']
-        versions = map(lambda v: v.number, sorted(self.versions))
+        versions = [v.number for v in sorted(self.versions)]
         self.assertEqual(order, versions)

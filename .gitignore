@@ -13,3 +13,5 @@ celerybeat-schedule
 htmlcov/
 .coverage
 node_modules/
+allure-results
+bdd_screenshots

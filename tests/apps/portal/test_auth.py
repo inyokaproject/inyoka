@@ -18,6 +18,7 @@ from inyoka.utils.test import TestCase
 from inyoka.portal.auth import InyokaAuthBackend
 from inyoka.portal.user import User, UserBanned
 
+
 class TestInyokaAuthBackend(TestCase):
     def setUp(self):
         super(TestInyokaAuthBackend, self).setUp()
@@ -51,27 +52,27 @@ class TestInyokaAuthBackend(TestCase):
         self.tbanned_user.save()
 
     def test_login(self):
-        self.assertIsInstance(self.backend.authenticate('user', 'inyoka'), User)
-        self.assertIsNone(self.backend.authenticate())
+        self.assertIsInstance(self.backend.authenticate(request=None, username='user', password='inyoka'), User)
+        self.assertIsNone(self.backend.authenticate(request=None))
 
     def test_login_by_email(self):
-        self.assertIsInstance(self.backend.authenticate('user@mail', 'inyoka'), User)
+        self.assertIsInstance(self.backend.authenticate(request=None, username='user@mail', password='inyoka'), User)
 
     def test_login_banned(self):
         with self.assertRaisesMessage(UserBanned, ''):
-            self.backend.authenticate('banned','inyoka')
+            self.backend.authenticate(request=None, username='banned', password='inyoka')
 
     def test_login_temp_banned(self):
-        self.assertIsInstance(self.backend.authenticate('tbanned', 'inyoka'), User)
+        self.assertIsInstance(self.backend.authenticate(request=None, username='tbanned', password='inyoka'), User)
 
     def test_login_anonymous(self):
-        self.assertIsNone(self.backend.authenticate(settings.ANONYMOUS_USER_NAME, 'inyoka'))
+        self.assertIsNone(self.backend.authenticate(request=None, username=settings.ANONYMOUS_USER_NAME, password='inyoka'))
 
     def test_login_system(self):
-        self.assertIsNone(self.backend.authenticate(settings.INYOKA_SYSTEM_USER, 'inyoka'))
+        self.assertIsNone(self.backend.authenticate(request=None, username=settings.INYOKA_SYSTEM_USER, password='inyoka'))
 
     def test_login_wrong_password(self):
-        self.assertIsNone(self.backend.authenticate('user', 'phpbb'))
+        self.assertIsNone(self.backend.authenticate(request=None, username='user', password='phpbb'))
 
     def test_get_user_permissions(self):
         self.assertEqual(self.backend.get_user_permissions(self.unprivileged_user), set())

@@ -11,7 +11,7 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from cPickle import dumps, loads, HIGHEST_PROTOCOL
+from pickle import dumps, loads, HIGHEST_PROTOCOL
 
 from django.utils.translation import ugettext as _
 
@@ -32,19 +32,19 @@ class NodeCompiler(object):
         is_dynamic = False
 
         for item in self.prepare(format):
-            if isinstance(item, basestring):
+            if isinstance(item, str):
                 text_buffer.append(item)
             else:
                 if text_buffer:
-                    result.append(u''.join(text_buffer))
+                    result.append(''.join(text_buffer))
                     del text_buffer[:]
                 result.append(item)
                 is_dynamic = True
         if text_buffer:
-            result.append(u''.join(text_buffer))
+            result.append(''.join(text_buffer))
 
         if not is_dynamic:
-            return '!%s\0%s' % (format, u''.join(result).encode('utf-8'))
+            return '!%s\0%s' % (format, ''.join(result))
         return '@' + dumps((format, result), HIGHEST_PROTOCOL)
 
 
@@ -94,14 +94,14 @@ class Query(object):
     def __iter__(self):
         return self
 
-    def next(self):
-        return self._nodeiter.next()
+    def __next__(self):
+        return next(self._nodeiter)
 
     @property
     def has_any(self):
         """Return `True` if at least one node was found."""
         try:
-            self._nodeiter.next()
+            next(self._nodeiter)
         except StopIteration:
             return False
         return True
@@ -176,7 +176,7 @@ class Renderer(object):
             if obj[0] == '!':
                 pos = obj.index('\0')
                 self.format = obj[1:pos]
-                self.instructions = [obj[pos + 1:].decode('utf-8')]
+                self.instructions = [obj[pos + 1:]]
             elif obj[0] == '@':
                 self.format, self.instructions = loads(obj[1:])
         else:
@@ -210,7 +210,7 @@ class Renderer(object):
         format = format or self.format
 
         for instruction in instructions:
-            if isinstance(instruction, basestring):
+            if isinstance(instruction, str):
                 yield instruction
             # if we are in simplified rendering mode dynamic macros
             # and other funny things are not supported. so we fail
@@ -224,11 +224,11 @@ class Renderer(object):
                 else:
                     from .nodes import error_box
                     box = error_box(
-                        _(u'Invalid macro'),
-                        _(u'This macro is not available.')
+                        _('Invalid macro'),
+                        _('This macro is not available.')
                     )
                     yield box.render(context, format)
 
     def render(self, context, format=None):
         """Streams into a buffer and returns it as string."""
-        return u''.join(self.stream(context, format))
+        return ''.join(self.stream(context, format))

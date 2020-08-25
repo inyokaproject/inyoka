@@ -55,17 +55,15 @@ def register(cls):
     names = cls.names
     for name in names:
         if name in ALL_MACROS:
-            raise RuntimeError(u'Macro name "%s" already registered' % name)
+            raise RuntimeError('Macro name "%s" already registered' % name)
         ALL_MACROS[name] = cls
 
 
-class Macro(object):
+class Macro(object, metaclass=ArgumentCollector):
     """
     Baseclass for macros.  All macros should extend from that or implement
     the same attributes.  The preferred way however is subclassing.
     """
-
-    __metaclass__ = ArgumentCollector
 
     #: The canonical names for this macro. A macro may have multiple aliases
     #: e.g to support multiple languages.
@@ -101,7 +99,7 @@ class Macro(object):
     def render(self, context, format):
         """Dispatch to the correct render method."""
         rv = self.build_node(context, format)
-        if isinstance(rv, basestring):
+        if isinstance(rv, str):
             return rv
         return rv.render(context, format)
 
@@ -165,7 +163,7 @@ class TableOfContents(TreeMacro):
     there is also no title on it.
     """
 
-    names = (u'TableOfContents', u'Inhaltsverzeichnis')
+    names = ('TableOfContents', 'Inhaltsverzeichnis')
     stage = 'final'
     is_block_tag = True
     arguments = (
@@ -236,14 +234,14 @@ class TableOfContents(TreeMacro):
             # we need to check for the difference between those levels
             # (see second example above)
             if headline.level > last_level:
-                for i in xrange(headline.level - last_level - 1):
+                for i in range(headline.level - last_level - 1):
                     stack.append(nodes.List(self.list_type))
                     stack[-1].children.append(nodes.ListItem(style='list-style: none'))
                 stack.append(nodes.List(self.list_type))
             # we are unindenting the headline level. All lists have to be
             # popped from the stack up to the current level
             elif headline.level < last_level:
-                for i in xrange(last_level - headline.level):
+                for i in range(last_level - headline.level):
                     n = stack.pop()
                     if stack[-1].children:
                         stack[-1].children[-1].children.append(n)
@@ -261,13 +259,13 @@ class TableOfContents(TreeMacro):
 
             last_level = headline.level
 
-        for i in xrange(last_level - 1):
+        for i in range(last_level - 1):
             n = stack.pop()
             if stack[-1].children:
                 stack[-1].children[-1].children.append(n)
             else:
                 stack[-1].children.append(nodes.ListItem([n], style='list-style: none'))
-        head = nodes.Layer(children=[nodes.Text(_(u'Table of contents'))],
+        head = nodes.Layer(children=[nodes.Text(_('Table of contents'))],
                            class_='head')
         result = nodes.Layer(class_='toc toc-depth-%d' % self.depth,
                              children=[head, result])
@@ -279,9 +277,9 @@ class Date(Macro):
     This macro accepts an `iso8601` string or unix timestamp (the latter in
     UTC) and formats it using the `format_datetime` function.
     """
-    names = (u'Date', u'Datum')
+    names = ('Date', 'Datum')
     arguments = (
-        ('date', unicode, None),
+        ('date', str, None),
     )
     allowed_context = ['ikhaya', 'wiki']
 
@@ -304,7 +302,7 @@ class Date(Macro):
         else:
             date = self.date
         if date is None:
-            return nodes.Text(_(u'Invalid date'))
+            return nodes.Text(_('Invalid date'))
         return nodes.Text(format_datetime(date))
 
 
@@ -312,7 +310,7 @@ class Newline(Macro):
     """
     This macro just forces a new line.
     """
-    names = (u'BR',)
+    names = ('BR',)
     is_static = True
     allowed_context = ['forum', 'ikhaya', 'wiki']
 
@@ -324,10 +322,10 @@ class Anchor(Macro):
     """
     This macro creates an anchor accessible by url.
     """
-    names = (u'Anchor', u'Anker')
+    names = ('Anchor', 'Anker')
     is_static = True
     arguments = (
-        ('id', unicode, None),
+        ('id', str, None),
     )
     allowed_context = ['forum', 'ikhaya', 'wiki']
 
@@ -335,17 +333,17 @@ class Anchor(Macro):
         self.id = id
 
     def build_node(self):
-        return nodes.Link(u'#%s' % self.id, id=self.id, class_='anchor',
-                          children=[nodes.Text(u'')])
+        return nodes.Link('#%s' % self.id, id=self.id, class_='anchor',
+                          children=[nodes.Text('')])
 
 
 class Span(Macro):
-    names = (u'SPAN',)
+    names = ('SPAN',)
     is_static = True
     arguments = (
-        ('content', unicode, ''),
-        ('class_', unicode, None),
-        ('style', unicode, None),
+        ('content', str, ''),
+        ('class_', str, None),
+        ('style', str, None),
     )
     allowed_context = ['forum', 'ikhaya', 'wiki']
 

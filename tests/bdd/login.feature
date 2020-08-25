@@ -1,3 +1,4 @@
+@login
 Feature: Logging in
   This feature tests the login to Inyoka.
   A user should be able to login if his account is active and denied access

@@ -52,10 +52,10 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import division
+
 
 from django.http import Http404
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from inyoka.utils.urls import urlencode
 
@@ -108,13 +108,13 @@ class Pagination(object):
         # This unicode/utf-8 conversion exists because of some fancy hacker-bots
         # that try to fuzz the pagination with some extremly invalid unicode data.
         # Catching those here fixes vulerabilty of the whole application.
-        enc = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
-        self.params = {enc(k): enc(v) for k, v in self.request.GET.iteritems()}
+        enc = lambda v: force_text(v).encode('utf-8') if isinstance(v, str) else v
+        self.params = {enc(k): enc(v) for k, v in self.request.GET.items()}
 
     def _get_base_link(self, link):
         if link is None:
             link = self.request.path
-        if isinstance(link, basestring):
+        if isinstance(link, str):
             return link
         else:
             self.generate_link = link
@@ -155,9 +155,9 @@ class Pagination(object):
         if page == 1:
             url = self.base_link
         else:
-            url = u'{}{}/'.format(self.base_link, page)
+            url = '{}{}/'.format(self.base_link, page)
         if self.params:
-            url = url + u'?{}'.format(urlencode(self.params))
+            url = url + '?{}'.format(urlencode(self.params))
         return url
 
     @property
@@ -205,7 +205,7 @@ class Pagination(object):
                  keys 'url' and 'page'.
         """
 
-        for num in xrange(1, self.pages + 1):
+        for num in range(1, self.pages + 1):
             if (num <= threshold or num > (self.pages - threshold) or
                     abs(self.page - num) < threshold):
                 was_ellipsis = False

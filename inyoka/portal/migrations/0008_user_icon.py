@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='icon',
-            field=models.ImageField(upload_to=b'portal/team_icons', null=True, verbose_name='Team icon', blank=True),
+            field=models.ImageField(upload_to='portal/team_icons', null=True, verbose_name='Team icon', blank=True),
         ),
         migrations.RunPython(copy_user_icon, migrations.RunPython.noop),
     ]

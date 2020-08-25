@@ -11,9 +11,9 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from itertools import izip
 
-from django.utils.encoding import smart_unicode
+
+from django.utils.encoding import smart_text
 
 from inyoka.markup.parsertools import TokenStream
 
@@ -22,7 +22,7 @@ def bygroups(*args):
     """
     Callback creator for bygroup yielding.
     """
-    return lambda m: izip(args, m.groups())
+    return lambda m: zip(args, m.groups())
 
 
 def astuple(token):
@@ -381,7 +381,7 @@ def tokenize_block(string, _escape_hint=None):
     text_buffer = []
     add_text = text_buffer.append
     push = stack.append
-    flatten = u''.join
+    flatten = ''.join
 
     while pos < end:
         state = stack[-1][1]
@@ -425,7 +425,7 @@ def tokenize_block(string, _escape_hint=None):
                 # now check if we leave something. if the state was
                 # entered non silent, send a close token.
                 pos = m.end()
-                for x in xrange(rule.leave):
+                for x in range(rule.leave):
                     announce, item = stack.pop()
                     if announce is not None:
                         yield announce, m.group()
@@ -471,14 +471,14 @@ def tokenize_block(string, _escape_hint=None):
     # emit the end tokens
     for announce, item in reversed(stack):
         if announce is not None:
-            yield announce, u''
+            yield announce, ''
 
 
 def escape(text):
     """Escape a text."""
     escapes = []
-    gen = tokenize_block(u'\n'.join(text.splitlines()), escapes)
-    text = u''.join(x[1] for x in gen)
+    gen = tokenize_block('\n'.join(text.splitlines()), escapes)
+    text = ''.join(x[1] for x in gen)
     offset = 0
     for pos in escapes:
         pos = pos + offset
@@ -498,7 +498,7 @@ class Lexer(object):
         open_blocks = [False]
 
         def tokenize_buffer():
-            for item in tokenize_block(u'\n'.join(smart_unicode(obj) for obj in buffer)):
+            for item in tokenize_block('\n'.join(smart_text(obj) for obj in buffer)):
                 yield item
             del buffer[:]
 
@@ -531,14 +531,14 @@ class Lexer(object):
                     if level > stack[-1]:
                         for item in tokenize_buffer():
                             yield item
-                        for new_level in xrange(stack[-1] + 1, level + 1):
+                        for new_level in range(stack[-1] + 1, level + 1):
                             stack.append(new_level)
                             open_blocks.append(False)
                             yield 'quote_begin', None
                     elif level < stack[-1]:
                         for item in tokenize_buffer():
                             yield item
-                        for x in xrange(stack[-1] - level):
+                        for x in range(stack[-1] - level):
                             stack.pop()
                             open_blocks.pop()
                             yield 'quote_end', None

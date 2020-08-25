@@ -36,7 +36,7 @@ from inyoka.utils.urls import href
 def _get_not_cached_articles(keys, cache_values):
     """Return a tuple of (dates, slugs) for all keys in cache_values that are None"""
     not_cached = [(x[1], x[2]) for x in keys if x[0] not in cache_values]
-    dates, slugs = map(itemgetter(0), not_cached), map(itemgetter(1), not_cached)
+    dates, slugs = list(map(itemgetter(0), not_cached)), list(map(itemgetter(1), not_cached))
     return dates, slugs
 
 
@@ -67,13 +67,13 @@ class ArticleManager(models.Manager):
         automatically fetched from the database. This method should be
         also used for retrieving single objects.
         """
-        keys = map(lambda x: ('ikhaya/article/%s/%s' % x, x[0], x[1]), keys)
-        cache_values = cache.get_many(map(itemgetter(0), keys))
+        keys = [('ikhaya/article/%s/%s' % x, x[0], x[1]) for x in keys]
+        cache_values = cache.get_many(list(map(itemgetter(0), keys)))
         dates, slugs = _get_not_cached_articles(keys, cache_values)
 
         related = ('author', 'category', 'icon', 'category__icon')
         objects = Article.objects.filter(slug__in=slugs, pub_date__in=dates) \
-                         .select_related(*related).order_by()
+                         .select_related(*related).defer('author__forum_read_status').order_by()
         new_cache_values = {}
         for article in objects:
             key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
@@ -82,7 +82,7 @@ class ArticleManager(models.Manager):
             # cache for 24 hours
             cache.set_many(new_cache_values, 24 * 60)
         cache_values.update(new_cache_values)
-        articles = filter(None, cache_values.values())
+        articles = [_f for _f in list(cache_values.values()) if _f]
         unpublished = list(sorted([a for a in articles if not a.public],
                                   key=attrgetter('updated'), reverse=True))
         published = list(sorted([a for a in articles if a not in unpublished],
@@ -160,12 +160,12 @@ class EventManager(models.Manager):
 
 class Category(models.Model):
     name = models.CharField(max_length=180)
-    slug = models.CharField(ugettext_lazy(u'Slug'), max_length=100,
+    slug = models.CharField(ugettext_lazy('Slug'), max_length=100,
             blank=True, unique=True, db_index=True)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-                             verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
+                             verbose_name=ugettext_lazy('Icon'), on_delete=models.SET_NULL)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self, action='show'):
@@ -183,8 +183,8 @@ class Category(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = ugettext_lazy(u'Category')
-        verbose_name_plural = ugettext_lazy(u'Categories')
+        verbose_name = ugettext_lazy('Category')
+        verbose_name_plural = ugettext_lazy('Categories')
 
 
 class Article(models.Model, LockableObject):
@@ -193,26 +193,26 @@ class Article(models.Model, LockableObject):
     objects = ArticleManager(all=True)
     published = ArticleManager(public=True)
 
-    pub_date = models.DateField(ugettext_lazy(u'Date'), db_index=True)
-    pub_time = models.TimeField(ugettext_lazy(u'Time'))
-    updated = models.DateTimeField(ugettext_lazy(u'Last change'), blank=True,
+    pub_date = models.DateField(ugettext_lazy('Date'), db_index=True)
+    pub_time = models.TimeField(ugettext_lazy('Time'))
+    updated = models.DateTimeField(ugettext_lazy('Last change'), blank=True,
                 null=True, db_index=True)
     author = models.ForeignKey(User, related_name='article_set',
-                               verbose_name=ugettext_lazy(u'Author'))
-    subject = models.CharField(ugettext_lazy(u'Headline'), max_length=180)
-    category = models.ForeignKey(Category, verbose_name=ugettext_lazy(u'Category'),
+                               verbose_name=ugettext_lazy('Author'), on_delete=models.CASCADE)
+    subject = models.CharField(ugettext_lazy('Headline'), max_length=180)
+    category = models.ForeignKey(Category, verbose_name=ugettext_lazy('Category'),
                                  on_delete=models.PROTECT)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-            verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
-    intro = InyokaMarkupField(verbose_name=ugettext_lazy(u'Introduction'), application='ikhaya')
-    text = InyokaMarkupField(verbose_name=ugettext_lazy(u'Text'), application='ikhaya')
-    public = models.BooleanField(ugettext_lazy(u'Public'), default=False)
-    slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
-            blank=True, db_index=True, help_text=ugettext_lazy(u'Unique URL-part for the article. If not given, the slug will be generated from title.'))
-    is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
+            verbose_name=ugettext_lazy('Icon'), on_delete=models.SET_NULL)
+    intro = InyokaMarkupField(verbose_name=ugettext_lazy('Introduction'), application='ikhaya')
+    text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='ikhaya')
+    public = models.BooleanField(ugettext_lazy('Public'), default=False)
+    slug = models.SlugField(ugettext_lazy('Slug'), max_length=100,
+            blank=True, db_index=True, help_text=ugettext_lazy('Unique URL-part for the article. If not given, the slug will be generated from title.'))
+    is_xhtml = models.BooleanField(ugettext_lazy('XHTML Markup'),
                 default=False)
     comment_count = models.IntegerField(default=0)
-    comments_enabled = models.BooleanField(ugettext_lazy(u'Allow comments'),
+    comments_enabled = models.BooleanField(ugettext_lazy('Allow comments'),
                         default=True)
 
     def get_intro(self):
@@ -287,9 +287,9 @@ class Article(models.Model, LockableObject):
             'show': ('ikhaya', self.stamp, self.slug),
         }
 
-        return href(*links[action if action in links.keys() else 'show'], **query)
+        return href(*links[action if action in list(links.keys()) else 'show'], **query)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.subject
 
     def save(self, *args, **kwargs):
@@ -299,7 +299,7 @@ class Article(models.Model, LockableObject):
         if self.text is None or self.intro is None:
             # might happen, because cached objects are setting text and
             # intro to None to save some space
-            raise ValueError(u'text and intro must not be null')
+            raise ValueError('text and intro must not be null')
         suffix_id = False
 
         # We need a local pubdt variable due to caching of self.pub_datetime
@@ -320,9 +320,9 @@ class Article(models.Model, LockableObject):
             self.slug = '%s-%s' % (self.slug, self.id)
             Article.objects.filter(id=self.id).update(slug=self.slug)
         cache.delete('ikhaya/archive')
-        cache.delete(u'ikhaya/article_text/{}'.format(self.id))
-        cache.delete(u'ikhaya/article_intro/{}'.format(self.id))
-        cache.delete(u'ikhaya/article/{}'.format(self.slug))
+        cache.delete('ikhaya/article_text/{}'.format(self.id))
+        cache.delete('ikhaya/article_intro/{}'.format(self.id))
+        cache.delete('ikhaya/article/{}'.format(self.slug))
 
     def delete(self):
         """
@@ -344,9 +344,9 @@ class Article(models.Model, LockableObject):
 
 
 class Report(models.Model):
-    article = models.ForeignKey(Article, null=True)
+    article = models.ForeignKey(Article, null=True, on_delete=models.CASCADE)
     text = InyokaMarkupField(application='ikhaya')
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
     solved = models.BooleanField(null=False, default=False)
@@ -367,22 +367,22 @@ class Suggestion(models.Model):
 
     objects = SuggestionManager()
 
-    author = models.ForeignKey(User, related_name='suggestion_set')
+    author = models.ForeignKey(User, related_name='suggestion_set', on_delete=models.CASCADE)
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
-    title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
-    text = InyokaMarkupField(verbose_name=ugettext_lazy(u'Text'), application='ikhaya')
-    intro = InyokaMarkupField(verbose_name=ugettext_lazy(u'Introduction'), application='ikhaya')
+    title = models.CharField(ugettext_lazy('Title'), max_length=100)
+    text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='ikhaya')
+    intro = InyokaMarkupField(verbose_name=ugettext_lazy('Introduction'), application='ikhaya')
     notes = InyokaMarkupField(
-        verbose_name=ugettext_lazy(u'Annotations to the team'),
+        verbose_name=ugettext_lazy('Annotations to the team'),
         blank=True,
-        default=u'',
+        default='',
         application='ikhaya')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
-                              null=True, blank=True)
+                              null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = ugettext_lazy(u'Article suggestion')
-        verbose_name_plural = ugettext_lazy(u'Article suggestions')
+        verbose_name = ugettext_lazy('Article suggestion')
+        verbose_name_plural = ugettext_lazy('Article suggestions')
 
     def get_absolute_url(self):
         return href('ikhaya', 'suggestions', _anchor=self.id)
@@ -392,9 +392,9 @@ class Comment(models.Model):
 
     objects = CommentManager()
 
-    article = models.ForeignKey(Article, null=True)
+    article = models.ForeignKey(Article, null=True, on_delete=models.CASCADE)
     text = InyokaMarkupField(application='ikhaya')
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
 
@@ -414,7 +414,7 @@ class Comment(models.Model):
             self.article.save()
         super(Comment, self).save(*args, **kwargs)
         if self.id:
-            cache.delete(u'ikhaya/comment/{}'.format(self.id))
+            cache.delete('ikhaya/comment/{}'.format(self.id))
 
 
 class Event(models.Model):
@@ -429,16 +429,16 @@ class Event(models.Model):
     enddate = models.DateField(blank=True, null=True)  # None
     endtime = models.TimeField(blank=True, null=True)  # None -> whole day
     description = InyokaMarkupField(blank=True, application='ikhaya')
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=128, blank=True)
     location_town = models.CharField(max_length=56, blank=True)
-    location_lat = models.FloatField(ugettext_lazy(u'Degree of latitude'),
+    location_lat = models.FloatField(ugettext_lazy('Degree of latitude'),
                                      blank=True, null=True)
-    location_long = models.FloatField(ugettext_lazy(u'Degree of longitude'),
+    location_long = models.FloatField(ugettext_lazy('Degree of longitude'),
                                       blank=True, null=True)
     visible = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self, action='show'):
@@ -457,49 +457,49 @@ class Event(models.Model):
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
-        cache.delete(u'ikhaya/event/{}'.format(self.id))
+        cache.delete('ikhaya/event/{}'.format(self.id))
         cache.delete('ikhaya/event_count')
 
     def friendly_title(self, with_html_link=False):
         s_location = '<span class="location">%s</span>' % (
-            self.location_town and u' in %s' % self.location_town or '')
-        summary = u'<span class="summary">%s</span>' % escape(self.name)
+            self.location_town and ' in %s' % self.location_town or '')
+        summary = '<span class="summary">%s</span>' % escape(self.name)
         if with_html_link:
-            ret = u'<a href="%s" class="event_link">%s</a>%s' % (
+            ret = '<a href="%s" class="event_link">%s</a>%s' % (
                 escape(self.get_absolute_url()),
                 summary,
                 s_location)
         else:
             ret = summary + s_location
-        return u'<span class="vevent">%s</span>' % ret
+        return '<span class="vevent">%s</span>' % ret
 
     @property
     def natural_coordinates(self):
         if self.location_lat and self.location_long:
-            lat = (self.location_lat > 0 and
-                   u'%g° N' % self.location_lat or
-                   u'%g° S' % -self.location_lat)
-            long = (self.location_long > 0 and
-                    u'%g° O' % self.location_long or
-                    u'%g° W' % -self.location_long)
-            return u'%s, %s' % (lat, long)
+            latitude = (self.location_lat > 0 and
+                   '%g° N' % self.location_lat or
+                   '%g° S' % -self.location_lat)
+            longitude = (self.location_long > 0 and
+                    '%g° O' % self.location_long or
+                    '%g° W' % -self.location_long)
+            return '%s, %s' % (latitude, longitude)
         else:
-            return u''
+            return ''
 
     @property
     def simple_coordinates(self):
-        return u'%s;%s' % (self.location_lat, self.location_long)
+        return '%s;%s' % (self.location_lat, self.location_long)
 
     @property
     def coordinates_url(self):
-        lat = (self.location_lat > 0 and
+        latitude = (self.location_lat > 0 and
                '%g_N' % self.location_lat or
                '%g_S' % -self.location_lat)
-        long = (self.location_long > 0 and
+        longitude = (self.location_long > 0 and
                 '%g_E' % self.location_long or
                 '%g_W' % -self.location_long)
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
-               '=de&params=%s_%s' % (lat, long)
+               '=de&params=%s_%s' % (latitude, longitude)
 
     def _construct_datetimes(self, day, time):
         if not day:

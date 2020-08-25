@@ -17,13 +17,13 @@
 """
 import os
 from hashlib import sha1
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
@@ -56,7 +56,7 @@ def redirect_new_page(request):
         backref = href('wiki', settings.WIKI_MAIN_PAGE)
 
     if not page:
-        messages.error(request, _(u'A site name needs to be entered to create this page.'))
+        messages.error(request, _('A site name needs to be entered to create this page.'))
         return HttpResponseRedirect(backref)
     if base:
         page = join_pagename(base, "./" + page)
@@ -67,7 +67,7 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    messages.error(request, _(u'Another site named “%(title)s” already exists.')
+    messages.error(request, _('Another site named “%(title)s” already exists.')
         % {'title': escape(page.title)})
     return HttpResponseRedirect(backref)
 
@@ -99,7 +99,7 @@ def fetch_real_target(target, width=None, height=None, force=False):
         if page_filename is None:
             return
 
-        page_filename = force_unicode(page_filename).encode('utf-8')
+        page_filename = force_text(page_filename).encode('utf-8')
         partial_hash = sha1(page_filename).hexdigest()
 
         dimension = '%sx%s%s' % (width or '',
@@ -162,7 +162,7 @@ def feed(request, page_name=None, count=10):
     # TODO i18n: Find a better solution to hard coded wiki paths.
     #           Maybe we need even more configuration values in the storage.
     if page_name:
-        feed = AtomFeed(title=_(u'%(sitename)s wiki – %(pagename)s') % {
+        feed = AtomFeed(title=_('%(sitename)s wiki – %(pagename)s') % {
             'sitename': settings.BASE_DOMAIN_NAME,
             'pagename': page_name
             },
@@ -172,11 +172,11 @@ def feed(request, page_name=None, count=10):
             rights=href('portal', 'lizenz'),
             icon=href('static', 'img', 'favicon.ico'))
     else:
-        feed = AtomFeed(_(u'%(sitename)s wiki – last changes')
+        feed = AtomFeed(_('%(sitename)s wiki – last changes')
             % {'sitename': settings.BASE_DOMAIN_NAME},
-            url=href('wiki', u'Letzte_Änderungen'),
+            url=href('wiki', 'Letzte_Änderungen'),
             feed_url=request.build_absolute_uri(),
-            id=href('wiki', u'Letzte_Änderungen'),
+            id=href('wiki', 'Letzte_Änderungen'),
             rights=href('portal', 'lizenz'),
             icon=href('static', 'img', 'favicon.ico'))
 
@@ -187,18 +187,18 @@ def feed(request, page_name=None, count=10):
 
         if rev.user:
             if rev.deleted:
-                text = _(u'%(user)s deleted the article “%(article)s” on '
-                         u'%(date)s. Summary: %(summary)s')
+                text = _('%(user)s deleted the article “%(article)s” on '
+                         '%(date)s. Summary: %(summary)s')
             else:
-                text = _(u'%(user)s edited the article “%(article)s” on '
-                         u'%(date)s. Summary: %(summary)s')
+                text = _('%(user)s edited the article “%(article)s” on '
+                         '%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:
-                text = _(u'An anonymous user deleted the article '
-                         u'“%(article)s” on %(date)s. Summary: %(summary)s')
+                text = _('An anonymous user deleted the article '
+                         '“%(article)s” on %(date)s. Summary: %(summary)s')
             else:
-                text = _(u'An anonymous user edited the article '
-                         u'“%(article)s” on %(date)s. Summary: %(summary)s')
+                text = _('An anonymous user edited the article '
+                         '“%(article)s” on %(date)s. Summary: %(summary)s')
 
         kwargs['summary'] = text % {
             'user': rev.user,
@@ -211,7 +211,7 @@ def feed(request, page_name=None, count=10):
                   and {'name': rev.user.username, 'uri': url_for(rev.user)}
                   or settings.ANONYMOUS_USER_NAME)
         feed.add(
-            title=u'%s (%s)' % (
+            title='%s (%s)' % (
                 rev.user or settings.ANONYMOUS_USER_NAME,
                 format_datetime(rev.change_date),
             ),

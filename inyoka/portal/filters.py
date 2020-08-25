@@ -10,7 +10,7 @@
 """
 from itertools import chain
 
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy
 
 from django_filters import FilterSet, ChoiceFilter
@@ -21,27 +21,27 @@ from inyoka.utils.urls import urlencode
 
 
 SUPPORTED_SUBSCRIPTION_TYPES = {
-    'topic': ugettext_lazy(u'Topic'),
-    'forum': ugettext_lazy(u'Forum'),
-    'article': ugettext_lazy(u'Ikhaya article'),
-    'page': ugettext_lazy(u'Wiki page')
+    'topic': ugettext_lazy('Topic'),
+    'forum': ugettext_lazy('Forum'),
+    'article': ugettext_lazy('Ikhaya article'),
+    'page': ugettext_lazy('Wiki page')
 }
 
 
 class LinkWidget(BaseLinkWidget):
 
     def render_options(self, choices, selected_choices, name):
-        selected_choices = set(force_unicode(v) for v in selected_choices)
+        selected_choices = set(force_text(v) for v in selected_choices)
         output = []
         for option_value, option_label in chain(self.choices, choices):
             if option_label:
                 output.append(self.render_option(name, selected_choices, option_value, option_label))
-        return u'\n'.join(output)
+        return '\n'.join(output)
 
     def render_option(self, name, selected_choices, option_value, option_label):
-        option_value = force_unicode(option_value)
+        option_value = force_text(option_value)
         if option_label == '':
-            option_label = ugettext_lazy(u'All types')
+            option_label = ugettext_lazy('All types')
         data = self.data.copy()
         data[name] = option_value
         selected = data == self.data or option_value in selected_choices
@@ -52,7 +52,7 @@ class LinkWidget(BaseLinkWidget):
         return self.option_string() % {
             'attrs': selected and ' class="selected"' or '',
             'query_string': url,
-            'label': force_unicode(option_label)
+            'label': force_text(option_label)
         }
 
     def option_string(self):
@@ -61,8 +61,8 @@ class LinkWidget(BaseLinkWidget):
 
 class SubscriptionFilter(FilterSet):
     content_type = ChoiceFilter(name='content_type__model', label='',
-        choices=tuple(SUPPORTED_SUBSCRIPTION_TYPES.iteritems()),
-        widget=LinkWidget, empty_label=ugettext_lazy(u'All types'))
+        choices=tuple(SUPPORTED_SUBSCRIPTION_TYPES.items()),
+        widget=LinkWidget, empty_label=ugettext_lazy('All types'))
 
     class Meta:
         model = Subscription

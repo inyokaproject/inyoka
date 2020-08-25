@@ -33,7 +33,7 @@ def generate_word():
     return ''.join(
         random.choice(consonants) +
         random.choice(vowels) +
-        random.choice(both) for x in xrange(length // 3)
+        random.choice(both) for x in range(length // 3)
     )[:length]
 
 
@@ -168,7 +168,7 @@ class RandomBackground(CombinedLayer):
     def __init__(self):
         layers = [random.choice([SolidColor, DarkBackground,
                                  LightBackground])()]
-        for x in xrange(random.randrange(1, 4)):
+        for x in range(random.randrange(1, 4)):
             layers.append(random.choice([
                 NoiseBackground,
                 GridBackground
@@ -185,7 +185,7 @@ class RandomDistortion(CombinedLayer):
 
     def __init__(self):
         layers = []
-        for x in xrange(random.randrange(1, 3)):
+        for x in range(random.randrange(1, 3)):
             layers.append(random.choice((
                 WigglyBlocks,
                 SineWarp
@@ -199,16 +199,16 @@ class Picture(Layer):
     """
 
     def __init__(self, picture):
-        self.image = Image.open(picture)
+        self._picture = picture
         self.offset = (random.random(), random.random())
 
     def render(self, image):
-        tile = self.image
-        for j in xrange(-1, int(image.size[1] / tile.size[1]) + 1):
-            for i in xrange(-1, int(image.size[0] / tile.size[0]) + 1):
-                dest = (int((self.offset[0] + i) * tile.size[0]),
-                        int((self.offset[1] + j) * tile.size[1]))
-                image.paste(tile, dest)
+        with Image.open(self._picture) as tile:
+            for j in range(-1, int(image.size[1] / tile.size[1]) + 1):
+                for i in range(-1, int(image.size[0] / tile.size[0]) + 1):
+                    dest = (int((self.offset[0] + i) * tile.size[0]),
+                            int((self.offset[1] + j) * tile.size[1]))
+                    image.paste(tile, dest)
         return image
 
 
@@ -239,7 +239,7 @@ class NoiseBackground(Layer):
 
     def render(self, image):
         r = random.Random(self.seed)
-        for i in xrange(self.num_dots):
+        for i in range(self.num_dots):
             dot_size = random.randrange(1, 5)
             bx = int(r.uniform(0, image.size[0] - dot_size))
             by = int(r.uniform(0, image.size[1] - dot_size))
@@ -268,11 +268,11 @@ class GridBackground(Layer):
 
     def render(self, image):
         draw = ImageDraw.Draw(image)
-        for i in xrange(image.size[0] / self.size + 1):
+        for i in range(int(image.size[0] / self.size + 1)):
             draw.line((i * self.size + self.offset[0], 0,
                        i * self.size + self.offset[0], image.size[1]),
                       fill=self.color)
-        for i in xrange(image.size[0] / self.size + 1):
+        for i in range(int(image.size[0] / self.size + 1)):
             draw.line(
                 (0, i * self.size + self.offset[1],
                  image.size[0], i * self.size + self.offset[1]),
@@ -314,7 +314,7 @@ class WigglyBlocks(Layer):
 
     def render(self, image):
         r = random.Random(self.seed)
-        for i in xrange(self.iterations):
+        for i in range(self.iterations):
             # Select a block
             bx = int(r.uniform(0, image.size[0] - self.block_size))
             by = int(r.uniform(0, image.size[1] - self.block_size))
@@ -349,17 +349,17 @@ class WarpBase(Layer):
 
     def render(self, image):
         r = self.resolution
-        x_points = image.size[0] / r + 2
-        y_points = image.size[1] / r + 2
+        x_points = int(image.size[0] / r + 2)
+        y_points = int(image.size[1] / r + 2)
         f = self.get_transform(image)
 
         # Create a list of arrays with transformed points
         x_rows = []
         y_rows = []
-        for j in xrange(y_points):
+        for j in range(y_points):
             x_row = []
             y_row = []
-            for i in xrange(x_points):
+            for i in range(x_points):
                 x, y = f(i * r, j * r)
 
                 # Clamp the edges so we don't get black undefined areas
@@ -374,8 +374,8 @@ class WarpBase(Layer):
         # Create the mesh list, with a transformation for
         # each square between points on the grid
         mesh = []
-        for j in xrange(y_points - 1):
-            for i in xrange(x_points - 1):
+        for j in range(y_points - 1):
+            for i in range(x_points - 1):
                 mesh.append((
                     # Destination rectangle
                     (i * r, j * r, (i + 1) * r, (j + 1) * r),

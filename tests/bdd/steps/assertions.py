@@ -1,7 +1,6 @@
 import re
 
 from behave import then
-from django.conf import settings
 
 
 @then('I should see elements')
@@ -46,9 +45,9 @@ def step_impl(context, inactive_type):
     assert messages[inactive_type] in error.text
 
 
-@then(u'I should see a link to "{link}"')
+@then('I should see a link to "{link}"')
 def step_impl(context, link):
-    link = link.replace('BASE_DOMAIN_NAME', settings.BASE_DOMAIN_NAME)
+    link = link.replace('BASE_DOMAIN_NAME', context.base_url[7:])
     assert context.browser.find_element_by_css_selector("[href*='%(link)s']" % {'link': link})
 
 
@@ -100,6 +99,8 @@ def step_impl(context, information_type):
 
 @then("I should be on the login page")
 def step_impl(context):
+    from inyoka.utils.urls import href
+
     current_url = context.browser.current_url
-    expected_url = context.SERVER_URL + "/login"
+    expected_url = href('portal', 'login')
     assert current_url.startswith(expected_url), "%s should be %s" % (current_url, expected_url)

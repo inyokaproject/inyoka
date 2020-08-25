@@ -10,7 +10,7 @@
 """
 import json
 from hashlib import md5
-from urllib import urlencode
+from urllib.parse import urlencode
 
 import requests
 
@@ -23,7 +23,8 @@ DEFAULTS = ('404', 'mm', 'identicon', 'monsterid', 'wavatar', 'retro')
 
 
 def email_hash(string):
-    return md5(string.strip().lower()).hexdigest()
+    string = string.strip().lower().encode()
+    return md5(string).hexdigest()
 
 
 def get_gravatar(email, rating='g', size=80, default='mm'):
@@ -41,7 +42,7 @@ def get_profile(email):
     :return: A dictionary representing the profile or `None` if nothing found.
     """
     profile = None
-    url = u'%s%s.json' % (PROFILE_URL, email_hash(email))
+    url = '%s%s.json' % (PROFILE_URL, email_hash(email))
     response = requests.get(url)
     if response.status_code == 200:
         profile = json.loads(response.content)['entry'][0]

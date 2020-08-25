@@ -27,11 +27,11 @@ class TokenStreamIterator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         token = self._stream.current
         if token.type == 'eof':
             raise StopIteration()
-        self._stream.next()
+        next(self._stream)
         return token
 
 
@@ -47,10 +47,10 @@ class TokenStream(object):
     """
 
     def __init__(self, generator):
-        self._next = generator.next
+        self._next = generator.__next__
         self._pushed = []
         self.current = Token('initial', '')
-        self.next()
+        next(self)
 
     @classmethod
     def from_tuple_iter(cls, tupleiter):
@@ -76,7 +76,7 @@ class TokenStream(object):
         if self._pushed:
             return self._pushed[-1]
         old_token = self.current
-        self.next()
+        next(self)
         new_token = self.current
         self.current = old_token
         self.push(new_token)
@@ -86,14 +86,14 @@ class TokenStream(object):
         """Push a token back to the stream (only one!)."""
         self._pushed.append(token)
         if current:
-            self.next()
+            next(self)
 
     def skip(self, n):
         """Got n tokens ahead."""
-        for x in xrange(n):
-            self.next()
+        for x in range(n):
+            next(self)
 
-    def next(self):
+    def __next__(self):
         """Go one token ahead."""
         if self._pushed:
             self.current = self._pushed.pop()
@@ -114,7 +114,7 @@ class TokenStream(object):
         try:
             return self.current
         finally:
-            self.next()
+            next(self)
 
     def test(self, type, value=Ellipsis):
         """Test the current token."""
@@ -128,11 +128,11 @@ class TokenStream(object):
         Push one token into the stream.
         """
         old_current = self.current
-        self.next()
+        next(self)
         self.push(self.current)
         self.push(old_current)
         self.push(token)
-        self.next()
+        next(self)
 
 
 def _unpickle_multimap(d):
@@ -182,7 +182,7 @@ class MultiMap(dict):
 
     def __repr__(self):
         tmp = []
-        for key, values in self.iteritems():
+        for key, values in self.items():
             for value in values:
                 tmp.append((key, value))
         return '%s(%r)' % (self.__class__.__name__, tmp)

@@ -8,7 +8,8 @@
     :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from inyoka.markup import RenderContext, macros
+from inyoka.markup import macros
+from inyoka.markup.base import RenderContext
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page

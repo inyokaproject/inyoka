@@ -10,12 +10,12 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import print_function
+
 
 import datetime
 from functools import partial
 from hashlib import sha1
-from itertools import izip
+
 from os import chmod, mkdir, path, unlink, walk
 from re import compile, escape, sub
 from shutil import copy, copytree, rmtree
@@ -24,9 +24,9 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.translation import activate
-from werkzeug import url_unquote
+from werkzeug.urls import url_unquote
 
 from inyoka.portal.user import User
 from inyoka.portal.models import StaticPage, Linkmap
@@ -58,24 +58,24 @@ PORTAL_RE = compile(escape(href('portal')))
 DONE_SRCS = {}
 UPDATED_SRCS = set()
 
-SNAPSHOT_MESSAGE = u'<div class="message staticwikinote"><strong>Hinweis:'\
-                   u'</strong> Dies ist ein statischer Snapshot unseres '\
-                   u'Wikis vom %s und kann daher nicht bearbeitet werden. '\
-                   u'Der aktuelle Artikel ist unter <a '\
-                   u'href="%s">wiki.ubuntuusers.de</a> zu finden.</div>'
+SNAPSHOT_MESSAGE = '<div class="message staticwikinote"><strong>Hinweis:'\
+                   '</strong> Dies ist ein statischer Snapshot unseres '\
+                   'Wikis vom %s und kann daher nicht bearbeitet werden. '\
+                   'Der aktuelle Artikel ist unter <a '\
+                   'href="%s">wiki.ubuntuusers.de</a> zu finden.</div>'
 SNAPSHOT_DATE = None
 
-REDIRECT_MESSAGE = u'<p>Diese Seite ist eine Weiterleitung. Daher wirst '\
-                   u'du in 5 Sekunden automatisch nach <a '\
-                   u'href="%s.html">%s</a> weitergeleitet.</p>'
+REDIRECT_MESSAGE = '<p>Diese Seite ist eine Weiterleitung. Daher wirst '\
+                   'du in 5 Sekunden automatisch nach <a '\
+                   'href="%s.html">%s</a> weitergeleitet.</p>'
 
-CREATED_MESSAGE = u'<li class="poweredby">Erstellt mit <a '\
-                  u'href="http://inyokaproject.org/">Inyoka</a></li>'
+CREATED_MESSAGE = '<li class="poweredby">Erstellt mit <a '\
+                  'href="http://inyokaproject.org/">Inyoka</a></li>'
 
-EXCLUDE_PAGES = [u'Benutzer/', u'Anwendertreffen/', u'Baustelle/',
-                 u'LocoTeam/', u'Wiki/Vorlagen', u'Vorlage/', u'Verwaltung/',
-                 u'Galerie', 'Trash/', u'Messen/', u'UWN-Team/', u'Mitmachen/',
-                 u'ubuntuusers/']
+EXCLUDE_PAGES = ['Benutzer/', 'Anwendertreffen/', 'Baustelle/',
+                 'LocoTeam/', 'Wiki/Vorlagen', 'Vorlage/', 'Verwaltung/',
+                 'Galerie', 'Trash/', 'Messen/', 'UWN-Team/', 'Mitmachen/',
+                 'ubuntuusers/']
 # we're case insensitive
 EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 
@@ -153,7 +153,7 @@ class Command(BaseCommand):
 
     def _write_file(self, pth, content):
         with open(pth, 'w+') as fobj:
-            fobj.write(content.encode('utf-8'))
+            fobj.write(content)
 
     def save_file(self, url, is_main_page=False, is_static=False):
         if not INCLUDE_IMAGES and not is_static and not is_main_page:
@@ -172,7 +172,7 @@ class Command(BaseCommand):
         rel_path = sub('\?v=v[\d\.]*', '', rel_path)
         if rel_path:
             abs_path = path.join(base, rel_path)
-            hash_code = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
+            hash_code = sha1(force_text(rel_path).encode('utf-8')).hexdigest()
             if hash_code not in DONE_SRCS:
                 ext = path.splitext(rel_path)[1]
                 fname = '%s%s' % (hash_code, ext)
@@ -185,12 +185,12 @@ class Command(BaseCommand):
         return ""
 
     def fix_path(self, pth, pre=''):
-        if isinstance(pth, unicode):
+        if isinstance(pth, str):
             pth.encode('utf-8')
         return pre + normalize_pagename(url_unquote(pth), False).lower()
 
     def _pre(self, parts):
-        return parts and u''.join('../' for _ in xrange(parts)) or './'
+        return parts and ''.join('../' for _ in range(parts)) or './'
 
     def handle_removals(self, soup, pre, is_main_page, page_name):
         remove = (('script',),
@@ -207,7 +207,7 @@ class Command(BaseCommand):
             if not rel_path:
                 tag.extract()
             else:
-                tag['href'] = u'%s%s' % (pre, rel_path)
+                tag['href'] = '%s%s' % (pre, rel_path)
                 if rel_path not in UPDATED_SRCS:
                     abs_path = path.join(FOLDER, 'files', rel_path)
                     if path.isfile(abs_path):
@@ -226,7 +226,7 @@ class Command(BaseCommand):
             if not rel_path:
                 tag.extract()
             else:
-                tag['href'] = u'%s%s' % (pre, rel_path)
+                tag['href'] = '%s%s' % (pre, rel_path)
 
         sub = {'stylesheet': _handle_style,
                'shortcut icon': _handle_favicon}
@@ -236,12 +236,12 @@ class Command(BaseCommand):
             op(link)
 
     def handle_title(self, soup, pre, is_main_page, page_name):
-        soup.find('title').string = page_name + u' › ubuntuusers statisches Wiki'
+        soup.find('title').string = page_name + ' › ubuntuusers statisches Wiki'
 
     def handle_logo(self, soup, pre, is_main_page, page_name):
         tag = soup.find('header', 'header').find('h1').find('a')
         tag['href'] = UU_PORTAL
-        tag.find('span').string = u'ubuntuusers.de'
+        tag.find('span').string = 'ubuntuusers.de'
 
     def handle_tabbar(self, soup, pre, is_main_page, page_name):
         sub = {
@@ -265,14 +265,14 @@ class Command(BaseCommand):
             else:
                 if '?' in link:
                     rel_path = self.fix_path(page_name, pre)
-                    a['href'] = u'%s.html' % rel_path
+                    a['href'] = '%s.html' % rel_path
                 elif '#' in link:
-                    target, anchor = link.split(u'#', 1)
+                    target, anchor = link.split('#', 1)
                     rel_path = self.fix_path(target, pre)
-                    a['href'] = u'%s.html#%s' % (rel_path, anchor)
+                    a['href'] = '%s.html#%s' % (rel_path, anchor)
                 else:
                     rel_path = self.fix_path(link, pre)
-                    a['href'] = u'%s.html' % rel_path
+                    a['href'] = '%s.html' % rel_path
 
     def handle_img(self, soup, pre, is_main_page, page_name):
         def _remove_link(tag):
@@ -284,6 +284,7 @@ class Command(BaseCommand):
         if not INCLUDE_IMAGES:
             for img in soup.find_all('img'):
                 img['src'] = transparent_pixel
+
                 _remove_link(img)
         else:
             for img in soup.find_all('img'):
@@ -292,15 +293,16 @@ class Command(BaseCommand):
                                               img['src'].startswith(href('static')))
                     if not rel_path:
                         img['src'] = transparent_pixel
+
                     else:
-                        img['src'] = u'%s%s' % (pre, rel_path)
+                        img['src'] = '%s%s' % (pre, rel_path)
                     _remove_link(img)
                 except KeyError:
                     img.extract()
 
     def handle_startpage(self, soup, pre, is_main_page, page_name):
         for a in soup.find_all('a', href=WIKI_CENTER_RE):
-            a['href'] = u'%s%s.html' % (pre, settings.WIKI_MAIN_PAGE.lower())
+            a['href'] = '%s%s.html' % (pre, settings.WIKI_MAIN_PAGE.lower())
 
     def handle_footer(self, soup, pre, is_main_page, page_name):
         for li in soup.find('footer', 'footer').find_all('li'):
@@ -386,7 +388,7 @@ class Command(BaseCommand):
         # Apply the handlers from above to modify the page content
         for handler in self.HANDLERS:
             handler(self, license_soup, self._pre(0), is_main_page=False, page_name='Lizenz')
-        license_content = unicode(license_soup)
+        license_content = str(license_soup)
         self._write_file(path.join(FOLDER, 'files', self.license_file), license_content)
 
         if verbosity >= 1:
@@ -451,7 +453,7 @@ class Command(BaseCommand):
             if redirect:
                 self.handle_redirect_page(soup, self._pre(parts), redirect)
 
-            content = unicode(soup)
+            content = str(soup)
 
             self._write_file(path.join(FOLDER, 'files', '%s.html' %
                                                    self.fix_path(page.name)), content)
@@ -462,11 +464,11 @@ class Command(BaseCommand):
                                    (m.groups()[0], m.groups()[1]), content)
                 self._write_file(path.join(FOLDER, 'index.html'), content)
 
-        if len(todo) is 0:
+        if len(todo) == 0:
             percents = []
         else:
             percents = list(percentize(len(todo)))
-        for percent, name in izip(percents, todo):
+        for percent, name in zip(percents, todo):
             _fetch_and_write(name)
             if verbosity >= 1:
                 pb.update(percent)

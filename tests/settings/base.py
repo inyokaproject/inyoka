@@ -24,6 +24,7 @@ DATABASES = {
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 
 # url settings
+ALLOWED_HOSTS = ['.ubuntuusers.local']
 BASE_DOMAIN_NAME = 'ubuntuusers.local:8080'
 INYOKA_URI_SCHEME = 'http'
 SESSION_COOKIE_DOMAIN = '.ubuntuusers.local'
@@ -44,10 +45,10 @@ INYOKA_AKISMET_KEY = 'inyokatestkey'
 INYOKA_AKISMET_URL = 'http://testserver/'
 
 CACHES['content']['LOCATION'] = 'redis://{}:6379/0'.format(test_host or 'localhost')
-CACHES['content']['KEY_PREFIX'] = uuid1()
+CACHES['content']['KEY_PREFIX'] = str(uuid1())
 
 CACHES['default']['LOCATION'] = 'redis://{}:6379/1'.format(test_host or 'localhost')
-CACHES['default']['KEY_PREFIX'] = uuid1()
+CACHES['default']['KEY_PREFIX'] = str(uuid1())
 
 BROKER_URL = 'redis://{}:6379/0'.format(test_host or 'localhost')
 CELERY_RESULT_BACKEND = 'redis://{}:6379/0'.format(test_host or 'localhost')

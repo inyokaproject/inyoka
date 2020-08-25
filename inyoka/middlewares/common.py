@@ -19,8 +19,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 from django_hosts.middleware import HostsRequestMiddleware
-from django_mobile.middleware import \
-    MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
 from inyoka.utils.local import local, local_manager
 from inyoka.utils.logger import logger
@@ -53,7 +51,7 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
         response = CommonMiddleware.process_response(self, request, response)
 
         # update the cache control
-        if hasattr(request, 'user') and request.user.is_authenticated() \
+        if hasattr(request, 'user') and request.user.is_authenticated \
            or len(messages.get_messages(request)):
             response['Cache-Control'] = 'no-cache'
 
@@ -70,19 +68,12 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
         }
         duration = request.watch.duration
         if duration < 5.0:
-            logger.debug(u'Request Duration', extra=logger_extras)
-        if duration >= 5.0 and duration < 10.0:
-            logger.info(u'Slow Request', extra=logger_extras)
+            logger.debug('Request Duration', extra=logger_extras)
+        if 5.0 <= duration < 10.0:
+            logger.info('Slow Request', extra=logger_extras)
         if duration >= 10.0:
-            logger.warn(u'Very Slow Request', extra=logger_extras)
+            logger.warn('Very Slow Request', extra=logger_extras)
 
         local_manager.cleanup()
 
         return response
-
-
-class MobileDetectionMiddleware(BaseMobileDetectionMiddleware):
-    agents = ('up.browser', 'up.link', 'mmp', 'symbian', 'smartphone',
-              'midp', 'wap', 'phone', 'windows ce', 'pda', 'mobile',
-              'mini', 'palm', 'netfront', 'fennec')
-    user_agents_test_search = "(?:%(agents)s)" % {'agents': '|'.join(agents)}

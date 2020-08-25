@@ -1,44 +1,32 @@
 import os
 
+from behave import use_fixture
 from django.conf import settings
-from django.contrib.auth.models import Group
-from selenium import webdriver
 
-os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = settings.BASE_DOMAIN_NAME
+from tests.bdd.behave_fixtures import browser_chrome, django_test_case, django_test_runner
+from tests.bdd.steps.utils import take_screenshot
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.bdd.settings.headless'
 
 
 def before_all(context):
-    context.SERVER_URL = "http://" + settings.BASE_DOMAIN_NAME
     context.LOG_DIR = "bdd_screenshots"
-
-    if settings.HEADLESS:
-        context.browser = webdriver.PhantomJS('node_modules/phantomjs-prebuilt/bin/phantomjs')
+    use_fixture(django_test_runner, context)
+    use_fixture(browser_chrome, context)
 
 
 def before_scenario(context, scenario):
-    if not settings.HEADLESS:
-        context.browser = webdriver.Chrome()
+    from django.contrib.auth.models import Group
+
+    use_fixture(django_test_case, context)
 
     Group.objects.get_or_create(name=settings.INYOKA_REGISTERED_GROUP_NAME)
     Group.objects.get_or_create(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
-
-    context.browser.implicitly_wait(10)
+    settings.BASE_DOMAIN_NAME = context.base_url[7:]
+    settings.MEDIA_URL = '//media.%s/' % settings.BASE_DOMAIN_NAME
+    settings.STATIC_URL = '//static.%s/' % settings.BASE_DOMAIN_NAME
+    settings.LOGIN_URL = '//%s/login/' % settings.BASE_DOMAIN_NAME
 
 
 def after_step(context, step):
-    if step.status == "failed":
-        directory = os.path.join(context.LOG_DIR, context.feature.name, context.scenario.name)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        filename = os.path.join(directory, step.name + ".png")
-        context.browser.get_screenshot_as_file(filename)
-
-
-def after_scenario(context, scenario):
-    if not settings.HEADLESS:
-        context.browser.quit()
-
-
-def after_all(context):
-    if settings.HEADLESS:
-        context.browser.quit()
+    take_screenshot(context, step.name)

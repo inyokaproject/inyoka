@@ -103,7 +103,7 @@ class TestViews(TestCase):
         user_g.save()
 
         avatar_url = href('media', user_w.avatar)
-        gravatar_url = 'https://www.gravatar.com/avatar/ca39ffdca4bd97c3a6c29a4c8f29b7dc?s=80&amp;r=g&amp;d=mm'
+        gravatar_url_part = 'https://www.gravatar.com/avatar/ca39ffdca4bd97c3a6c29a4c8f29b7dc'
 
         a = Article.objects.create(author=self.admin, subject="Subject 2",
                             text="Text 3", pub_date=datetime.datetime.today().date(),
@@ -119,7 +119,7 @@ class TestViews(TestCase):
                 <a href="%s">user_wo</a>
             </p>
         </td>''' % user_wo.get_absolute_url(action='show'), count=1, html=True)
-        self.assertContains(response, gravatar_url, count=1)
+        self.assertContains(response, gravatar_url_part, count=1)
         self.assertContains(response, '<td class="author">', count=3)
 
     def test_add_event_without_data(self):
@@ -140,7 +140,7 @@ class TestViews(TestCase):
                                                         'enddate': datetime.date(2015, 5, 2),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddate_before_startdate(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
@@ -154,7 +154,7 @@ class TestViews(TestCase):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_startdatetime_enddatetime_midnight(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
@@ -163,7 +163,7 @@ class TestViews(TestCase):
                                                         'endtime': datetime.time(0, 0, 0),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_startdatetime_enddatetime(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
@@ -172,7 +172,7 @@ class TestViews(TestCase):
                                                         'endtime': datetime.time(11, 0, 0),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddatetime_before_startdatetime(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),

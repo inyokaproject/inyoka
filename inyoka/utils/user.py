@@ -16,7 +16,7 @@ import re
 from django.conf import settings
 from django.contrib.auth import hashers
 
-_username_re = re.compile(ur'^[@_\-\.a-z0-9äöüß]{1,30}$', re.I | re.U)
+_username_re = re.compile(r'^[@_\-\.a-z0-9äöüß]{1,30}$', re.I | re.U)
 
 
 def is_valid_username(name):
@@ -39,8 +39,7 @@ def gen_activation_key(user):
         user.id, user.username,
         settings.SECRET_KEY,
         user.email,
-    )).encode('utf8')).digest()[:9].encode('base64') \
-        .strip('\n=').replace('/', '_').replace('+', '-')
+    )).encode('utf8')).hexdigest()
 
 
 def check_activation_key(user, key):
