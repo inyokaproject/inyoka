@@ -12,6 +12,7 @@ import uuid
 
 from django.contrib import auth, messages
 from django.utils.crypto import constant_time_compare
+from django.utils.deprecation import MiddlewareMixin
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
@@ -19,7 +20,7 @@ from inyoka.portal.user import User
 from inyoka.utils.sessions import set_session_info
 
 
-class AuthMiddleware(object):
+class AuthMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         try:

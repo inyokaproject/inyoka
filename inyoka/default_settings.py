@@ -223,7 +223,7 @@ AVAILABLE_FEED_COUNTS = {
     'wiki_feed': (10, 20),
 }
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
     'inyoka.middlewares.session.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
