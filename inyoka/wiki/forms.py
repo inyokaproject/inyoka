@@ -118,7 +118,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
     """
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 50}))
     note = forms.CharField(label=ugettext_lazy('Edit summary'),
-                           widget=forms.TextInput(attrs={'size': 50}),
+                           widget=forms.TextInput(attrs={'size': 50, 'spellcheck': 'true'}),
                            max_length=512, required=True,
                            help_text=storage['wiki_edit_note_rendered'])
     edit_time = forms.CharField(widget=forms.HiddenInput(), required=True)
