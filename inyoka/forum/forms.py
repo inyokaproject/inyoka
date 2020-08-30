@@ -257,7 +257,8 @@ class ReportTopicForm(forms.Form):
     It's only field is a text field where the user can write why he thinks
     that the moderators should have a look at this topic.
     """
-    text = forms.CharField(label=ugettext_lazy('Reason'), widget=forms.Textarea)
+    text = forms.CharField(label=ugettext_lazy('Reason'),
+                           widget=forms.Textarea(attrs={'spellcheck': 'true'}))
 
 
 class ReportListForm(forms.Form):
