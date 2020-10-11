@@ -80,6 +80,9 @@ def sync():
         except socket.timeout:
             logger.debug('socket.timeout on %s' % blog.feed_url)
             continue
+        except ConnectionError:
+            logger.debug('ConnectionError on %s' % blog.feed_url)
+            continue
 
         blog_author = feed.get('author') or blog.name
         blog_author_detail = feed.get('author_detail')
