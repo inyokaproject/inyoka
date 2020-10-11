@@ -191,7 +191,7 @@ class MultiMap(dict):
 def flatten_iterator(iter):
     """Flatten an iterator to one without any sub-elements"""
     for item in iter:
-        if hasattr(item, '__iter__'):
+        if hasattr(item, '__iter__') and not isinstance(item, str):
             for sub in flatten_iterator(item):
                 yield sub
         else:
