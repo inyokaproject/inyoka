@@ -71,14 +71,8 @@ def sync():
         # but the bozo bit might be defined.
         try:
             feed = feedparser.parse(blog.feed_url)
-        except LookupError:
-            logger.debug('LookupError on %s' % blog.feed_url)
-            continue
-        except urllib.error.URLError:
-            logger.debug('URLError on %s' % blog.feed_url)
-            continue
-        except socket.timeout:
-            logger.debug('socket.timeout on %s' % blog.feed_url)
+        except (LookupError, urllib.error.URLError, socket.timeout, ConnectionError) as e:
+            logger.debug('%s on %s' % (repr(e), blog.feed_url))
             continue
 
         blog_author = feed.get('author') or blog.name
