@@ -189,9 +189,11 @@ class SplitTopicForm(forms.Form):
     ubuntu_distro = forms.ChoiceField(required=False)
     edit_post = forms.BooleanField(required=False, label=_('Edit first post afterwards'))
 
+    use_required_attribute = False
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        super(SplitTopicForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['forum'] = ForumField(user=user)
 
         self.fields['ubuntu_version'].choices = get_version_choices()
