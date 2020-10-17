@@ -136,6 +136,8 @@ class RegisterForm(forms.Form):
     captcha = CaptchaField(label=ugettext_lazy('CAPTCHA'))
     terms_of_usage = forms.BooleanField()
 
+    use_required_attribute = False
+
     def clean_username(self):
         """
         Validates that the username is alphanumeric and is not already
