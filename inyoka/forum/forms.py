@@ -193,7 +193,7 @@ class SplitTopicForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
-        super(SplitTopicForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['forum'] = ForumField(user=user)
 
         self.fields['ubuntu_version'].choices = get_version_choices()
