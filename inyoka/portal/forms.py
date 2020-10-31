@@ -576,7 +576,7 @@ class EditUserStatusForm(forms.ModelForm):
         data = self.cleaned_data
         if not data.get('banned_until'):
             return data
-        if int(data['status']) != 2:
+        if int(data['status']) != User.STATUS_BANNED:
             raise forms.ValidationError(_('The user is not banned'))
         if data['banned_until'] < datetime.datetime.utcnow():
             raise forms.ValidationError(_('The point of time is in the past.'))
