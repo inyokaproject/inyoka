@@ -203,7 +203,7 @@ class StrippedCharField(forms.CharField):
 class EmailField(forms.EmailField):
 
     def clean(self, value):
-        value = super(EmailField, self).clean(value)
+        value = super().clean(value)
         value = value.strip()
         if is_blocked_host(value):
             raise forms.ValidationError(_('The entered e-mail address belongs to a '
@@ -217,7 +217,7 @@ class ForumMulitpleChoiceField(MultipleChoiceField):
 
     def __init__(self, *args, **kwargs):
         self.is_category = kwargs.pop('is_category', lambda val: val)
-        super(ForumMulitpleChoiceField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class JabberField(forms.CharField):

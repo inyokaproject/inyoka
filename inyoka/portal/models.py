@@ -273,7 +273,7 @@ class StaticFile(models.Model):
 
     def delete(self):
         self.file.delete(save=False)
-        super(StaticFile, self).delete()
+        super().delete()
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
