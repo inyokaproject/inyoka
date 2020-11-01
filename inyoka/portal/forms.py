@@ -563,7 +563,7 @@ class CreateUserForm(forms.Form):
 
 class EditUserStatusForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(EditUserStatusForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['banned_until'].localize = True
 
     class Meta:
@@ -576,7 +576,7 @@ class EditUserStatusForm(forms.ModelForm):
         data = self.cleaned_data
         if not data.get('banned_until'):
             return data
-        if int(data['status']) != 2:
+        if int(data['status']) != User.STATUS_BANNED:
             raise forms.ValidationError(_('The user is not banned'))
         if data['banned_until'] < datetime.datetime.utcnow():
             raise forms.ValidationError(_('The point of time is in the past.'))
@@ -1008,7 +1008,7 @@ class EditStaticPageForm(forms.ModelForm):
         fields = ('key', 'title', 'content')
 
     def __init__(self, *args, **kwargs):
-        super(EditStaticPageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.new = self.instance.key == ""
 
@@ -1024,7 +1024,7 @@ class EditStaticPageForm(forms.ModelForm):
         return key
 
     def clean(self):
-        super(EditStaticPageForm, self).clean()
+        super().clean()
 
         key = self.cleaned_data.get('key')
         title = self.cleaned_data.get('title')
@@ -1056,7 +1056,7 @@ class EditFileForm(forms.ModelForm):
         return data['file']
 
     def save(self, commit=True):
-        instance = super(EditFileForm, self).save(commit=False)
+        instance = super().save(commit=False)
         instance.identifier = instance.file.name.rsplit('/', 1)[-1]
         if commit:
             instance.save()
