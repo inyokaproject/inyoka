@@ -13,6 +13,7 @@ import csv
 from functools import partial
 
 from datetime import date, datetime, timedelta
+from django.contrib.messages.views import SuccessMessageMixin
 from icalendar import Calendar as iCal, Event as iEvent
 from time import time
 
@@ -320,25 +321,25 @@ def lost_password(request):
         messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(href('portal'))
 
-    return PasswordResetView.as_view(
-        template_name='portal/lost_password.html',
-        email_template_name='mails/new_user_password.txt',
-        subject_template_name='mails/new_user_password_subject.txt',
-        form_class=LostPasswordForm,
-        success_url=href('portal', 'login')
-    )(request)
+    class _PasswordResetView(SuccessMessageMixin, PasswordResetView):
+        template_name = 'portal/lost_password.html'
+        email_template_name = 'mails/new_user_password.txt'
+        subject_template_name = 'mails/new_user_password_subject.txt'
+        form_class = LostPasswordForm
+        success_url = href('portal', 'login')
+        success_message = _('An email with further instructions was sent to you.')
+
+    return _PasswordResetView.as_view()(request)
 
 
 def set_new_password(request, uidb36, token):
-    response = PasswordResetConfirmView.as_view(
-        success_url=href('portal', 'login'),
-        template_name='portal/set_new_password.html'
-    )(request, uidb64=uidb36, token=token)
+    class _PasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmView):
+        success_url = href('portal', 'login')
+        success_message = _('You successfully changed your password and are now '
+                            'able to login.')
+        template_name = 'portal/set_new_password.html'
 
-    if isinstance(response, HttpResponseRedirect):
-        messages.success(request,
-            _('You successfully changed your password and are now '
-              'able to login.'))
+    response = _PasswordResetConfirmView.as_view()(request, uidb64=uidb36, token=token)
 
     return response
 
