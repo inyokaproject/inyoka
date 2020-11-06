@@ -18,8 +18,8 @@ lxml==4.6.1
 MarkupSafe==1.1.1
 Pillow==7.2.0
 psycopg2==2.8.6
-pyasn1_modules==0.1.5
-pyasn1==0.3.7
+pyasn1_modules==0.2.8
+pyasn1==0.4.8
 Pygments==2.7.2
 python-dateutil==2.6.1
 python-magic==0.4.18
