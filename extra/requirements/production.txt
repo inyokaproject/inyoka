@@ -22,7 +22,7 @@ pyasn1_modules==0.1.5
 pyasn1==0.3.7
 Pygments==2.5.2
 python-dateutil==2.6.1
-python-magic==0.4.13
+python-magic==0.4.18
 pytz==2017.3
 pyzmq==16.0.4
 raven==6.3.0
