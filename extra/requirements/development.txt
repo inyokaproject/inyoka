@@ -11,8 +11,9 @@ freezegun==0.3.12
 gevent==20.9.0
 isort==4.2.15
 mock==2.0.0
-responses==0.8.1
+responses==0.12.0
 selenium==3.11.0
 sphinx-rtd-theme==0.2.4
 Sphinx==1.6.5
 unittest-xml-reporting==2.3.2
+urllib3==1.25.11
