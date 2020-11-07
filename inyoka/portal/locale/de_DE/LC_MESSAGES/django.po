@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-26 20:50+0200\n"
-"PO-Revision-Date: 2019-01-25 20:45+0100\n"
+"POT-Creation-Date: 2020-11-07 18:18+0100\n"
+"PO-Revision-Date: 2020-11-07 18:27+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -192,6 +192,9 @@ msgstr "Vollständiger Link zur Zielseite"
 
 msgid "GPG fingerprint"
 msgstr "GPG-Fingerprint"
+
+msgid "Generate new code"
+msgstr "Neue Zeichenfolge generieren"
 
 msgid "Global Message"
 msgstr "Globale Nachricht"
@@ -379,6 +382,9 @@ msgstr "Bitte wähle ein Forum aus"
 
 msgid "Please select the groups for this user."
 msgstr "Bitte wähle Gruppen für diesen Benutzer."
+
+msgid "Please type in the code from the graphic above"
+msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 
 msgid "Portal"
 msgstr "Portal"
@@ -773,3 +779,4 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
+

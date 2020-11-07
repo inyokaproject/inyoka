@@ -1,14 +1,14 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2019 Inyoka Team (see AUTHORS)
+# Copyright (C) 2020 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.20.0\n"
+"Project-Id-Version: Inyoka Project v0.23.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-26 20:50+0200\n"
+"POT-Creation-Date: 2020-11-07 18:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -192,6 +192,9 @@ msgstr ""
 msgid "GPG fingerprint"
 msgstr ""
 
+msgid "Generate new code"
+msgstr ""
+
 msgid "Global Message"
 msgstr ""
 
@@ -226,6 +229,9 @@ msgid "Icon"
 msgstr ""
 
 msgid "Identifier"
+msgstr ""
+
+msgid "If enabled, less animations are used."
 msgstr ""
 
 msgid "If not given, the last changes will be displayed."
@@ -376,6 +382,9 @@ msgstr ""
 msgid "Please select the groups for this user."
 msgstr ""
 
+msgid "Please type in the code from the graphic above"
+msgstr ""
+
 msgid "Portal"
 msgstr ""
 
@@ -383,6 +392,9 @@ msgid "Read"
 msgstr ""
 
 msgid "Read posts"
+msgstr ""
+
+msgid "Reduced motion"
 msgstr ""
 
 msgid "Release date"
