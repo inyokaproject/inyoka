@@ -36,7 +36,7 @@ del name2codepoint
 
 
 class XHTMLSerializer(HTMLSerializer):
-    quote_attr_values = True
+    quote_attr_values = "always"
     minimize_boolean_attributes = False
     use_trailing_solidus = True
     escape_lt_in_attrs = True
@@ -132,7 +132,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
         serializer = XHTMLSerializer()
     else:
         serializer = HTMLSerializer(
-            quote_attr_values=True,
+            quote_attr_values="always",
             minimize_boolean_attributes=False,
             omit_optional_tags=False,
         )
