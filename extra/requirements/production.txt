@@ -9,7 +9,7 @@ django-hosts==3.0
 django-redis==4.11.0
 Django==1.11.29
 dnspython==1.16.0
-feedparser==6.0.2
+feedparser==6.0.0b3
 gunicorn==20.0.4
 html5lib==1.1
 icalendar==4.0.7
