@@ -1,14 +1,14 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2019 Inyoka Team (see AUTHORS)
+# Copyright (C) 2020 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.17.6\n"
+"Project-Id-Version: Inyoka Project v0.23.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"POT-Creation-Date: 2020-11-07 18:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -154,13 +154,10 @@ msgstr ""
 msgid "No recent topics within this forum."
 msgstr ""
 
-msgid "No topic with this slug found."
-msgstr ""
-
 msgid "No topics selected."
 msgstr ""
 
-msgid "No Ubuntu"
+msgid "Not specified"
 msgstr ""
 
 msgid "Notifications on new posts in this topic will be sent to you."
@@ -211,6 +208,10 @@ msgid "Posts of the last %(n)d hours"
 msgstr ""
 
 msgid "Reason"
+msgstr ""
+
+#, python-format
+msgid "Reported post: “%(post)s”"
 msgstr ""
 
 #, python-format

@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-19 17:15+0200\n"
-"PO-Revision-Date: 2017-03-23 22:51+0000\n"
-"Last-Translator: Lyra\n"
+"POT-Creation-Date: 2020-11-07 18:18+0100\n"
+"PO-Revision-Date: 2020-11-07 18:24+0100\n"
+"Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -25,17 +25,11 @@ msgstr "\"%(fingerprint)s\" ist kein valider GPG-Fingerprint."
 msgid "Are you sure?"
 msgstr "Bist du sicher?"
 
-msgid "CAPTCHA"
-msgstr "CAPTCHA"
-
 msgid "Canceled."
 msgstr "Abgebrochen."
 
 msgid "Errors occurred, please fix them."
 msgstr "Bitte die aufgetretenen Fehler beheben."
-
-msgid "Generate new code"
-msgstr "Neue Zeichenfolge generieren"
 
 msgid "New"
 msgstr "Neu"
@@ -49,9 +43,6 @@ msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
 msgid "Old"
 msgstr "Alt"
-
-msgid "Please type in the code from the graphic above"
-msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 
 msgid "Text must not be empty"
 msgstr "Text darf nicht leer sein"
@@ -143,3 +134,4 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
+

@@ -1,14 +1,14 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2019 Inyoka Team (see AUTHORS)
+# Copyright (C) 2020 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.17.6\n"
+"Project-Id-Version: Inyoka Project v0.23.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"POT-Creation-Date: 2020-11-07 18:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -169,10 +169,13 @@ msgstr ""
 msgid "Revision is the latest one, revert aborted."
 msgstr ""
 
-msgid "URL of the topic"
+msgid "Somebody else edited the page while you were making your changes. We tried to merge the text automatically. Please confirm that everything is ok."
 msgstr ""
 
-msgid "Somebody else edited the page while you were making your changes. We tried to merge the text automatically. Please confirm that everything is ok."
+msgid "Successfully linked the discussion with the article."
+msgstr ""
+
+msgid "Successfully unlinked the discussion from the article."
 msgstr ""
 
 msgid "The article „{name}“ does not exist, you can try to create it now."
@@ -221,9 +224,6 @@ msgstr ""
 msgid "This page contains a redirect that leads to a redirect loop!"
 msgstr ""
 
-msgid "This topic does not exist."
-msgstr ""
-
 msgid "Unknown page"
 msgstr ""
 
@@ -240,10 +240,6 @@ msgid "You are not permitted to make this change."
 msgstr ""
 
 msgid "You are viewing an old revision of this wiki page."
-msgstr ""
-
-#, python-format
-msgid "You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>%(example)s</em>)"
 msgstr ""
 
 msgid "You can not create a page with a reserved name."
@@ -271,8 +267,3 @@ msgstr ""
 msgid "“%(title)s” was reverted successfully"
 msgstr ""
 
-msgid "Successfully linked the discussion with the article."
-msgstr ""
-
-msgid "Successfully unlinked the discussion from the article."
-msgstr ""
