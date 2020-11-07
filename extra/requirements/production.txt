@@ -21,7 +21,7 @@ psycopg2==2.8.6
 pyasn1_modules==0.2.8
 pyasn1==0.4.8
 Pygments==2.7.2
-python-dateutil==2.6.1
+python-dateutil==2.8.1
 python-magic==0.4.18
 pytz==2020.4
 pyzmq==16.0.4
