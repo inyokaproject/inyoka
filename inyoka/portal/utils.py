@@ -93,7 +93,7 @@ def google_calendarize(event):
     return s + '&trp=false'
 
 
-class UbuntuVersion(object):
+class UbuntuVersion:
     """
     This class holds a single Ubuntu version. Based on the settings for
     :py:attr:`lts`, :py:attr:`active`, :py:attr:`current`, :py:attr:`dev`, a
@@ -140,6 +140,9 @@ class UbuntuVersion(object):
         o = list(map(int, other.number.split('.')))
         #: Sort by major number and if they are the same, by minor version
         return s[0] > o[0] or s[0] == o[0] and s[1] > o[1]
+
+    def __hash__(self):
+        return hash(self.number) ^ hash(self.name)
 
     def as_json(self):
         data = {
