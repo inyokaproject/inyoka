@@ -79,7 +79,7 @@ class SendmailEmailBackend(BaseEmailBackend):
                    settings.INYOKA_SYSTEM_USER_EMAIL,
                    '-t']
             proc = Popen(cmd, stdin=PIPE)
-            proc.stdin.write(email_message.message().as_string())
+            proc.stdin.write(email_message.message().as_bytes())
             proc.stdin.flush()
             proc.stdin.close()
             # replace with os.wait() in a outer level to not wait to much?!
