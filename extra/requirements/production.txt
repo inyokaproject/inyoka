@@ -27,7 +27,7 @@ pytz==2017.3
 pyzmq==16.0.4
 raven==6.3.0
 requests==2.20.0
-SleekXMPP==1.3.2 # 1.3.3 breaks, see https://github.com/fritzy/SleekXMPP/issues/461
+slixmpp==1.4.2
 transifex-client==0.12.5
 vine==1.3.0
 Werkzeug==0.15.5
