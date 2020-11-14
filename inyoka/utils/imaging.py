@@ -83,8 +83,8 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     thumbnails once a month to get rid of unused thumbnails. The wiki will
     recreate thumbnails automatically.
 
-    The return value is `None` if it cannot generate a thumbnail or the path
-    for the thumbnail. Join it with the media root or media URL to get the
+    The return value is `None` if it cannot generate a thumbnail.
+    Join it with the media root or media URL to get the
     internal filename. This method generates a PNG thumbnail.
     """
     if not width and not height:
@@ -110,10 +110,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
             if img.size > box:
                 img.thumbnail(box, Image.ANTIALIAS)
             real_filename = os.path.join(settings.MEDIA_ROOT, destination)
-            try:
-                os.makedirs(os.path.dirname(real_filename))
-            except OSError:
-                pass
+            os.makedirs(os.path.dirname(real_filename), exist_ok=True)
             img.save(real_filename, quality=100)
     except IOError:
         # the image could not be identified
