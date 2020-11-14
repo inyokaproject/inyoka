@@ -109,7 +109,7 @@ def fetch_real_target(target, width=None, height=None, force=False):
                            dimension.replace('!', 'f'))
         base_filename = os.path.join('wiki', 'thumbnails', hash[:1],
                                      hash[:2], hash)
-        thumbnail = get_thumbnail(page_filename, base_filename, width, height, force)
+        thumbnail = get_thumbnail(page_filename.decode(), base_filename, width, height, force)
 
         target = urljoin(settings.MEDIA_URL, thumbnail)
     else:

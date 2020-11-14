@@ -416,10 +416,10 @@ class Attachment(macros.Macro):
 class Picture(macros.Macro):
     """
     This macro can display external images and attachments as images.  It
-    also takes care about thumbnail generation.  For any internal (attachment)
+    also takes care about thumbnail generation. For any internal (attachment)
     image included that way an ``X-Attach`` metadata is emitted.
 
-    Like for any link only absolute targets are allowed.  This might be
+    Like for any link only absolute targets are allowed. This might be
     surprising behavior if you're used to the MoinMoin syntax but caused
     by the fact that the parser does not know at parse time on which page
     it is operating.
