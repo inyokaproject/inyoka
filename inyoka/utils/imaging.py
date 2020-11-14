@@ -79,16 +79,16 @@ def fix_colorspace(image, grayscale=False, replace_alpha=False):
 def get_thumbnail(location, destination, width=None, height=None, force=False):
     """
     This function generates a thumbnail for an uploaded image.
-    It uses the media root to cache those thumbnails.  A script should delete
-    thumbnails once a month to get rid of unused thumbnails.  The wiki will
+    It uses the media root to cache those thumbnails. A script should delete
+    thumbnails once a month to get rid of unused thumbnails. The wiki will
     recreate thumbnails automatically.
 
     The return value is `None` if it cannot generate a thumbnail or the path
-    for the thumbnail.  Join it with the media root or media URL to get the
-    internal filename.  This method generates a PNG thumbnail.
+    for the thumbnail. Join it with the media root or media URL to get the
+    internal filename. This method generates a PNG thumbnail.
     """
     if not width and not height:
-        raise ValueError('neither with nor height given')
+        raise ValueError('neither width nor height given')
 
     if not is_safe_domain(location):
         return None
