@@ -45,7 +45,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestViews, self).setUp()
+        super().setUp()
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
         self.admin.is_superuser = True
         self.admin.save()
@@ -416,7 +416,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
 class TestUserPostCounter(TestCase):
     def setUp(self):
-        super(TestUserPostCounter, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.user.is_superuser = True
         self.user.save()
@@ -470,7 +470,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestPostEditView, self).setUp()
+        super().setUp()
         anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
@@ -830,6 +830,34 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Test send
         # The assert calls are inside the function self.post_request()
         self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=2, polloptions=4, submit=True)
+
+    def test_vote_in_poll(self):
+        self.client.login(username='admin', password='admin')
+        # Add first poll
+        postdata = {
+            'question': "What shall I ask?",
+            'options': ['this', 'that'],
+            'add_poll': True,
+        }
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, polls=1, polloptions=2)
+        poll = Poll.objects.get()
+
+        # create topic for poll
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': 'newpost text',
+            'polls': str(poll.pk),
+        }
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=1, polloptions=2, submit=True)
+
+        # submit vote
+        postdata = {
+            'poll_%s' % poll.id: poll.options.first().id,
+            'vote': 'submit'
+        }
+        self.client.post('/topic/newpost-title/', postdata)
+        self.assertEqual(poll.votes, 1)
 
     def test_new_post(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
@@ -1409,14 +1437,13 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 class TestWelcomeMessageView(TestCase):
 
     def setUp(self):
-        super(TestWelcomeMessageView, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.forum_welcome = Forum.objects.create(slug='f-slug-welcome', welcome_title='test')
         self.forum_no_welcome = Forum.objects.create(slug='f-slug-no-welcome')
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         for forum in (self.forum_welcome, self.forum_no_welcome):
             assign_perm('forum.view_forum', registered_group, forum)
-
 
     def test_post_accept(self):
         request = RequestFactory().post('/fake/', {'accept': True})

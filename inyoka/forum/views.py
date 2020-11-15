@@ -228,7 +228,7 @@ def viewtopic(request, topic_slug, page=1):
                     elif poll.ended:
                         messages.error(request, _('The poll already ended.'))
                         continue
-                    poll.votings.add(PollVote(voter=request.user))
+                    poll.votings.add(PollVote(voter=request.user), bulk=False)
                     poll.options.filter(id__in=votes) \
                                 .update(votes=F('votes') + 1)
 
