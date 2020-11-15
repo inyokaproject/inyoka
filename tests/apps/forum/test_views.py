@@ -831,6 +831,34 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # The assert calls are inside the function self.post_request()
         self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=2, polloptions=4, submit=True)
 
+    def test_vote_in_poll(self):
+        self.client.login(username='admin', password='admin')
+        # Add first poll
+        postdata = {
+            'question': "What shall I ask?",
+            'options': ['this', 'that'],
+            'add_poll': True,
+        }
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, polls=1, polloptions=2)
+        poll = Poll.objects.get()
+
+        # create topic for poll
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': 'newpost text',
+            'polls': str(poll.pk),
+        }
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=1, polloptions=2, submit=True)
+
+        # submit vote
+        postdata = {
+            'poll_%s' % poll.id: poll.options.first().id,
+            'vote': 'submit'
+        }
+        self.client.post('/topic/newpost-title/', postdata)
+        self.assertEqual(poll.votes, 1)
+
     def test_new_post(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
         Post.objects.create(text='first post', author=self.admin, position=0, topic=topic)
