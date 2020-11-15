@@ -9,15 +9,15 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, timedelta
+from typing import Dict, List, Optional
 
 
-def easter_sunday(year):
-    '''
-    uses the gauss algorithm with additions
+def easter_sunday(year: int) -> date:
+    """
+    Get the date of easter sunday.
+    Uses the gauss algorithm with additions
     german source: https://de.wikipedia.org/wiki/Gau%C3%9Fsche_Osterformel#Eine_erg.C3.A4nzte_Osterformel
-
-    Returns a date object.
-    '''
+    """
 
     k = year // 100
     m = 15 + (3*k+3)//4 - (8*k+13)//25
@@ -40,7 +40,7 @@ def easter_sunday(year):
     return date(year, month, day)
 
 
-def fourth_advent(year):
+def fourth_advent(year: int) -> date:
     fourth_advent = date(year, 12, 24)
     fourth_weekday = date.weekday(fourth_advent)
 
@@ -50,11 +50,11 @@ def fourth_advent(year):
     return fourth_advent
 
 
-def advent_week(n_th, year):
-    '''
+def advent_week(n_th: int, year: int) -> List[date]:
+    """
         Returns a list of date-objects that represent the given advent-week.
         The "week" of the 4th advent ends with the 26th december.
-    '''
+    """
     if n_th < 1 or n_th > 4:
         raise ValueError('Only 1st to (inclusive) 4th advent exists.')
 
@@ -67,29 +67,29 @@ def advent_week(n_th, year):
         return [fourth + timedelta(days=d-n_th_offset) for d in range(0, 7)]
 
 
-def collect_styles(year):
-    '''
-        createse a dict with scheme {date1: 'stylesheet.css', …}
-        → easier for check_special_day() to determine todays style
-    '''
+def collect_styles(year: int) -> Dict[date, str]:
+    """
+        Creates a dict with scheme {date1: 'stylesheet.css', …}
+        → easier for check_special_day() to determine today's style
+    """
     special_styles = dict()
 
     for i in (date(year, 12, 31), date(year, 1, 1)):
         special_styles[i] = 'silvester.css'
 
-    for i in range(1, 5):
-        for d in advent_week(i, year):
-            special_styles[d] = 'advent_{}.css'.format(i)
+    for w in range(1, 5):
+        for d in advent_week(w, year):
+            special_styles[d] = 'advent_{}.css'.format(w)
 
     return special_styles
 
 
-def check_special_day():
-    '''
-        Checks wheter today is a special day.
+def check_special_day() -> Optional[str]:
+    """
+        Checks whether today is a special day.
         If true, the function returns the name of the css-file to use.
         Otherwise returns None.
-    '''
+    """
     today = date.today()
 
     return collect_styles(today.year).get(today)
