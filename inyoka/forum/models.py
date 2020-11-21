@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-
+from typing import List, Optional
 
 import pickle
 import os
@@ -178,6 +178,36 @@ class ForumManager(models.Manager):
         forums = self.get_cached()
         forums = sorted(forums, key=attrgetter(attr))
         return forums
+
+    @staticmethod
+    def update_last_post(forums: List["Forum"],
+                         exclude_topic: Optional["Topic"] = None,
+                         exclude_post: Optional["Post"] = None) -> None:
+        """
+        Updates last_post of the given forums.
+        last_post of a forum is expected to be the most recent post,
+        as such this method just set the highest id (== max recent posts) as
+        last_post.
+
+        `exclude_topic` is helpful while deleting a topic
+        `exclude_post` is helpful while deleting a post
+        """
+        for f in forums:
+            descendants_with_forum = [des.id for des in f.descendants] + [f.id]
+
+            if exclude_post is not None:
+                last_post = Post.objects.exclude(hidden=True).exclude(id=exclude_post.pk).filter(
+                    topic__forum__in=descendants_with_forum).aggregate(count=Max('id'))
+            else:
+                # if no post to exclude is given, it's possible to rely on Topic.last_post
+                # → this makes the query faster
+                query = Topic.objects
+                if exclude_topic is not None:
+                    query = query.exclude(id=exclude_topic.pk)
+                last_post = query.filter(forum__in=descendants_with_forum).aggregate(count=Max('last_post'))
+
+            f.last_post_id = last_post['count']
+            f.save()
 
 
 class TopicManager(models.Manager):
@@ -598,12 +628,8 @@ class Topic(models.Model):
 
             self.save()
 
-            for forum in new_forums + old_forums:
-                forum.last_post_id = (
-                    Post.objects
-                        .filter(topic__forum=forum)
-                        .aggregate(count=Max('id'))['count'])
-                forum.save()
+            Forum.objects.update_last_post(new_forums)
+            Forum.objects.update_last_post(old_forums)
 
         old_forum.invalidate_topic_cache()
         new_forum.invalidate_topic_cache()
@@ -611,16 +637,15 @@ class Topic(models.Model):
     def delete(self, *args, **kwargs):
         parent_forums = self.forum.parents + [self.forum]
 
-        # Decrease the topic count of each parent forum and update last_post
+        # Decrease the topic count of each parent forum
         for forum in parent_forums:
             forum.topic_count.decr()
             forum.post_count.decr(self.post_count.value())
-            forum.last_post_id = (
-                Post.objects
-                    .filter(topic__forum=forum)
-                    .exclude(topic=self)
-                    .aggregate(count=Max('id'))['count'])
             forum.save()
+
+        # update last_post of forum
+        Forum.objects.update_last_post(parent_forums, exclude_topic=self)
+
         # Clear self.last_post and self.first_post, so this posts can be deleted
         self.last_post = None
         self.first_post = None
@@ -881,16 +906,9 @@ class Post(models.Model, LockableObject):
 
         parent_forums = list(Forum.objects.filter(last_post=self).all())
 
-        # search for a new last post for al forums in the chain up.
-        # We actually cheat here and set the newest post from the current
-        # forum for all forums.
+        # search for a new last post for all forums in the chain up.
         if self.pk == self.topic.forum.last_post_id:
-            new_lp_ids = Topic.objects.filter(forum=self.topic.forum)\
-                .exclude(last_post=self).order_by('-last_post')\
-                .values_list('last_post', flat=True)
-            new_lp_id = new_lp_ids[0] if new_lp_ids else None
-            (Forum.objects.filter(id__in=[forum.id for forum in parent_forums])
-                  .update(last_post=model_or_none(new_lp_id, self)))
+            Forum.objects.update_last_post(parent_forums, exclude_post=self)
 
         if parent_forums:
             # django_redis has a bug, that delete_many does not work with
@@ -1009,24 +1027,8 @@ class Post(models.Model, LockableObject):
             Topic.objects.filter(pk=new_topic.pk).update(**values)
             Post.objects.filter(pk=values['first_post'].pk).update(position=0)
 
-            # and find a new last post id for the new forum
-            new_ids = [p.id for p in new_forums]
-            old_ids = [p.id for p in old_forums]
-
-            # Update last_post of the forums
-            # NOTE: last_post of a forum is expected to be the most recent post,
-            # as such the following two updates ignore the splitted posts
-            # completly and just set the highest id (== max recent posts) as
-            # last_post.
-            Forum.objects.filter(id__in=new_ids).update(
-                last_post=Topic.objects.filter(forum__id__in=new_ids)
-                               .aggregate(count=Max('last_post'))['count']
-            )
-
-            Forum.objects.filter(id__in=old_ids).update(
-                last_post=Topic.objects.filter(forum__id__in=old_ids)
-                               .aggregate(count=Max('last_post'))['count']
-            )
+            Forum.objects.update_last_post(new_forums)
+            Forum.objects.update_last_post(old_forums)
 
             # Update post_count of the forums
             for forum in new_forums:
