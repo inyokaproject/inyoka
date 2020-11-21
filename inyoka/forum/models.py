@@ -1406,7 +1406,6 @@ class ReadStatus(object):
         Determine the read status for a forum or topic. If the topic
         was already read by the user, True is returned.
         """
-        forum_id, post_id = None, None
         is_forum = isinstance(item, Forum)
         if is_forum:
             forum_id, post_id = item.id, item.last_post_id
@@ -1414,6 +1413,7 @@ class ReadStatus(object):
             forum_id, post_id = item.forum_id, item.last_post_id
         else:
             raise ValueError('Can\'t determine read status of an unknown type')
+
         row = self.data.get(forum_id, (None, []))
         if row[0] and row[0] >= post_id:
             return True
