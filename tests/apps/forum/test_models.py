@@ -231,11 +231,34 @@ class TestPostMove(ForumTestCaseWithSecondItems):
 
         self.topic.refresh_from_db()
         self.forum.refresh_from_db()
+        self.parent.refresh_from_db()
+        self.category.refresh_from_db()
         self.assertEqual(self.user.post_count(), 0)
         self.assertEqual(self.topic.post_count.value(), 5)
         self.assertEqual(self.topic.last_post, self.topic_posts[-1])
         self.assertEqual(self.topic.forum.last_post, self.other_topic_posts[-1])
         self.assertEqual(self.forum.last_post, None)
+        self.assertEqual(self.parent.last_post, None)
+        self.assertEqual(self.category.last_post, None)
+
+    def test_topic_move__topic_in_forum_left(self):
+        """This adds another topic to self.forum. Thus, a topic is still left in self.forum."""
+        second_topic_in_forum = Topic.objects.create(title='topic1_2', author=self.user, forum=self.forum)
+        second_topic_posts = list(self.addPosts(2, second_topic_in_forum))
+
+        self.topic.move(self.other_forum)
+
+        self.topic.refresh_from_db()
+        self.forum.refresh_from_db()
+        self.parent.refresh_from_db()
+        self.category.refresh_from_db()
+        self.assertEqual(self.user.post_count(), len(second_topic_posts))
+        self.assertEqual(self.topic.post_count.value(), 5)
+        self.assertEqual(self.topic.last_post, self.topic_posts[-1])
+        self.assertEqual(self.topic.forum.last_post, self.other_topic_posts[-1])
+        self.assertEqual(self.forum.last_post, second_topic_posts[-1])
+        self.assertEqual(self.parent.last_post, second_topic_posts[-1])
+        self.assertEqual(self.category.last_post, second_topic_posts[-1])
 
 
 class PostDeletionTest(ForumTestCase):
