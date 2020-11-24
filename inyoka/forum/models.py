@@ -192,8 +192,8 @@ class ForumManager(models.Manager):
         `exclude_topic` is helpful while deleting a topic
         `exclude_post` is helpful while deleting a post
         """
-        for f in forums:
-            descendants_with_forum = [des.id for des in f.descendants] + [f.id]
+        for forum in forums:
+            descendants_with_forum = [des.id for des in forum.descendants] + [forum.id]
 
             if exclude_post is not None:
                 last_post = Post.objects.exclude(hidden=True).exclude(id=exclude_post.pk).filter(
@@ -206,8 +206,8 @@ class ForumManager(models.Manager):
                     query = query.exclude(id=exclude_topic.pk)
                 last_post = query.filter(forum__in=descendants_with_forum).aggregate(count=Max('last_post'))
 
-            f.last_post_id = last_post['count']
-            f.save()
+            forum.last_post_id = last_post['count']
+            forum.save()
 
 
 class TopicManager(models.Manager):
