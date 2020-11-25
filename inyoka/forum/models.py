@@ -189,8 +189,12 @@ class ForumManager(models.Manager):
         as such this method just set the highest id (== max recent posts) as
         last_post.
 
-        `exclude_topic` is helpful while deleting a topic
-        `exclude_post` is helpful while deleting a post
+        `exclude_topic` should be used when a topic is deleted to exclude all
+                        posts of the topic from being a potential new last post.
+        `exclude_post` should be used when a post is deleted to exclude the post
+                       from being a potential last post.
+        Both parameters are needed, as a topic/post can not be deleted, if they are
+        still referenced by a forum.
         """
         for forum in forums:
             descendants_with_forum = [descendant.id for descendant in forum.descendants] + [forum.id]
