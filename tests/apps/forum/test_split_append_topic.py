@@ -44,7 +44,7 @@ class TestPostSplit(TestCase):
 
         self.t2_posts = {}
         for i in range(10):
-            self.t2_posts[i] = Post(text='post-1-%d' % i, author=self.user,
+            self.t2_posts[i] = Post(text='post-2-%d' % i, author=self.user,
                     position=i, topic=self.topic2)
             self.t2_posts[i].save()
 
