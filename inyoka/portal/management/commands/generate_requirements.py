@@ -9,6 +9,9 @@
     :copyright: (c) 2011-2020 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from typing import List
+
+import argparse
 import os
 import subprocess
 import sys
@@ -25,21 +28,29 @@ class Command(BaseCommand):
     requirements_path = 'extra/requirements'
 
     def add_arguments(self, parser):
-        parser.add_argument('--update', action='store', default=None, dest='packages')
+        parser.add_argument('--upgrade', action='extend', nargs='*', type=str, default=argparse.SUPPRESS,
+                            dest='upgrade_packages', help='Define one or more packages that should be upgraded. '
+                                                          'If only the option is given, all packages are upgraded.')
 
-    def generate_requirements_file(self, stage: str) -> None:
+    def generate_requirements_file(self, stage: str, upgrade_all: bool = False, upgrade_packages: List = []) -> None:
         py_major, py_minor, _ = platform.python_version_tuple()
         file = '{}-py{}.{}-{}.txt'.format(sys.platform, py_major, py_minor, stage)
         full_path = os.path.join(self.requirements_path, file)
 
-        print('Generating', file)
-
         program_name = 'pip-compile'
         arguments = ['--allow-unsafe', '--generate-hashes', '--output-file', full_path]
 
-        if stage == self.stage_prod:
+        if upgrade_all and upgrade_packages:
+            raise ValueError("Both upgrade_all and upgrade_packages are given. That's invalid")
+        if upgrade_all:
+            arguments.append('--upgrade')
+        for p in upgrade_packages:
+            arguments += ['--upgrade-package', p]
+
+        if stage == self.stage_dev:
             arguments += [os.path.join(self.requirements_path, 'development.in')]
 
+        print('Generating', file)
         try:
             subprocess.run([program_name] + arguments, capture_output=True, check=True)
         except subprocess.CalledProcessError as e:
@@ -50,5 +61,13 @@ class Command(BaseCommand):
             print(e.stderr.decode())
 
     def handle(self, *args, **options):
+        upgrade_all = False
+        upgrade_packages = []
+        if hasattr(options, 'upgrade_packages'):
+            if len(options.upgrade_packages) == 0:
+                upgrade_all = True
+            else:
+                upgrade_packages = options.upgrade_packages
+
         for s in self.stages:
-            self.generate_requirements_file(s)
+            self.generate_requirements_file(s, upgrade_all, upgrade_packages)
