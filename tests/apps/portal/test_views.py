@@ -765,8 +765,7 @@ class TestEditGlobalPermissions(TestCase):
         response = self.client.get(self.url)
 
         self.assertContains(response,
-                            '<label for="id_auth_permissions_1"><input type="checkbox" name="auth_permissions"'
-                            ' value="auth.change_group" id="id_auth_permissions_1" checked />')
+                            '<input type="checkbox" name="auth_permissions" value="auth.change_group"')
 
 
 class TestEditForumPermissions(TestCase):
