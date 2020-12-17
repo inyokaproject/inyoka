@@ -21,7 +21,7 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Create all requirement files"
+    help = "Create or update requirement files. The packages can be installed with pip-sync"
     stage_dev = 'development'
     stage_prod = 'production'
     stages = (stage_prod, stage_dev)
@@ -50,9 +50,12 @@ class Command(BaseCommand):
         if stage == self.stage_dev:
             arguments += [os.path.join(self.requirements_path, 'development.in')]
 
+        custom_env = os.environ
+        custom_env["CUSTOM_COMPILE_COMMAND"] = "python manage.py generate_requirements"
+
         print('Generating', file)
         try:
-            subprocess.run([program_name] + arguments, capture_output=True, check=True)
+            subprocess.run([program_name] + arguments, capture_output=True, check=True, env=custom_env)
         except subprocess.CalledProcessError as e:
             print('stdout')
             print(e.stdout.decode())
