@@ -875,10 +875,10 @@ class GroupForumPermissionForm(forms.Form):
         ]
 
     def _forum_instance_permissions(self, forum):
-        return set([
+        return [
             'forum.%s' % perm
             for perm in get_perms(self.instance, forum)
-        ])
+        ]
 
     def clean(self):
         super().clean()
@@ -893,7 +893,7 @@ class GroupForumPermissionForm(forms.Form):
         for forum in Forum.objects.all():
             forum_key = 'forum_%s_permissions' % forum.id
             if self.cleaned_data[forum_key]:
-                active_permissions = self._forum_instance_permissions(forum)
+                active_permissions = set(self._forum_instance_permissions(forum))
                 wanted_permissions = set(self.cleaned_data[forum_key])
                 delete_permissions = active_permissions - wanted_permissions
                 assign_permissions = wanted_permissions - active_permissions
