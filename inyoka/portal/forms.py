@@ -838,7 +838,7 @@ class GroupGlobalPermissionForm(forms.Form):
 class GroupForumPermissionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop('instance', None)
-        super(GroupForumPermissionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.instance:
             self.instance_permissions = [
                 permission_to_string(perm)
@@ -875,13 +875,13 @@ class GroupForumPermissionForm(forms.Form):
         ]
 
     def _forum_instance_permissions(self, forum):
-        return set([
+        return [
             'forum.%s' % perm
             for perm in get_perms(self.instance, forum)
-        ])
+        ]
 
     def clean(self):
-        super(GroupForumPermissionForm, self).clean()
+        super().clean()
         module_permissions = permission_choices_to_permission_strings('forum')
         for fieldname, values in self._forum_fields:
             if values:
@@ -893,7 +893,7 @@ class GroupForumPermissionForm(forms.Form):
         for forum in Forum.objects.all():
             forum_key = 'forum_%s_permissions' % forum.id
             if self.cleaned_data[forum_key]:
-                active_permissions = self._forum_instance_permissions(forum)
+                active_permissions = set(self._forum_instance_permissions(forum))
                 wanted_permissions = set(self.cleaned_data[forum_key])
                 delete_permissions = active_permissions - wanted_permissions
                 assign_permissions = wanted_permissions - active_permissions
@@ -904,6 +904,7 @@ class GroupForumPermissionForm(forms.Form):
             for perm in delete_permissions:
                 remove_perm(perm, self.instance, forum)
         cache.delete_pattern('/acl/*')
+
 
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""
