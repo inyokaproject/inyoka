@@ -1,4 +1,4 @@
--c production.txt
+-r production.txt
 
 allure-behave==2.4.1
 bump2version
