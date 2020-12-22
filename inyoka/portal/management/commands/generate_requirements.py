@@ -28,7 +28,12 @@ class Command(BaseCommand):
     requirements_path = 'extra/requirements'
 
     def add_arguments(self, parser):
-        parser.add_argument('--upgrade', action='extend', nargs='*', type=str, default=argparse.SUPPRESS,
+        if platform.python_version_tuple() > ('3', '8'):
+            upgrade_action = 'extend'
+        else:
+            upgrade_action = 'append'
+
+        parser.add_argument('--upgrade', action=upgrade_action, nargs='*', type=str, default=argparse.SUPPRESS,
                             dest='upgrade_packages', help='Define one or more packages that should be upgraded. '
                                                           'If only the option is given, all packages are upgraded.')
 
@@ -80,7 +85,8 @@ class Command(BaseCommand):
 
         print('Generating', full_path)
         try:
-            subprocess.run([program_name] + arguments, capture_output=True, check=True, env=custom_env)
+            subprocess.run([program_name] + arguments, check=True, env=custom_env,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             print('stdout')
             print(e.stdout.decode())
