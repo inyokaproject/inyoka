@@ -28,6 +28,10 @@ python manage.py generate_requirements --upgrade django
 Please check, if you have another python version installed and need to use another requirements file.
 All available requirements files can be found in `extra/requirements/`.
 
+If you want to generate the requirements for a python version you have not installed, there are tools
+like [pyenv](https://github.com/pyenv/pyenv). They allow to have multiple versions of python installed
+in parallel.
+
 # Installation of packages
 
 For the first time run
