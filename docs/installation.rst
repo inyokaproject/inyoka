@@ -43,15 +43,6 @@ For using Inyoka and its dependencies you need a lot of python and developer fil
 
     $  sudo apt-get install git nodejs-legacy libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python3-dev
 
-
-Further you need a recent pip and virtualenv for Python 3:
-
-.. code-block:: console
-
-    $ wget https://bootstrap.pypa.io/get-pip.py
-    $ sudo python get-pip.py
-    $ sudo pip install virtualenv
-
 You also need the JavaScript package manager npm:
 
 .. code-block:: console
@@ -67,7 +58,7 @@ Now you can start the installation of inyoka:
 .. code-block:: console
 
     $ mkdir -p ~/.venvs/
-    $ virtualenv3 ~/.venvs/inyoka
+    $ python -m venv ~/.venvs/inyoka
     $ source ~/.venvs/inyoka/bin/activate
     $ pip install -r extra/requirements/development.txt
 
