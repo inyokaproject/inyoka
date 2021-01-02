@@ -15,8 +15,8 @@ Note: You need the correct access rights to see the GitHub repository!
 You can find a documentation on how to use Git here: `<http://git-scm.com/>`_
 
 The idea for developing Inyoka is to fork the main project, do your changes in
-your own branch in your repository and then add a “Pull Request” for the original
-Inyoka. A developer will then review your changes or will directly merge it.
+your own branch in your repository and then open a “Pull Request” for the original
+Inyoka-repository. A developer will then review your changes or will directly merge it.
 
 Note: The changes in Inyoka will not immediately be visible on `ubuntuusers.de
 <http://ubuntuusers.de/>`_
@@ -27,7 +27,7 @@ Preparation
 Getting access to the Inyoka repository
 ***************************************
 
-You need to a team member who will give you access right to fork the project.
+You need to contact a team member who will give you access rights to fork the project.
 After that, simply fork the `<https://github.com/inyokaproject/inyoka>`_ repository
 to create a new *private* fork of this repository.
 
@@ -73,7 +73,7 @@ Now you can start the installation of inyoka:
 
 Note: You need to cd to your inyoka directory for the last command to work.
 
-The last command downloads and installs all needed libraries via pip packages. During
+The last command downloads and installs all needed libraries via pip. During
 the installation there might be some warning which you can ignore.
 
 At the end you need to edit your ``/etc/hosts`` with root privileges and add
@@ -150,14 +150,14 @@ the password:
     'USER': 'root',
     'PASSWORD': '',
 
-Further you need to set a SECRET_KEY with a string, like this:
+Further you need to set a ``SECRET_KEY`` with a string, like this:
 
 .. code-block:: console
 
     SECRET_KEY = 'development-key'
 
 To switch between the supported languages you have to add another setting.
-Available languages are ``en-us`` and ``de-de``.
+Currently available languages are ``en-us`` and ``de-de``.
 
 .. code-block:: console
     LANGUAGE_CODE= 'de-de'
@@ -188,11 +188,11 @@ installation of Inyoka:
 
 You can also use another password, but you should keep the *admin* username
 because it will be used in some test files. It is also advisable to
-use that mail adress in order to be able to test notifications, see
+use that mail address in order to be able to test notifications, see
 :ref:`testing notifications <test-notifies>`.
 
 Note: If you want to change settings in the admin's control panel, you need to
-set the email adress to ``admin@localhost.local`` to not raise an error. The
+set the email address to ``admin@localhost.local`` to not raise an error. The
 email address is then automatically set back to ``admin@localhost``.
 
 Now you can create the real test data:

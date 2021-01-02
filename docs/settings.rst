@@ -11,7 +11,7 @@ variables. To use them, add the following line into your script::
 
 Every configuration directive can be overridden by using a custom settings file
 (see ``example_development_settings.py``) and setting the
-``DJANGO_SETTINGS_MODULE`` environment variabel:
+``DJANGO_SETTINGS_MODULE`` environment variable:
 
 .. code-block:: console
 
