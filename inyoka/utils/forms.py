@@ -310,7 +310,7 @@ class CaptchaField(forms.MultiValueField):
     def clean(self, value):
         if current_request.user.is_authenticated and self.only_anonymous:
             return [None, None]
-        value[1] = False  # Prevent beeing catched by validators.EMPTY_VALUES
+        value[1] = False  # Prevent being catched by validators.EMPTY_VALUES
         return super(CaptchaField, self).clean(value)
 
 

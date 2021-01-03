@@ -259,7 +259,7 @@ class TestAuthViews(TestCase):
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
 
     def test_logout_as_anonymous(self):
-        """If a user is logging out without beeing logged in previously,
+        """If a user is logging out without being logged in previously,
         display a message telling that the user.
         """
         with translation.override('en-us'):

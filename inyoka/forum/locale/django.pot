@@ -339,7 +339,7 @@ msgid "There is no “%(slug)s” anymore."
 msgstr ""
 
 #, python-format
-msgid "This post is currently beeing edited by “%(user)s”!"
+msgid "This post is currently being edited by “%(user)s”!"
 msgstr ""
 
 msgid "This report has already been claimed."
