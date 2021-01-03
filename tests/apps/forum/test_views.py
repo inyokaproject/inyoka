@@ -606,10 +606,46 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
         content = response.content.decode()
+        print(content)
         self.assertInHTML('<div class="message info">Your submission needs approval '
                           'by a team member and is hidden meanwhile. Please be patient, '
                           'we will get to it as soon as possible.</div>',
                           content, count=1)
+        self.assertInHTML('<div class="message info">This topic is hidden. Either it '
+                          'needs to be activated by moderators or it has been hidden '
+                          'explicitly by moderators.</div>',
+                          content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_newtopic_user_spam_with_other_authors_post(self):
+        """
+        A hidden topic is visible to the author if all posts of that topic belong to the same user.
+        This check adds a post by another user (admin) and the original poster should not be able to view it.
+        See https://github.com/inyokaproject/inyoka/pull/1191
+        """
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': 'newpost text',
+        }
+        # Post it
+        self.post_request('/forum/%s/newtopic/' % self.public_forum.slug, postdata, 1, 1, submit=True)
+
+        self.client.logout()
+        self.client.login(username='admin', password='admin')
+        self.post_request('/topic/newpost-title/reply/', postdata, 1, 1, submit=True, fail_if_post_count_differs=False)
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        content = response.content.decode()
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
                           content, count=1)
 

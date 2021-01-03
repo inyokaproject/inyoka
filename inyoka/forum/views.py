@@ -195,9 +195,15 @@ def viewtopic(request, topic_slug, page=1):
     if not request.user.has_perm('forum.view_forum', topic.forum):
         return abort_access_denied(request)
 
+    post_authors = Post.objects.filter(topic=topic) \
+                           .values_list('author', flat=True)
     if topic.hidden:
         if request.user.has_perm('forum.moderate_forum', topic.forum):
             messages.info(request, _('This topic is not visible for regular users.'))
+        elif request.user == topic.author and all(request.user.id == post_author for post_author in post_authors):
+            # A user can see a topic if all posts of this topic are from this user https://github.com/inyokaproject/inyoka/pull/1191
+            # This is useful if the topic was hidden automatically by the spam filter
+            messages.info(request, _('This topic is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators.'))
         else:
             return abort_access_denied(request)
 
