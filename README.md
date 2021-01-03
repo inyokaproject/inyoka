@@ -47,8 +47,8 @@ The following applications are part of Inyoka so far:
     used in other components (`forum`, `ikhaya`, …) as well.
 
  * `planet`
-    A planet like feed aggregator. It has archives and sanitized
-    input data thanks to feedparser.
+    A planet like feed aggregator. It archives and sanitizes input data
+    thanks to feedparser.
 
  * `ikhaya`
     Ikhaya is zulu for [home](http://glosbe.com/zu/en/ikhaya) and a blog
