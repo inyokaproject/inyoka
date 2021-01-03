@@ -478,7 +478,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         locked = post.lock(request)
         if locked:
             messages.error(request,
-                _('This post is currently beeing edited by “%(user)s”!')
+                _('This post is currently being edited by “%(user)s”!')
                 % {'user': locked})
         topic = post.topic
         forum = topic.forum
