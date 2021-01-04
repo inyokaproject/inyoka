@@ -464,7 +464,7 @@ class EditUserProfileForm(UserCPProfileForm):
                   'alphanumeric chars and “-” are allowed.')
             )
         exists = User.objects.filter(username=username).exists()
-        if (self.instance.username != username and exists):
+        if self.instance.username != username and exists:
             raise forms.ValidationError(
                 _('A user with this name already exists.'))
         return username
