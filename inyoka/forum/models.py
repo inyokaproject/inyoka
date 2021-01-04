@@ -49,7 +49,6 @@ from inyoka.utils.database import (
     LockableObject,
     model_or_none,
 )
-from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
@@ -1080,7 +1079,7 @@ class Post(models.Model, LockableObject):
         if t == -1:
             return True
         delta = datetime.utcnow() - self.pub_date.replace(tzinfo=None)
-        return timedelta_to_seconds(delta) < t
+        return delta.total_seconds() < t
 
     def mark_ham(self):
         mark_ham(self, self.get_text(), 'forum-post')

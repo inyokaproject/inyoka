@@ -128,10 +128,3 @@ def parse_iso8601(value):
 def format_iso8601(obj):
     """Format a datetime object for iso8601"""
     return datetime_safe.new_datetime(obj).strftime('%Y-%d-%mT%H:%M:%SZ')
-
-
-def timedelta_to_seconds(t):
-    """
-    Convert a datetime.timedelta to Seconds.
-    """
-    return t.days * 86400 + t.seconds
