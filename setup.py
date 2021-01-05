@@ -23,9 +23,7 @@ setup(
     # https://packaging.python.org/specifications/core-metadata/#description-optional
     long_description=long_description,
     long_description_content_type='text/markdown',
-
-    # TODO: url='https://inyokaproject.org/' or 'https://github.com/inyokaproject/inyoka',
-
+    url='https://inyokaproject.org/',
     author='Inyoka Team',
 
     classifiers=[  # see https://pypi.org/classifiers/
