@@ -1,8 +1,14 @@
 """A setuptools based setup module.
 
 See:
+for a good overview
 https://packaging.python.org/guides/distributing-packages-using-setuptools/
+
+for an example project
 https://github.com/pypa/sampleproject
+
+for more background on the metadata parameters
+https://packaging.python.org/specifications/core-metadata/
 """
 
 # Always prefer setuptools over distutils
@@ -13,19 +19,13 @@ current_folder = pathlib.Path(__file__).parent.resolve()
 long_description = (current_folder / 'README.md').read_text(encoding='utf-8')
 
 setup(
-    # https://packaging.python.org/specifications/core-metadata/#name
     name='Inyoka',
     # version defined via setup.cfg
-
-    # https://packaging.python.org/specifications/core-metadata/#summary
     description='All-in-one portal software with Forum, Wiki, Planet, News and Calendar',
-
-    # https://packaging.python.org/specifications/core-metadata/#description-optional
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://inyokaproject.org/',
     author='Inyoka Team',
-
     classifiers=[  # see https://pypi.org/classifiers/
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -41,12 +41,7 @@ setup(
     keywords='Forum, Wiki, Planet, News, Calendar',
 
     packages=find_packages(),
-
-    # Specify which Python versions you support
-    # 'pip install' will check this
-    # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
     python_requires='>=3.5, <4',
-
     install_requires=[
         'Django<2.0',
         'pip-tools',
@@ -91,7 +86,6 @@ setup(
     #    'dev': ['check-manifest'],
     #},
 
-    # https://packaging.python.org/specifications/core-metadata/#project-url-multiple-use
     project_urls={
         'Bug Reports': 'https://github.com/inyokaproject/inyoka/issues',
         'Source': 'https://github.com/inyokaproject/inyoka',
