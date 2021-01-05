@@ -9,10 +9,8 @@ https://github.com/pypa/sampleproject
 from setuptools import setup, find_packages
 import pathlib
 
-here = pathlib.Path(__file__).parent.resolve()
-
-# Get the long description from the README file
-long_description = (here / 'README.md').read_text(encoding='utf-8')
+current_folder = pathlib.Path(__file__).parent.resolve()
+long_description = (current_folder / 'README.md').read_text(encoding='utf-8')
 
 setup(
     # https://packaging.python.org/specifications/core-metadata/#name
