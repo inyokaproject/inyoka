@@ -40,7 +40,7 @@ setup(
     ],
     keywords='Forum Wiki Planet News Calendar',
 
-    packages=find_packages(),
+    packages=find_packages(include=('inyoka*',)),
     python_requires='>=3.5, <4',
     install_requires=[
         'Django<2.0',
