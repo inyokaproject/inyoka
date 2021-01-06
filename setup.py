@@ -16,14 +16,14 @@ from setuptools import setup, find_packages
 import pathlib
 
 current_folder = pathlib.Path(__file__).parent.resolve()
-long_description = (current_folder / 'README.md').read_text(encoding='utf-8')
+long_description = (current_folder / 'README.rst').read_text(encoding='utf-8')
 
 setup(
     name='Inyoka',
     # version defined via setup.cfg
     description='All-in-one portal software with Forum, Wiki, Planet, News and Calendar',
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     url='https://inyokaproject.org/',
     author='Inyoka Team',
     classifiers=[  # see https://pypi.org/classifiers/
