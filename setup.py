@@ -76,16 +76,6 @@ setup(
         'Werkzeug==0.15.5'
     ],
 
-    # TODO: pip-tools currently does not support groups → reason why extra/requirements/development.in exists
-    # Additional groups of dependencies here (e.g. development
-    # dependencies). Users will be able to install these using the "extras"
-    # syntax, for example:
-    #
-    #   $ pip install sampleproject[dev]
-    #extras_require={  # Optional
-    #    'dev': ['check-manifest'],
-    #},
-
     project_urls={
         'Bug Reports': 'https://github.com/inyokaproject/inyoka/issues',
         'Source': 'https://github.com/inyokaproject/inyoka',
