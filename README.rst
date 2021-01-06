@@ -1,5 +1,11 @@
+.. _general:
+
 Inyoka
 ======
+
+**If possible, please read the**
+`pretty version <https://ci.ubuntu-de.org/job/inyokaproject-github/job/inyoka/job/staging/Inyoka_20Documentation/index.html>`_
+**of Inyoka's documentation.**
 
 The Inyoka portal system is divided into multiple modules to which we
 refer as applications. The name Inyoka means “snake” in
@@ -14,8 +20,7 @@ The basic application structure is explained below.
 Build states
 ------------
 
-Master |Build Status Master|   Staging |Build Status Staging|  
-Testing |Build Status Testing|
+Master |Build Status Master|   Staging |Build Status Staging|   Testing |Build Status Testing|
 
 Requirements
 ------------
@@ -30,7 +35,7 @@ supports. The preferred caching system is redis.
 Installation & Configuration
 ----------------------------
 
-See in the documentation the files “installation” and “getting_started”.
+See :ref:`installation` and :ref:`getting-started`.
 
 Applications of Inyoka
 ----------------------

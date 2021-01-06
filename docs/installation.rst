@@ -60,12 +60,28 @@ Now you can start the installation of inyoka:
     $ mkdir -p ~/.venvs/
     $ python -m venv ~/.venvs/inyoka
     $ source ~/.venvs/inyoka/bin/activate
+    $ cd to/my/inyoka-repo # replace with correct path
     $ pip install -r extra/requirements/development.txt
 
-Note: You need to cd to your inyoka directory for the last command to work.
+The last command downloads and installs all needed libraries via pip.
 
-The last command downloads and installs all needed libraries via pip. During
-the installation there might be some warning which you can ignore.
+.. note::
+   ``development.txt`` and ``production.txt`` are just symlinks to the
+   environment used on ubuntuusers.de. Please check, if you have another
+   python version installed and need to use another requirements file. All
+   available requirements files can be found in ``extra/requirements/``.
+
+   If you are interested in how these files are generated, see :ref:`packagemanagement`.
+
+Once the requirements are installed, you can run *optionally*
+
+::
+
+   $ pip-sync extra/requirements/development.txt
+
+``pip-sync`` has the benefit of removing all unneeded packages from the virtualenv.
+``pip`` will leave f.e. old dropped dependencies in the virtualenv. This is especially
+relevant, if you have an old virtualenv and update the packages in it regularly.
 
 At the end you need to edit your ``/etc/hosts`` with root privileges and add
 the following line:
