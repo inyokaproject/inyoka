@@ -48,7 +48,7 @@ setup(
 
         'Babel',
         'beautifulsoup4==4.6.0',
-        'celery==4.3.0',
+        'celery[redis]==4.3.0',
         'certifi',
         'defusedxml==0.6.0',
         'django-filter==1.0.4',

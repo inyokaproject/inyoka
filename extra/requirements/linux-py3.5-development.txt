@@ -77,7 +77,7 @@ bump2version==1.0.1 \
     --hash=sha256:37f927ea17cde7ae2d7baf832f8e80ce3777624554a653006c9144f8017fe410 \
     --hash=sha256:762cb2bfad61f4ec8e2bdf452c7c267416f8c70dd9ecb1653fd0bbb01fa936e6 \
     # via -r extra/requirements/development.in
-celery==4.3.0 \
+celery[redis]==4.3.0 \
     --hash=sha256:4c4532aa683f170f40bd76f928b70bc06ff171a959e06e71bf35f2f9d6031ef9 \
     --hash=sha256:528e56767ae7e43a16cfef24ee1062491f5754368d38fcfffa861cdb9ef219be \
     # via -r extra/requirements/linux-py3.5-production.txt
@@ -414,9 +414,9 @@ pillow==7.2.0 \
     --hash=sha256:f7e30c27477dffc3e85c2463b3e649f751789e0f6c8456099eea7ddd53be4a8a \
     --hash=sha256:ffe538682dc19cc542ae7c3e504fdf54ca7f86fb8a135e59dd6bc8627eae6cce \
     # via -r extra/requirements/linux-py3.5-production.txt
-pip-tools==5.4.0 \
-    --hash=sha256:a4d3990df2d65961af8b41dacc242e600fdc8a65a2e155ed3d2fc18a5c209f20 \
-    --hash=sha256:b73f76fe6464b95e41d595a9c0302c55a786dbc54b63ae776c540c04e31914fb \
+pip-tools==5.5.0 \
+    --hash=sha256:10841c1e56c234d610d0466447685b9ea4ee4a2c274f858c0ef3c33d9bd0d985 \
+    --hash=sha256:cb0108391366b3ef336185097b3c2c0f3fa115b15098dafbda5e78aef70ea114 \
     # via -r extra/requirements/linux-py3.5-production.txt
 pluggy==0.13.1 \
     --hash=sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0 \
@@ -544,7 +544,7 @@ raven==6.10.0 \
 redis==3.5.3 \
     --hash=sha256:0e7e0cfca8660dea8b7d5cd8c4f6c5e29e11f31158c0b0ae91a397f00e5a05a2 \
     --hash=sha256:432b788c4530cfe16d8d943a09d40ca6c16149727e4afe8c2c9d5580c59d9f24 \
-    # via -r extra/requirements/linux-py3.5-production.txt, django-redis
+    # via -r extra/requirements/linux-py3.5-production.txt, celery, django-redis
 requests==2.25.1 \
     --hash=sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804 \
     --hash=sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e \
@@ -563,7 +563,7 @@ sgmllib3k==1.0.0 \
 six==1.15.0 \
     --hash=sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259 \
     --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced \
-    # via -r extra/requirements/linux-py3.5-production.txt, allure-python-commons, behave, django-guardian, freezegun, html5lib, mock, parse-type, pip-tools, python-dateutil, responses, sphinx, transifex-client, unittest-xml-reporting
+    # via -r extra/requirements/linux-py3.5-production.txt, allure-python-commons, behave, django-guardian, freezegun, html5lib, mock, parse-type, python-dateutil, responses, sphinx, transifex-client, unittest-xml-reporting
 slixmpp==1.4.2 \
     --hash=sha256:c3204fbe8ded148e1eca6720ba0398298c159f29ec76dfc6f7dd7ed999ae1767 \
     # via -r extra/requirements/linux-py3.5-production.txt
