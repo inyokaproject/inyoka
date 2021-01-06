@@ -38,7 +38,7 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Framework :: Django',
     ],
-    keywords='Forum, Wiki, Planet, News, Calendar',
+    keywords='Forum Wiki Planet News Calendar',
 
     packages=find_packages(),
     python_requires='>=3.5, <4',
