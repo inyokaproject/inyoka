@@ -13,10 +13,12 @@ Overview
 .. toctree::
     :maxdepth: 2
 
+    general
     installation
     getting_started
     inyoka
     settings
+    packagemanagement
 
 Releases
 ========
