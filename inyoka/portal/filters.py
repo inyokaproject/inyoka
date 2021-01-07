@@ -60,7 +60,7 @@ class LinkWidget(BaseLinkWidget):
 
 
 class SubscriptionFilter(FilterSet):
-    content_type = ChoiceFilter(name='content_type__model', label='',
+    content_type = ChoiceFilter(field_name='content_type__model', label='',
         choices=tuple(SUPPORTED_SUBSCRIPTION_TYPES.items()),
         widget=LinkWidget, empty_label=ugettext_lazy('All types'))
 
