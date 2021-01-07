@@ -131,9 +131,9 @@ django-redis==4.11.0 \
     --hash=sha256:a5b1e3ffd3198735e6c529d9bdf38ca3fcb3155515249b98dc4d966b8ddf9d2b \
     --hash=sha256:e1aad4cc5bd743d8d0b13d5cae0cef5410eaace33e83bff5fc3a139ad8db50b4
     # via Inyoka (setup.py)
-django==1.11.29 \
-    --hash=sha256:014e3392058d94f40569206a24523ce254d55ad2f9f46c6550b0fe2e4f94cf3f \
-    --hash=sha256:4200aefb6678019a0acf0005cd14cfce3a5e6b9b90d06145fcdd2e474ad4329c
+django==2.0.13 \
+    --hash=sha256:665457d4146bbd34ae9d2970fa3b37082d7b225b0671bfd24c337458f229db78 \
+    --hash=sha256:bde46d4dbc410678e89bc95ea5d312dd6eb4c37d0fa0e19c9415cad94addf22f
     # via
     #   Inyoka (setup.py)
     #   django-filter
