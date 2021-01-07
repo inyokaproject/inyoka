@@ -194,9 +194,9 @@ django-debug-toolbar==1.9.1 \
     --hash=sha256:4af2a4e1e932dadbda197b18585962d4fc20172b4e5a479490bc659fe998864d \
     --hash=sha256:d9ea75659f76d8f1e3eb8f390b47fc5bad0908d949c34a8a3c4c87978eb40a0f
     # via -r extra/requirements/development.in
-django-filter==1.1 \
-    --hash=sha256:ea204242ea83790e1512c9d0d8255002a652a6f4986e93cee664f28955ba0c22 \
-    --hash=sha256:ec0ef1ba23ef95b1620f5d481334413700fb33f45cd76d56a63f4b0b1d76976a
+django-filter==2.2 \
+    --hash=sha256:558c727bce3ffa89c4a7a0b13bc8976745d63e5fd576b3a9a851650ef11c401b \
+    --hash=sha256:c3deb57f0dd7ff94d7dce52a047516822013e2b441bed472b722a317658cfd14
     # via -r extra/requirements/linux-py3.5-production.txt
 django-guardian==1.5.1 \
     --hash=sha256:60a4932e322b4474ab76400f3f542ecdf9bee069dbed0ce0c7af55559ec83d3a \
@@ -216,6 +216,7 @@ django==1.11.29 \
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   django-debug-toolbar
+    #   django-filter
     #   django-redis
 dnspython==1.16.0 \
     --hash=sha256:36c5e8e38d4369a08b6780b7f27d790a292b2b08eea01607865bf0936c558e01 \
