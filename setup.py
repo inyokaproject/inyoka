@@ -51,7 +51,7 @@ setup(
         'celery[redis]==4.3.0',
         'certifi',
         'defusedxml==0.6.0',
-        'django-filter==1.0.4',
+        'django-filter==1.1',
         'django-guardian==1.5.1',
         'django-hosts==3.0',
         'django-redis==4.11.0',
