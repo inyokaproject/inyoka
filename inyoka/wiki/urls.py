@@ -22,12 +22,12 @@ urlpatterns = [
     url(r'^_feed/(?P<count>\d+)/$', views.feed),
     url(r'^(?P<page_name>.+)/a/feed/$', views.feed, {'count': 10}),
     url(r'^(?P<page_name>.+)/a/feed/(?P<count>\d+)/$', views.feed),
-    url(r'(?i)^wiki/recentchanges/$', views.recentchanges),
-    url(r'(?i)^wiki/missingpages/$', views.missingpages),
-    url(r'(?i)^wiki/randompages/$', views.randompages),
-    url(r'(?i)^wiki/tagcloud/$', views.show_tag_cloud),
-    url(r'(?i)^wiki/tags/$', views.show_tag_list),
-    url(r'(?i)^wiki/tags/(?P<tag>.+)/$', views.show_pages_by_tag)
+    url(r'^wiki/recentchanges/$', views.recentchanges),
+    url(r'^wiki/missingpages/$', views.missingpages),
+    url(r'^wiki/randompages/$', views.randompages),
+    url(r'^wiki/tagcloud/$', views.show_tag_cloud),
+    url(r'^wiki/tags/$', views.show_tag_list),
+    url(r'^wiki/tags/(?P<tag>.+)/$', views.show_pages_by_tag)
 ]
 
 if settings.DEBUG:
@@ -37,8 +37,8 @@ if settings.DEBUG:
     )
 
 urlpatterns.extend([
-    url(r'(?i)^wiki/create/?$', actions.do_create),
-    url(r'(?i)^wiki/create/(?P<name>.+)/$', actions.do_create),
+    url(r'^wiki/create/?$', actions.do_create),
+    url(r'^wiki/create/(?P<name>.+)/$', actions.do_create),
     url(r'^(?P<name>.+)/a/attachments/$', actions.do_attach),
     url(r'^(?P<name>.+)/a/backlinks/$', actions.do_backlinks),
     url(r'^(?P<name>.+)/a/delete/$', actions.do_delete),
