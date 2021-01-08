@@ -348,7 +348,6 @@ class Forum(models.Model):
         verbose_name_plural = ugettext_lazy('Forums')
         permissions = (
             ('delete_topic_forum', 'Can delete Topics from Forum'),
-            ('view_forum', 'Can view Forum'),
             ('add_topic_forum', 'Can add Topic in Forum'),
             ('add_reply_forum', 'Can answer Topics in Forum'),
             ('sticky_forum', 'Can make Topics Sticky in Forum'),
