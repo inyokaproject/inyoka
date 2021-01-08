@@ -12,6 +12,7 @@
 """
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.utils.encoding import force_str
 from django.utils.http import urlencode, urlquote, urlquote_plus, is_safe_url
 from django_hosts.resolvers import get_host, get_host_patterns
 
@@ -20,7 +21,7 @@ def href(_module='portal', *parts, **query):
     """Generates an internal URL for different subdomains."""
     anchor = query.pop('_anchor', None)
     append_slash = _module not in ['static', 'media']
-    path = '/'.join(urlquote(x) for x in parts if x is not None)
+    path = '/'.join(urlquote(force_str(x)) for x in parts if x is not None)
 
     if not append_slash:
         base_url = {
@@ -37,7 +38,7 @@ def href(_module='portal', *parts, **query):
         path,
         append_slash and path and not path.endswith('/') and '/' or '',
         query and '?' + urlencode(query) or '',
-        anchor and '#' + urlquote_plus(anchor) or ''
+        anchor and '#' + urlquote_plus(force_str(anchor)) or ''
     )
 
 
