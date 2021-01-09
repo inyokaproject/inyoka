@@ -55,7 +55,6 @@ setup(
         'django-guardian<2.4',
         'django-hosts',
         'django-redis',
-        'dnspython==1.16.0',
         'feedparser==6.0.0b3',
         'gunicorn',
         'html5lib==1.1',
