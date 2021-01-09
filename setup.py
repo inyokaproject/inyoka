@@ -51,9 +51,9 @@ setup(
         'celery[redis]==4.3.0',
         'certifi',
         'defusedxml==0.6.0',
-        'django-filter==2.2',
-        'django-guardian<2.3',  # only 2.2.x still supports django 2.1
-        'django-hosts==3.0',
+        'django-filter<3',
+        'django-guardian<2.4',
+        'django-hosts',
         'django-redis==4.11.0',
         'dnspython==1.16.0',
         'feedparser==6.0.0b3',
