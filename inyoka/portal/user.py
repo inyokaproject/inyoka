@@ -73,7 +73,7 @@ def reactivate_user(id, email, status):
         user.status = User.STATUS_ACTIVE
         user.banned_until = None
 
-    # Set a dumy password
+    # Set a dummy password
     user.set_password(User.objects.make_random_password(length=32))
     user.save()
 
