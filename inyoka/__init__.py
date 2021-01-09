@@ -17,10 +17,6 @@ assert xml.sax.make_parser is defusedxml.sax.make_parser
 
 
 from .celery_app import app as celery_app  # noqa
-import socket
-
-# Set a global socket timeout to avoid blocking worker processes:
-socket.setdefaulttimeout(10.0)
 
 # Inyoka version is updated through bumpversion and can stay hardcoded here.
 INYOKA_VERSION = "v0.24.5"
