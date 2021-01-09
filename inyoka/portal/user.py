@@ -197,7 +197,7 @@ class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
         now = datetime.utcnow()
         user = self.model(username=username, email=email.strip().lower(),
-            status=0, date_joined=now, last_login=now)
+                          status=User.STATUS_INACTIVE, date_joined=now, last_login=now)
         if password:
             user.set_password(password)
         else:
