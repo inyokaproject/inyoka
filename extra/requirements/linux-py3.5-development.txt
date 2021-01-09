@@ -718,9 +718,9 @@ webencodings==0.5.1 \
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   html5lib
-werkzeug==0.15.5 \
-    --hash=sha256:87ae4e5b5366da2347eb3116c0e6c681a0e939a33b2805e2c0cbd282664932c4 \
-    --hash=sha256:a13b74dd3c45f758d4ebdb224be8f1ab8ef58b3c0ffc1783a8c7d9f4f50227e6
+werkzeug==0.16.1 \
+    --hash=sha256:1e0dedc2acb1f46827daa2e399c1485c8fa17c0d8e70b6b875b4e7f54bf408d2 \
+    --hash=sha256:b353856d37dec59d6511359f97f6a4b2468442e454bd1c98298ddce53cac1f04
     # via -r extra/requirements/linux-py3.5-production.txt
 yarl==1.6.0 \
     --hash=sha256:04a54f126a0732af75e5edc9addeaa2113e2ca7c6fce8974a63549a70a25e50e \

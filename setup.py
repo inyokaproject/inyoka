@@ -72,7 +72,7 @@ setup(
         'requests',
         'slixmpp==1.4.2',
         'transifex-client==0.12.5',
-        'Werkzeug==0.15.5'
+        'Werkzeug<1.0'  # 1.0 removed feed support, see https://github.com/inyokaproject/inyoka/issues/1071
     ],
 
     project_urls={
