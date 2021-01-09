@@ -43,7 +43,7 @@ setup(
     packages=find_packages(include=('inyoka*',)),
     python_requires='>=3.5, <4',
     install_requires=[
-        'Django<2.2',
+        'Django<2.3',
         'pip-tools',
 
         'Babel',

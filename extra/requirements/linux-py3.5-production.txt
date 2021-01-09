@@ -131,9 +131,9 @@ django-redis==4.11.0 \
     --hash=sha256:a5b1e3ffd3198735e6c529d9bdf38ca3fcb3155515249b98dc4d966b8ddf9d2b \
     --hash=sha256:e1aad4cc5bd743d8d0b13d5cae0cef5410eaace33e83bff5fc3a139ad8db50b4
     # via Inyoka (setup.py)
-django==2.1.15 \
-    --hash=sha256:48522428f4a285cf265af969f4744c5ebb027c7f41958ba48b639ace2068ffe7 \
-    --hash=sha256:a794f7a2f4b7c928eecfbc4ebad03712ff27fb545abe269bf01aa8500781eb1c
+django==2.2.17 \
+    --hash=sha256:558cb27930defd9a6042133258caf797b2d1dee233959f537e3dc475cb49bd7c \
+    --hash=sha256:cf5370a4d7765a9dd6d42a7b96b53c74f9446cd38209211304b210fe0404b861
     # via
     #   Inyoka (setup.py)
     #   django-filter
@@ -473,6 +473,10 @@ six==1.15.0 \
 slixmpp==1.4.2 \
     --hash=sha256:c3204fbe8ded148e1eca6720ba0398298c159f29ec76dfc6f7dd7ed999ae1767
     # via Inyoka (setup.py)
+sqlparse==0.4.1 \
+    --hash=sha256:017cde379adbd6a1f15a61873f43e8274179378e95ef3fede90b5aa64d304ed0 \
+    --hash=sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8
+    # via django
 transifex-client==0.12.5 \
     --hash=sha256:139867ffaf340aa2b74b0c44fa2d6525bf641357d04b7961a5b10ebe468678d8 \
     --hash=sha256:23c88c55d1469b62a771646d4f202b6fe5f4abbcdbe61bda3a3b08c44aaa7a78
