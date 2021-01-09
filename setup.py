@@ -52,7 +52,7 @@ setup(
         'certifi',
         'defusedxml==0.6.0',
         'django-filter==2.2',
-        'django-guardian==1.5.1',
+        'django-guardian<2.3',  # only 2.2.x still supports django 2.1
         'django-hosts==3.0',
         'django-redis==4.11.0',
         'dnspython==1.16.0',
