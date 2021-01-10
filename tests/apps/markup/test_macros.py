@@ -5,7 +5,7 @@
 
     Test for global macros.
 
-    :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from inyoka.markup.base import RenderContext, parse
