@@ -68,7 +68,7 @@ setup(
         'python-dateutil',
         'pytz',
         'pyzmq',
-        'raven',
+        'sentry-sdk',
         'requests',
         'slixmpp==1.4.2',
         'transifex-client==0.12.5',
