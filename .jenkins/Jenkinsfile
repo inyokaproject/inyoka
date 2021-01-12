@@ -14,7 +14,7 @@ def runTestOnDatabase(String database) {
   sh """
   ${activate_venv}
   export COVERAGE_FILE=.coverage-${database}
-  coverage run --branch manage.py test --setting tests.settings.${database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true
+  coverage run --branch manage.py test --settings tests.settings.${database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true
   coverage xml -o coverage-${database}.xml
   """
 }
