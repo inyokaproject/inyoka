@@ -418,8 +418,8 @@ parse-type==0.5.2 \
     --hash=sha256:089a471b06327103865dfec2dd844230c3c658a4a1b5b4c8b6c16c8f77577f9e \
     --hash=sha256:7f690b18d35048c15438d6d0571f9045cffbec5907e0b1ccf006f889e3a38c0b
     # via behave
-parse==1.18.0 \
-    --hash=sha256:91666032d6723dc5905248417ef0dc9e4c51df9526aaeef271eacad6491f06a4
+parse==1.19.0 \
+    --hash=sha256:9ff82852bcb65d139813e2a5197627a94966245c897796760a3a2a8eb66f020b
     # via
     #   behave
     #   parse-type
@@ -542,9 +542,9 @@ pyflakes==1.6.0 \
     --hash=sha256:08bd6a50edf8cffa9fa09a463063c425ecaaf10d1eb0335a7e8b1401aef89e6f \
     --hash=sha256:8d616a382f243dbf19b54743f280b80198be0bca3a5396f1d2e1fca6223e8805
     # via flake8
-pygments==2.7.3 \
-    --hash=sha256:ccf3acacf3782cbed4a989426012f1c535c9a90d3a7fc3f16d231b9372d2b716 \
-    --hash=sha256:f275b6c0909e5dafd2d6269a656aa90fa58ebf4a74f8fcf9053195d226b24a08
+pygments==2.7.4 \
+    --hash=sha256:bc9591213a8f0e0ca1a5e68a479b4887fdc3e75d0774e5c71c31920c427de435 \
+    --hash=sha256:df49d09b498e83c1a73128295860250b0b7edd4c723a32e9bc0d295c7c2ec337
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   sphinx
@@ -649,9 +649,9 @@ six==1.15.0 \
 slixmpp==1.4.2 \
     --hash=sha256:c3204fbe8ded148e1eca6720ba0398298c159f29ec76dfc6f7dd7ed999ae1767
     # via -r extra/requirements/linux-py3.5-production.txt
-snowballstemmer==2.0.0 \
-    --hash=sha256:209f257d7533fdb3cb73bdbd24f436239ca3b2fa67d56f6ff88e86be08cc5ef0 \
-    --hash=sha256:df3bac3df4c2c01363f3dd2cfa78cce2840a79b9f1c2d2de9ce8d31683992f52
+snowballstemmer==2.1.0 \
+    --hash=sha256:b51b447bea85f9968c13b650126a888aabd4cb4463fca868ec596826325dedc2 \
+    --hash=sha256:e997baa4f2e9139951b6f4c631bad912dfd3c792467e2f03d7239464af90e914
     # via sphinx
 sphinx-rtd-theme==0.2.4 \
     --hash=sha256:2df74b8ff6fae6965c527e97cca6c6c944886aae474b490e17f92adfbe843417 \
