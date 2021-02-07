@@ -40,13 +40,13 @@ alabaster==0.7.12 \
     --hash=sha256:446438bdcca0e05bd45ea2de1668c1d9b032e1a9154c2c259092d77031ddd359 \
     --hash=sha256:a661d72d58e6ea8a57f7a86e37d86716863ee5e92788398526d58b26a4e4dc02
     # via sphinx
-allure-behave==2.4.1 \
-    --hash=sha256:a108a42d1eeef5929a043c35ed03bfb18bb85679b5370032a19e26495786b574 \
-    --hash=sha256:c9e4016767ce14cfde9cd22f9d27c42d643d6f550c0dd6aaded5daa9e7e35303
+allure-behave==2.8.31 \
+    --hash=sha256:1bff72443b28915d4c6e1fd27e56919689259cc0b689c2c6454078e023b2a9fc \
+    --hash=sha256:4985a09fb3cc599d77d88c787ea7fe328ccafdc09046f9e02af8d4ea9151d5ee
     # via -r extra/requirements/development.in
-allure-python-commons==2.4.1 \
-    --hash=sha256:aff6463ec528df72d8d84602bbed61f8129401c2737edbeb8c0e2533dbdb216e \
-    --hash=sha256:cd72fc26a190f533f404c0a8f74a2f0ec4807ab82ca2501a9c218c0f29f107be
+allure-python-commons==2.8.31 \
+    --hash=sha256:4e96bf857f85cd6796a6d064836b28f9fbf316f2d9033faae2201d7ea4debba2 \
+    --hash=sha256:e792c668661f5c2f47d71e94ae76727f0cebe45c7c0d16fc8889b2220c18fb76
     # via allure-behave
 amqp==2.6.1 \
     --hash=sha256:70cdb10628468ff14e57ec2f751c7aa9e48e7e3651cfd62d431213c0c4e58f21 \
