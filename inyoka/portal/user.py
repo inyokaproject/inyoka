@@ -6,7 +6,7 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -304,8 +304,8 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     # member icon
     icon = models.FilePathField(ugettext_lazy('Group icon'),
-                            path=os.path.join(inyoka_settings.MEDIA_ROOT,'portal/team_icons'),
-                            match='.*\.png', blank=True, null=True)
+                                path=os.path.join(inyoka_settings.MEDIA_ROOT, 'portal/team_icons'),
+                                match='.*\.png', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """

@@ -335,7 +335,7 @@ msgid "There is no “%(slug)s” anymore."
 msgstr "Äs git keini „%(slug)s“ meh."
 
 #, python-format
-msgid "This post is currently beeing edited by “%(user)s”!"
+msgid "This post is currently being edited by “%(user)s”!"
 msgstr "Dä Bytrag wird grad vom „%(user)s“ bearbeität!"
 
 msgid "This report has already been claimed."

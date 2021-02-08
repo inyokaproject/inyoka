@@ -5,13 +5,11 @@
 
     Macros for the wiki.
 
-    :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import itertools
 import operator
-import random
-import string
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -206,7 +204,7 @@ class TagList(macros.Macro):
         result = nodes.List('unordered', class_='taglist')
         if active_tag:
             pages = Page.objects.find_by_tag(active_tag)
-            for page in sorted(pages, key=string.lower):
+            for page in sorted(pages, key=str.lower):
                 item = nodes.ListItem([nodes.InternalLink(page)])
                 result.children.append(item)
         else:

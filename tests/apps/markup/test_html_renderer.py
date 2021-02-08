@@ -5,7 +5,7 @@
 
     Here we test the HTML rendering.
 
-    :copyright: (c) 2013-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2013-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.test import override_settings

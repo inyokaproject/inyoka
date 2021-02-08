@@ -5,7 +5,7 @@
 
     Test portal views.
 
-    :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -22,6 +22,7 @@ from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
 from unittest import skip
 
+from inyoka.forum.models import Forum
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
     PrivateMessage,
@@ -259,7 +260,7 @@ class TestAuthViews(TestCase):
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
 
     def test_logout_as_anonymous(self):
-        """If a user is logging out without beeing logged in previously,
+        """If a user is logging out without being logged in previously,
         display a message telling that the user.
         """
         with translation.override('en-us'):
@@ -723,3 +724,87 @@ class TestStaticPageEdit(TestCase):
 
         self.assertContains(response, content)
         self.assertContains(response, '<div class="preview">')
+
+
+class TestEditGlobalPermissions(TestCase):
+    client_class = InyokaClient
+
+    @staticmethod
+    def get_url(group_name):
+        return href('portal', 'group', group_name, 'edit', 'global_permissions')
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.local', 'user', False)
+        self.client.login(username='user', password='user')
+
+        self.group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        self.url = self.get_url(self.group.name)
+
+    def _permissions_for_user(self):
+        assign_perm('auth.change_group', self.group)
+
+    def test_anonymous_user(self):
+        response = self.client_class().get(self.url)
+        self.assertRedirects(response,
+                             '/accounts/login/?next=/group/registered/edit/global_permissions/',
+                             target_status_code=404)
+
+    def test_missing_permissions(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_existing_group__404(self):
+        self._permissions_for_user()
+        self.url = self.get_url('not_existing')
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get(self):
+        self._permissions_for_user()
+        response = self.client.get(self.url)
+
+        self.assertContains(response,
+                            '<input type="checkbox" name="auth_permissions" value="auth.change_group"')
+
+
+class TestEditForumPermissions(TestCase):
+    client_class = InyokaClient
+
+    @staticmethod
+    def get_url(group_name):
+        return href('portal', 'group', group_name, 'edit', 'forum_permissions')
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.local', 'user', False)
+        self.client.login(username='user', password='user')
+
+        self.group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        self.url = self.get_url(self.group.name)
+
+    def _permissions_for_user(self):
+        assign_perm('auth.change_group', self.group)
+
+    def test_anonymous_user(self):
+        response = self.client_class().get(self.url)
+        self.assertRedirects(response,
+                             '/accounts/login/?next=/group/registered/edit/forum_permissions/',
+                             target_status_code=404)
+
+    def test_missing_permissions(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_existing_group__404(self):
+        self._permissions_for_user()
+        self.url = self.get_url('not_existing')
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get(self):
+        forum = Forum.objects.create(name='Forum 1')
+        self._permissions_for_user()
+        response = self.client.get(self.url)
+
+        self.assertContains(response, forum.name, html=True)

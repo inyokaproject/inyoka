@@ -6,7 +6,7 @@ Getting Started
 
 Assuming you already have :ref:`installed <installation>` Inyoka, you can start
 working on it. You need to know how to work with Git. `Pro Git <https://git-scm.com/book/en/v2>`_
-is a good ressource to learn Git. And see the
+is a good resource to learn Git. And see the
 `GitHub Help 'Creating a pull request' <https://help.github.com/articles/creating-a-pull-request/>`_
 to create pull requests.
 
@@ -71,7 +71,7 @@ copy and adapt existing test classes and methods.
 BDD-Integration Tests
 *********************
 
-To cover the functionalty between different modules there are BDD-Style integration tests at ``tests/bdd/``.
+To cover the functionality between different modules there are BDD-Style integration tests at ``tests/bdd/``.
 
 To run them you need to have Chromium installed on your system. Other browsers could be supported. But their usage
 still needs to be implemented and documented (If you are looking for a task feel free).
@@ -180,7 +180,7 @@ translation files)
 
 and restart the server to test.
 
-To prevent merge conflicts it is recomented to NOT add the ``*.mo`` files to your commit, because they cannot
+To prevent merge conflicts it is recommended to NOT add the ``*.mo`` files to your commit, because they cannot
 be merged by git.
 
 Add a new language

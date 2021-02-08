@@ -5,7 +5,7 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -478,7 +478,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         locked = post.lock(request)
         if locked:
             messages.error(request,
-                _('This post is currently beeing edited by “%(user)s”!')
+                _('This post is currently being edited by “%(user)s”!')
                 % {'user': locked})
         topic = post.topic
         forum = topic.forum

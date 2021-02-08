@@ -7,7 +7,7 @@
     Creates a snapshot of all wiki pages in HTML format. Requires
     BeautifulSoup4 to be installed.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -371,8 +371,7 @@ class Command(BaseCommand):
                         img('logo.png'),
                         img('favicon.ico'),
                         img('wiki.svg'),
-                        img('anchor.png'),
-                        img('main-sprite.png'))
+                        img('anchor.png'))
 
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth

@@ -6,7 +6,7 @@
     This file contains extensions for the django forms like special form
     fields.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -310,7 +310,7 @@ class CaptchaField(forms.MultiValueField):
     def clean(self, value):
         if current_request.user.is_authenticated and self.only_anonymous:
             return [None, None]
-        value[1] = False  # Prevent beeing catched by validators.EMPTY_VALUES
+        value[1] = False  # Prevent being catched by validators.EMPTY_VALUES
         return super(CaptchaField, self).clean(value)
 
 
