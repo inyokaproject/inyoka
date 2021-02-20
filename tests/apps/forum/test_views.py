@@ -509,7 +509,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         user._ANONYMOUS_USER = None
 
     def post_request(self, path, postdata, topics, posts, attachments=None,
-            polls=None, polloptions=None, submit=False):
+            polls=None, polloptions=None, submit=False, fail_if_post_count_differs=True):
+        """
+        fail_if_post_count_differs: If true, an AssertionError is raised, if the resulting topic has more posts than given as parameter post.
+            If the topic contains posts of previous submits, you need to set this parameter to False.
+        """
         if submit:
             if 'preview' in postdata:
                 postdata.pop('preview')
@@ -521,7 +525,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.post(path, postdata)
         self.assertEqual(Topic.objects.count(), topics)
-        self.assertEqual(Post.objects.count(), posts)
+        if fail_if_post_count_differs:
+            self.assertEqual(Post.objects.count(), posts)
         if attachments:
             self.assertEqual(Attachment.objects.count(), attachments)
         if polls:
