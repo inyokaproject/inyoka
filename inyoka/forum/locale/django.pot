@@ -427,7 +427,7 @@ msgstr ""
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr ""
 
-msgid "You cannot reply in this topic because it was deleted by a moderator."
+msgid "You cannot reply in this topic because it is hidden."
 msgstr ""
 
 msgid "You cannot reply to this topic because it was locked."

@@ -428,8 +428,8 @@ msgstr "Du kannst diesen Beitrag nicht bearbeiten."
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
 
-msgid "You cannot reply in this topic because it was deleted by a moderator."
-msgstr "Du kannst in diesem Thema nicht antworten, da es von einem Moderator gelöscht wurde."
+msgid "You cannot reply in this topic because it is hidden."
+msgstr "Du kannst in diesem Thema nicht antworten, da es nicht sichtbar ist."
 
 msgid "You cannot reply to this topic because it was locked."
 msgstr "Du kannst auf dieses Thema nicht antworten, da es gesperrt wurde."

@@ -566,8 +566,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         if topic.hidden:
             if not request.user.has_perm('forum.moderate_forum', forum):
                 messages.error(request,
-                    _('You cannot reply in this topic because it was '
-                      'deleted by a moderator.'))
+                    _('You cannot reply in this topic because it is '
+                      'hidden.'))
                 return HttpResponseRedirect(url_for(topic))
         elif topic.locked:
             if not request.user.has_perm('forum.moderate_forum', forum):
