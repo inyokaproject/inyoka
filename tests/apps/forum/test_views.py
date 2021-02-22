@@ -611,7 +611,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
         content = response.content.decode()
-        print(content)
+
         self.assertInHTML('<div class="message info">Your submission needs approval '
                           'by a team member and is hidden meanwhile. Please be patient, '
                           'we will get to it as soon as possible.</div>',
