@@ -44,7 +44,7 @@ pipeline {
           . ../venv/bin/activate
           python setup.py develop
           npm install
-          ./node_modules/grunt-cli/bin/grunt
+          npm run all
           '''
         }
 
