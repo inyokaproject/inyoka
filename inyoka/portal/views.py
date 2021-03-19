@@ -1377,8 +1377,8 @@ def feedselector(request, app=None):
                     return HttpResponseRedirect(href('wiki', '_feed',
                            data['count']))
                 else:
-                    return HttpResponseRedirect(href('wiki', '_feed',
-                           data['page'], data['count']))
+                    return HttpResponseRedirect(href('wiki', data['page'],
+                           'a', 'feed', data['count']))
 
     return {
         'app': app,
