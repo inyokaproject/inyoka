@@ -4,42 +4,10 @@
 #
 #    python manage.py generate_requirements
 #
-aiodns==2.0.0 \
-    --hash=sha256:815fdef4607474295d68da46978a54481dd1e7be153c7d60f9e72773cd38d77d \
-    --hash=sha256:aaa5ac584f40fe778013df0aa6544bf157799bd3f608364b451840ed2c8688de \
-    # via slixmpp
-aiohttp==2.3.10 \
-    --hash=sha256:14821eb8613bfab9118be3c55afc87bf4cef97689896fa0874c6877b117afbeb \
-    --hash=sha256:3a4cdb9ca87c099d8ba5eb91cb8f000b60c21f8c1b50c75e04e8777e903bd278 \
-    --hash=sha256:44c9cf24e63576244c13265ef0786b56d6751f5fb722225ecc021d6ecf91b4d2 \
-    --hash=sha256:46ace48789865a89992419205024ae451d577876f9919fbb0f22f71189822dea \
-    --hash=sha256:528b0b811b6260a79222b055664b82093d01f35fe5c82521d8659cb2b28b8044 \
-    --hash=sha256:5436ca0ed752bb05a399fc07dc86dc23c756db523a3b7d5da46a457eacf4c4b5 \
-    --hash=sha256:5a952d4af7de5f78dfb3206dbc352717890b37d447f0bbd4b5969b3c8bb713af \
-    --hash=sha256:6b8c5a00432b8a5a083792006e8fdfb558b8b10019ce254200855264d3a25895 \
-    --hash=sha256:756fc336a29c551b02252685f01bc87116bc9b04bbd02c1a6b8a96b3c6ad713b \
-    --hash=sha256:7ac6378ae364d8e5e5260c7224ea4a1965cb6f4719f15d0552349d0b0cc93953 \
-    --hash=sha256:7b407c22b0ab473ffe0a7d3231f2084a8ae80fdb64a31842b88d57d6b7bdab7c \
-    --hash=sha256:82a9068d9cb15eb2d99ecf39f8d56b4ed9f931a77a3622a0de747465fd2a7b96 \
-    --hash=sha256:834f687b806fbf49cb135b5a208b5c27338e19c219d6e09e9049936e01e8bea8 \
-    --hash=sha256:8adda6583ba438a4c70693374e10b60168663ffa6564c5c75d3c7a9055290964 \
-    --hash=sha256:8f32a4e157bad9c60ebc38c3bb93fcc907a020b017ddf8f7ab1580390e21940e \
-    --hash=sha256:a8c12f3184c7cad8f66cae6c945d2c97e598b0cb7afd655a5b9471475e67f30e \
-    --hash=sha256:b25c7720c495048ed658086a29925ab485ac7ececf1b346f2b459e5431d85016 \
-    --hash=sha256:c77e29243a79e376a1b51d71a13df4a61bc54fd4d9597ce3790b8d82ec6eb44d \
-    --hash=sha256:cf790e61c2af0278f39dcedad9a22532bf81fb029c2cd73b1ceba7bea062c908 \
-    --hash=sha256:ef1a36a16e72b6689ce0a6c7fc6bd88837d8fef4590b16bd72817644ae1f414d \
-    --hash=sha256:f5e7d41d924a1d5274060c467539ee0c4f3bab318c1671ad65abd91f6b637baf \
-    --hash=sha256:f72bb19cece43483171264584bbaaf8b97717d9c0f244d1ef4a51df1cdb34085 \
-    # via slixmpp
 amqp==2.6.1 \
     --hash=sha256:70cdb10628468ff14e57ec2f751c7aa9e48e7e3651cfd62d431213c0c4e58f21 \
     --hash=sha256:aa7f313fb887c91f15474c1229907a04dac0b8135822d6603437803424c0aa59 \
     # via kombu
-async-timeout==2.0.1 \
-    --hash=sha256:00cff4d2dce744607335cba84e9929c3165632da2d27970dbc55802a0c7873d0 \
-    --hash=sha256:9093db5b8ddbe4b8f6885d1a6e0ad84ae3155464cbf6877c387605244c285f3c \
-    # via aiohttp
 babel==2.9.0 \
     --hash=sha256:9d35c22fcc79893c3ecc85ac4a56cde1ecf3f19c540bba0922308a6c06ca6fa5 \
     --hash=sha256:da031ab54472314f210b0adcff1588ee5d1d1d0ba4dbd07b94dba82bde791e05 \
@@ -334,14 +302,6 @@ psycopg2==2.8.6 \
     --hash=sha256:f974c96fca34ae9e4f49839ba6b78addf0346777b46c4da27a7bf54f48d3057d \
     --hash=sha256:fb23f6c71107c37fd667cb4ea363ddeb936b348bbd6449278eb92c189699f543 \
     # via Inyoka (setup.py)
-pyasn1-modules==0.2.8 \
-    --hash=sha256:905f84c712230b2c592c19470d3ca8d552de726050d1d1716282a1f6146be65e \
-    --hash=sha256:a50b808ffeb97cb3601dd25981f6b016cbb3d31fbf57a8b8a87428e6158d0c74 \
-    # via slixmpp
-pyasn1==0.4.8 \
-    --hash=sha256:39c7e2ec30515947ff4e87fb6f456dfc6e84857d34be479c9d4a4ba4bf46aa5d \
-    --hash=sha256:aef77c9fb94a3ac588e87841208bdec464471d9871bd5050a287cc9a475cd0ba \
-    # via pyasn1-modules, slixmpp
 pycares==3.1.1 \
     --hash=sha256:050f00b39ed77ea8a4e555f09417d4b1a6b5baa24bb9531a3e15d003d2319b3f \
     --hash=sha256:0a24d2e580a8eb567140d7b69f12cb7de90c836bd7b6488ec69394d308605ac3 \
@@ -443,9 +403,6 @@ six==1.15.0 \
     --hash=sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259 \
     --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced \
     # via django-guardian, html5lib, python-dateutil, transifex-client
-slixmpp==1.4.2 \
-    --hash=sha256:c3204fbe8ded148e1eca6720ba0398298c159f29ec76dfc6f7dd7ed999ae1767 \
-    # via Inyoka (setup.py)
 transifex-client==0.12.5 \
     --hash=sha256:139867ffaf340aa2b74b0c44fa2d6525bf641357d04b7961a5b10ebe468678d8 \
     --hash=sha256:23c88c55d1469b62a771646d4f202b6fe5f4abbcdbe61bda3a3b08c44aaa7a78 \
