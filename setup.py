@@ -71,10 +71,13 @@ setup(
         'pyzmq',
         'raven',
         'requests',
-        'slixmpp==1.4.2',
         'transifex-client==0.12.5',
         'Werkzeug==0.15.5'
     ],
+
+    extras_require={
+        'xmpp': ['slixmpp'],
+    },
 
     project_urls={
         'Bug Reports': 'https://github.com/inyokaproject/inyoka/issues',
