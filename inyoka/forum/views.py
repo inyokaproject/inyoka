@@ -537,7 +537,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             data=request.POST or None,
         )
 
-    if request.method == 'POST' and request.user.has_perm('forum.moderate_forum', forum):
+    if request.method == 'POST' and (request.user.has_perm('forum.moderate_forum', forum) or not needs_spam_check):
+        # Moderators, trusted users and all users in non-public forums are exempt from the surge protection
+        # https://github.com/inyokaproject/inyoka/issues/1203
         form.surge_protection_timeout = None
 
     # check privileges
