@@ -352,8 +352,8 @@ pbr==5.5.1 \
     --hash=sha256:5fad80b613c402d5b7df7bd84812548b2a61e9977387a80a5fc5c396492b13c9 \
     --hash=sha256:b236cde0ac9a6aedd5e3c34517b423cd4fd97ef723849da6b0d2231142d89c00 \
     # via mock
-https://github.com/chris34/pillow/archive/refs/heads/main.zip#egg=Pillow --global-option="build_ext" \
-    --hash=sha256:355d12e6d8eefd9c9e9924759d90281ca0e11af2a328e553f5f36edd69cef32e
+https://github.com/chris34/pillow/releases/download/7.2.1-pre/Pillow-7.2.1.tar.gz \
+    --hash=sha256:5026c3fa92e890f8408d6d1c20b49210a711d54305cf3cf76d87ae16f2df4051
 pip-tools==5.5.0 \
     --hash=sha256:10841c1e56c234d610d0466447685b9ea4ee4a2c274f858c0ef3c33d9bd0d985 \
     --hash=sha256:cb0108391366b3ef336185097b3c2c0f3fa115b15098dafbda5e78aef70ea114 \
