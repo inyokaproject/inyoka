@@ -92,5 +92,9 @@ class TestCheckSpecialDay(unittest.TestCase):
         self.assertEqual(check_special_day(), 'silvester.css')
 
     @freeze_time("2021-04-04")
-    def test_easter(self):
+    def test_easter_sunday(self):
+        self.assertEqual(check_special_day(), 'easter.css')
+
+    @freeze_time("2021-04-05")
+    def test_easter_monday(self):
         self.assertEqual(check_special_day(), 'easter.css')
