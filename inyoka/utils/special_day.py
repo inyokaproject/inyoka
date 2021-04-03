@@ -74,7 +74,10 @@ def collect_styles(year: int) -> Dict[date, str]:
     """
     special_styles = dict()
 
-    special_styles[easter_sunday(year)] = 'easter.css'
+    easter_sunday_current = easter_sunday(year)
+    easter_monday = easter_sunday_current + timedelta(days=1)
+    for i in (easter_sunday_current, easter_monday):
+        special_styles[i] = 'easter.css'
 
     for i in (date(year, 12, 31), date(year, 1, 1)):
         special_styles[i] = 'silvester.css'
