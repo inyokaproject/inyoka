@@ -21,7 +21,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
@@ -1553,7 +1553,7 @@ def markread(request, slug=None):
         messages.info(request, _('Please login to mark posts as read.'))
         return HttpResponseRedirect(href('forum'))
     if slug:
-        forum = Forum.objects.get(slug=slug)
+        forum = get_object_or_404(Forum, slug=slug)
         forum.mark_read(user)
         user.save()
         messages.success(request,

@@ -1514,3 +1514,54 @@ class TestWelcomeMessageView(TestCase):
             views.WelcomeMessageView.as_view()(request, slug='f-slug-no-welcome')
 
         self.assertFalse(self.forum_no_welcome.welcome_read_users.filter(pk=self.user.pk).exists())
+
+
+class TestMarkRead(TestCase):
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.public_category = Forum.objects.create(name='Public category')
+        self.public_forum = Forum.objects.create(name='Public forum', parent=self.public_category)
+
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered_group, self.public_category)
+        assign_perm('forum.view_forum', registered_group, self.public_forum)
+
+        topic = Topic.objects.create(title='A test Topic', author=self.user, forum=self.public_forum)
+        Post.objects.create(text='Post 1', author=self.user, topic=topic, position=0)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_anonymous(self):
+        url = self.public_forum.get_absolute_url('markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, href('forum'))
+        self.assertContains(response, 'Please login to mark posts as read.')
+
+    def test_mark_all_as_read(self):
+        self.client.force_login(user=self.user)
+
+        url = href('forum', 'markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, href('forum'))
+        self.assertContains(response, 'All forums were marked as read.')
+
+    def test_mark_one_forum(self):
+        self.client.force_login(user=self.user)
+
+        url = self.public_forum.get_absolute_url('markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, url_for(self.public_forum))
+        self.assertContains(response, 'The forum “{}” was marked as read.'.format(self.public_forum.name))
+
+    def test_no_existing_forum(self):
+        self.client.force_login(user=self.user)
+
+        url = href('forum', 'forum', 'does_not_exist', 'markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 404)
