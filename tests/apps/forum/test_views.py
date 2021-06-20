@@ -1187,10 +1187,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         new_file2 = path.join(basedir, TEST_ATTACHMENT2)
         shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT2), new_file2)
 
-        with open(new_file1, 'rb') as f:
-            att1 = Attachment.objects.create(name=TEST_ATTACHMENT1, file=File(f), mimetype='image/png', post=post)
-        with open(new_file2, 'rb') as f:
-            att2 = Attachment.objects.create(name=TEST_ATTACHMENT2, file=File(f), mimetype='image/png', post=post)
+        att1 = Attachment.objects.create(name=TEST_ATTACHMENT1, file=path.relpath(new_file1, start=settings.MEDIA_ROOT), mimetype='image/png', post=post)
+        att2 = Attachment.objects.create(name=TEST_ATTACHMENT2, file=path.relpath(new_file2, start=settings.MEDIA_ROOT), mimetype='image/png', post=post)
         # FIXME: Move this stuff to the model!
         post.has_attachments = True
         post.save(update_fields=['has_attachments'])
