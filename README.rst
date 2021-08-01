@@ -4,8 +4,8 @@ Inyoka
 ======
 
 **If possible, please read the**
-`pretty version <https://ci.ubuntu-de.org/job/inyokaproject-github/job/inyoka/job/staging/Inyoka_20Documentation/index.html>`_
-**of Inyoka's documentation.**
+`pretty version (select the newest build, download the artifact 'Inyoka_Documentation') <https://github.com/inyokaproject/inyoka/actions?query=branch%3Astaging>`_.
+
 
 The Inyoka portal system is divided into multiple modules to which we
 refer as applications. The name Inyoka means “snake” in
@@ -77,9 +77,9 @@ The following applications are part of Inyoka so far:
    for highlighting. It does not support diffing yet but allows to
    download pastes.
 
-.. |Build Status Master| image:: https://ci.ubuntu-de.org/buildStatus/icon?job=inyokaproject-github/inyoka/master
-   :target: https://ci.ubuntu-de.org/job/inyokaproject-github/inyoka/master
-.. |Build Status Staging| image:: https://ci.ubuntu-de.org/buildStatus/icon?job=inyokaproject-github/inyoka/staging
-   :target: https://ci.ubuntu-de.org/job/inyokaproject-github/inyoka/staging
-.. |Build Status Testing| image:: https://ci.ubuntu-de.org/buildStatus/icon?job=inyokaproject-github/inyoka/testing
-   :target: https://ci.ubuntu-de.org/job/inyokaproject-github/inyoka/testing
+.. |Build Status Master| image:: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml/badge.svg?branch=master
+   :target: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml?query=branch%3Amaster
+.. |Build Status Staging| image:: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml/badge.svg?branch=staging
+   :target: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml?query=branch%3Astaging
+.. |Build Status Testing| image:: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml/badge.svg?branch=testing
+   :target: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml?query=branch%3Atesting
