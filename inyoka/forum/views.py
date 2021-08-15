@@ -1510,13 +1510,7 @@ class ForumAtomFeed(InyokaAtomFeed):
         return _('Feed contains new topics of the whole forum')
 
     def items(self):
-        # We have only one feed, so it's always in the view of ANONYMOUS_USER
-        anonymous = User.objects.get_anonymous_user()
-        allowed_forums = [forum.id for forum in Forum.objects.get_cached() if
-                          anonymous.has_perm('forum.view_forum', forum)]
-        if not allowed_forums:
-            raise PermissionDenied
-        return Topic.objects.get_latest(allowed_forums=allowed_forums, count=self.count)
+        return Topic.objects.get_latest(count=self.count)
 
     def item_title(self, topic):
         return topic.title
@@ -1588,15 +1582,7 @@ class OneForumAtomFeed(ForumAtomFeed):
         return _('Feed contains new topics of the forum “%(forum)s”.') % {'forum': self.forum.name}
 
     def items(self):
-        anonymous = User.objects.get_anonymous_user()
-
-        if self.forum.children:
-            joined_forum = [child.id for child in self.forum.children if anonymous.has_perm('forum.view_forum', child)]
-            joined_forum.append(self.forum.id)
-
-            return Topic.objects.get_latest(allowed_forums=joined_forum, count=self.count)
-
-        return Topic.objects.get_latest(self.forum.slug, count=self.count)
+        return Topic.objects.get_latest(forum_slug=self.forum.slug, count=self.count)
 
 
 def markread(request, slug=None):
