@@ -71,10 +71,11 @@ urlpatterns = [
     path('suggestions/subscribe/', views.suggestions_subscribe),
     path('suggestions/unsubscribe/', views.suggestions_unsubscribe),
 
-    re_path(r'^feeds/comments/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_comment, {'id': None}),
-    re_path(r'^feeds/comments/(?P<id>\d+)/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_comment),
-    re_path(r'^feeds/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_article, {'slug': None}),
-    re_path(r'^feeds/(?P<slug>[^/]+)/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_article),
+
+    re_path(r'^feeds/comments/(?P<mode>\w+)/(?P<count>\d+)/$', views.IkhayaCommentAtomFeed()),
+    re_path(r'^feeds/comments/(?P<id>\d+)/(?P<mode>\w+)/(?P<count>\d+)/$', views.IkhayaArticleCommentAtomFeed()),
+    re_path(r'^feeds/(?P<mode>\w+)/(?P<count>\d+)/$', views.IkhayaAtomFeed()),
+    re_path(r'^feeds/(?P<slug>[^/]+)/(?P<mode>\w+)/(?P<count>\d+)/$', views.IkhayaCategoryAtomFeed()),
 
     path('events/', views.events),
     path('events/all/', views.events, {'show_all': True}),

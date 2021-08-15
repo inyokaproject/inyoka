@@ -1594,7 +1594,7 @@ class TestPostFeed(TestCase):
         remove_perm('forum.view_forum', anonymous_group, self.forum)
 
         response = self.client.get('/feeds/short/10/', follow=True)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_modes(self):
         response = self.client.get('/feeds/short/10/')
@@ -1622,26 +1622,24 @@ class TestPostFeed(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 forum</title>
-  <id>http://forum.ubuntuusers.local:8080/feeds/full/10/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://forum.ubuntuusers.local:8080/" />
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 forum</title>
+  <link href="http://forum.ubuntuusers.local:8080/" rel="alternate" />
   <link href="http://forum.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://forum.ubuntuusers.local:8080/</id>
+  <updated>2023-12-09T23:55:04+01:00</updated>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://forum.ubuntuusers.local:8080/feeds/full/10/">
-    <title type="text">test topic</title>
-    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" />
+  <entry>
+    <title>test topic</title>
+    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
+    <published>2023-12-09T23:55:04+01:00</published>
+    <updated>2023-12-09T23:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>some text</p></div></content>
+    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+    <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
   </entry>
 </feed>
 ''')
@@ -1675,7 +1673,7 @@ class TestPostForumFeed(TestCase):
         remove_perm('forum.view_forum', anonymous_group, self.forum)
 
         response = self.client.get(f'/feeds/forum/{self.forum.name}/short/10/', follow=True)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_modes(self):
         response = self.client.get(f'/feeds/forum/{self.forum.name}/short/10/')
@@ -1716,26 +1714,24 @@ class TestPostForumFeed(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 forum – “hardware”</title>
-  <id>http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://forum.ubuntuusers.local:8080/category/hardware/" />
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 forum – “hardware”</title>
+  <link href="http://forum.ubuntuusers.local:8080/category/hardware/" rel="alternate" />
   <link href="http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/" rel="self" />
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://forum.ubuntuusers.local:8080/category/hardware/</id>
+  <updated>2023-12-09T23:55:04+01:00</updated>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/">
-    <title type="text">test topic</title>
-    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" />
+  <entry>
+    <title>test topic</title>
+    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
+    <published>2023-12-09T23:55:04+01:00</published>
+    <updated>2023-12-09T23:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>some text</p></div></content>
+    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+    <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
   </entry>
 </feed>
 ''')
@@ -1794,7 +1790,7 @@ class TestTopicFeed(TestCase):
         topic = Topic.objects.create(forum=forum, author=self.user, title='no perm topic')
 
         response = self.client.get(f'/feeds/topic/{topic.slug}/short/10/', follow=True)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_content_exact(self):
         response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
@@ -1802,25 +1798,24 @@ class TestTopicFeed(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 topic – “test topic”</title>
-  <id>http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" />
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 topic – “test topic”</title>
+  <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
   <link href="http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/" rel="self" />
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+  <updated>2023-12-09T23:55:04+01:00</updated>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/">
-    <title type="text">user (Dec. 10, 2023, 12:55 a.m.)</title>
-    <id>http://forum.ubuntuusers.local:8080/post/1/</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://forum.ubuntuusers.local:8080/post/1/" />
+  <entry>
+    <title>user (Dec. 10, 2023, 12:55 a.m.)</title>
+    <link href="http://forum.ubuntuusers.local:8080/post/1/" rel="alternate"/>
+    <published>2023-12-09T23:55:04+01:00</published>
+    <updated>2023-12-09T23:55:04+01:00</updated>
     <author>
       <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>some text</p></div></content>
+    <id>http://forum.ubuntuusers.local:8080/post/1/</id>
+    <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
   </entry>
 </feed>
 ''')

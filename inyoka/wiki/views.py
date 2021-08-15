@@ -26,8 +26,7 @@ from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
-from inyoka.utils.dates import format_datetime
-from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.http import AccessDeniedResponse, templated
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.text import join_pagename, normalize_pagename
@@ -152,76 +151,84 @@ def get_image_resource(request):
     return HttpResponseRedirect(target)
 
 
-@atom_feed(name='wiki_feed', supports_modes=False)
-def feed(request, page_name=None, count=10):
+class WikiAtomFeed(InyokaAtomFeed):
     """
-    Shows the wiki pages or all revisions of one page that match
-    the given criteria in an atom feed.
+    Atom feed with revisions of the *whole wiki*.
     """
-    # TODO i18n: Find a better solution to hard coded wiki paths.
-    #           Maybe we need even more configuration values in the storage.
-    if page_name:
-        feed = AtomFeed(title=_('%(sitename)s wiki – %(pagename)s') % {
-            'sitename': settings.BASE_DOMAIN_NAME,
-            'pagename': page_name
-            },
-            url=href('wiki', page_name),
-            feed_url=request.build_absolute_uri(),
-            id=href('wiki', page_name),
-            rights=href('portal', 'lizenz'),
-            icon=href('static', 'img', 'favicon.ico'))
-    else:
-        feed = AtomFeed(_('%(sitename)s wiki – last changes')
-            % {'sitename': settings.BASE_DOMAIN_NAME},
-            url=href('wiki', 'Letzte_Änderungen'),
-            feed_url=request.build_absolute_uri(),
-            id=href('wiki', 'Letzte_Änderungen'),
-            rights=href('portal', 'lizenz'),
-            icon=href('static', 'img', 'favicon.ico'))
+    name = 'wiki_feed'
+    supports_modes = False
 
-    revisions = Revision.objects.get_latest_revisions(page_name, count)
+    title = _('%(sitename)s wiki – last changes') % {'sitename': settings.BASE_DOMAIN_NAME}
 
-    for rev in revisions:
-        kwargs = {}
+    def link(self, *args):
+        return href('wiki', 'wiki', 'recentchanges')
 
-        if rev.user:
-            if rev.deleted:
-                text = _('%(user)s deleted the article “%(article)s” on '
-                         '%(date)s. Summary: %(summary)s')
-            else:
-                text = _('%(user)s edited the article “%(article)s” on '
-                         '%(date)s. Summary: %(summary)s')
-        else:
-            if rev.deleted:
-                text = _('An anonymous user deleted the article '
-                         '“%(article)s” on %(date)s. Summary: %(summary)s')
-            else:
-                text = _('An anonymous user edited the article '
-                         '“%(article)s” on %(date)s. Summary: %(summary)s')
+    def items(self, *args):
+        return Revision.objects.get_latest_revisions(count=self.count)
 
-        kwargs['summary'] = text % {
-            'user': rev.user,
-            'article': rev.page.title,
-            'date': rev.change_date,
-            'summary': rev.note or '-',
-        }
-        kwargs['summary_type'] = None
-        author = (rev.user
-                  and {'name': rev.user.username, 'uri': url_for(rev.user)}
-                  or settings.ANONYMOUS_USER_NAME)
-        feed.add(
-            title='%s (%s)' % (
-                rev.user or settings.ANONYMOUS_USER_NAME,
-                format_datetime(rev.change_date),
-            ),
-            url=url_for(rev),
-            author=author,
-            published=rev.change_date,
-            updated=rev.change_date,
-            **kwargs
+    def item_title(self, rev):
+        return '%s: %s' % (
+            rev.user or settings.ANONYMOUS_USER_NAME,
+            rev.note or _('-')
         )
 
-    return feed
+    def item_description(self, rev):
+        if rev.deleted:
+            text = _('%(user)s deleted the article “%(article)s” on '
+                     '%(date)s. Summary: %(summary)s')
+        else:
+            text = _('%(user)s edited the article “%(article)s” on '
+                     '%(date)s. Summary: %(summary)s')
+
+        return text % {
+            'user': rev.user or _('An anonymous user'),
+            'article': rev.page.title,
+            'date': rev.change_date,
+            'summary': rev.note or _('-'),
+        }
+
+    def item_link(self, rev):
+        return url_for(rev)
+
+    def item_author_name(self, rev):
+        if rev.user:
+            return rev.user.username
+
+        return settings.ANONYMOUS_USER_NAME
+
+    def item_author_link(self, rev):
+        if rev.user:
+            return url_for(rev.user)
+
+        return None
+
+    def item_pubdate(self, rev):
+        return rev.change_date
+
+    def item_updateddate(self, rev):
+        return rev.change_date
+
+
+class WikiPageAtomFeed(WikiAtomFeed):
+    """
+    Atom feed with revisions of *one wiki page*.
+    """
+
+    def title(self, page):
+        return _('%(sitename)s wiki – %(pagename)s') % {
+            'sitename': settings.BASE_DOMAIN_NAME,
+            'pagename': page.name
+        }
+
+    def link(self, page):
+        return page.get_absolute_url()
+
+    def get_object(self, request, *args, **kwargs):
+        super().get_object(request, *args, **kwargs)
+        return Page.objects.get_by_name(kwargs['page_name'], exclude_privileged=True)
+
+    def items(self, page):
+        return Revision.objects.get_latest_revisions(page.name, self.count)
 
 
 @templated('wiki/recentchanges.html')

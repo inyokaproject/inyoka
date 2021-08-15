@@ -8,6 +8,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import gc
+import xml
 from importlib import import_module
 
 import responses
@@ -171,3 +172,10 @@ class TestCase(_TestCase):
         content_cache.delete_pattern("*")
         default_cache = caches['default']
         default_cache.delete_pattern("*")
+
+    def assertXMLEqual(self, xml1, xml2, msg=None):
+        """Prettify comparison of two XML strings"""
+        xml1 = xml.dom.minidom.parseString(xml1).toprettyxml(indent='  ')
+        xml2 = xml.dom.minidom.parseString(xml2).toprettyxml(indent='  ')
+
+        super().assertXMLEqual(xml1, xml2, msg)

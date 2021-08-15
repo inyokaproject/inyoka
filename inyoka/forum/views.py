@@ -17,7 +17,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -62,7 +62,7 @@ from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
-from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.generic import PermissionRequiredMixin
@@ -1435,112 +1435,140 @@ def delete_topic(request, topic_slug, action='hide'):
     return HttpResponseRedirect(url_for(topic))
 
 
-@atom_feed(name='forum_topic_feed')
-@does_not_exist_is_404
-def topic_feed(request, slug=None, mode='short', count=10):
-    # We have one feed, so we use ANONYMOUS_USER to cache the correct feed.
-    anonymous = User.objects.get_anonymous_user()
+class ForumTopicAtomFeed(InyokaAtomFeed):
+    """
+    Atom feed with posts of a topic.
+    """
+    name = 'forum_topic_feed'
 
-    topic = Topic.objects.get(slug=slug)
-    if topic.hidden:
-        raise Http404()
+    def get_object(self, request, *args, **kwargs):
+        topic = get_object_or_404(Topic, slug=kwargs['slug'], hidden=False)
 
-    if not anonymous.has_perm('forum.view_forum', topic.cached_forum()):
-        return abort_access_denied(request)
+        # We have only one feed, so it's always in the view of ANONYMOUS_USER
+        anonymous = User.objects.get_anonymous_user()
+        if not anonymous.has_perm('forum.view_forum', topic.cached_forum()):
+            raise PermissionDenied
 
-    maxposts = max(settings.AVAILABLE_FEED_COUNTS['forum_topic_feed'])
-    posts = topic.posts.select_related('author').order_by('-position')[:maxposts]
+        self.topic = topic
 
-    feed = AtomFeed(_('%(site)s topic – “%(topic)s”')
-                    % {'topic': topic.title, 'site': settings.BASE_DOMAIN_NAME},
-                    url=url_for(topic),
-                    feed_url=request.build_absolute_uri(),
-                    rights=href('portal', 'lizenz'),
-                    icon=href('static', 'img', 'favicon.ico'))
+        super().get_object(request, *args, **kwargs)
 
-    for post in posts:
-        kwargs = {}
-        if mode == 'full':
-            kwargs['content'] = post.get_text()
-            kwargs['content_type'] = 'xhtml'
-        if mode == 'short':
-            kwargs['summary'] = Truncator(post.get_text).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+    def title(self):
+        return _('%(site)s topic – “%(topic)s”') % {'topic': self.topic.title, 'site': settings.BASE_DOMAIN_NAME}
 
-        feed.add(
-            title='%s (%s)' % (
-                post.author.username,
-                format_datetime(post.pub_date)
-            ),
-            url=url_for(post),
-            author=post.author,
-            published=post.pub_date,
-            updated=post.pub_date,
-            **kwargs
+    def link(self):
+        return url_for(self.topic)
+
+    def items(self):
+        return self.topic.posts.select_related('author').order_by('-position')[:self.count]
+
+    def item_title(self, post):
+        return '%s (%s)' % (
+            post.author.username,
+            format_datetime(post.pub_date)
         )
-    return feed
+
+    def item_description(self, post):
+        if self.mode == 'full':
+            return post.get_text()
+        if self.mode == 'short':
+            return self._shorten_html(post.get_text)
+
+    def item_link(self, post):
+        return url_for(post)
+
+    def item_author_name(self, post):
+        return post.author.username
+
+    def item_author_link(self, post):
+        return url_for(post.author)
+
+    def item_pubdate(self, post):
+        return post.pub_date
+
+    def item_updateddate(self, post):
+        # TODO check how to get the date of the last post, like it's rendered in the forum
+        return post.pub_date
 
 
-@atom_feed(name='forum_forum_feed')
-@does_not_exist_is_404
-def forum_feed(request, slug=None, mode='short', count=10):
-    # We have one feed, so we use ANONYMOUS_USER to cache the correct feed.
-    anonymous = User.objects.get_anonymous_user()
+class ForumAtomFeed(InyokaAtomFeed):
+    """
+    Atom feed with new topics of the whole forum.
+    """
+    name = 'forum_forum_feed'
+    title = _('%(site)s forum') % {'site': settings.BASE_DOMAIN_NAME}
+    link = href('forum')
 
-    if slug:
-        forum = Forum.objects.get_cached(slug=slug)
-        if not anonymous.has_perm('forum.view_forum', forum):
-            return abort_access_denied(request)
-
-        if forum.children:
-            joined_forum = [child.id for child in forum.children if anonymous.has_perm('forum.view_forum', child)]
-            joined_forum.append(forum.id)
-
-            topics = Topic.objects.get_latest(allowed_forums=joined_forum, count=count)
-        else:
-            topics = Topic.objects.get_latest(forum.slug, count=count)
-
-        title = _('%(site)s forum – “%(forum)s”') % {'forum': forum.name,
-                'site': settings.BASE_DOMAIN_NAME}
-        url = url_for(forum)
-    else:
-        allowed_forums = [forum.id for forum in Forum.objects.get_cached() if anonymous.has_perm('forum.view_forum', forum)]
+    def items(self):
+        # We have only one feed, so it's always in the view of ANONYMOUS_USER
+        anonymous = User.objects.get_anonymous_user()
+        allowed_forums = [forum.id for forum in Forum.objects.get_cached() if
+                          anonymous.has_perm('forum.view_forum', forum)]
         if not allowed_forums:
-            return abort_access_denied(request)
-        topics = Topic.objects.get_latest(allowed_forums=allowed_forums, count=count)
-        title = _('%(site)s forum') % {'site': settings.BASE_DOMAIN_NAME}
-        url = href('forum')
+            raise PermissionDenied
+        return Topic.objects.get_latest(allowed_forums=allowed_forums, count=self.count)
 
-    feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    url=url, rights=href('portal', 'lizenz'),
-                    icon=href('static', 'img', 'favicon.ico'))
+    def item_title(self, topic):
+        return topic.title
 
-    for topic in topics:
-        kwargs = {}
+    def item_description(self, topic):
         post = topic.first_post
-
         text = post.get_text()
 
-        if mode == 'full':
-            kwargs['content'] = text
-            kwargs['content_type'] = 'xhtml'
-        if mode == 'short':
-            kwargs['summary'] = Truncator(text).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+        if self.mode == 'full':
+            return text
+        if self.mode == 'short':
+            return self._shorten_html(text)
 
-        feed.add(
-            title=topic.title,
-            url=url_for(topic),
-            author={
-                'name': topic.author.username,
-                'uri': url_for(topic.author),
-            },
-            published=post.pub_date,
-            updated=post.pub_date,
-            **kwargs
-        )
+    def item_link(self, topic):
+        return url_for(topic)
 
-    return feed
+    def item_author_name(self, topic):
+        return topic.author.username
+
+    def item_author_link(self, topic):
+        return url_for(topic.author)
+
+    def item_pubdate(self, topic):
+        post = topic.first_post
+        return post.pub_date
+
+    def item_updateddate(self, topic):
+        post = topic.last_post
+        return post.pub_date
+
+
+class OneForumAtomFeed(ForumAtomFeed):
+    """
+    Atom feed with new topics of one forum.
+    """
+
+    def get_object(self, request, *args, **kwargs):
+        # We have only one feed, so it's always in the view of ANONYMOUS_USER
+        anonymous = User.objects.get_anonymous_user()
+
+        self.forum = Forum.objects.get_cached(slug=kwargs['slug'])
+        if not anonymous.has_perm('forum.view_forum', self.forum):
+            raise PermissionDenied
+
+        super().get_object(request, *args, **kwargs)
+
+    def title(self):
+        return _('%(site)s forum – “%(forum)s”') % {'forum': self.forum.name, 'site': settings.BASE_DOMAIN_NAME}
+
+    def link(self):
+        return url_for(self.forum)
+
+    def items(self):
+        anonymous = User.objects.get_anonymous_user()
+
+        if self.forum.children:
+            joined_forum = [child.id for child in self.forum.children if anonymous.has_perm('forum.view_forum', child)]
+            joined_forum.append(self.forum.id)
+
+            return Topic.objects.get_latest(allowed_forums=joined_forum, count=self.count)
+
+        return Topic.objects.get_latest(self.forum.slug, count=self.count)
 
 
 def markread(request, slug=None):

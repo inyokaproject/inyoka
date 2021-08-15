@@ -242,9 +242,9 @@ class TopicManager(models.Manager):
 
         topic_ids = cache.get(key)
         if topic_ids is None:
-            filter_by = { 'hidden':False,
-                          'first_post__isnull':False,
-                          'last_post__isnull':False
+            filter_by = { 'hidden': False,
+                          'first_post__isnull': False,
+                          'last_post__isnull': False
                         }
             query = Topic.objects.filter(**filter_by)
             if forum_slug:

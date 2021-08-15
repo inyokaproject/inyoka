@@ -358,26 +358,24 @@ class TestRevisionFeed(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 wiki – last changes</title>
-  <id>http://wiki.ubuntuusers.local:8080/Letzte_%C3%84nderungen/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://wiki.ubuntuusers.local:8080/Letzte_%C3%84nderungen/" />
+<feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom">
+  <title>ubuntuusers.local:8080 wiki – last changes</title>
+  <link href="http://wiki.ubuntuusers.local:8080/wiki/recentchanges/" rel="alternate" />
   <link href="http://wiki.ubuntuusers.local:8080/_feed/10/" rel="self" />
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://wiki.ubuntuusers.local:8080/wiki/recentchanges/</id>
+  <updated>2023-12-09T23:55:04+01:00</updated>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://wiki.ubuntuusers.local:8080/_feed/10/">
-    <title type="text">user (Dec. 10, 2023, 12:55 a.m.)</title>
-    <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" />
+  <entry>
+    <title>user: Created</title>
+    <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" rel="alternate" />
+    <published>2023-12-09T23:55:04+01:00</published>
+    <updated>2023-12-09T23:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
-    <summary>user edited the article “test page” on 2023-12-09 23:55:04. Summary: Created</summary>
+    <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
+    <summary type="html">user edited the article “test page” on 2023-12-09 23:55:04. Summary: Created</summary>
   </entry>
 </feed>
 ''')
@@ -429,26 +427,24 @@ class TestArticleRevisionFeed(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 wiki – test_page</title>
+<feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom">
+  <title>ubuntuusers.local:8080 wiki – test_page</title>
+  <link href="http://wiki.ubuntuusers.local:8080/test_page/" rel="alternate"></link>
+  <link href="http://wiki.ubuntuusers.local:8080/test_page/a/feed/" rel="self"></link>
   <id>http://wiki.ubuntuusers.local:8080/test_page/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://wiki.ubuntuusers.local:8080/test_page/" />
-  <link href="http://wiki.ubuntuusers.local:8080/test_page/a/feed/" rel="self" />
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <updated>2023-12-09T23:55:04+01:00</updated>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://wiki.ubuntuusers.local:8080/test_page/a/feed/">
-    <title type="text">user (Dec. 10, 2023, 12:55 a.m.)</title>
-    <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" />
+  <entry>
+    <title>user: Created</title>
+    <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" rel="alternate"></link>
+    <published>2023-12-09T23:55:04+01:00</published>
+    <updated>2023-12-09T23:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
-    <summary>user edited the article “test page” on 2023-12-09 23:55:04. Summary: Created</summary>
+    <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
+    <summary type="html">user edited the article “test page” on 2023-12-09 23:55:04. Summary: Created</summary>
   </entry>
 </feed>
 ''')

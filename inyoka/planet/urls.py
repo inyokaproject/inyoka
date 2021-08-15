@@ -18,7 +18,7 @@ urlpatterns = [
     re_path(r'^(\d+)/$', views.index),
     path('hide/<int:id>/', views.hide_entry),
     path('suggest/', views.suggest),
-    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.feed),
+    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.PlanetAtomFeed()),
     path('blogs/', views.blog_list),
     re_path(r'^blogs/(?P<page>\d)/$', views.blog_list),
     re_path(r'^blogs/export/(?P<export_type>[a-z]+)/$', views.export),
