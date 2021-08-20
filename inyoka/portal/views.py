@@ -13,13 +13,14 @@ import csv
 from functools import partial
 
 from datetime import date, datetime, timedelta
+from django.contrib.messages.views import SuccessMessageMixin
 from icalendar import Calendar as iCal, Event as iEvent
 from time import time
 
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -315,29 +316,39 @@ def activate(request, action='', username='', activation_key=''):
             return HttpResponseRedirect(href('portal'))
 
 
-def lost_password(request):
-    if request.user.is_authenticated:
-        messages.error(request, _('You are already logged in.'))
-        return HttpResponseRedirect(href('portal'))
-    return password_reset(request,
-        post_reset_redirect=href('portal', 'login'),
-        template_name='portal/lost_password.html',
-        email_template_name='mails/new_user_password.txt',
-        subject_template_name='mails/new_user_password_subject.txt',
-        password_reset_form=LostPasswordForm)
+class InyokaPasswordResetView(SuccessMessageMixin, PasswordResetView):
+    """
+    If a users has lost his password, it is here possible to send an email
+    with an one time link to his account-email-address. With this link he
+    can set a new password at `InyokaPasswordResetConfirmView`.
+
+    Customized to show an error, if the user is already logged in and
+    to show an success message.
+    """
+    template_name = 'portal/lost_password.html'
+    email_template_name = 'mails/new_user_password.txt'
+    subject_template_name = 'mails/new_user_password_subject.txt'
+    form_class = LostPasswordForm
+    success_url = href('portal', 'login')
+    success_message = _('An email with further instructions was sent to you.')
+
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            messages.error(self.request, _('You are already logged in.'))
+            return HttpResponseRedirect(href('portal'))
+
+        return super().dispatch(*args, **kwargs)
 
 
-def set_new_password(request, uidb36, token):
-    response = password_reset_confirm(request, uidb36, token,
-        post_reset_redirect=href('portal', 'login'),
-        template_name='portal/set_new_password.html')
-
-    if isinstance(response, HttpResponseRedirect):
-        messages.success(request,
-            _('You successfully changed your password and are now '
-              'able to login.'))
-
-    return response
+class InyokaPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmView):
+    """
+    With the correct one time token this view allows to set a new password for an
+    account.
+    """
+    success_url = href('portal', 'login')
+    success_message = _('You successfully changed your password and are now '
+                        'able to login.')
+    template_name = 'portal/set_new_password.html'
 
 
 @templated('portal/login.html')

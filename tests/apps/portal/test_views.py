@@ -20,7 +20,6 @@ from django.utils.timezone import now
 from django.utils.translation import ugettext as _
 
 from guardian.shortcuts import assign_perm
-from unittest import skip
 
 from inyoka.forum.models import Forum
 from inyoka.portal.models import (
@@ -380,7 +379,7 @@ class TestAuthViews(TestCase):
         body = mail.outbox[0].body
         link = re.search(r'(/lost_password/.*)\n', body).groups()[0]
         with translation.override('en-us'):
-            response = self.client.get(link)
+            response = self.client.get(link, follow=True)
         self.assertContains(response, 'You can set a new password')
 
     def test_lost_password_as_authenticated_user(self):
@@ -391,6 +390,20 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.get('/lost_password/', follow=True)
         self.assertContains(response, 'You are already logged in.')
+
+    def test_lost_password__banned_account(self):
+        self.user.status = User.STATUS_BANNED
+        self.user.save()
+
+        self.client.post('/lost_password/', {'email': self.user.email})
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_lost_password__unusable_password(self):
+        self.user.set_unusable_password()
+        self.user.save()
+
+        self.client.post('/lost_password/', {'email': self.user.email})
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_reactivate_user_as_authenticated_user(self):
         self.client.login(username='user', password='user')

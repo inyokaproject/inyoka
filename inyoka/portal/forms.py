@@ -21,8 +21,6 @@ from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -33,9 +31,6 @@ from django.db.models import CharField, Count, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
 from django.forms import HiddenInput, modelformset_factory
-from django.template import loader
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
@@ -66,6 +61,8 @@ from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
 
+
+UserModel = get_user_model()
 
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
@@ -205,50 +202,25 @@ class RegisterForm(forms.Form):
 
 
 class LostPasswordForm(auth_forms.PasswordResetForm):
-    def save(self, domain_override=None,
-             subject_template_name='registration/password_reset_subject.txt',
-             email_template_name='registration/password_reset_email.html',
-             use_https=False, token_generator=default_token_generator,
-             from_email=None, request=None, *args, **kwargs):
+
+    def get_users(self, email):
         """
-        Generates a one-use only link for resetting password and sends to the
-        user.
+        Customized from upstream Django. Django believes `is_active` to be a field
+        in the database, but it is not in our data model.
         """
-        # FIXME: Copied from stock Django. Django believes is_active to be a
-        # field in the database, but it is no one in our data model.
-        from django.core.mail import send_mail
-        messages.success(request, _('An email with further instructions was sent to you.'))
-        UserModel = get_user_model()
-        email = self.cleaned_data["email"]
-        active_users = UserModel._default_manager.filter(
-            email__iexact=email)
-        for user in active_users:
-            # Make sure that no email is sent to a user that actually has
-            # a password marked as unusable
-            if not user.is_active:
-                continue
-            if not user.has_usable_password():
-                continue
-            if not domain_override:
-                current_site = get_current_site(request)
-                site_name = current_site.name
-                domain = current_site.domain
-            else:
-                site_name = domain = domain_override
-            c = {
-                'email': user.email,
-                'domain': domain,
-                'site_name': site_name,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'user': user,
-                'token': token_generator.make_token(user),
-                'protocol': 'https' if use_https else 'http',
-            }
-            subject = loader.render_to_string(subject_template_name, c)
-            # Email subject *must not* contain newlines
-            subject = ''.join(subject.splitlines())
-            body = loader.render_to_string(email_template_name, c)
-            send_mail(subject, body, from_email, [user.email])
+        from django.contrib.auth.forms import _unicode_ci_compare
+
+        email_field_name = UserModel.get_email_field_name()
+        possible_users = UserModel._default_manager.filter(**{
+            '%s__iexact' % email_field_name: email,
+        })
+
+        return (
+            u for u in possible_users
+            if u.has_usable_password() and
+               u.is_active and
+            _unicode_ci_compare(email, getattr(u, email_field_name))
+        )
 
 
 class ChangePasswordForm(forms.Form):
