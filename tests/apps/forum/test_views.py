@@ -5,7 +5,7 @@
 
     Test forum views.
 
-    :copyright: (c) 2012-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import shutil
@@ -509,7 +509,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         user._ANONYMOUS_USER = None
 
     def post_request(self, path, postdata, topics, posts, attachments=None,
-            polls=None, polloptions=None, submit=False):
+            polls=None, polloptions=None, submit=False, fail_if_post_count_differs=True):
+        """
+        fail_if_post_count_differs: If true, an AssertionError is raised, if the resulting topic has more posts than given as parameter post.
+            If the topic contains posts of previous submits, you need to set this parameter to False.
+        """
         if submit:
             if 'preview' in postdata:
                 postdata.pop('preview')
@@ -521,7 +525,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.post(path, postdata)
         self.assertEqual(Topic.objects.count(), topics)
-        self.assertEqual(Post.objects.count(), posts)
+        if fail_if_post_count_differs:
+            self.assertEqual(Post.objects.count(), posts)
         if attachments:
             self.assertEqual(Attachment.objects.count(), attachments)
         if polls:
@@ -606,10 +611,46 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
         content = response.content.decode()
+
         self.assertInHTML('<div class="message info">Your submission needs approval '
                           'by a team member and is hidden meanwhile. Please be patient, '
                           'we will get to it as soon as possible.</div>',
                           content, count=1)
+        self.assertInHTML('<div class="message info">This topic is hidden. Either it '
+                          'needs to be activated by moderators or it has been hidden '
+                          'explicitly by moderators.</div>',
+                          content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_newtopic_user_spam_with_other_authors_post(self):
+        """
+        A hidden topic is visible to the author if all posts of that topic belong to the same user.
+        This check adds a post by another user (admin) and the original poster should not be able to view it.
+        See https://github.com/inyokaproject/inyoka/pull/1191
+        """
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': 'newpost text',
+        }
+        # Post it
+        self.post_request('/forum/%s/newtopic/' % self.public_forum.slug, postdata, 1, 1, submit=True)
+
+        self.client.logout()
+        self.client.login(username='admin', password='admin')
+        self.post_request('/topic/newpost-title/reply/', postdata, 1, 1, submit=True, fail_if_post_count_differs=False)
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        content = response.content.decode()
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
                           content, count=1)
 
@@ -1471,3 +1512,54 @@ class TestWelcomeMessageView(TestCase):
             views.WelcomeMessageView.as_view()(request, slug='f-slug-no-welcome')
 
         self.assertFalse(self.forum_no_welcome.welcome_read_users.filter(pk=self.user.pk).exists())
+
+
+class TestMarkRead(TestCase):
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.public_category = Forum.objects.create(name='Public category')
+        self.public_forum = Forum.objects.create(name='Public forum', parent=self.public_category)
+
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered_group, self.public_category)
+        assign_perm('forum.view_forum', registered_group, self.public_forum)
+
+        topic = Topic.objects.create(title='A test Topic', author=self.user, forum=self.public_forum)
+        Post.objects.create(text='Post 1', author=self.user, topic=topic, position=0)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_anonymous(self):
+        url = self.public_forum.get_absolute_url('markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, href('forum'))
+        self.assertContains(response, 'Please login to mark posts as read.')
+
+    def test_mark_all_as_read(self):
+        self.client.force_login(user=self.user)
+
+        url = href('forum', 'markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, href('forum'))
+        self.assertContains(response, 'All forums were marked as read.')
+
+    def test_mark_one_forum(self):
+        self.client.force_login(user=self.user)
+
+        url = self.public_forum.get_absolute_url('markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, url_for(self.public_forum))
+        self.assertContains(response, 'The forum “{}” was marked as read.'.format(self.public_forum.name))
+
+    def test_no_existing_forum(self):
+        self.client.force_login(user=self.user)
+
+        url = href('forum', 'forum', 'does_not_exist', 'markread')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 404)

@@ -211,7 +211,7 @@ Inyoka uses `less <http://lesscss.org/>`_ for creating css files. Run
 
 .. code-block:: console
 
-    (inyoka)$ ./node_modules/grunt-cli/bin/grunt watch
+    (inyoka)$ npm run watch
 
 in your theme's base directory to automatically generate the ``.css`` files.
 For more information read the theme documentation.

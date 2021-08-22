@@ -5,7 +5,7 @@
 
     The urls for the main portal (index page, error pages, login page etc.)
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -61,8 +61,8 @@ urlpatterns = [
     url(r'^register/$', views.register),
     url(r'^(?P<action>activate|delete)/(?P<username>[^/]+)/(?P<activation_key>.*?)/$', views.activate),
     url(r'^confirm/(?P<action>reactivate_user|set_new_email|reset_email)/$', views.confirm),
-    url(r'^lost_password/$', views.lost_password),
-    url(r'^lost_password/(?P<uidb36>[0-9A-Za-z]{1,13})/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.set_new_password),
+    url(r'^lost_password/$', views.InyokaPasswordResetView.as_view()),
+    url(r'^lost_password/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', views.InyokaPasswordResetConfirmView.as_view()),
     url(r'^feeds/$', views.feedselector),
     url(r'^feeds/(?P<app>[^/]+)/$', views.feedselector),
     url(r'^calendar/$', views.calendar_overview),

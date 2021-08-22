@@ -5,7 +5,7 @@
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import io
@@ -21,8 +21,6 @@ from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -33,9 +31,6 @@ from django.db.models import CharField, Count, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
 from django.forms import HiddenInput, modelformset_factory
-from django.template import loader
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
@@ -66,6 +61,8 @@ from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
 
+
+UserModel = get_user_model()
 
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
@@ -205,50 +202,25 @@ class RegisterForm(forms.Form):
 
 
 class LostPasswordForm(auth_forms.PasswordResetForm):
-    def save(self, domain_override=None,
-             subject_template_name='registration/password_reset_subject.txt',
-             email_template_name='registration/password_reset_email.html',
-             use_https=False, token_generator=default_token_generator,
-             from_email=None, request=None, *args, **kwargs):
+
+    def get_users(self, email):
         """
-        Generates a one-use only link for resetting password and sends to the
-        user.
+        Customized from upstream Django. Django believes `is_active` to be a field
+        in the database, but it is not in our data model.
         """
-        # FIXME: Copied from stock Django. Django believes is_active to be a
-        # field in the database, but it is no one in our data model.
-        from django.core.mail import send_mail
-        messages.success(request, _('An email with further instructions was sent to you.'))
-        UserModel = get_user_model()
-        email = self.cleaned_data["email"]
-        active_users = UserModel._default_manager.filter(
-            email__iexact=email)
-        for user in active_users:
-            # Make sure that no email is sent to a user that actually has
-            # a password marked as unusable
-            if not user.is_active:
-                continue
-            if not user.has_usable_password():
-                continue
-            if not domain_override:
-                current_site = get_current_site(request)
-                site_name = current_site.name
-                domain = current_site.domain
-            else:
-                site_name = domain = domain_override
-            c = {
-                'email': user.email,
-                'domain': domain,
-                'site_name': site_name,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'user': user,
-                'token': token_generator.make_token(user),
-                'protocol': 'https' if use_https else 'http',
-            }
-            subject = loader.render_to_string(subject_template_name, c)
-            # Email subject *must not* contain newlines
-            subject = ''.join(subject.splitlines())
-            body = loader.render_to_string(email_template_name, c)
-            send_mail(subject, body, from_email, [user.email])
+        from django.contrib.auth.forms import _unicode_ci_compare
+
+        email_field_name = UserModel.get_email_field_name()
+        possible_users = UserModel._default_manager.filter(**{
+            '%s__iexact' % email_field_name: email,
+        })
+
+        return (
+            u for u in possible_users
+            if u.has_usable_password() and
+               u.is_active and
+            _unicode_ci_compare(email, getattr(u, email_field_name))
+        )
 
 
 class ChangePasswordForm(forms.Form):
@@ -331,12 +303,14 @@ class UserCPProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['jabber', 'signature', 'location', 'website', 'gpgkey',
-                  'launchpad', 'avatar', 'icon']
+                  'launchpad', 'avatar']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
         self.admin_mode = kwargs.pop('admin_mode', False)
-        initial = kwargs['initial'] = {}
+
+        # kwargs['initial'] can already exist from subclass EditUserProfileForm
+        initial = kwargs['initial'] = kwargs.get('initial', {})
 
         initial.update(dict(
             ((k, v) for k, v in instance.settings.items()
@@ -344,15 +318,14 @@ class UserCPProfileForm(forms.ModelForm):
         ))
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
-        if instance.icon:
-            initial['icon'] = os.path.join(settings.MEDIA_ROOT,instance.icon)
+
         if hasattr(instance, 'userpage'):
             initial['userpage'] = instance.userpage.content
 
         self.old_email = instance.email
         self.old_avatar = instance.avatar.name if instance.avatar else None
         self.change_avatar = False
-        super(UserCPProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_gpgkey(self):
         gpgkey = self.cleaned_data.get('gpgkey', '').upper()
@@ -372,13 +345,6 @@ class UserCPProfileForm(forms.ModelForm):
             raise forms.ValidationError(
                 _('This email address is already in use.'))
         return email
-
-    def clean_icon(self):
-        icon = self.cleaned_data.get('icon')
-        if icon:
-            return os.path.relpath(icon, settings.MEDIA_ROOT)
-        else:
-            return icon
 
     def clean_avatar(self):
         """
@@ -409,8 +375,6 @@ class UserCPProfileForm(forms.ModelForm):
     def save(self, request, commit=True):
         data = self.cleaned_data
         user = super().save(commit=False)
-
-        user.icon = data['icon']
 
         # Ensure that we delete the old avatar, otherwise Django will create
         # a file with a different name.
@@ -448,7 +412,16 @@ class UserCPProfileForm(forms.ModelForm):
 
 class EditUserProfileForm(UserCPProfileForm):
     class Meta(UserCPProfileForm.Meta):
-        fields = UserCPProfileForm.Meta.fields + ['username', 'member_title']
+        fields = UserCPProfileForm.Meta.fields + ['icon', 'username', 'member_title']
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs['instance']
+
+        initial = kwargs['initial'] = {}
+        if instance.icon:
+            initial['icon'] = os.path.join(settings.MEDIA_ROOT, instance.icon)
+
+        super().__init__(*args, **kwargs)
 
     def clean_username(self):
         """
@@ -463,10 +436,17 @@ class EditUserProfileForm(UserCPProfileForm):
                   'alphanumeric chars and “-” are allowed.')
             )
         exists = User.objects.filter(username=username).exists()
-        if (self.instance.username != username and exists):
+        if self.instance.username != username and exists:
             raise forms.ValidationError(
                 _('A user with this name already exists.'))
         return username
+
+    def clean_icon(self):
+        icon = self.cleaned_data.get('icon')
+        if icon:
+            return os.path.relpath(icon, settings.MEDIA_ROOT)
+        else:
+            return icon
 
 
 class EditUserGroupsForm(forms.Form):

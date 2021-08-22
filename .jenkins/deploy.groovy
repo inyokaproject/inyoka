@@ -42,7 +42,7 @@ pipeline {
         if ${REBUILD_STATICS}
         then
             npm install
-            ./node_modules/grunt-cli/bin/grunt
+            npm run all
         else
             echo 'Not rebuildung statics'
         fi
@@ -56,7 +56,7 @@ pipeline {
         else
             echo 'Not running migrations'
         fi
-        
+
         if ${REBUILD_STATICS}
         then
             python manage.py collectstatic --noinput

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-11-07 18:18+0100\n"
+"POT-Creation-Date: 2021-01-03 22:22+0100\n"
 "PO-Revision-Date: 2020-11-07 18:23+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.1\n"
+"Generated-By: Babel 2.8.0\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -349,6 +349,9 @@ msgstr "Diese Meldung wird bereits bearbeitet."
 msgid "This topic is hidden due to possible spam."
 msgstr "Dieses Thema wurde aufgrund möglichen Spams verborgen"
 
+msgid "This topic is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators."
+msgstr "Dieses Thema ist verborgen. Entweder muss es von Moderatoren aktiviert werden oder es wurde explizit von Moderatoren verborgen."
+
 msgid "This topic is not visible for regular users."
 msgstr "Dieses Thema ist für normale Benutzer unsichtbar."
 
@@ -425,8 +428,8 @@ msgstr "Du kannst diesen Beitrag nicht bearbeiten."
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
 
-msgid "You cannot reply in this topic because it was deleted by a moderator."
-msgstr "Du kannst in diesem Thema nicht antworten, da es von einem Moderator gelöscht wurde."
+msgid "You cannot reply in this topic because it is hidden."
+msgstr "Du kannst in diesem Thema nicht antworten, da es nicht sichtbar ist."
 
 msgid "You cannot reply to this topic because it was locked."
 msgstr "Du kannst auf dieses Thema nicht antworten, da es gesperrt wurde."

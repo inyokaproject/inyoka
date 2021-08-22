@@ -5,10 +5,11 @@
 
     This module contains functions for template-related things.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import json
+from datetime import date
 
 from django.apps import apps
 from django.conf import settings
@@ -115,6 +116,7 @@ def context_data(request):
     linkmap_model = apps.get_model(app_label='portal', model_name='Linkmap')
     context = {
         'CURRENT_URL': request.build_absolute_uri(),
+        'current_year': date.today().year,
         'USER': user,
         'special_day_css': check_special_day(),
         'LANGUAGE_CODE': settings.LANGUAGE_CODE,

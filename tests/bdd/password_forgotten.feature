@@ -13,6 +13,7 @@ Feature: Password forgotten
       | item     |
       | id_email |
 
+  @skip
   Scenario: The user requests an new password to his mail
     Given I am on the "lost_password" page
      When I fill out the form

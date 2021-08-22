@@ -5,7 +5,7 @@
 
     Init file for the inyoka portal.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 # Secure XML libraries till a python solution exists.
@@ -19,4 +19,4 @@ assert xml.sax.make_parser is defusedxml.sax.make_parser
 from .celery_app import app as celery_app  # noqa
 
 # Inyoka version is updated through bumpversion and can stay hardcoded here.
-INYOKA_VERSION = "v0.24.5"
+INYOKA_VERSION = "v0.26.1"

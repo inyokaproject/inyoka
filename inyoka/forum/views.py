@@ -5,7 +5,7 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2020 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -21,7 +21,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
@@ -198,6 +198,10 @@ def viewtopic(request, topic_slug, page=1):
     if topic.hidden:
         if request.user.has_perm('forum.moderate_forum', topic.forum):
             messages.info(request, _('This topic is not visible for regular users.'))
+        elif request.user == topic.author and not Post.objects.filter(topic=topic).exclude(author=request.user).exists():
+            # A user can see a topic if all posts of this topic are from this user https://github.com/inyokaproject/inyoka/pull/1191
+            # This is useful if the topic was hidden automatically by the spam filter
+            messages.info(request, _('This topic is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators.'))
         else:
             return abort_access_denied(request)
 
@@ -533,7 +537,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             data=request.POST or None,
         )
 
-    if request.method == 'POST' and request.user.has_perm('forum.moderate_forum', forum):
+    if request.method == 'POST' and (request.user.has_perm('forum.moderate_forum', forum) or not needs_spam_check):
+        # Moderators, trusted users and all users in non-public forums are exempt from the surge protection
+        # https://github.com/inyokaproject/inyoka/issues/1203
         form.surge_protection_timeout = None
 
     # check privileges
@@ -560,8 +566,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         if topic.hidden:
             if not request.user.has_perm('forum.moderate_forum', forum):
                 messages.error(request,
-                    _('You cannot reply in this topic because it was '
-                      'deleted by a moderator.'))
+                    _('You cannot reply in this topic because it is '
+                      'hidden.'))
                 return HttpResponseRedirect(url_for(topic))
         elif topic.locked:
             if not request.user.has_perm('forum.moderate_forum', forum):
@@ -1547,7 +1553,7 @@ def markread(request, slug=None):
         messages.info(request, _('Please login to mark posts as read.'))
         return HttpResponseRedirect(href('forum'))
     if slug:
-        forum = Forum.objects.get(slug=slug)
+        forum = get_object_or_404(Forum, slug=slug)
         forum.mark_read(user)
         user.save()
         messages.success(request,
