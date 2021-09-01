@@ -213,7 +213,7 @@ class DjangoLoader(Loader):
     def get_template_sources(self, template_name, skip=None):
         if not template_name.startswith('debug_toolbar'):
             return []
-        return super(DjangoLoader, self).get_template_sources(template_name, skip)
+        return super().get_template_sources(template_name)
 
 
 class Jinja2Templates(Jinja2):
