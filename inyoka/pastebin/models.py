@@ -30,9 +30,6 @@ class Entry(models.Model):
         verbose_name = ugettext_lazy('Entry')
         verbose_name_plural = ugettext_lazy('Entries')
         ordering = ('-id',)
-        permissions = (
-            ('view_entry', 'Can view Entry'),
-        )
 
     def get_absolute_url(self, action='show'):
         return href(*{

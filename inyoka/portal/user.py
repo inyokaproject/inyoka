@@ -73,7 +73,7 @@ def reactivate_user(id, email, status):
         user.status = User.STATUS_ACTIVE
         user.banned_until = None
 
-    # Set a dumy password
+    # Set a dummy password
     user.set_password(User.objects.make_random_password(length=32))
     user.save()
 
@@ -197,7 +197,7 @@ class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
         now = datetime.utcnow()
         user = self.model(username=username, email=email.strip().lower(),
-            status=0, date_joined=now, last_login=now)
+                          status=User.STATUS_INACTIVE, date_joined=now, last_login=now)
         if password:
             user.set_password(password)
         else:
@@ -305,7 +305,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     # member icon
     icon = models.FilePathField(ugettext_lazy('Group icon'),
                                 path=os.path.join(inyoka_settings.MEDIA_ROOT, 'portal/team_icons'),
-                                match='.*\.png', blank=True, null=True)
+                                match='.*\.png', blank=True, null=True, recursive=True)
 
     def save(self, *args, **kwargs):
         """

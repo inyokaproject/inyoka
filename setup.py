@@ -43,7 +43,7 @@ setup(
     packages=find_packages(include=('inyoka*',)),
     python_requires='>=3.5, <4',
     install_requires=[
-        'Django<2.0',
+        'Django<2.3',
         'pip-tools',
 
         'Babel',
@@ -51,11 +51,10 @@ setup(
         'celery[redis]==4.3.0',
         'certifi',
         'defusedxml==0.6.0',
-        'django-filter==1.0.4',
-        'django-guardian==1.4.9',
-        'django-hosts==3.0',
-        'django-redis==4.11.0',
-        'dnspython==1.16.0',
+        'django-filter<3',
+        'django-guardian<2.4',
+        'django-hosts',
+        'django-redis',
         'feedparser==6.0.0b3',
         'gunicorn',
         'html5lib==1.1',
@@ -69,10 +68,10 @@ setup(
         'python-dateutil',
         'pytz',
         'pyzmq',
-        'raven',
+        'sentry-sdk',
         'requests',
         'transifex-client==0.12.5',
-        'Werkzeug==0.15.5'
+        'Werkzeug<1.0'  # 1.0 removed feed support, see https://github.com/inyokaproject/inyoka/issues/1071
     ],
 
     extras_require={

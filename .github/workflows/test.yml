@@ -122,7 +122,7 @@ jobs:
     - name: Run Tests
       run: |
         . ~/venv/bin/activate
-        coverage run manage.py test --setting tests.settings.${{ matrix.database }}
+        coverage run manage.py test --settings tests.settings.${{ matrix.database }}
         coverage html
     - name: Compress coverage report
       run: zip htmlcov.zip -r htmlcov

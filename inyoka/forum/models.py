@@ -348,7 +348,6 @@ class Forum(models.Model):
         verbose_name_plural = ugettext_lazy('Forums')
         permissions = (
             ('delete_topic_forum', 'Can delete Topics from Forum'),
-            ('view_forum', 'Can view Forum'),
             ('add_topic_forum', 'Can add Topic in Forum'),
             ('add_reply_forum', 'Can answer Topics in Forum'),
             ('sticky_forum', 'Can make Topics Sticky in Forum'),
@@ -835,7 +834,12 @@ class Post(models.Model, LockableObject):
         post = Post.objects.get(id=id)
         position, slug = post.position, post.topic.slug
         page = max(0, position) // POSTS_PER_PAGE + 1
-        url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))
+
+        url_parts = ['forum', 'topic', slug]
+        if page != 1:
+            url_parts.append(str(page))
+        url = href(*url_parts)
+
         return ''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
 
     def edit(self, text, is_plaintext=False):

@@ -69,7 +69,7 @@ def global_not_found(request, err_message=None, exception=None):
 
 
 def server_error(request, exception=None):
-    return render(request, 'errors/500.html', {'request' : request, 'dsn' : settings.RAVEN_PUBLIC_DSN}, status=500)
+    return render(request, 'errors/500.html', {'request': request}, status=500)
 
 
 class TemplateResponse(HttpResponse):

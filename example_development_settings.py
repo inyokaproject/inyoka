@@ -37,19 +37,10 @@ SECRET_KEY = None
 
 INSTALLED_APPS = INSTALLED_APPS + (
     'inyoka_theme_default',
-#    'raven.contrib.django.raven_compat',
 )
-
-# Sentry exception tracing via raven
-#
-#RAVEN_CONFIG = {
-#    'dsn': 'add your dsn here',
-#    'release': INYOKA_VERSION,
-#}
-#RAVEN_PUBLIC_DSN = 'your public dsn for user feedback'
 
 # Django Debug Toolbar Integration
 #
 # uncomment to activate debug toolbar support
-#MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+#MIDDLEWARE += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 #INSTALLED_APPS += ('debug_toolbar',)

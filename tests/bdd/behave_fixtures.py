@@ -1,6 +1,7 @@
 import django
 from behave import fixture
 from django.conf import settings
+from django.db import connections, OperationalError
 from django.test.runner import DiscoverRunner
 from django.test.testcases import LiveServerTestCase
 from selenium.webdriver import Chrome
@@ -30,6 +31,28 @@ def django_test_case(context):
     yield context.base_url
     context.test_case.tearDownClass()
     context.test_case._post_teardown()
+
+    # via https://stackoverflow.com/a/57000493
+    # from https://github.com/cga-harvard/Hypermap-Registry/blob/cd4efad61f18194ddab2c662aa431aa21dec03f4/hypermap/tests/test_csw.py (MIT)
+    # Workaround for https://code.djangoproject.com/ticket/22414
+    # Persistent connections not closed by LiveServerTestCase, preventing dropping test databases
+    # https://github.com/cjerdonek/django/commit/b07fbca02688a0f8eb159f0dde132e7498aa40cc
+    def close_sessions(conn):
+        close_sessions_query = """
+            SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE
+                datname = current_database() AND
+                pid <> pg_backend_pid();
+        """
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute(close_sessions_query)
+            except OperationalError:
+                # We get kicked out after closing.
+                pass
+
+    for alias in connections:
+        close_sessions(connections[alias])
+
     del context.test_case
 
 

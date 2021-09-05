@@ -665,16 +665,22 @@ class GroupGlobalPermissionForm(forms.Form):
     MANAGED_APPS = ('auth', 'ikhaya', 'portal', 'pastebin', 'planet', 'forum')
     AUTH_FILTERED_PERMISSIONS = (
         'auth.delete_group',
+        'auth.view_group',
         'auth.add_permission',
         'auth.change_permission',
         'auth.delete_permission',
     )
     IKHAYA_FILTERED_PERMISSIONS = (
         'ikhaya.add_article',
+        'ikhaya.view_article',
         'ikhaya.add_category',
+        'ikhaya.view_category',
         'ikhaya.add_comment',
+        'ikhaya.view_comment',
         'ikhaya.add_report',
+        'ikhaya.view_report',
         'ikhaya.add_suggestion',
+        'ikhaya.view_suggestion',
         'ikhaya.change_report',
         'ikhaya.change_suggestion',
         'ikhaya.delete_category',
@@ -682,13 +688,19 @@ class GroupGlobalPermissionForm(forms.Form):
         'ikhaya.delete_report',
     )
     PORTAL_FILTERED_PERMISSIONS = (
+        'portal.view_event',
         'portal.delete_user',
+        'portal.view_user',
         'portal.add_staticfile',
+        'portal.view_staticfile',
         'portal.add_staticpage',
+        'portal.view_staticpage',
         'portal.add_storage',
         'portal.delete_storage',
+        'portal.view_storage',
         'portal.add_linkmap',
         'portal.delete_linkmap',
+        'portal.view_linkmap',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
@@ -704,6 +716,7 @@ class GroupGlobalPermissionForm(forms.Form):
         'forum.sticky_forum',
         'forum.upload_forum',
         'forum.view_forum',
+        'forum.view_topic',
         'forum.vote_forum',
     )
     PASTEBIN_FILTERED_PERMISSIONS = (
@@ -712,6 +725,7 @@ class GroupGlobalPermissionForm(forms.Form):
     PLANET_FILTERED_PERMISSIONS = (
         'planet.add_blog',
         'planet.add_entry',
+        'planet.view_entry',
         'planet.change_entry',
         'planet.delete_entry',
         'planet.delete_blog',
@@ -832,6 +846,7 @@ class GroupForumPermissionForm(forms.Form):
             'forum.delete_forum',
             'forum.delete_topic',
             'forum.manage_reported_topic',
+            'forum.view_topic',
         )
         forums = [tuple[1] for tuple in Forum.get_children_recursive(Forum.objects.get_sorted())]
         for forum in forums:

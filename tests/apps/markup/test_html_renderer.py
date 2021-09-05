@@ -55,12 +55,21 @@ cp ~/.bash_profile ~/.bash_profile.back
 # autologin for user instead of root
 sed -i 's/root/arch/' $HOME/.bash_profile
 }}}""")
+        self.maxDiff = None
         self.assertHTMLEqual(html, """<div class="code">
-        <table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+        <table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre>
+        <span class="normal">
+        1
+        </span><span class="normal">
         2
+        </span><span class="normal">
         3
+        </span><span class="normal">
         4
-        5</pre></div></td><td class="code"><div class="notranslate syntax"><pre><span></span><span class="ch">#!/bin/bash</span>
+        </span><span class="normal">
+        5
+        </span>
+        </pre></div></td><td class="code"><div class="notranslate syntax"><pre><span></span><span class="ch">#!/bin/bash</span>
         cp ~/.bash_profile ~/.bash_profile.back
 
         <span class="c1"># autologin for user instead of root</span>

@@ -11,10 +11,15 @@
 from collections import OrderedDict
 
 import jinja2
+import sentry_sdk
 from datetime import timedelta
 from os.path import dirname, join
 
 from celery.schedules import crontab
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+
+import inyoka
 
 gettext_noop = lambda x: x
 
@@ -260,8 +265,15 @@ INSTALLED_APPS = (
     'guardian',
 )
 
-# Set the default sentry site
-SENTRY_SITE = 'example.com'
+# TODO: environment variable https://docs.sentry.io/product/cli/configuration/#configuration-values
+sentry_sdk.init(
+    dsn=None,  # TODO: adapt to instance
+    integrations=[DjangoIntegration(), CeleryIntegration()],
+    traces_sample_rate=1.0,
+    #send_default_pii=True,  # uncomment, if personal data in sentry is ok
+    release="inyoka@{}".format(inyoka.INYOKA_VERSION),
+    environment="production"
+)
 
 
 # Celery broker.
@@ -348,11 +360,6 @@ LOGGING = {
             'formatter': 'console',
             'filters': ['require_debug_true'],
         },
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.handlers.SentryHandler',
-            'filters': ['require_debug_false'],
-        },
         'inyokalog': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
@@ -373,14 +380,9 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
-        },
-        'sentry.errors': {
-            'handlers': ['console',],
-            'level': 'ERROR',
-            'propagate': True,
         },
         'django.db.backends': {
             'handlers': ['inyokalog',],
@@ -463,9 +465,6 @@ ANONYMOUS_USER_NAME = 'anonymous'
 
 # disable guardian monkey patching, for custom user model support
 GUARDIAN_MONKEY_PATCH = False
-
-# Raven config
-RAVEN_PUBLIC_DSN = None
 
 SMILIES = OrderedDict([
     (':?:', '❓'),  # has to come before :?
