@@ -334,7 +334,7 @@ class Anchor(Macro):
 
     def build_node(self):
         return nodes.Link('#%s' % self.id, id=self.id, class_='anchor',
-                          children=[nodes.Text('')])
+                          children=[nodes.Text('⚓︎')])
 
 
 class Span(Macro):
