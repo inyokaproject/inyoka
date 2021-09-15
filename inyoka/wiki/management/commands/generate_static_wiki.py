@@ -368,10 +368,9 @@ class Command(BaseCommand):
                         (img('head'), 'head'),
                         (img('ubuntu-logo-set-web-svg'), 'ubuntu-logo-set-web-svg'),
                         (img('circle-of-friends-web'), 'circle-of-friends-web'),
-                        img('logo.png'),
+                        img('logo-no_text.svg'),
                         img('favicon.ico'),
-                        img('wiki.svg'),
-                        img('anchor.png'))
+                        img('wiki.svg'))
 
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth

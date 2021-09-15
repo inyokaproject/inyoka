@@ -37,6 +37,7 @@ Unreleased 0.27.0 (2021-MM-DD)
 * `Replace jenkins with github actions as CI <https://github.com/inyokaproject/inyoka/pull/1222>`_
 * `Use django's PasswordResetView and PasswordResetConfirmView <https://github.com/inyokaproject/inyoka/pull/1135>`_
 * `Add ircs as an supported protocol for InterWiki links <https://github.com/inyokaproject/inyoka/pull/1221>`_
+* `Markup: Use unicode for rendering an anchor <https://github.com/inyokaproject/inyoka/pull/1226>`_
 
 🗑 Deprecations
 --------------
