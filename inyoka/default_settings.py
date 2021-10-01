@@ -11,13 +11,10 @@
 from collections import OrderedDict
 
 import jinja2
-import sentry_sdk
 from datetime import timedelta
 from os.path import dirname, join
 
 from celery.schedules import crontab
-from sentry_sdk.integrations.celery import CeleryIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
 
 import inyoka
 
@@ -264,17 +261,6 @@ INSTALLED_APPS = (
     'django_hosts',
     'guardian',
 )
-
-# TODO: environment variable https://docs.sentry.io/product/cli/configuration/#configuration-values
-sentry_sdk.init(
-    dsn=None,  # TODO: adapt to instance
-    integrations=[DjangoIntegration(), CeleryIntegration()],
-    traces_sample_rate=1.0,
-    #send_default_pii=True,  # uncomment, if personal data in sentry is ok
-    release="inyoka@{}".format(inyoka.INYOKA_VERSION),
-    environment="production"
-)
-
 
 # Celery broker.
 CELERY_BROKER_URL = 'redis://localhost:6379/0'

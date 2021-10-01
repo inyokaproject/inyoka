@@ -39,6 +39,24 @@ INSTALLED_APPS = INSTALLED_APPS + (
     'inyoka_theme_default',
 )
 
+# Sentry integration
+# remove commment to enable sentry integration
+# insert DSN for used sentry instance
+"""
+import sentry_sdk
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn=None,  # TODO: adapt to instance
+    integrations=[DjangoIntegration(), CeleryIntegration()],
+    traces_sample_rate=1.0,
+    #send_default_pii=True,  # uncomment, if personal data in sentry is ok
+    release=INYOKA_VERSION,
+    environment="production"
+)
+"""
+
 # Django Debug Toolbar Integration
 #
 # uncomment to activate debug toolbar support
