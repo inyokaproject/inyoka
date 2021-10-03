@@ -160,7 +160,7 @@ def sync():
                 except AttributeError:
                     max_length = None
                 if isinstance(locals()[n], str):
-                    setattr(entry, n, force_text(locals()[n][:max_length]).encode('utf-8'))
+                    setattr(entry, n, force_text(locals()[n][:max_length]))
                 else:
                     setattr(entry, n, locals()[n])
             try:
