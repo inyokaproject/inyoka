@@ -138,14 +138,15 @@ jobs:
       env:
         DJANGO_SETTINGS_MODULE: 'tests.bdd.settings.headless'
         #PATH: '$PATH:/usr/lib/chromium-browser/'
+        COVERAGE_RCFILE: 'tests/bdd/settings/.coveragerc'
       run: |
         . ~/venv/bin/activate
         cat << '__EOF__' | sudo tee -a /etc/hosts > /dev/null
         127.0.0.1       ubuntuusers.local forum.ubuntuusers.local paste.ubuntuusers.local wiki.ubuntuusers.local planet.ubuntuusers.local ikhaya.ubuntuusers.local static.ubuntuusers.local media.ubuntuusers.local
         __EOF__
         python manage.py collectstatic --noinput
-        coverage run --rcfile tests/bdd/settings/.coveragerc -m behave -f allure_behave.formatter:AllureFormatter -o allure-results --tags=-skip
-        coverage html -d bdd_coverage --rcfile tests/bdd/settings/.coveragerc
+        coverage run -m behave -f allure_behave.formatter:AllureFormatter -o allure-results --tags=-skip
+        coverage html -d bdd_coverage
     - name: Compress BDD results
       if: ${{ matrix.database == 'postgresql' }}
       run: zip bdd_coverage.zip -r bdd_coverage
