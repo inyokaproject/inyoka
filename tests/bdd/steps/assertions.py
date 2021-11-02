@@ -104,3 +104,14 @@ def step_impl(context):
     current_url = context.browser.current_url
     expected_url = href('portal', 'login')
     assert current_url.startswith(expected_url), "%s should be %s" % (current_url, expected_url)
+
+
+@then('I should see a title "{value}"')
+def step_impl(context, value):
+    headings = context.browser.find_elements_by_css_selector('h1')
+    for h in headings:
+        text = h.text
+        if value in text:
+            return
+
+    assert False

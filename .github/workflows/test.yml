@@ -103,7 +103,7 @@ jobs:
     - name: Start postgres
       if: ${{ matrix.database == 'postgresql' }}
       run: |
-        cat << '__EOF__' | sudo tee /etc/postgresql/13/main/pg_hba.conf > /dev/null
+        cat << '__EOF__' | sudo tee /etc/postgresql/14/main/pg_hba.conf > /dev/null
         # TYPE  DATABASE        USER            ADDRESS                 METHOD
         # "local" is for Unix domain socket connections only
         local   all             all                                     trust

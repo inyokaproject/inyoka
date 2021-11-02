@@ -37,9 +37,9 @@ Feature: Paste
       And a "paste" with caption "BDD-TEST" exists
       And I have the permission "pastebin.view_entry"
      When I open the "pastebin" in detail view
-     Then I should see elements with values
+     Then I should see a title "BDD-TEST"
+      And I should see elements with values
        | element      | value    |
-       | entry_title  | BDD-TEST |
        | entry_author | bdd      |
        | entry_code   | 1TEST    |
 
@@ -131,9 +131,9 @@ Feature: Paste
      When I open the "pastebin" in delete view
       And I click on cancel
      Then I should see canceled info
+      And I should see a title "BDD-TEST"
       And I should see elements with values
        | element      | value    |
-       | entry_title  | BDD-TEST |
        | entry_author | bdd      |
        | entry_code   | 1TEST    |
 

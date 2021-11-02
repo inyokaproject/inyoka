@@ -827,7 +827,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         opt1, opt2 = PollOption.objects.all()
         pattern = '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt_pk)d" value="%(opt_pk)d"/><label for="option_%(opt_pk)d">%(opt)s</label></td></tr>'
         content = response.content.decode()
-        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll.question}, content, count=1)
+        self.assertInHTML('<caption>%(question)s</caption>' % {'question': poll.question}, content, count=1)
         self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt1.name, 'opt_pk': opt1.pk}, content, count=1)
         self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt2.name, 'opt_pk': opt2.pk}, content, count=1)
 
