@@ -1,6 +1,6 @@
 -r production.txt
 
-allure-behave
+allure-behave<2.9.44 # newer version needs python 3.6 with f-strings
 bump2version
 coverage
 django-debug-toolbar<3
