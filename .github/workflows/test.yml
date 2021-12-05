@@ -145,7 +145,7 @@ jobs:
         127.0.0.1       ubuntuusers.local forum.ubuntuusers.local paste.ubuntuusers.local wiki.ubuntuusers.local planet.ubuntuusers.local ikhaya.ubuntuusers.local static.ubuntuusers.local media.ubuntuusers.local
         __EOF__
         python manage.py collectstatic --noinput
-        coverage run -m behave -f allure_behave.formatter:AllureFormatter -o allure-results --tags=-skip
+        coverage run -m behave --tags=-skip
         coverage html -d bdd_coverage
     - name: Compress BDD results
       if: ${{ matrix.database == 'postgresql' }}
