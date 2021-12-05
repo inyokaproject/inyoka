@@ -31,10 +31,10 @@ Unreleased 0.27.0 (2021-MM-DD)
 Deployment notes
 ----------------
 
-1. Update requirements
-1. Adapt sentry-settings in local configuration
-1. For development setups: Migrate changes from ``example_development_settings.py`` to local configuration
-1. Run ``python manage.py migrate``
+#. Update requirements
+#. Adapt sentry-settings in local configuration
+#. For development setups: Migrate changes from ``example_development_settings.py`` to local configuration
+#. Run ``python manage.py migrate``
 
 ✨ New features
 ---------------
@@ -60,7 +60,7 @@ Deployment notes
 --------
 
 * `Forum: Raise 404, if forum-slug for markread is not found <https://github.com/inyokaproject/inyoka/pull/1220>`_
-* Planet, Sync: `Continue with next blog on SSLError <https://github.com/inyokaproject/inyoka/commit/254b9295f634c7d9deff782651402307582fbe80>`, `Fix unicode error <https://github.com/inyokaproject/inyoka/commit/72bfc3fce42ab82f4e28ce1459aef4be865d6b27>`
+* Planet, Sync: `Continue with next blog on SSLError <https://github.com/inyokaproject/inyoka/commit/254b9295f634c7d9deff782651402307582fbe80>`_, `Fix unicode error <https://github.com/inyokaproject/inyoka/commit/72bfc3fce42ab82f4e28ce1459aef4be865d6b27>`_
 
 🔒 Security
 -----------
