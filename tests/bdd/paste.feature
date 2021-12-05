@@ -89,7 +89,7 @@ Feature: Paste
       | anonymous |
       | BDD-User  |
 
-  @skip
+
   Scenario: Users should be able to add pastes if they have the permission
     Given I am "BDD-User"
       And I have the permission "pastebin.add_entry"
@@ -99,9 +99,9 @@ Feature: Paste
        | field    | value |
        | id_title | title |
        | id_code  | text  |
-     Then I should see elements with values
+     Then I should see a title "title"
+      And I should see elements with values
        | element      | value    |
-       | entry_title  | title    |
        | entry_author | BDD-User |
        | entry_code   | 1text    |
 
