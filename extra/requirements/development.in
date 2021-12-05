@@ -12,4 +12,3 @@ responses
 selenium<4
 Sphinx==1.6.5
 sphinx-rtd-theme==0.2.4
-unittest-xml-reporting==2.3.2

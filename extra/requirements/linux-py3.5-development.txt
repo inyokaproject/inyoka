@@ -499,7 +499,6 @@ six==1.16.0 \
     #   responses
     #   sphinx
     #   transifex-client
-    #   unittest-xml-reporting
 snowballstemmer==2.2.0 \
     --hash=sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1 \
     --hash=sha256:c8e1716e83cc398ae16824e5572ae04e0d9fc2c6b985fb0f900f5f0c96ecba1a
@@ -531,10 +530,6 @@ transifex-client==0.12.5 \
     --hash=sha256:139867ffaf340aa2b74b0c44fa2d6525bf641357d04b7961a5b10ebe468678d8 \
     --hash=sha256:23c88c55d1469b62a771646d4f202b6fe5f4abbcdbe61bda3a3b08c44aaa7a78
     # via -r extra/requirements/linux-py3.5-production.txt
-unittest-xml-reporting==2.3.2 \
-    --hash=sha256:0b16cf177400d2df88550d4bc1ae1116cde7cd5f9825daf3a9c3558756497d06 \
-    --hash=sha256:8198222445e1d19d9c1250d61fa1004be6a44729be6e6f264427e88eb7bb37f6
-    # via -r extra/requirements/development.in
 urllib3==1.26.7 \
     --hash=sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece \
     --hash=sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844
