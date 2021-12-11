@@ -216,8 +216,8 @@ markupsafe==1.1.1 \
     --hash=sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be \
     --hash=sha256:feb7b34d6325451ef96bc0e36e1a6c0c1c64bc1fbec4b854f4529e51887b1621
     # via jinja2
-https://github.com/chris34/pillow/releases/download/7.2.1-pre/Pillow-7.2.1.tar.gz \
-    --hash=sha256:5026c3fa92e890f8408d6d1c20b49210a711d54305cf3cf76d87ae16f2df4051
+https://github.com/chris34/pillow/releases/download/7.2.2-pre/Pillow-7.2.2.tar.gz \
+    --hash=sha256:b083c4758626a89fa86ab96f085bd060a2ce88b1f1d10a302c3606ababdc6bc0
 pip-tools==5.5.0 \
     --hash=sha256:10841c1e56c234d610d0466447685b9ea4ee4a2c274f858c0ef3c33d9bd0d985 \
     --hash=sha256:cb0108391366b3ef336185097b3c2c0f3fa115b15098dafbda5e78aef70ea114
