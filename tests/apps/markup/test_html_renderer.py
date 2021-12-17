@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.markup.test_html_renderer
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -8,12 +7,17 @@
     :copyright: (c) 2013-2021 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from django.conf import settings
 from django.test import override_settings
 
 from inyoka.markup.base import Parser, RenderContext
 from inyoka.markup.transformers import SmileyInjector
+from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
+from inyoka.wiki.models import Page
+
+from os import path
 
 
 def render(source, transformers=None):
@@ -182,3 +186,81 @@ Tablet,167759,1843644,9.1%,8.63
         html = render(code, RenderContext())
         self.assertHTMLEqual(html,
                              '<p>Hello World!</p><p><em>foo bar spam</em></p>')
+
+
+class TestTemplateHtmlRenderer(TestCase):
+
+    def setUp(self):
+        user = User.objects.create_user('test_user', 'test@inyoka.local')
+
+        note_markup = """{{|<title="Note:" class="box notice">
+        <@ $arguments @>
+        |}}
+        """
+        Page.objects.create(name=path.join(settings.WIKI_TEMPLATE_BASE, 'Note'),
+                            text=note_markup, user=user)
+
+        command_markup = '{{|<class="bash">{{{<@ $arguments @> }}}|}}'
+        Page.objects.create(name=path.join(settings.WIKI_TEMPLATE_BASE, 'Command'),
+                            text=command_markup, user=user)
+
+        table_markup = """||<@ for $line in $arguments split_by '
+' @>
+<@ if $line as stripped contains '+++' @>
+||<@ else @>
+<@ $line @> ||
+<@ endif @> 
+<@ endfor @>"""
+        Page.objects.create(name=path.join(settings.WIKI_TEMPLATE_BASE, 'Table'),
+                            text=table_markup, user=user)
+
+    def test_list_inside_a_template(self):
+        markup = """[[Vorlage(Note, "Text inside a template not in a list.
+
+ * some text in a list.
+ * another element")]]
+        """
+        html = render(markup)
+        self.assertHTMLEqual(html, """<div class="box notice"><h3 class="box notice">Note:</h3><div class="contents"><p>
+        Text inside a template not in a list.</p><ul><li><p>some text in a list.</p></li><li><p>another element</p></li></ul><p>        </p></div></div><p>
+        </p>""")
+
+    def test_template_inside_template(self):
+        markup = """{{{#!vorlage Note
+Type the following
+{{{#!vorlage Command
+start
+\}}}
+to start it.
+}}}
+"""
+        html = render(markup)
+        self.assertHTMLEqual(html, """<div class="box notice"><h3 class="box notice">Note:</h3><div class="contents"><p>
+        Type the following
+</p><div class="bash"><div class="contents"><pre class="notranslate">start </pre></div></div><p>
+to start it.
+        </p></div></div><p>
+        </p>""")
+
+    def test_template_inside_template_same_line(self):
+        markup = """{{{#!vorlage Note
+Type the following [[Vorlage(Command, start)]] to start it.
+}}}
+"""
+        html = render(markup)
+        self.assertHTMLEqual(html, """<div class="box notice"><h3 class="box notice">Note:</h3><div class="contents"><p>
+        Type the following </p><div class="bash"><div class="contents"><pre class="notranslate">start </pre></div></div><p> to start it.
+        </p></div></div><p>
+        </p>""")
+
+    def test_template_inside_table_template(self):
+        markup = """{{{#!vorlage Table
+<rowclass="head"> Command
+Description
++++
+[[Vorlage (Command, "start")]]
+Text
+}}}
+"""
+        html = render(markup)
+        self.assertHTMLEqual(html, """<table><tr class="head"><td> Command </td><td> Description </td></tr><tr><td> <div class="bash"><div class="contents"><pre class="notranslate">start </pre></div></div> </td><td> Text </td></tr></table>""")
