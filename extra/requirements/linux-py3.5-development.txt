@@ -22,9 +22,9 @@ amqp==2.6.1 \
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   kombu
-attrs==21.2.0 \
-    --hash=sha256:149e90d6d8ac20db7a955ad60cf0e6881a3f20d37096140088356da6c716b0b1 \
-    --hash=sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb
+attrs==21.4.0 \
+    --hash=sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4 \
+    --hash=sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd
     # via allure-python-commons
 babel==2.9.1 \
     --hash=sha256:ab49e12b91d937cd11f0b67cb259a57ab4ad2b59ac7a3b41d6c06c0ac5b0def9 \
@@ -152,9 +152,9 @@ django-redis==4.12.1 \
     --hash=sha256:1133b26b75baa3664164c3f44b9d5d133d1b8de45d94d79f38d1adc5b1d502e5 \
     --hash=sha256:306589c7021e6468b2656edc89f62b8ba67e8d5a1c8877e2688042263daa7a63
     # via -r extra/requirements/linux-py3.5-production.txt
-django==2.2.25 \
-    --hash=sha256:08bad7ef7e90286b438dbe1412c3e633fbc7b96db04735f0c7baadeed52f3fad \
-    --hash=sha256:b1e65eaf371347d4b13eb7e061b09786c973061de95390c327c85c1e2aa2349c
+django==2.2.27 \
+    --hash=sha256:1ee37046b0bf2b61e83b3a01d067323516ec3b6f2b17cd49b1326dd4ba9dc913 \
+    --hash=sha256:90763c764738586b11d7e1f44828032c153366e43ad7f782908193a1bb2d6d92
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   django-debug-toolbar
@@ -199,9 +199,9 @@ imagesize==1.3.0 \
     --hash=sha256:1db2f82529e53c3e929e8926a1fa9235aa82d0bd0c580359c67ec31b2fddaa8c \
     --hash=sha256:cd1750d452385ca327479d45b64d9c7729ecf0b3969a58148298c77092261f9d
     # via sphinx
-importlib-metadata==2.1.2 \
-    --hash=sha256:09db40742204610ef6826af16e49f0479d11d0d54687d0169ff7fddf8b3f557f \
-    --hash=sha256:cd6a92d78385dd145f5f233b3a6919acf5e8e43922aa9b9dbe78573e3540eb56
+importlib-metadata==2.1.3 \
+    --hash=sha256:02a9f62b02e9b1cc43871809ef99947e8f5d94771392d666ada2cafc4cd09d4f \
+    --hash=sha256:52e65a0856f9ba7ea8f2c4ced253fb6c88d1a8c352cb1e916cff4eb17d5a693d
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   kombu
@@ -348,9 +348,9 @@ mock==2.0.0 \
     --hash=sha256:5ce3c71c5545b472da17b72268978914d0252980348636840bd34a00b5cc96c1 \
     --hash=sha256:b158b6df76edd239b8208d481dc46b6afd45a846b7812ff0ce58971cf5bc8bba
     # via -r extra/requirements/development.in
-parse-type==0.5.2 \
-    --hash=sha256:089a471b06327103865dfec2dd844230c3c658a4a1b5b4c8b6c16c8f77577f9e \
-    --hash=sha256:7f690b18d35048c15438d6d0571f9045cffbec5907e0b1ccf006f889e3a38c0b
+parse-type==0.6.0 \
+    --hash=sha256:20b43c660e48ed47f433bce5873a2a3d4b9b6a7ba47bd7f7d2a7cec4bec5551f \
+    --hash=sha256:c148e88436bd54dab16484108e882be3367f44952c649c9cd6b82a7370b650cb
     # via behave
 parse==1.19.0 \
     --hash=sha256:9ff82852bcb65d139813e2a5197627a94966245c897796760a3a2a8eb66f020b
@@ -396,9 +396,9 @@ pyflakes==1.6.0 \
     --hash=sha256:08bd6a50edf8cffa9fa09a463063c425ecaaf10d1eb0335a7e8b1401aef89e6f \
     --hash=sha256:8d616a382f243dbf19b54743f280b80198be0bca3a5396f1d2e1fca6223e8805
     # via flake8
-pygments==2.10.0 \
-    --hash=sha256:b8e67fe6af78f492b3c4b3e2970c0624cbf08beb1e493b2c99b9fa1b67a20380 \
-    --hash=sha256:f398865f7eb6874156579fdf36bc840a03cab64d1cde9e93d68f46a425ec52c6
+pygments==2.11.2 \
+    --hash=sha256:44238f1b60a76d78fc8ca0528ee429702aae011c265fe6a8dd8b63049ae41c65 \
+    --hash=sha256:4e426f72023d88d03b2fa258de560726ce890ff3b630f88c21cbb8b2503b8c6a
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   sphinx
@@ -409,9 +409,9 @@ python-dateutil==2.8.2 \
     #   -r extra/requirements/linux-py3.5-production.txt
     #   freezegun
     #   icalendar
-python-magic==0.4.24 \
-    --hash=sha256:4fec8ee805fea30c07afccd1592c0f17977089895bdfaae5fec870a84e997626 \
-    --hash=sha256:de800df9fb50f8ec5974761054a708af6e4246b03b4bdaee993f948947b0ebcf
+python-magic==0.4.25 \
+    --hash=sha256:1a2c81e8f395c744536369790bd75094665e9644110a6623bcc3bbea30f03973 \
+    --hash=sha256:21f5f542aa0330f5c8a64442528542f6215c8e18d2466b399b0d9d39356d83fc
     # via -r extra/requirements/linux-py3.5-production.txt
 pytz==2021.3 \
     --hash=sha256:3672058bc3453457b622aab7a1c3bfd5ab0bdae451512f6cf25f64ed37f5b87c \
@@ -467,17 +467,17 @@ requests==2.25.1 \
     #   -r extra/requirements/linux-py3.5-production.txt
     #   responses
     #   sphinx
-responses==0.16.0 \
-    --hash=sha256:a2e3aca2a8277e61257cd3b1c154b1dd0d782b1ae3d38b7fa37cbe3feb531791 \
-    --hash=sha256:f358ef75e8bf431b0aa203cc62625c3a1c80a600dbe9de91b944bf4e9c600b92
+responses==0.17.0 \
+    --hash=sha256:e4fc472fb7374fb8f84fcefa51c515ca4351f198852b4eb7fc88223780b472ea \
+    --hash=sha256:ec675e080d06bf8d1fb5e5a68a1e5cd0df46b09c78230315f650af5e4036bec7
     # via -r extra/requirements/development.in
 selenium==3.141.0 \
     --hash=sha256:2d7131d7bc5a5b99a2d9b04aaf2612c411b03b8ca1b1ee8d3de5845a9be2cb3c \
     --hash=sha256:deaf32b60ad91a4611b98d8002757f29e6f2c2d5fcaf202e1c9ad06d6772300d
     # via -r extra/requirements/development.in
-sentry-sdk==1.5.1 \
-    --hash=sha256:2a1757d6611e4bec7d672c2b7ef45afef79fed201d064f53994753303944f5a8 \
-    --hash=sha256:e4cb107e305b2c1b919414775fa73a9997f996447417d22b98e7610ded1e9eb5
+sentry-sdk==1.5.4 \
+    --hash=sha256:4fc7960a82c95d906a0514cf4d9aacba1743eb9863a5b7c2a01c525a7d9b21e6 \
+    --hash=sha256:f7e54567937ebcbe938c4df1075ec891587faeb7c74184b88cf2894e47c86116
     # via -r extra/requirements/linux-py3.5-production.txt
 sgmllib3k==1.0.0 \
     --hash=sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9
@@ -530,9 +530,9 @@ transifex-client==0.12.5 \
     --hash=sha256:139867ffaf340aa2b74b0c44fa2d6525bf641357d04b7961a5b10ebe468678d8 \
     --hash=sha256:23c88c55d1469b62a771646d4f202b6fe5f4abbcdbe61bda3a3b08c44aaa7a78
     # via -r extra/requirements/linux-py3.5-production.txt
-urllib3==1.26.7 \
-    --hash=sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece \
-    --hash=sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844
+urllib3==1.26.8 \
+    --hash=sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed \
+    --hash=sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c
     # via
     #   -r extra/requirements/linux-py3.5-production.txt
     #   requests
