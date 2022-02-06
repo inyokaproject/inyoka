@@ -25,7 +25,7 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 0.27.0 (2021-MM-DD)
+Unreleased 0.27.0 (2022-MM-DD)
 =====================
 
 Deployment notes

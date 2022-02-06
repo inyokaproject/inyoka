@@ -5,7 +5,7 @@
 
     Test the wiki page rename.
 
-    :copyright: (c) 2012-2021 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2022 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.core.files import File
