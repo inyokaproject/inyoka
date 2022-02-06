@@ -5,7 +5,7 @@
 
     Tests for the :class:`UbuntuVersion` class, such as ordering.
 
-    :copyright: (c) 2007-2021 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest

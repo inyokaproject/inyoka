@@ -1,5 +1,5 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2021 Inyoka Team (see AUTHORS)
+# Copyright (C) 2022 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #

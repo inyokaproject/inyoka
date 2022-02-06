@@ -6,7 +6,7 @@
     This module provides a command to the Django ``manage.py`` file to create
     requirement-files with the help of pip-tools.
 
-    :copyright: (c) 2011-2021 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2022 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from typing import List

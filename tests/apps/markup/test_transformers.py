@@ -6,7 +6,7 @@
     This module tests the AST transformers.
 
     :copyright: Copyright 2007 by Armin Ronacher.
-    :copyright: (c) 2011-2021 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2022 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
