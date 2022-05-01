@@ -108,7 +108,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
             img = fix_colorspace(img)
             box = _get_box(img, width, height)
             if img.size > box:
-                img.thumbnail(box, Image.ANTIALIAS)
+                img.thumbnail(box, Image.Resampling.LANCZOS)
             real_filename = os.path.join(settings.MEDIA_ROOT, destination)
             os.makedirs(os.path.dirname(real_filename), exist_ok=True)
             img.save(real_filename, quality=100)

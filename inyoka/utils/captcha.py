@@ -340,7 +340,7 @@ class WarpBase(Layer):
     PIL's mesh transform to warp the image.
     """
     bg = 'transparent'
-    filtering = Image.BILINEAR
+    filtering = Image.Resampling.BILINEAR
     resolution = 10
 
     def get_transform(self, image):
@@ -385,7 +385,7 @@ class WarpBase(Layer):
                      x_rows[j + 1][i + 1], y_rows[j + 1][i + 1],
                      x_rows[j][i + 1], y_rows[j][i + 1]),
                 ))
-        return image.transform(image.size, Image.MESH, mesh, self.filtering)
+        return image.transform(image.size, Image.Transform.MESH, mesh, self.filtering)
 
 
 class SineWarp(WarpBase):

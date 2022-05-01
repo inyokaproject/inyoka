@@ -61,7 +61,7 @@ setup(
         'icalendar',
         'Jinja2',
         'lxml<4.7',
-        'Pillow<8',
+        'Pillow',
         'psycopg2',
         'Pygments',
         'python-magic',
