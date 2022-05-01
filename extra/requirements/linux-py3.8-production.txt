@@ -76,9 +76,9 @@ django-redis==5.2.0 \
     --hash=sha256:1d037dc02b11ad7aa11f655d26dac3fb1af32630f61ef4428860a2e29ff92026 \
     --hash=sha256:8a99e5582c79f894168f5865c52bd921213253b7fd64d16733ae4591564465de
     # via Inyoka (setup.py)
-feedparser==6.0.0b3 \
-    --hash=sha256:733f7ae6f288f409b3db8fa74f1074484518afc664cba5a1065f78550267e5b4 \
-    --hash=sha256:d4885f34627140c9076f43022e3be49e6b80ddb25a6dd1a4d40f795546faec1f
+feedparser==6.0.8 \
+    --hash=sha256:1b7f57841d9cf85074deb316ed2c795091a238adb79846bc46dccdaf80f9c59a \
+    --hash=sha256:5ce0410a05ab248c8c7cfca3a0ea2203968ee9ff4486067379af4827a59f9661
     # via Inyoka (setup.py)
 gunicorn==20.1.0 \
     --hash=sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e \

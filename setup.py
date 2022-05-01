@@ -55,7 +55,7 @@ setup(
         'django-guardian<2.4',
         'django-hosts',
         'django-redis',
-        'feedparser==6.0.0b3',
+        'feedparser',
         'gunicorn',
         'html5lib==1.1',
         'icalendar',
