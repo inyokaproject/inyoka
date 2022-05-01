@@ -12,11 +12,11 @@ jobs:
       REQUIREMENTS_FILE: extra/requirements/linux-py${{ matrix.python-version }}-development.txt
     strategy:
       matrix:
-        python-version: [3.5, 3.8]
+        python-version: [3.8]
         database: ['postgresql', 'sqlite']
 
         include:
-          - python-version: 3.5
+          - python-version: 3.8
             database: 'postgresql'
             build_docs: true
 
