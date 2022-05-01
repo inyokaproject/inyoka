@@ -59,7 +59,7 @@ setup(
         'gunicorn',
         'html5lib==1.1',
         'icalendar',
-        'Jinja2<3',
+        'Jinja2',
         'lxml<4.7',
         'Pillow<8',
         'psycopg2',
