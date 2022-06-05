@@ -22,7 +22,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
-from mock import patch
+from unittest.mock import patch
 from guardian.shortcuts import assign_perm
 from unittest import skip
 

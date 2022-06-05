@@ -311,10 +311,6 @@ mccabe==0.6.1 \
     --hash=sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42 \
     --hash=sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f
     # via flake8
-mock==2.0.0 \
-    --hash=sha256:5ce3c71c5545b472da17b72268978914d0252980348636840bd34a00b5cc96c1 \
-    --hash=sha256:b158b6df76edd239b8208d481dc46b6afd45a846b7812ff0ce58971cf5bc8bba
-    # via Inyoka (setup.py)
 packaging==21.3 \
     --hash=sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb \
     --hash=sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522
@@ -328,10 +324,6 @@ parse-type==0.6.0 \
     --hash=sha256:20b43c660e48ed47f433bce5873a2a3d4b9b6a7ba47bd7f7d2a7cec4bec5551f \
     --hash=sha256:c148e88436bd54dab16484108e882be3367f44952c649c9cd6b82a7370b650cb
     # via behave
-pbr==5.9.0 \
-    --hash=sha256:e547125940bcc052856ded43be8e101f63828c2d94239ffbe2b327ba3d5ccf0a \
-    --hash=sha256:e8dca2f4b43560edef58813969f52a56cef023146cbb8931626db80e6c1c4308
-    # via mock
 pep517==0.12.0 \
     --hash=sha256:931378d93d11b298cf511dd634cf5ea4cb249a28ef84160b3247ee9afb4e8ab0 \
     --hash=sha256:dd884c326898e2c6e11f9e0b64940606a93eb10ea022a2e067959f3a110cf161
@@ -530,7 +522,6 @@ six==1.16.0 \
     #   behave
     #   freezegun
     #   html5lib
-    #   mock
     #   parse-type
     #   python-dateutil
     #   sphinx

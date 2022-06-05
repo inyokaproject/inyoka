@@ -11,7 +11,7 @@
 
 from functools import partial
 
-from mock import patch
+from unittest.mock import patch
 
 from inyoka.portal.user import User
 from inyoka.utils.storage import storage

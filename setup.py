@@ -82,7 +82,6 @@ setup(
                 'flake8==3.5.0',
                 'freezegun==0.3.12',
                 'isort==4.2.15',
-                'mock==2.0.0',
                 'responses',
                 'selenium<4',
                 'Sphinx==1.6.5',

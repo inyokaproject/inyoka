@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mock import patch
+from unittest.mock import patch
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.portal.user import User

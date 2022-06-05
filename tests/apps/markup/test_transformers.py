@@ -10,7 +10,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import unittest
-from mock import patch
+from unittest.mock import patch
 
 from inyoka.markup import nodes, transformers
 from inyoka.markup.base import Parser
