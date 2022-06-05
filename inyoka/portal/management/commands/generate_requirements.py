@@ -69,16 +69,7 @@ class Command(BaseCommand):
             arguments += ['--upgrade-package', p]
 
         if stage == self.stage_dev:
-            dev_template_file = os.path.join(self.requirements_path, 'development.in')
-            arguments += [dev_template_file]
-
-            # use previously generated production file (for this specific environment)
-            # as constraint in `dev_template_file`
-            with open(dev_template_file, 'r+') as f:
-                lines = f.readlines()
-                lines[0] = '-r ' + os.path.basename(self._get_requirements_path(self.stage_prod)) + '\n'
-                f.seek(0)
-                f.writelines(lines)
+            arguments += ['--extra', 'dev']
 
         custom_env = os.environ
         custom_env["CUSTOM_COMPILE_COMMAND"] = "python manage.py generate_requirements"
