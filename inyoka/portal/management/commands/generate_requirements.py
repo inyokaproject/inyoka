@@ -28,11 +28,7 @@ class Command(BaseCommand):
     requirements_path = 'extra/requirements'
 
     def add_arguments(self, parser):
-        if platform.python_version_tuple() > ('3', '8'):
-            upgrade_action = 'extend'
-        else:
-            upgrade_action = 'append'
-
+        upgrade_action = 'extend'
         parser.add_argument('--upgrade', action=upgrade_action, nargs='*', type=str, default=argparse.SUPPRESS,
                             dest='upgrade_packages', help='Define one or more packages that should be upgraded. '
                                                           'If only the option is given, all packages are upgraded.')
