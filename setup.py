@@ -57,10 +57,10 @@ setup(
         'django-redis',
         'feedparser',
         'gunicorn',
-        'html5lib==1.1',
+        'html5lib',
         'icalendar',
         'Jinja2',
-        'lxml<4.7',
+        'lxml',
         'Pillow',
         'psycopg2',
         'Pygments',
@@ -75,7 +75,7 @@ setup(
     ],
 
     extras_require={
-        'dev': ['allure-behave<2.9.44', # newer version needs python 3.6 with f-strings
+        'dev': ['allure-behave',
                 'bump2version',
                 'coverage',
                 'django-debug-toolbar<3',
