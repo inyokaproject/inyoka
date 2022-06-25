@@ -28,11 +28,7 @@ class Command(BaseCommand):
     requirements_path = 'extra/requirements'
 
     def add_arguments(self, parser):
-        if platform.python_version_tuple() > ('3', '8'):
-            upgrade_action = 'extend'
-        else:
-            upgrade_action = 'append'
-
+        upgrade_action = 'extend'
         parser.add_argument('--upgrade', action=upgrade_action, nargs='*', type=str, default=argparse.SUPPRESS,
                             dest='upgrade_packages', help='Define one or more packages that should be upgraded. '
                                                           'If only the option is given, all packages are upgraded.')
@@ -69,16 +65,7 @@ class Command(BaseCommand):
             arguments += ['--upgrade-package', p]
 
         if stage == self.stage_dev:
-            dev_template_file = os.path.join(self.requirements_path, 'development.in')
-            arguments += [dev_template_file]
-
-            # use previously generated production file (for this specific environment)
-            # as constraint in `dev_template_file`
-            with open(dev_template_file, 'r+') as f:
-                lines = f.readlines()
-                lines[0] = '-r ' + os.path.basename(self._get_requirements_path(self.stage_prod)) + '\n'
-                f.seek(0)
-                f.writelines(lines)
+            arguments += ['--extra', 'dev']
 
         custom_env = os.environ
         custom_env["CUSTOM_COMPILE_COMMAND"] = "python manage.py generate_requirements"

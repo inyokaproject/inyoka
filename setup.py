@@ -41,7 +41,7 @@ setup(
     keywords='Forum Wiki Planet News Calendar',
 
     packages=find_packages(include=('inyoka*',)),
-    python_requires='>=3.5, <4',
+    python_requires='>=3.8, <4',
     install_requires=[
         'Django<2.3',
         'pip-tools',
@@ -55,13 +55,13 @@ setup(
         'django-guardian<2.4',
         'django-hosts',
         'django-redis',
-        'feedparser==6.0.0b3',
+        'feedparser',
         'gunicorn',
-        'html5lib==1.1',
+        'html5lib',
         'icalendar',
-        'Jinja2<3',
-        'lxml<4.7',
-        'Pillow<8',
+        'Jinja2',
+        'lxml',
+        'Pillow',
         'psycopg2',
         'Pygments',
         'python-magic',
@@ -75,6 +75,18 @@ setup(
     ],
 
     extras_require={
+        'dev': ['allure-behave',
+                'bump2version',
+                'coverage',
+                'django-debug-toolbar<3.3', # last version to support django 2.2
+                'flake8==3.5.0',
+                'freezegun',
+                'isort',
+                'responses',
+                'selenium',
+                'Sphinx==1.6.5',
+                'sphinx-rtd-theme==0.2.4',
+               ],
         'xmpp': ['slixmpp'],
     },
 

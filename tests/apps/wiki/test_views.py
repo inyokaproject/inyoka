@@ -12,7 +12,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.test.utils import override_settings
-from mock import patch
+from unittest.mock import patch
 
 from inyoka.portal.user import User
 from inyoka.utils.sessions import SurgeProtectionMixin

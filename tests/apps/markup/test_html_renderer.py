@@ -60,7 +60,7 @@ cp ~/.bash_profile ~/.bash_profile.back
 sed -i 's/root/arch/' $HOME/.bash_profile
 }}}""")
         self.maxDiff = None
-        self.assertHTMLEqual(html, """<div class="code">
+        self.assertHTMLEqual(html, """<div class="code"><div class="notranslate syntax">
         <table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre>
         <span class="normal">
         1
@@ -73,13 +73,13 @@ sed -i 's/root/arch/' $HOME/.bash_profile
         </span><span class="normal">
         5
         </span>
-        </pre></div></td><td class="code"><div class="notranslate syntax"><pre><span></span><span class="ch">#!/bin/bash</span>
+        </pre></div></td><td class="code"><div><pre><span></span><span class="ch">#!/bin/bash</span>
         cp ~/.bash_profile ~/.bash_profile.back
 
         <span class="c1"># autologin for user instead of root</span>
         sed -i <span class="s1">&39;s/root/arch/&39;</span> <span class="nv">$HOME</span>/.bash_profile
         </pre></div>
-        </td></tr></table></div>""")
+        </td></tr></table></div></div>""")
 
     def test_csv_to_table(self):
         html = render("""{{{#!csv

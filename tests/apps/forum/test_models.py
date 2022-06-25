@@ -12,7 +12,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test.utils import override_settings
-from mock import patch
+from unittest.mock import patch
 
 from inyoka.forum.models import Attachment, Forum, Post, PostRevision, Topic
 from inyoka.utils.test import TestCase
