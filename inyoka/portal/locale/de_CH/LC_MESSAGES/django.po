@@ -393,6 +393,9 @@ msgstr "Wiederherschteuä"
 msgid "Send"
 msgstr "Sändä"
 
+msgid "Sent"
+msgstr ""
+
 msgid "Separate multiple groups by semicolon"
 msgstr ""
 

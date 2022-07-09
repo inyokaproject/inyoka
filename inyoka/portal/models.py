@@ -79,7 +79,7 @@ class SubscriptionManager(ContentTypeManager):
 
 
 PRIVMSG_FOLDERS_DATA = (
-    (0, 'sent', ugettext_lazy('Send')),
+    (0, 'sent', ugettext_lazy('Sent')),
     (1, 'inbox', ugettext_lazy('Inbox')),
     (2, 'trash', ugettext_lazy('Trash')),
     (3, 'archive', ugettext_lazy('Archive')))
