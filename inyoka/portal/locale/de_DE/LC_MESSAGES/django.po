@@ -416,6 +416,9 @@ msgstr "Wiederherstellen"
 msgid "Send"
 msgstr "Senden"
 
+msgid "Sent"
+msgstr "Gesendet"
+
 msgid "Separate multiple groups by semicolon"
 msgstr "Mehrere Gruppen mit Semikolon getrennt eingeben"
 
