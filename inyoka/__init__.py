@@ -19,4 +19,4 @@ assert xml.sax.make_parser is defusedxml.sax.make_parser
 from .celery_app import app as celery_app  # noqa
 
 # Inyoka version is updated through bumpversion and can stay hardcoded here.
-INYOKA_VERSION = "v0.26.1"
+INYOKA_VERSION = "v0.27.0"
