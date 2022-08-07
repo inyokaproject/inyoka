@@ -80,7 +80,7 @@ jobs:
         python -m venv ~/venv
         . ~/venv/bin/activate
         python -m pip install --upgrade pip
-        pip install -r ${{ env.REQUIREMENTS_FILE }}
+        pip install --no-deps --require-hashes -r ${{ env.REQUIREMENTS_FILE }}
 
     - name: Link theme
       working-directory: ./theme-ubuntuusers
