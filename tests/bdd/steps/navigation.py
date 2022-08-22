@@ -1,6 +1,7 @@
 from behave import given, step
 
 from tests.bdd.steps.utils import take_screenshot
+from selenium.webdriver.common.by import By
 
 
 @given('I am on the "{page_slug}" page')
@@ -44,4 +45,4 @@ def go_to_item(context, app, view_type, item_id):
 
 @step("I click on {action}")
 def step_impl(context, action):
-    context.browser.find_element_by_name(action).click()
+    context.browser.find_element(by=By.NAME, value=action).click()
