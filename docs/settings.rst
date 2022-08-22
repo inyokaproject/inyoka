@@ -244,12 +244,6 @@ Notification
 
     Print a short message to STDOUT for each notification that is send by mail.
 
-.. py:data:: EMAIL_BACKEND
-
-    Defaults to: ``'inyoka.utils.mail.SendmailEmailBackend'``
-
-    See https://docs.djangoproject.com/en/2.2/ref/settings/#email-backend
-
 .. py:data:: EMAIL_SUBJECT_PREFIX
 
     Defaults to: ``'example.com: '``
