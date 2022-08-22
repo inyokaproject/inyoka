@@ -128,7 +128,6 @@ TAGCLOUD_SIZE = 100
 # prefix for the system mails
 EMAIL_SUBJECT_PREFIX = '%s: ' % BASE_DOMAIN_NAME
 
-EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
 # forum settings
 FORUM_LIMIT_UNREAD = 100
