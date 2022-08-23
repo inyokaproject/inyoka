@@ -1,18 +1,19 @@
 import re
 
 from behave import then
+from selenium.webdriver.common.by import By
 
 
 @then('I should see elements')
 def step_impl(context):
     for row in context.table:
-        assert context.browser.find_element_by_id(row['item'])
+        assert context.browser.find_element(by=By.ID, value=row['item'])
 
 
 @then("I should see elements with values")
 def step_impl(context):
     for row in context.table:
-        element = context.browser.find_element_by_id(row['element'])
+        element = context.browser.find_element(by=By.ID, value=row['element'])
         value = row['value']
         element_text = get_plain_text(element.text)
         assert element_text == value, "'%s' doesn't match expected '%s'" % (element_text, value)
@@ -26,12 +27,12 @@ def get_plain_text(text):
 
 @then('it should be successful')
 def step_impl(context):
-    assert context.browser.find_element_by_css_selector('.message.success')
+    assert context.browser.find_element(by=By.CSS_SELECTOR, value='.message.success')
 
 
 @then('it should fail')
 def step_impl(context):
-    assert context.browser.find_element_by_css_selector('.errors')
+    assert context.browser.find_element(by=By.CSS_SELECTOR, value='.errors')
 
 
 @then('I should see "{inactive_type}" error')
@@ -41,14 +42,14 @@ def step_impl(context, inactive_type):
         'inactive': 'inaktiv',
         'deleted': 'inaktiv'
     }
-    error = context.browser.find_element_by_css_selector('.errors')
+    error = context.browser.find_element(by=By.CSS_SELECTOR, value='.errors')
     assert messages[inactive_type] in error.text
 
 
 @then('I should see a link to "{link}"')
 def step_impl(context, link):
     link = link.replace('BASE_DOMAIN_NAME', context.base_url[7:])
-    assert context.browser.find_element_by_css_selector("[href*='%(link)s']" % {'link': link})
+    assert context.browser.find_element(by=By.CSS_SELECTOR, value="[href*='%(link)s']" % {'link': link})
 
 
 @then('I should see a "{itemtype}" with "{required_keyword}" in a list')
@@ -62,8 +63,8 @@ def step_impl(context, itemtype, required_keyword):
     """
 
     if itemtype == "paste":
-        pastes = context.browser.find_elements_by_css_selector(".pastes")
-        keywords = [entry.find_element_by_css_selector('li > a:first-of-type').text for entry in pastes]
+        pastes = context.browser.find_elements(by=By.CSS_SELECTOR, value=".pastes")
+        keywords = [entry.find_element(by=By.CSS_SELECTOR, value='li > a:first-of-type').text for entry in pastes]
         assert any(keyword == required_keyword for keyword in keywords)
         return
 
@@ -72,7 +73,7 @@ def step_impl(context, itemtype, required_keyword):
 
 @then('I should see a "403" exception')
 def step_impl(context):
-    caption = context.browser.find_element_by_css_selector('h1')
+    caption = context.browser.find_element(by=By.CSS_SELECTOR, value='h1')
     assert '403' in caption.text
 
 
@@ -93,7 +94,7 @@ def step_impl(context, information_type):
     messages = {
         'canceled': "abgebrochen"
     }
-    error = context.browser.find_element_by_css_selector('.message.info')
+    error = context.browser.find_element(by=By.CSS_SELECTOR, value='.message.info')
     assert messages[information_type] in error.text
 
 
@@ -108,7 +109,7 @@ def step_impl(context):
 
 @then('I should see a title "{value}"')
 def step_impl(context, value):
-    headings = context.browser.find_elements_by_css_selector('h1')
+    headings = context.browser.find_elements(by=By.CSS_SELECTOR, value='h1')
     for h in headings:
         text = h.text
         if value in text:
