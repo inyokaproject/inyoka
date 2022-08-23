@@ -159,15 +159,15 @@ jobs:
 
 
     - name: Build documentation
-      if: ${{ github.ref == env.DEFAULT_BRANCH && matrix.build_docs }}
+      if: ${{ matrix.build_docs }}
       run: |
         . ~/venv/bin/activate
         make -C docs html
     - name: Compress documentation
-      if: ${{ github.ref == env.DEFAULT_BRANCH && matrix.build_docs }}
+      if: ${{ matrix.build_docs }}
       run: zip doc.zip -r docs/build/html
     - name: Save documentation
-      if: ${{ github.ref == env.DEFAULT_BRANCH && matrix.build_docs }}
+      if: ${{ matrix.build_docs }}
       uses: actions/upload-artifact@v2
       with:
         name: 'Inyoka_Documentation'
