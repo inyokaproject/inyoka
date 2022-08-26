@@ -109,3 +109,12 @@ def update_recentchanges():
                 'note': revision.note
             })
     cache.set('wiki/recentchanges', recentchanges)
+
+
+@shared_task
+def render_all_pages():
+    """
+    Prerenders all wiki pages.
+    """
+    from inyoka.wiki.models import Page
+    Page.objects.render_all_pages()

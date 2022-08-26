@@ -312,6 +312,10 @@ CELERY_BEAT_SCHEDULE = {
     'update_page_by_slug': {
         'task': 'inyoka.wiki.tasks.update_page_by_slug',
         'schedule': timedelta(hours=1),
+    },
+    'render_all_wiki_pages': {
+        'task': 'inyoka.wiki.tasks.render_all_pages',
+        'schedule': crontab(hour=23, minute=5),
     }
 }
 
