@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.core.cache import cache
+from django.core.cache import cache, caches
 
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
@@ -38,3 +38,39 @@ class TestPageManager(TestCase):
         missing_pages = Page.objects.get_missing()
 
         self.assertEqual(dict(missing_pages), {'missing': [test3]})
+
+    def test_render_all_pages(self):
+        """
+        Test, that a rendered page will be put into the cache.
+        """
+        page = Page.objects.create('test1', '[:test1:] content')
+
+        _field = page.rev.text._meta.get_field('value')
+        cache_key = _field.get_redis_key(page.rev.text.__class__, page.rev.text, _field.name)
+
+        content_cache = caches['content']
+        self.assertFalse(content_cache.has_key(cache_key))
+
+        Page.objects.render_all_pages()
+
+        self.assertTrue(content_cache.has_key(cache_key))
+
+    def test_render_all_pages__two_pages(self):
+        """
+        Test, that two rendered pages will be put into the cache.
+        """
+        page = Page.objects.create('test1', '[:test1:] content')
+        page2 = Page.objects.create('test2', 'test content')
+
+        _field = page.rev.text._meta.get_field('value')
+        cache_key = _field.get_redis_key(page.rev.text.__class__, page.rev.text, _field.name)
+        cache_key2 = _field.get_redis_key(page2.rev.text.__class__, page2.rev.text, _field.name)
+
+        content_cache = caches['content']
+        self.assertFalse(content_cache.has_key(cache_key))
+        self.assertFalse(content_cache.has_key(cache_key2))
+
+        Page.objects.render_all_pages()
+
+        self.assertTrue(content_cache.has_key(cache_key))
+        self.assertTrue(content_cache.has_key(cache_key2))

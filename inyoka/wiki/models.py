@@ -81,6 +81,7 @@ from datetime import datetime
 
 import magic
 import random
+import time
 from collections import defaultdict
 from django.apps import apps
 from django.conf import settings
@@ -106,6 +107,7 @@ from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
 from inyoka.utils.local import local as local_cache
+from inyoka.utils.logger import logger
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
 from inyoka.utils.urls import href
@@ -489,6 +491,45 @@ class PageManager(models.Manager):
                               .annotate(Max('id')).order_by('-id')[:1]
         if attachments:
             return attachments[0][0]
+
+    def render_all_pages(self):
+        """
+        This method will rerender all wiki pages (only the newest revision of them and only non-privilged ones). If run on a schedule, it can guarantee that an up-to-date version is in the cache.
+
+        If a page is already in the cache, the cache entry will be dropped before rerendering it.
+        """
+        def remove_from_cache(page):
+            """Helper method that removes the rendered content of a page from the cache"""
+            from django.core.cache import caches
+            content_cache = caches['content']
+
+            field = page.rev.text._meta.get_field('value')
+            content_cache.delete(field.get_redis_key(page.rev.text.__class__, page.rev.text, field.name))
+
+        page_list = self.get_page_list(exclude_privileged=True)
+ 
+        for name in page_list:
+            try:
+                page = self.get_by_name(name, exclude_privileged=True)
+            except CaseSensitiveException as e:
+                page = e.page
+            except Page.DoesNotExist:
+                continue
+
+            if page.rev.attachment:
+                # page is an attachment
+                continue
+
+            remove_from_cache(page)
+
+            logger.info(f'# Start rendering {name}')
+            start = time.perf_counter()
+
+            content = page.rev.rendered_text[:100]
+
+            end = time.perf_counter()
+            time_delta = end - start
+            logger.info(f' Finished {name}, took {time_delta} seconds')
 
     def create(self, name, text, user=None, change_date=None,
                note=None, attachment=None, attachment_filename=None,
