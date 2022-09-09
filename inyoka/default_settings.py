@@ -419,16 +419,11 @@ TEMPLATES = [
         'NAME': 'django',
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': False,
-        'OPTIONS': {
-            'loaders': [
-                'inyoka.utils.templating.DjangoLoader',
-            ]
-        },
+        'APP_DIRS': True,
     },
     {
         'NAME': 'jinja',
-        'BACKEND': 'inyoka.utils.templating.Jinja2Templates',
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
