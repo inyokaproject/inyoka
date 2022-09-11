@@ -25,6 +25,35 @@ Inyoka Changelog
    -----------
 
 
+0.28.0 (2022-09-11)
+=====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+ ---------------
+
+* `Add task to render all wikipages, so they are all in the cache for a faster (first) retrival. <https://github.com/inyokaproject/inyoka/pull/1245>_`
+
+🔥 Removals
+-----------
+
+* `Remove Inyoka's custom SendmailEmailBackend. Instead, use the django builtin SMTP backend.  <https://github.com/inyokaproject/inyoka/pull/1243>_`
+
+🐛 Fixes
+--------
+
+* `Correct title and breadcumb for sent private messages <https://github.com/inyokaproject/inyoka/pull/1241>_`
+* `CI: Build documentation also on PRs <https://github.com/inyokaproject/inyoka/pull/1244>_`
+
+🔒 Security
+-----------
+
+* Update requirements (dependency-packages `lxml` and `Pillow` include known security fixes)
+
 0.27.0 (2022-08-05)
 =====================
 
