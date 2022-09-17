@@ -271,7 +271,7 @@ CELERY_TASK_ALWAYS_EAGER = DEBUG
 
 # Do not hijack the root logger, avoids unicode errors
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
-CELERY_SEND_EVENTS = True
+CELERY_WORKER_SEND_TASK_EVENTS = True
 
 # Modules that hold task definitions
 CELERY_IMPORTS = [
