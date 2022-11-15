@@ -25,6 +25,33 @@ Inyoka Changelog
    -----------
 
 
+0.29.0 (2022-MM-DD)
+=====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+* Use default django classes for templates
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+🔒 Security
+-----------
+
+* Update requirements (dependency-package ``Pillow`` includes known security fixes)
+
 0.28.0 (2022-09-11)
 =====================
 
