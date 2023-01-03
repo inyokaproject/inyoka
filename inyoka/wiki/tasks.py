@@ -118,3 +118,9 @@ def render_all_pages():
     """
     from inyoka.wiki.models import Page
     Page.objects.render_all_pages()
+
+
+@shared_task
+def render_one_revision(revision_id: int):
+    from inyoka.wiki.models import Revision
+    Revision.objects.get(id=revision_id).rendered_text[:100]

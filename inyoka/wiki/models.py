@@ -112,7 +112,7 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
 from inyoka.utils.urls import href
 from inyoka.wiki.exceptions import CaseSensitiveException
-from inyoka.wiki.tasks import update_related_pages, update_page_by_slug
+from inyoka.wiki.tasks import update_related_pages, update_page_by_slug, render_one_revision
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -518,7 +518,8 @@ class PageManager(models.Manager):
             logger.info(f'# Start rendering {name}')
             start = time.perf_counter()
 
-            page.rev.rendered_text[:100]
+            # as this runs normally in a celery task, prevent to spawn new celery tasks (do not use `page.rev.rendered_text`)
+            page.rev.text.value_rendered[:100]
 
             end = time.perf_counter()
             time_delta = end - start
@@ -1310,7 +1311,24 @@ class Revision(models.Model):
     def rendered_text(self):
         """
         The rendered version of the `text` attribute.
+
+        If the page is not in the cache yet, schedule a (semi-parallel) celery task.
+
+        Reason: Some Inyoka markup renders too slow to render synchronisly
+        inside the request and will display a timeout (HTTP 502).
+        In those cases, the celery task will render it asynchronisly and put
+        the result in the cache. As a side effect, the 502 will be displayed
+        some minutes until the rendered page is in the cache.
+        If the rendering finished inside the request already, the celery task
+        will fetch the rendered content from the cache.
+        (This is a small amount of 'wasted' work)
+        To prevent rendering in parallel, the celery task should be executed
+        after the gunicorn timeout, which is 30 seconds by default.
         """
+        in_cache, _ = self.text.is_value_in_cache()
+        if not in_cache:
+            render_one_revision.apply_async(args=[self.pk], countdown=35)
+
         return self.text.value_rendered
 
     @property
