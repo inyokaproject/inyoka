@@ -561,4 +561,5 @@ def update_user_flags(sender, request, user, **kwargs):
     if tz and tz != settings.TIME_ZONE:
         request.session['django_timezone'] = tz
 
+
 user_logged_in.disconnect(update_last_login)

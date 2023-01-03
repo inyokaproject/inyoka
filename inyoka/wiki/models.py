@@ -507,7 +507,7 @@ class PageManager(models.Manager):
             content_cache.delete(field.get_redis_key(page.rev.text.__class__, page.rev.text, field.name))
 
         page_list = self.get_page_list(exclude_privileged=True)
- 
+
         for name in page_list:
             try:
                 page = self.get_by_name(name, exclude_privileged=True)
@@ -1074,23 +1074,30 @@ class Page(models.Model):
             user = apps.get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
+
         if remote_addr is None and user is None:
             raise TypeError('either user or remote addr required')
+
         try:
             rev = self.revisions.latest()
         except Revision.DoesNotExist:
             rev = None
+
         if deleted is None:
             if rev:
                 deleted = rev.deleted
             else:
                 deleted = False
+
         if deleted:
             text = ''
+
         if text is None:
             text = rev and rev.text or ''
+
         if isinstance(text, str):
             text, created = Text.objects.get_or_create(value=text)
+
         if attachment_filename is None:
             attachment = rev and rev.attachment or None
         elif attachment is not None:
@@ -1099,8 +1106,10 @@ class Page(models.Model):
             att.file.save(attachment_filename, attachment)
             att.save()
             attachment = att
+
         if change_date is None:
             change_date = datetime.utcnow()
+
         self.rev = Revision(page=self, text=text, user=user,
                             change_date=change_date, note=note,
                             attachment=attachment, deleted=deleted,
@@ -1330,9 +1339,9 @@ class Revision(models.Model):
 
         note = _('%(note)s [Revision from %(date)s restored by %(user)s]' %
             {'note': note,
-            'date': datetime_to_timezone(self.change_date).strftime(
+             'date': datetime_to_timezone(self.change_date).strftime(
                 '%d.%m.%Y %H:%M %Z'),
-            'user': self.user.username if self.user else self.remote_addr})
+             'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated else None),
                            change_date=datetime.utcnow(),
@@ -1347,6 +1356,7 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
+
         cache.delete('wiki/page/{}'.format(self.page.name.lower()))
         cache.delete('wiki/latest_revisions')
         cache.delete('wiki/latest_revisions/{}'.format(self.page.name))
