@@ -218,8 +218,8 @@ class BaseMarkupField(models.TextField):
             # exist in redis, or if the cache is expired.
             return content_cache.get_or_set(key, create_content, self.redis_timeout)
 
-        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(self.get_render_method()))
-        setattr(cls, '{}_rendered'.format(name), field_rendered)
+        setattr(cls, f'get_{name}_rendered', staticmethod(self.get_render_method()))
+        setattr(cls, f'{name}_rendered', field_rendered)
 
 
 class InyokaMarkupField(BaseMarkupField):
