@@ -525,7 +525,7 @@ class PageManager(models.Manager):
             logger.info(f'# Start rendering {name}')
             start = time.perf_counter()
 
-            content = page.rev.rendered_text[:100]
+            page.rev.rendered_text[:100]
 
             end = time.perf_counter()
             time_delta = end - start
