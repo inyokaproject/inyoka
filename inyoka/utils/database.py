@@ -167,10 +167,10 @@ class BaseMarkupField(models.TextField):
     def __init__(self, application=None, redis_timeout=None, *args, **kwargs):
         self.application = application
         self.redis_timeout = redis_timeout
-        super(BaseMarkupField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(BaseMarkupField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         if self.application is not None:
             kwargs['application'] = self.application
         if self.redis_timeout is not None:
@@ -186,7 +186,7 @@ class BaseMarkupField(models.TextField):
         )
 
     def contribute_to_class(self, cls, name):
-        super(BaseMarkupField, self).contribute_to_class(cls, name)
+        super().contribute_to_class(cls, name)
 
         # Register to the post_save signal, to delete the redis cache if the
         # content changes
@@ -231,10 +231,10 @@ class InyokaMarkupField(BaseMarkupField):
                  *args, **kwargs):
         self.simplify = simplify
         self.force_existing = force_existing
-        super(InyokaMarkupField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(BaseMarkupField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         if self.simplify is not None:
             kwargs['simplify'] = self.simplify
         if self.force_existing is not None:
