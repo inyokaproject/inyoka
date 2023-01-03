@@ -689,7 +689,7 @@ class RevisionManager(models.Manager):
 class Diff(object):
     """
     This class represents the results of a page comparison.  You can get
-    useful instances of this class by using the ``compare_*`` functions on
+    useful instances of this class by using the ``compare`` function on
     the `PageManager`.
 
     :IVariables:
