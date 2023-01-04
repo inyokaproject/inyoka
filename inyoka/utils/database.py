@@ -218,6 +218,17 @@ class BaseMarkupField(models.TextField):
             # exist in redis, or if the cache is expired.
             return content_cache.get_or_set(key, create_content, self.redis_timeout)
 
+        def is_in_cache(inst_self):
+            key = self.get_redis_key(cls, inst_self, name)
+            value = content_cache.get(key)
+            return (value is not None, value)
+
+        def remove_from_cache(inst_self):
+            key = self.get_redis_key(cls, inst_self, name)
+            content_cache.delete(key)
+
+        setattr(cls, f'is_{name}_in_cache', is_in_cache)
+        setattr(cls, f'remove_{name}_from_cache', remove_from_cache)
         setattr(cls, f'get_{name}_rendered', staticmethod(self.get_render_method()))
         setattr(cls, f'{name}_rendered', field_rendered)
 

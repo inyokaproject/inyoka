@@ -494,18 +494,11 @@ class PageManager(models.Manager):
 
     def render_all_pages(self):
         """
-        This method will rerender all wiki pages (only the newest revision of them and only non-privilged ones). If run on a schedule, it can guarantee that an up-to-date version is in the cache.
+        This method will rerender all wiki pages (only the newest revision of them and only non-privilged ones).
+        If run on a schedule, it can guarantee that an up-to-date version is in the cache.
 
         If a page is already in the cache, the cache entry will be dropped before rerendering it.
         """
-        def remove_from_cache(page):
-            """Helper method that removes the rendered content of a page from the cache"""
-            from django.core.cache import caches
-            content_cache = caches['content']
-
-            field = page.rev.text._meta.get_field('value')
-            content_cache.delete(field.get_redis_key(page.rev.text.__class__, page.rev.text, field.name))
-
         page_list = self.get_page_list(exclude_privileged=True)
 
         for name in page_list:
@@ -520,7 +513,7 @@ class PageManager(models.Manager):
                 # page is an attachment
                 continue
 
-            remove_from_cache(page)
+            page.rev.text.remove_value_from_cache()
 
             logger.info(f'# Start rendering {name}')
             start = time.perf_counter()
