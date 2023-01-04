@@ -49,7 +49,7 @@
     Caveat: paginations with link functions generated in a closure are
     not pickleable.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 

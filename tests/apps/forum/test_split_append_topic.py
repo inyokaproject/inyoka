@@ -5,7 +5,7 @@
 
     Test split function for topics that append posts to another thread.
 
-    :copyright: (c) 2012-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.core.cache import cache
