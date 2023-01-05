@@ -112,7 +112,7 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
 from inyoka.utils.urls import href
 from inyoka.wiki.exceptions import CaseSensitiveException
-from inyoka.wiki.tasks import update_related_pages, update_page_by_slug
+from inyoka.wiki.tasks import update_related_pages, update_page_by_slug, render_one_revision
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -494,20 +494,13 @@ class PageManager(models.Manager):
 
     def render_all_pages(self):
         """
-        This method will rerender all wiki pages (only the newest revision of them and only non-privilged ones). If run on a schedule, it can guarantee that an up-to-date version is in the cache.
+        This method will rerender all wiki pages (only the newest revision of them and only non-privilged ones).
+        If run on a schedule, it can guarantee that an up-to-date version is in the cache.
 
         If a page is already in the cache, the cache entry will be dropped before rerendering it.
         """
-        def remove_from_cache(page):
-            """Helper method that removes the rendered content of a page from the cache"""
-            from django.core.cache import caches
-            content_cache = caches['content']
-
-            field = page.rev.text._meta.get_field('value')
-            content_cache.delete(field.get_redis_key(page.rev.text.__class__, page.rev.text, field.name))
-
         page_list = self.get_page_list(exclude_privileged=True)
- 
+
         for name in page_list:
             try:
                 page = self.get_by_name(name, exclude_privileged=True)
@@ -520,12 +513,13 @@ class PageManager(models.Manager):
                 # page is an attachment
                 continue
 
-            remove_from_cache(page)
+            page.rev.text.remove_value_from_cache()
 
             logger.info(f'# Start rendering {name}')
             start = time.perf_counter()
 
-            content = page.rev.rendered_text[:100]
+            # as this runs normally in a celery task, prevent to spawn new celery tasks (do not use `page.rev.rendered_text`)
+            page.rev.text.value_rendered[:100]
 
             end = time.perf_counter()
             time_delta = end - start
@@ -689,7 +683,7 @@ class RevisionManager(models.Manager):
 class Diff(object):
     """
     This class represents the results of a page comparison.  You can get
-    useful instances of this class by using the ``compare_*`` functions on
+    useful instances of this class by using the ``compare`` function on
     the `PageManager`.
 
     :IVariables:
@@ -1074,23 +1068,30 @@ class Page(models.Model):
             user = apps.get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
+
         if remote_addr is None and user is None:
             raise TypeError('either user or remote addr required')
+
         try:
             rev = self.revisions.latest()
         except Revision.DoesNotExist:
             rev = None
+
         if deleted is None:
             if rev:
                 deleted = rev.deleted
             else:
                 deleted = False
+
         if deleted:
             text = ''
+
         if text is None:
             text = rev and rev.text or ''
+
         if isinstance(text, str):
             text, created = Text.objects.get_or_create(value=text)
+
         if attachment_filename is None:
             attachment = rev and rev.attachment or None
         elif attachment is not None:
@@ -1099,8 +1100,10 @@ class Page(models.Model):
             att.file.save(attachment_filename, attachment)
             att.save()
             attachment = att
+
         if change_date is None:
             change_date = datetime.utcnow()
+
         self.rev = Revision(page=self, text=text, user=user,
                             change_date=change_date, note=note,
                             attachment=attachment, deleted=deleted,
@@ -1308,7 +1311,24 @@ class Revision(models.Model):
     def rendered_text(self):
         """
         The rendered version of the `text` attribute.
+
+        If the page is not in the cache yet, schedule a (semi-parallel) celery task.
+
+        Reason: Some Inyoka markup renders too slow to render synchronisly
+        inside the request and will display a timeout (HTTP 502).
+        In those cases, the celery task will render it asynchronisly and put
+        the result in the cache. As a side effect, the 502 will be displayed
+        some minutes until the rendered page is in the cache.
+        If the rendering finished inside the request already, the celery task
+        will fetch the rendered content from the cache.
+        (This is a small amount of 'wasted' work)
+        To prevent rendering in parallel, the celery task should be executed
+        after the gunicorn timeout, which is 30 seconds by default.
         """
+        in_cache, _ = self.text.is_value_in_cache()
+        if not in_cache:
+            render_one_revision.apply_async(args=[self.pk], countdown=35)
+
         return self.text.value_rendered
 
     @property
@@ -1330,9 +1350,9 @@ class Revision(models.Model):
 
         note = _('%(note)s [Revision from %(date)s restored by %(user)s]' %
             {'note': note,
-            'date': datetime_to_timezone(self.change_date).strftime(
+             'date': datetime_to_timezone(self.change_date).strftime(
                 '%d.%m.%Y %H:%M %Z'),
-            'user': self.user.username if self.user else self.remote_addr})
+             'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated else None),
                            change_date=datetime.utcnow(),
@@ -1347,6 +1367,7 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
+
         cache.delete('wiki/page/{}'.format(self.page.name.lower()))
         cache.delete('wiki/latest_revisions')
         cache.delete('wiki/latest_revisions/{}'.format(self.page.name))

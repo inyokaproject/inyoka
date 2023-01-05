@@ -45,15 +45,11 @@ class TestPageManager(TestCase):
         """
         page = Page.objects.create('test1', '[:test1:] content')
 
-        _field = page.rev.text._meta.get_field('value')
-        cache_key = _field.get_redis_key(page.rev.text.__class__, page.rev.text, _field.name)
-
-        content_cache = caches['content']
-        self.assertFalse(content_cache.has_key(cache_key))
+        self.assertFalse(page.rev.text.is_value_in_cache()[0])
 
         Page.objects.render_all_pages()
-
-        self.assertTrue(content_cache.has_key(cache_key))
+ 
+        self.assertTrue(page.rev.text.is_value_in_cache()[0])
 
     def test_render_all_pages__two_pages(self):
         """
@@ -62,15 +58,10 @@ class TestPageManager(TestCase):
         page = Page.objects.create('test1', '[:test1:] content')
         page2 = Page.objects.create('test2', 'test content')
 
-        _field = page.rev.text._meta.get_field('value')
-        cache_key = _field.get_redis_key(page.rev.text.__class__, page.rev.text, _field.name)
-        cache_key2 = _field.get_redis_key(page2.rev.text.__class__, page2.rev.text, _field.name)
-
-        content_cache = caches['content']
-        self.assertFalse(content_cache.has_key(cache_key))
-        self.assertFalse(content_cache.has_key(cache_key2))
+        self.assertFalse(page.rev.text.is_value_in_cache()[0])
+        self.assertFalse(page2.rev.text.is_value_in_cache()[0])
 
         Page.objects.render_all_pages()
 
-        self.assertTrue(content_cache.has_key(cache_key))
-        self.assertTrue(content_cache.has_key(cache_key2))
+        self.assertTrue(page.rev.text.is_value_in_cache()[0])
+        self.assertTrue(page2.rev.text.is_value_in_cache()[0])

@@ -167,10 +167,10 @@ class BaseMarkupField(models.TextField):
     def __init__(self, application=None, redis_timeout=None, *args, **kwargs):
         self.application = application
         self.redis_timeout = redis_timeout
-        super(BaseMarkupField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(BaseMarkupField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         if self.application is not None:
             kwargs['application'] = self.application
         if self.redis_timeout is not None:
@@ -186,7 +186,7 @@ class BaseMarkupField(models.TextField):
         )
 
     def contribute_to_class(self, cls, name):
-        super(BaseMarkupField, self).contribute_to_class(cls, name)
+        super().contribute_to_class(cls, name)
 
         # Register to the post_save signal, to delete the redis cache if the
         # content changes
@@ -218,8 +218,19 @@ class BaseMarkupField(models.TextField):
             # exist in redis, or if the cache is expired.
             return content_cache.get_or_set(key, create_content, self.redis_timeout)
 
-        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(self.get_render_method()))
-        setattr(cls, '{}_rendered'.format(name), field_rendered)
+        def is_in_cache(inst_self):
+            key = self.get_redis_key(cls, inst_self, name)
+            value = content_cache.get(key)
+            return (value is not None, value)
+
+        def remove_from_cache(inst_self):
+            key = self.get_redis_key(cls, inst_self, name)
+            content_cache.delete(key)
+
+        setattr(cls, f'is_{name}_in_cache', is_in_cache)
+        setattr(cls, f'remove_{name}_from_cache', remove_from_cache)
+        setattr(cls, f'get_{name}_rendered', staticmethod(self.get_render_method()))
+        setattr(cls, f'{name}_rendered', field_rendered)
 
 
 class InyokaMarkupField(BaseMarkupField):
@@ -231,10 +242,10 @@ class InyokaMarkupField(BaseMarkupField):
                  *args, **kwargs):
         self.simplify = simplify
         self.force_existing = force_existing
-        super(InyokaMarkupField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(BaseMarkupField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         if self.simplify is not None:
             kwargs['simplify'] = self.simplify
         if self.force_existing is not None:
