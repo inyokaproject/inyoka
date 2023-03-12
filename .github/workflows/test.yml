@@ -119,6 +119,11 @@ jobs:
       run: |
         sudo apt-get install redis-server
 
+    - name: Check for missing migrations
+      run: |
+        . ~/venv/bin/activate
+        python manage.py makemigrations --check --dry-run
+
     - name: Run Tests
       run: |
         . ~/venv/bin/activate
