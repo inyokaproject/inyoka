@@ -78,8 +78,8 @@ intersphinx_mapping = {
 }
 
 extlinks = {
-    'ticket': ('http://trac.inyokaproject.org/ticket/%s', 'Ticket #'),
-    'pr': ('https://github.com/inyokaproject/inyoka/pull/%s', 'PR #'),
+    'ticket': ('http://trac.inyokaproject.org/ticket/%s', 'Ticket #%s'),
+    'pr': ('https://github.com/inyokaproject/inyoka/pull/%s', 'PR #%s'),
 }
 
 # -- Options for HTML output ---------------------------------------------------
