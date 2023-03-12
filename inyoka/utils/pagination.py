@@ -42,6 +42,7 @@
     parameter `threshold` determines how many pages are to be displayed
     before/after current page and at beginning and end. Possible yields can take
     three forms:
+
         - `{ 'type': 'link', 'url': 'http://localhost/', 'page': 1 }`
         - `{ 'type': 'current', 'url': 'http://localhost/2/', 'page': 2 }`
         - `{ 'type': 'spacer' }`
