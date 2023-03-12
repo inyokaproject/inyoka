@@ -153,8 +153,8 @@ class ForumManager(models.Manager):
     def get_forums_filtered(self, user, priv='forum.view_forum', reverse=False, sort=False):
         """Return all forums the `user` has proper privileges for.
 
-        :param user: :class:`User` instance.
-        :param priv: A bit reresenting a privilege, see :mod:`inyoka.forum.acl`
+        :param user: :class:`inyoka.portal.user.User` instance.
+        :param priv: A string representing a privilege
         :param reverse: Reverse the filtering (visible/unvisible), default is
                         that only visible forums are returned.
         :param sort: Sort the output by position.

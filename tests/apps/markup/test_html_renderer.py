@@ -74,10 +74,10 @@ sed -i 's/root/arch/' $HOME/.bash_profile
         5
         </span>
         </pre></div></td><td class="code"><div><pre><span></span><span class="ch">#!/bin/bash</span>
-        cp ~/.bash_profile ~/.bash_profile.back
+        cp<span class="w"> </span>~/.bash_profile<span class="w"> </span>~/.bash_profile.back
 
         <span class="c1"># autologin for user instead of root</span>
-        sed -i <span class="s1">&39;s/root/arch/&39;</span> <span class="nv">$HOME</span>/.bash_profile
+        sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/root/arch/&#39;</span><span class="w"> </span><span class="nv">$HOME</span>/.bash_profile
         </pre></div>
         </td></tr></table></div></div>""")
 

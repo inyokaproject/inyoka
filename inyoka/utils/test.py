@@ -88,8 +88,8 @@ class InyokaClient(Client):
         :param username: The username of the :class:`~inyoka.portal.user.User`
             to login
         :param password: The password of the user to login
-        :type username: string
-        :type password: string
+        :type username: str
+        :type password: str
         :raise:
             User.DoesNotExist
                 If the user with `username` does not exist

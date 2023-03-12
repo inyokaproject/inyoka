@@ -95,8 +95,8 @@ class ArticleManager(models.Manager):
 
         :param category: Takes the slug of the category or None
         :param count: maximum retrieve this many articles. Defaults to 10
-        :type category: string or None
-        :type count: integer
+        :type category: str or None
+        :type count: int
 
         """
         key = 'ikhaya/latest_articles'

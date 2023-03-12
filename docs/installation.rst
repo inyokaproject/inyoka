@@ -166,6 +166,7 @@ To switch between the supported languages you have to add another setting.
 Currently available languages are ``en-us`` and ``de-de``.
 
 .. code-block:: console
+
     LANGUAGE_CODE= 'de-de'
 
 Creating test database
