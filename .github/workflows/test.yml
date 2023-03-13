@@ -16,7 +16,7 @@ jobs:
         database: ['postgresql', 'sqlite']
 
         include:
-          - python-version: 3.8
+          - python-version: 3.9
             database: 'postgresql'
             build_docs: true
 
