@@ -119,10 +119,16 @@ jobs:
       run: |
         sudo apt-get install redis-server
 
-    - name: Check for missing migrations
+    - name: Check for missing migrations (postgresql)
+      if: ${{ matrix.database == 'postgresql' }}
       run: |
         . ~/venv/bin/activate
-        python manage.py makemigrations --check --dry-run
+        python manage.py makemigrations --check --dry-run --settings tests.settings.${{ matrix.database }}_staticdbname
+    - name: Check for missing migrations (no postgresql)
+      if: ${{ matrix.database != 'postgresql' }}
+      run: |
+        . ~/venv/bin/activate
+        python manage.py makemigrations --check --dry-run --settings tests.settings.${{ matrix.database }}
 
     - name: Run Tests
       run: |
