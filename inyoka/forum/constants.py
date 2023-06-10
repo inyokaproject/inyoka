@@ -50,8 +50,8 @@ def get_version_choices():
     return [('', ugettext_lazy('Version'))] + get_simple_version_choices()
 
 
-def get_distro_choices( exclude:bool=False ):
-    if(exclude):
+def get_distro_choices(exclude: bool=False):
+    if exclude:
         UBUNTU_DISTROS_SELECT = UBUNTU_DISTROS.copy()
 
         for key in UBUNTU_DISTROS_SELECT_EXCLUDE:
