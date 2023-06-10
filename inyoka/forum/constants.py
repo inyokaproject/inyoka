@@ -34,6 +34,7 @@ UBUNTU_DISTROS = {
     'touch': ugettext_lazy('Ubuntu Touch'),
     'mate': ugettext_lazy('Ubuntu MATE'),
     'budgie': ugettext_lazy('Ubuntu Budgie'),
+    'unity': ugettext_lazy('Ubuntu Unity'),
 }
 
 UBUNTU_DISTROS_SELECT_EXCLUDE = (
