@@ -133,7 +133,7 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
         self.request = request
         super(NewTopicForm, self).__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_version_choices()
-        self.fields['ubuntu_distro'].choices = get_distro_choices()
+        self.fields['ubuntu_distro'].choices = get_distro_choices(True)
 
     def clean_ubuntu_version(self):
         ubuntu_version = self.cleaned_data.get('ubuntu_version', None)
