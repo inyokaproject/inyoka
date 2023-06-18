@@ -34,7 +34,12 @@ UBUNTU_DISTROS = {
     'touch': ugettext_lazy('Ubuntu Touch'),
     'mate': ugettext_lazy('Ubuntu MATE'),
     'budgie': ugettext_lazy('Ubuntu Budgie'),
+    'unity': ugettext_lazy('Ubuntu Unity'),
 }
+
+UBUNTU_DISTROS_SELECT_EXCLUDE = (
+    'gnome',
+)
 
 
 def get_simple_version_choices():
@@ -45,5 +50,13 @@ def get_version_choices():
     return [('', ugettext_lazy('Version'))] + get_simple_version_choices()
 
 
-def get_distro_choices():
+def get_distro_choices(exclude: bool=False):
+    if exclude:
+        UBUNTU_DISTROS_SELECT = UBUNTU_DISTROS.copy()
+
+        for key in UBUNTU_DISTROS_SELECT_EXCLUDE:
+            UBUNTU_DISTROS_SELECT.pop(key)
+
+        return [('', ugettext_lazy('Distribution'))] + list(UBUNTU_DISTROS_SELECT.items())
+
     return [('', ugettext_lazy('Distribution'))] + list(UBUNTU_DISTROS.items())
