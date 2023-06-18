@@ -1277,7 +1277,7 @@ def delete_post(request, post_id, action='hide'):
         request.user.has_perm('forum.moderate_forum', topic.forum) and
         not (post.author_id == request.user.id and post.check_ownpost_limit('delete'))
     )
-    can_delete = can_hide and request.user.has_perm('forum.delete_topic_forum')
+    can_delete = can_hide and request.user.has_perm('forum.delete_topic_forum', topic.forum)
 
     if action == 'delete' and not can_delete:
         return abort_access_denied(request)
