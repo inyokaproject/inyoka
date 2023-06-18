@@ -25,21 +25,26 @@ Inyoka Changelog
    -----------
 
 
-0.29.0 (2022-MM-DD)
+0.29.0 (2023-06-DD)
 =====================
 
 Deployment notes
 ----------------
 
 #. Update requirements
+#. Run ``python manage.py migrate``
 
 ✨ New features
 ---------------
+* `Async markup rendering <https://github.com/inyokaproject/inyoka/pull/1256>`_
 
 🏗 Changes
 ----------
 
+* Require python 3.9
 * Use default django classes for templates
+* `Update celery to version 5 <https://github.com/inyokaproject/inyoka/pull/1249>`_
+* `Ubuntu Distro Select: Add Ubuntu Unity, Do not allow Ubuntu GNOME for new threads <https://github.com/inyokaproject/inyoka/pull/1264/>`_
 
 🔥 Removals
 -----------
@@ -50,7 +55,7 @@ Deployment notes
 🔒 Security
 -----------
 
-* Update requirements (dependency-package ``Pillow`` includes known security fixes)
+* Update requirements (at least the dependencies ``Pillow``, ``requests``, ``sqlparse``  include known security fixes)
 
 0.28.0 (2022-09-11)
 =====================
