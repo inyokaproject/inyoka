@@ -55,7 +55,7 @@ class Command(BaseCommand):
         full_path = self._get_requirements_path(stage)
 
         program_name = 'pip-compile'
-        arguments = ['--allow-unsafe', '--generate-hashes', '--output-file', full_path]
+        arguments = ['--allow-unsafe', '--generate-hashes', '--resolver', 'backtracking', '--output-file', full_path]
 
         if upgrade_all and upgrade_packages:
             raise ValueError("Both upgrade_all and upgrade_packages are given. That's invalid")
