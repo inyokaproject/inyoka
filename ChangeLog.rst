@@ -52,6 +52,8 @@ Deployment notes
 🐛 Fixes
 --------
 
+* `To delete posts in the forum, permission per forum are used instead of one global permission. The global permisson could not be configured via the webinterface <https://github.com/inyokaproject/inyoka/pull/1267>`_
+
 🔒 Security
 -----------
 
