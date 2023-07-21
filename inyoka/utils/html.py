@@ -6,7 +6,7 @@
     This module implements various HTML/XHTML utility functions.  Some parts
     of this module require the lxml and html5lib libraries.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 

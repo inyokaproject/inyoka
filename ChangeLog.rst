@@ -25,6 +25,40 @@ Inyoka Changelog
    -----------
 
 
+0.29.0 (2023-07-21)
+=====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+#. Run ``python manage.py migrate``
+
+✨ New features
+---------------
+* `Async markup rendering <https://github.com/inyokaproject/inyoka/pull/1256>`_
+
+🏗 Changes
+----------
+
+* Require python 3.9
+* Use default django classes for templates
+* `Update celery to version 5 <https://github.com/inyokaproject/inyoka/pull/1249>`_
+* `Ubuntu Distro Select: Add Ubuntu Unity, Do not allow Ubuntu GNOME for new threads <https://github.com/inyokaproject/inyoka/pull/1264/>`_
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+* `To delete posts in the forum, permission per forum are used instead of one global permission. The global permisson could not be configured via the webinterface <https://github.com/inyokaproject/inyoka/pull/1267>`_
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``Pillow``, ``requests``, ``sqlparse``  include known security fixes)
+
 0.28.0 (2022-09-11)
 =====================
 
@@ -34,25 +68,25 @@ Deployment notes
 #. Update requirements
 
 ✨ New features
- ---------------
+---------------
 
-* `Add task to render all wikipages, so they are all in the cache for a faster (first) retrival. <https://github.com/inyokaproject/inyoka/pull/1245>_`
+* `Add task to render all wikipages, so they are all in the cache for a faster (first) retrival. <https://github.com/inyokaproject/inyoka/pull/1245>`_
 
 🔥 Removals
 -----------
 
-* `Remove Inyoka's custom SendmailEmailBackend. Instead, use the django builtin SMTP backend.  <https://github.com/inyokaproject/inyoka/pull/1243>_`
+* `Remove Inyoka's custom SendmailEmailBackend. Instead, use the django builtin SMTP backend.  <https://github.com/inyokaproject/inyoka/pull/1243>`_
 
 🐛 Fixes
 --------
 
-* `Correct title and breadcumb for sent private messages <https://github.com/inyokaproject/inyoka/pull/1241>_`
-* `CI: Build documentation also on PRs <https://github.com/inyokaproject/inyoka/pull/1244>_`
+* `Correct title and breadcumb for sent private messages <https://github.com/inyokaproject/inyoka/pull/1241>`_
+* `CI: Build documentation also on PRs <https://github.com/inyokaproject/inyoka/pull/1244>`_
 
 🔒 Security
 -----------
 
-* Update requirements (dependency-packages `lxml` and `Pillow` include known security fixes)
+* Update requirements (dependency-packages ``lxml`` and ``Pillow`` include known security fixes)
 
 0.27.0 (2022-08-05)
 =====================

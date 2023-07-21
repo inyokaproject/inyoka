@@ -60,7 +60,7 @@ def django_test_case(context):
 def browser_chrome(context):
     options = Options()
     options.headless = settings.HEADLESS
-    context.browser = Chrome(chrome_options=options)
+    context.browser = Chrome(options=options)
     context.browser.set_window_size(1024, 1900)
     yield context.browser
     context.browser.quit()

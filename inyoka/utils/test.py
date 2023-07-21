@@ -5,7 +5,7 @@
 
     Various utilities and helpers that improve our unittest experience.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import gc
@@ -88,8 +88,8 @@ class InyokaClient(Client):
         :param username: The username of the :class:`~inyoka.portal.user.User`
             to login
         :param password: The password of the user to login
-        :type username: string
-        :type password: string
+        :type username: str
+        :type password: str
         :raise:
             User.DoesNotExist
                 If the user with `username` does not exist

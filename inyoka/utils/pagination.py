@@ -42,6 +42,7 @@
     parameter `threshold` determines how many pages are to be displayed
     before/after current page and at beginning and end. Possible yields can take
     three forms:
+
         - `{ 'type': 'link', 'url': 'http://localhost/', 'page': 1 }`
         - `{ 'type': 'current', 'url': 'http://localhost/2/', 'page': 2 }`
         - `{ 'type': 'spacer' }`
@@ -49,7 +50,7 @@
     Caveat: paginations with link functions generated in a closure are
     not pickleable.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 

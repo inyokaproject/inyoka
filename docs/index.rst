@@ -16,7 +16,6 @@ Overview
     general
     installation
     getting_started
-    inyoka
     settings
     packagemanagement
 

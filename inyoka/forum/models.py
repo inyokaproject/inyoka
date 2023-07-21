@@ -5,7 +5,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from typing import List, Optional
@@ -153,8 +153,8 @@ class ForumManager(models.Manager):
     def get_forums_filtered(self, user, priv='forum.view_forum', reverse=False, sort=False):
         """Return all forums the `user` has proper privileges for.
 
-        :param user: :class:`User` instance.
-        :param priv: A bit reresenting a privilege, see :mod:`inyoka.forum.acl`
+        :param user: :class:`inyoka.portal.user.User` instance.
+        :param priv: A string representing a privilege
         :param reverse: Reverse the filtering (visible/unvisible), default is
                         that only visible forums are returned.
         :param sort: Sort the output by position.

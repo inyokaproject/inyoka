@@ -71,15 +71,15 @@ pygments_style = 'sphinx'
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'django': ('https://docs.djangoproject.com/en/1.8',
-               'http://docs.djangoproject.com/en/1.8/_objects'),
-    'python': ('http://docs.python.org/2.7', None),
-    'sphinx': ('http://sphinx.pocoo.org/', None),
+    'django': ('https://docs.djangoproject.com/en/2.2',
+               'https://docs.djangoproject.com/en/2.2/_objects'),
+    'python': ('https://docs.python.org/3', None),
+    'sphinx': ('https://www.sphinx-doc.org', None),
 }
 
 extlinks = {
-    'ticket': ('http://trac.inyokaproject.org/ticket/%s', 'Ticket #'),
-    'pr': ('https://github.com/inyokaproject/inyoka/pull/%s', 'PR #'),
+    'ticket': ('http://trac.inyokaproject.org/ticket/%s', 'Ticket #%s'),
+    'pr': ('https://github.com/inyokaproject/inyoka/pull/%s', 'PR #%s'),
 }
 
 # -- Options for HTML output ---------------------------------------------------

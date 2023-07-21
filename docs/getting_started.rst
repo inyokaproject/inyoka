@@ -112,20 +112,20 @@ To mark a string as localizable use:
 If you are editing a template inside an inyoka theme, use the following syntax
 to mark localizable strings:
 
-.. code-block:: css
+.. code-block:: jinja
 
     {% trans %}AN ENGLISH TEXT{% endtrans %}
 
 To distinguish between a singular and plural form you can use:
 
-.. code-block:: css
+.. code-block:: jinja
 
     {% trans count=VAR %}AN ENGLISH TEXT{% pluralize %}SOME ENGLISH TEXTS{% endtrans %}
 
 where VAR is the deciding variable. You can also use variables in localizable
 strings as
 
-.. code-block:: css
+.. code-block:: jinja
 
     {% trans count=VAR %}AN ENGLISH TEXT{% pluralize %}THERE ARE {{ count }}} ENGLISH TEXTS{% endtrans %}
 

@@ -5,7 +5,7 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -1277,7 +1277,7 @@ def delete_post(request, post_id, action='hide'):
         request.user.has_perm('forum.moderate_forum', topic.forum) and
         not (post.author_id == request.user.id and post.check_ownpost_limit('delete'))
     )
-    can_delete = can_hide and request.user.has_perm('forum.delete_topic_forum')
+    can_delete = can_hide and request.user.has_perm('forum.delete_topic_forum', topic.forum)
 
     if action == 'delete' and not can_delete:
         return abort_access_denied(request)

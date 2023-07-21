@@ -5,7 +5,7 @@
 
     This module contains functions for template-related things.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import json
@@ -201,24 +201,6 @@ def environment(**options):
     env.install_gettext_translations(translation, newstyle=True)
 
     return env
-
-# TODO: Reevaluate if needed for debug toolbar or so
-#    def _compile(self, source, filename):
-#        filename = 'jinja:/' + filename if filename.startswith('/') else filename
-#        code = compile(source, filename, 'exec')
-#        return code
-
-
-class DjangoLoader(Loader):
-    def get_template_sources(self, template_name, skip=None):
-        if not template_name.startswith('debug_toolbar'):
-            return []
-        return super().get_template_sources(template_name)
-
-
-class Jinja2Templates(Jinja2):
-    # TODO: Rename the templates folder in theme to jinja2, then we can drop this class and DjangoLoader
-    app_dirname = 'templates'
 
 
 #: Filters that are globally available in the template environment

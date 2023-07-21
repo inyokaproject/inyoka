@@ -5,7 +5,7 @@
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
@@ -271,7 +271,7 @@ CELERY_TASK_ALWAYS_EAGER = DEBUG
 
 # Do not hijack the root logger, avoids unicode errors
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
-CELERY_SEND_EVENTS = True
+CELERY_WORKER_SEND_TASK_EVENTS = True
 
 # Modules that hold task definitions
 CELERY_IMPORTS = [
@@ -419,16 +419,11 @@ TEMPLATES = [
         'NAME': 'django',
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': False,
-        'OPTIONS': {
-            'loaders': [
-                'inyoka.utils.templating.DjangoLoader',
-            ]
-        },
+        'APP_DIRS': True,
     },
     {
         'NAME': 'jinja',
-        'BACKEND': 'inyoka.utils.templating.Jinja2Templates',
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {

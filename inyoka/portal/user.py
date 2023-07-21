@@ -6,7 +6,7 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -560,5 +560,6 @@ def update_user_flags(sender, request, user, **kwargs):
     tz = user.settings.get('timezone')
     if tz and tz != settings.TIME_ZONE:
         request.session['django_timezone'] = tz
+
 
 user_logged_in.disconnect(update_last_login)

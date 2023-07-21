@@ -6,7 +6,7 @@
     Module that implements wiki related tasks that must be executed by
     our distributed queue implementation.
 
-    :copyright: (c) 2007-2022 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
@@ -118,3 +118,9 @@ def render_all_pages():
     """
     from inyoka.wiki.models import Page
     Page.objects.render_all_pages()
+
+
+@shared_task
+def render_one_revision(revision_id: int):
+    from inyoka.wiki.models import Revision
+    Revision.objects.get(id=revision_id).rendered_text[:100]

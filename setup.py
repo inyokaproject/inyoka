@@ -41,18 +41,18 @@ setup(
     keywords='Forum Wiki Planet News Calendar',
 
     packages=find_packages(include=('inyoka*',)),
-    python_requires='>=3.8, <4',
+    python_requires='>=3.9, <4',
     install_requires=[
         'Django<2.3',
         'pip-tools',
 
         'Babel',
         'beautifulsoup4==4.6.0',
-        'celery[redis]==4.3.0',
+        'celery[redis]',
         'certifi',
-        'defusedxml==0.6.0',
-        'django-filter<3',
-        'django-guardian<2.4',
+        'defusedxml',
+        'django-filter<22', # last version to support django 2.2
+        'django-guardian',
         'django-hosts',
         'django-redis',
         'feedparser',

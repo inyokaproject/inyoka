@@ -43,13 +43,6 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
         self.assertFalse(Subscription.objects.user_subscribed(self.user, self.topic),
                         "It shouldn't be possible to subscribe to topics which you can't view")
 
-    def test_should_contain_unsubscribe_link_in_subscription_list(self):
-        self.set_up_subscription_to_topic()
-
-        response = self.client.get('/usercp/subscriptions/', {}, False, HTTP_HOST=settings.BASE_DOMAIN_NAME)
-
-        self.assertContains(response, ('/topic/%s/unsubscribe/?next=' % self.topic.slug))
-
     def test_should_forward_to_defined_url_after_unsubcribe(self):
         self.set_up_subscription_to_topic()
         forward_url = 'http://%s/myfwd' % settings.BASE_DOMAIN_NAME
