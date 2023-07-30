@@ -86,7 +86,7 @@ jobs:
       working-directory: ./theme-ubuntuusers
       run: |
         . ~/venv/bin/activate
-        python setup.py develop
+        pip install -e .
 
     - name: Build static files
       working-directory: ./theme-ubuntuusers
