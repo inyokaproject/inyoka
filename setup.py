@@ -80,6 +80,7 @@ setup(
                 'coverage',
                 'django-codemod',
                 'django-debug-toolbar<3.3', # last version to support django 2.2
+                'django-upgrade',
                 'flake8==3.5.0',
                 'freezegun',
                 'isort',

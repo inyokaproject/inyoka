@@ -51,7 +51,7 @@ def redirect_new_page(request):
     base = request.GET.get('base', '')
     page = request.GET.get('page', '')
     options = {'action': 'edit'}
-    backref = request.META.get('HTTP_REFERER')
+    backref = request.headers.get('referer')
     if not backref or not is_safe_domain(backref):
         backref = href('wiki', settings.WIKI_MAIN_PAGE)
 
