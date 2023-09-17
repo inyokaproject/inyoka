@@ -13,7 +13,7 @@
 import re
 
 
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 from inyoka.markup.parsertools import TokenStream
 
@@ -498,7 +498,7 @@ class Lexer(object):
         open_blocks = [False]
 
         def tokenize_buffer():
-            for item in tokenize_block('\n'.join(smart_text(obj) for obj in buffer)):
+            for item in tokenize_block('\n'.join(smart_str(obj) for obj in buffer)):
                 yield item
             del buffer[:]
 

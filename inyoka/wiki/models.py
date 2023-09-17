@@ -89,8 +89,8 @@ from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
 from django.utils.html import escape
-from django.utils.translation import ugettext as _, to_locale, get_language
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext as _, to_locale, get_language
+from django.utils.translation import gettext_lazy
 from functools import partial
 from hashlib import sha1
 from werkzeug import cached_property
@@ -1168,8 +1168,8 @@ class Page(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = ugettext_lazy('Wiki page')
-        verbose_name_plural = ugettext_lazy('Wiki pages')
+        verbose_name = gettext_lazy('Wiki page')
+        verbose_name_plural = gettext_lazy('Wiki pages')
 
 
 class Attachment(models.Model):

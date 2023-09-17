@@ -23,9 +23,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -99,7 +99,7 @@ def fetch_real_target(target, width=None, height=None, force=False):
         if page_filename is None:
             return
 
-        page_filename = force_text(page_filename).encode('utf-8')
+        page_filename = force_str(page_filename).encode('utf-8')
         partial_hash = sha1(page_filename).hexdigest()
 
         dimension = '%sx%s%s' % (width or '',

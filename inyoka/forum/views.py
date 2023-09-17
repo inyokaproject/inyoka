@@ -23,7 +23,7 @@ from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.text import Truncator
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import gettext as _, gettext_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from guardian.mixins import PermissionRequiredMixin as GuardianPermissionRequiredMixin
 
@@ -762,9 +762,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     }
 
 
-@confirm_action(message=ugettext_lazy('Do you want to (un)lock the topic?'),
-                confirm=ugettext_lazy('(Un)lock'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to (un)lock the topic?'),
+                confirm=gettext_lazy('(Un)lock'),
+                cancel=gettext_lazy('Cancel'))
 @login_required
 def lock_topic(request, topic_slug, locked, page=1):
     """Lock/unlock a topic and redirect to it"""
@@ -885,21 +885,21 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher, page=1):
 
 subscribe_forum = _generate_subscriber(Forum,
     'slug', 'forum',
-    (ugettext_lazy('Notifications on new topics within this forum will be sent to you.')))
+    (gettext_lazy('Notifications on new topics within this forum will be sent to you.')))
 
 
 unsubscribe_forum = _generate_unsubscriber(Forum,
     'slug', 'forum',
-    (ugettext_lazy('No notifications on new topics within this forum will be sent to you '
+    (gettext_lazy('No notifications on new topics within this forum will be sent to you '
        'any more.')))
 
 subscribe_topic = _generate_subscriber(Topic,
     'topic_slug', 'topic',
-    (ugettext_lazy('Notifications on new posts in this topic will be sent to you.')))
+    (gettext_lazy('Notifications on new posts in this topic will be sent to you.')))
 
 unsubscribe_topic = _generate_unsubscriber(Topic,
     'topic_slug', 'topic',
-    (ugettext_lazy('No notifications on new posts in this topic will be sent to you any '
+    (gettext_lazy('No notifications on new posts in this topic will be sent to you any '
        'more')))
 
 
@@ -1243,9 +1243,9 @@ def splittopic(request, topic_slug, page=1):
     }
 
 
-@confirm_action(message=ugettext_lazy('Do you want to restore this post?'),
-                confirm=ugettext_lazy('Restore'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to restore this post?'),
+                confirm=gettext_lazy('Restore'),
+                cancel=gettext_lazy('Cancel'))
 def restore_post(request, post_id):
     """
     This function removes the hidden flag of a post to make it visible for
@@ -1261,9 +1261,9 @@ def restore_post(request, post_id):
     return HttpResponseRedirect(url_for(post))
 
 
-@confirm_action(message=ugettext_lazy('Do you really want to hide / delete this post?'),
-                confirm=ugettext_lazy('Hide / Delete'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you really want to hide / delete this post?'),
+                confirm=gettext_lazy('Hide / Delete'),
+                cancel=gettext_lazy('Cancel'))
 def delete_post(request, post_id, action='hide'):
     """
     Sets the hidden flag of a post to True if action == 'hide'. which has the
@@ -1315,9 +1315,9 @@ def delete_post(request, post_id, action='hide'):
                                      post.page))
 
 
-@confirm_action(message=ugettext_lazy('Do you really want to mark this post as ham / spam?'),
-                confirm=ugettext_lazy('Mark as ham / spam'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you really want to mark this post as ham / spam?'),
+                confirm=gettext_lazy('Mark as ham / spam'),
+                cancel=gettext_lazy('Cancel'))
 def mark_ham_spam(request, post_id, action='spam'):
     post = Post.objects.select_related('topic__forum').get(id=post_id)
     topic = post.topic
@@ -1355,9 +1355,9 @@ def revisions(request, post_id):
     }
 
 
-@confirm_action(message=ugettext_lazy('Do you want to restore the revision of the post?'),
-                confirm=ugettext_lazy('Restore'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to restore the revision of the post?'),
+                confirm=gettext_lazy('Restore'),
+                cancel=gettext_lazy('Cancel'))
 def restore_revision(request, rev_id):
     rev = PostRevision.objects.select_related('post__topic__forum').get(id=rev_id)
     if not request.user.has_perm('forum.moderate_forum', rev.post.topic.forum):
@@ -1367,9 +1367,9 @@ def restore_revision(request, rev_id):
     return HttpResponseRedirect(href('forum', 'post', rev.post_id))
 
 
-@confirm_action(message=ugettext_lazy('Do you want to restore the topic?'),
-                confirm=ugettext_lazy('Restore'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to restore the topic?'),
+                confirm=gettext_lazy('Restore'),
+                cancel=gettext_lazy('Cancel'))
 def restore_topic(request, topic_slug):
     """
     This function removes the hidden flag of a topic to make it visible for

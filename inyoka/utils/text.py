@@ -15,7 +15,7 @@ from unicodedata import normalize
 
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.translation import get_language, pgettext
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')

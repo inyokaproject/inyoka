@@ -32,8 +32,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
-from django.utils.translation import ungettext
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from django.views.decorators.http import require_POST
 from PIL import Image
 
@@ -668,7 +668,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
             if form.is_valid():
                 d = form.cleaned_data
                 Subscription.objects.delete_list(request.user.id, d['select'])
-                msg = ungettext('A subscription was deleted.',
+                msg = ngettext('A subscription was deleted.',
                                 '%(n)d subscriptions were deleted.',
                                 len(d['select']))
                 messages.success(request, msg % {'n': len(d['select'])})
@@ -678,7 +678,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
             if form.is_valid():
                 d = form.cleaned_data
                 Subscription.objects.mark_read_list(request.user.id, d['select'])
-                msg = ungettext('A subscription was marked as read.',
+                msg = ngettext('A subscription was marked as read.',
                                 '%(n)d subscriptions were marked as read.',
                                 len(d['select']))
                 messages.success(request, msg % {'n': len(d['select'])})
@@ -947,7 +947,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         if form.is_valid():
             d = form.cleaned_data
             PrivateMessageEntry.delete_list(request.user.id, d['delete'])
-            msg = ungettext('A message was deleted.',
+            msg = ngettext('A message was deleted.',
                             '%(n)d messages were deleted.',
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})

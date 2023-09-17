@@ -23,7 +23,7 @@ from urllib.parse import urlparse, urlunparse
 from django.apps import apps
 from django.conf import settings
 from django.utils.html import escape, smart_urlquote
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.translation import gettext_lazy, gettext as _
 
 from inyoka.markup.machine import NodeRenderer, NodeCompiler, NodeQueryInterface
 from inyoka.markup.utils import debug_repr
@@ -717,7 +717,7 @@ class Edited(Element):
     allowed_in_signatures = False
 
     #: Title message for the edited box
-    msg = ugettext_lazy('Edited by')
+    msg = gettext_lazy('Edited by')
 
     #: CSS Class used for styling
     css_class = 'edited'
@@ -742,7 +742,7 @@ class Moderated(Edited):
     """
     Text that describes a moderation action.
     """
-    msg = ugettext_lazy('Moderated by')
+    msg = gettext_lazy('Moderated by')
     css_class = 'moderated'
 
 

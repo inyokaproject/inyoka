@@ -12,7 +12,7 @@ from datetime import datetime, time as dt_time
 
 from django import forms
 from django.utils.timezone import get_current_timezone
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 
 import pytz
 
@@ -42,8 +42,8 @@ class SuggestArticleForm(forms.ModelForm):
 
 
 class EditCommentForm(forms.Form):
-    text = StrippedCharField(label=ugettext_lazy('Text'), widget=forms.Textarea,
-             help_text=ugettext_lazy('To refer to another comment, you '
+    text = StrippedCharField(label=gettext_lazy('Text'), widget=forms.Textarea,
+             help_text=gettext_lazy('To refer to another comment, you '
                'can write <code>@commentnumber</code>.<br />'
                'Clicking on “reply” will automatically insert this code.'))
 
@@ -64,9 +64,9 @@ class EditArticleForm(forms.ModelForm):
             for field in ('subject', 'intro', 'text'):
                 self.fields[field].widget.attrs['readonly'] = True
 
-    author = UserField(label=ugettext_lazy('Author'), required=True)
-    updated = DateTimeField(label=ugettext_lazy('Last update'),
-                help_text=ugettext_lazy('If you keep this field empty, the '
+    author = UserField(label=gettext_lazy('Author'), required=True)
+    updated = DateTimeField(label=gettext_lazy('Last update'),
+                help_text=gettext_lazy('If you keep this field empty, the '
                     'publication date will be used.'),
                 localize=True, required=False)
 
@@ -94,7 +94,7 @@ class EditArticleForm(forms.ModelForm):
             if self.instance.pk:
                 q = q.exclude(id=self.instance.pk)
             if q.exists():
-                raise forms.ValidationError(ugettext_lazy('There already '
+                raise forms.ValidationError(gettext_lazy('There already '
                             'exists an article with this slug!'))
         return slug
 
@@ -177,14 +177,14 @@ class NewEventForm(forms.ModelForm):
         startdate = cleaned_data.get('date')
         enddate = cleaned_data.get('enddate')
         if startdate and enddate and enddate < startdate:
-            self._errors['enddate'] = self.error_class([ugettext_lazy('The '
+            self._errors['enddate'] = self.error_class([gettext_lazy('The '
                 'end date must occur after the start date.')])
             del cleaned_data['enddate']
         elif startdate == enddate:
             starttime = cleaned_data.get('time')
             endtime = cleaned_data.get('endtime')
             if starttime and endtime and endtime < starttime:
-                self._errors['endtime'] = self.error_class([ugettext_lazy('The '
+                self._errors['endtime'] = self.error_class([gettext_lazy('The '
                       'end time must occur after the start time.')])
                 del cleaned_data['endtime']
 
@@ -202,7 +202,7 @@ class NewEventForm(forms.ModelForm):
 
 
 class EditEventForm(NewEventForm):
-    visible = forms.BooleanField(label=ugettext_lazy('Display event?'),
+    visible = forms.BooleanField(label=gettext_lazy('Display event?'),
                 required=False)
 
     class Meta(NewEventForm.Meta):

@@ -11,7 +11,7 @@ import re
 from urllib.parse import urlsplit
 from functools import partial
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
 from inyoka.markup.constants import HTML_COLORS

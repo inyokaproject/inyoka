@@ -22,7 +22,7 @@ from django.utils.dates import MONTHS
 from django.utils.html import escape
 from django.utils.text import Truncator
 from django.utils.timezone import get_current_timezone
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import gettext as _, gettext_lazy
 
 from inyoka.ikhaya.forms import (
     EditArticleForm,
@@ -467,36 +467,36 @@ def _change_report_status(request, report_id, action, msg):
 
 
 @permission_required('ikhaya.change_article', raise_exception=True)
-@confirm_action(message=ugettext_lazy('Do you want to hide this report?'),
-                confirm=ugettext_lazy('Hide'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to hide this report?'),
+                confirm=gettext_lazy('Hide'),
+                cancel=gettext_lazy('Cancel'))
 def report_hide(request, report_id):
     return _change_report_status(request, report_id, 'hide',
                 _('The report was hidden.'))
 
 
 @permission_required('ikhaya.change_article', raise_exception=True)
-@confirm_action(message=ugettext_lazy('Do you want to restore this report?'),
-                confirm=ugettext_lazy('Restore'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to restore this report?'),
+                confirm=gettext_lazy('Restore'),
+                cancel=gettext_lazy('Cancel'))
 def report_restore(request, report_id):
     return _change_report_status(request, report_id, 'restore',
                 _('The report was restored.'))
 
 
 @permission_required('ikhaya.change_article', raise_exception=True)
-@confirm_action(message=ugettext_lazy('Do you want to mark this report as solved?'),
-                confirm=ugettext_lazy('Mark as solved'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to mark this report as solved?'),
+                confirm=gettext_lazy('Mark as solved'),
+                cancel=gettext_lazy('Cancel'))
 def report_solve(request, report_id):
     return _change_report_status(request, report_id, 'solve',
                 _('The report was marked as solved.'))
 
 
 @permission_required('ikhaya.change_article', raise_exception=True)
-@confirm_action(message=ugettext_lazy('Do you want to mark this report as unsolved?'),
-                confirm=ugettext_lazy('Mark as unsolved'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to mark this report as unsolved?'),
+                confirm=gettext_lazy('Mark as unsolved'),
+                cancel=gettext_lazy('Cancel'))
 def report_unsolve(request, report_id):
     return _change_report_status(request, report_id, 'unsolve',
                 _('The report was marked as unsolved.'))
@@ -560,17 +560,17 @@ def _change_comment_status(request, comment_id, hide, msg):
     return HttpResponseRedirect(url_for(c.article))
 
 
-@confirm_action(message=ugettext_lazy('Do you want to hide this comment?'),
-                confirm=ugettext_lazy('Hide'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to hide this comment?'),
+                confirm=gettext_lazy('Hide'),
+                cancel=gettext_lazy('Cancel'))
 def comment_hide(request, comment_id):
     return _change_comment_status(request, comment_id, True,
                 _('The comment was hidden.'))
 
 
-@confirm_action(message=ugettext_lazy('Do you want to restore this comment?'),
-                confirm=ugettext_lazy('Restore'),
-                cancel=ugettext_lazy('Cancel'))
+@confirm_action(message=gettext_lazy('Do you want to restore this comment?'),
+                confirm=gettext_lazy('Restore'),
+                cancel=gettext_lazy('Cancel'))
 def comment_restore(request, comment_id):
     return _change_comment_status(request, comment_id, False,
                 _('The comment was restored.'))

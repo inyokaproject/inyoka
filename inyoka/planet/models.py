@@ -11,7 +11,7 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 
 from inyoka.portal.user import User
 from inyoka.utils.html import striptags
@@ -31,15 +31,15 @@ class EntryManager(models.Manager):
 
 
 class Blog(models.Model):
-    name = models.CharField(ugettext_lazy('Name of the blog'), max_length=40)
-    description = models.TextField(ugettext_lazy('Description'), blank=True, null=True)
-    blog_url = models.URLField(ugettext_lazy('URL of the blog'))
-    feed_url = models.URLField(ugettext_lazy('URL of the feed'))
-    user = models.ForeignKey(User, verbose_name=ugettext_lazy('User'),
+    name = models.CharField(gettext_lazy('Name of the blog'), max_length=40)
+    description = models.TextField(gettext_lazy('Description'), blank=True, null=True)
+    blog_url = models.URLField(gettext_lazy('URL of the blog'))
+    feed_url = models.URLField(gettext_lazy('URL of the feed'))
+    user = models.ForeignKey(User, verbose_name=gettext_lazy('User'),
                              blank=True, null=True, on_delete=models.CASCADE)
-    icon = models.ImageField(ugettext_lazy('Icon'), upload_to='planet/icons', blank=True)
+    icon = models.ImageField(gettext_lazy('Icon'), upload_to='planet/icons', blank=True)
     last_sync = models.DateTimeField(blank=True, null=True)
-    active = models.BooleanField(ugettext_lazy('Index the blog'), default=True)
+    active = models.BooleanField(gettext_lazy('Index the blog'), default=True)
 
     @property
     def icon_url(self):
@@ -113,8 +113,8 @@ class Entry(models.Model):
         super(Entry, self).delete()
 
     class Meta:
-        verbose_name = ugettext_lazy('Entry')
-        verbose_name_plural = ugettext_lazy('Entries')
+        verbose_name = gettext_lazy('Entry')
+        verbose_name_plural = gettext_lazy('Entries')
         get_latest_by = 'pub_date'
         ordering = ('-pub_date',)
         permissions = (

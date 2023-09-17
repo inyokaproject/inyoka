@@ -27,10 +27,10 @@ from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.db import models, transaction
 from django.db.models import Count, F, Max, Sum
-from django.utils.encoding import DjangoUnicodeDecodeError, force_text
+from django.utils.encoding import DjangoUnicodeDecodeError, force_str
 from django.utils.html import escape, format_html
-from django.utils.translation import ugettext as _
-from django.utils.translation import pgettext, ugettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import pgettext, gettext_lazy
 from werkzeug.utils import secure_filename
 
 from inyoka.forum.constants import (
@@ -274,42 +274,42 @@ class Forum(models.Model):
     objects = ForumManager()
 
     name = models.CharField(
-        verbose_name=ugettext_lazy('Name'),
+        verbose_name=gettext_lazy('Name'),
         max_length=100)
 
     slug = models.SlugField(
-        verbose_name=ugettext_lazy('Slug'),
+        verbose_name=gettext_lazy('Slug'),
         max_length=100,
         unique=True)
 
     description = models.CharField(
-        verbose_name=ugettext_lazy('Description'),
+        verbose_name=gettext_lazy('Description'),
         max_length=500,
         blank=True)
 
     position = models.IntegerField(
-        verbose_name=ugettext_lazy('Position'),
+        verbose_name=gettext_lazy('Position'),
         default=0,
         db_index=True)
 
     newtopic_default_text = models.TextField(
-        verbose_name=ugettext_lazy('Default text for new topics'),
+        verbose_name=gettext_lazy('Default text for new topics'),
         null=True,
         blank=True)
 
     user_count_posts = models.BooleanField(
-        verbose_name=ugettext_lazy('Count user posts'),
-        help_text=ugettext_lazy('If not set then posts of users in this forum are '
+        verbose_name=gettext_lazy('Count user posts'),
+        help_text=gettext_lazy('If not set then posts of users in this forum are '
                                 'ignored in the post counter of the user.'),
         default=True)
 
     force_version = models.BooleanField(
-        verbose_name=ugettext_lazy('Force version'),
+        verbose_name=gettext_lazy('Force version'),
         default=False)
 
     parent = models.ForeignKey(
         'self',
-        verbose_name=ugettext_lazy('Parent forum'),
+        verbose_name=gettext_lazy('Parent forum'),
         null=True,
         blank=True,
         related_name='_children',
@@ -323,20 +323,20 @@ class Forum(models.Model):
 
     support_group = models.ForeignKey(
         Group,
-        verbose_name=ugettext_lazy('Support group'),
+        verbose_name=gettext_lazy('Support group'),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='forums')
 
     welcome_title = models.CharField(
-        verbose_name=ugettext_lazy('Welcome title'),
+        verbose_name=gettext_lazy('Welcome title'),
         max_length=120,
         null=True,
         blank=True)
 
     welcome_text = InyokaMarkupField(
-        verbose_name=ugettext_lazy('Welcome text'),
+        verbose_name=gettext_lazy('Welcome text'),
         application='forum',
         null=True,
         blank=True)
@@ -344,8 +344,8 @@ class Forum(models.Model):
     welcome_read_users = models.ManyToManyField(User)
 
     class Meta:
-        verbose_name = ugettext_lazy('Forum')
-        verbose_name_plural = ugettext_lazy('Forums')
+        verbose_name = gettext_lazy('Forum')
+        verbose_name_plural = gettext_lazy('Forums')
         permissions = (
             ('delete_topic_forum', 'Can delete Topics from Forum'),
             ('add_topic_forum', 'Can add Topic in Forum'),
@@ -580,8 +580,8 @@ class Topic(models.Model):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = ugettext_lazy('Topic')
-        verbose_name_plural = ugettext_lazy('Topics')
+        verbose_name = gettext_lazy('Topic')
+        verbose_name_plural = gettext_lazy('Topics')
         permissions = (
             ('manage_reported_topic', 'Can manage reported Topics'),
         )
@@ -719,8 +719,8 @@ class Topic(models.Model):
         if self.ubuntu_distro:
             out.append(UBUNTU_DISTROS[self.ubuntu_distro])
         if self.ubuntu_version and self.ubuntu_version != 'none':
-            out.append(force_text(self.get_ubuntu_version()))
-        return ' '.join(force_text(x) for x in out)
+            out.append(force_str(self.get_ubuntu_version()))
+        return ' '.join(force_str(x) for x in out)
 
     def get_read_status(self, user):
         if user.is_anonymous:
@@ -814,8 +814,8 @@ class Post(models.Model, LockableObject):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = ugettext_lazy('Post')
-        verbose_name_plural = ugettext_lazy('Posts')
+        verbose_name = gettext_lazy('Post')
+        verbose_name_plural = gettext_lazy('Posts')
 
     def get_text(self):
         if self.is_plaintext:
@@ -1336,7 +1336,7 @@ class Attachment(models.Model):
             contents = self.contents
             if contents is not None:
                 try:
-                    highlighted = highlight_code(force_text(contents), mimetype=self.mimetype)
+                    highlighted = highlight_code(force_str(contents), mimetype=self.mimetype)
                     return format_html('<div class="code">{}</div>', highlighted)
                 except DjangoUnicodeDecodeError:
                     pass

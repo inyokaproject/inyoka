@@ -15,7 +15,7 @@ from datetime import datetime, date, time
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.utils.http import urlquote_plus
+from urllib.parse import quote_plus
 
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
@@ -77,7 +77,7 @@ def google_calendarize(event):
         dates += '%2F' + end.strftime(tfmt)
     else:
         dates += '%2F' + start.strftime(tfmt)
-    name = urlquote_plus(event.name)
+    name = quote_plus(event.name)
 
     s = ('https://www.google.com/calendar/event?action=TEMPLATE&' +
          'text=' + name + '&' +
@@ -85,10 +85,10 @@ def google_calendarize(event):
          'sprop=website:ubuntuusers.de')
 
     if event.description:
-        s += s + '&details=' + urlquote_plus(event.description)
+        s += s + '&details=' + quote_plus(event.description)
 
     if event.location:
-        s = s + '&location=' + urlquote_plus(event.simple_coordinates)
+        s = s + '&location=' + quote_plus(event.simple_coordinates)
 
     return s + '&trp=false'
 

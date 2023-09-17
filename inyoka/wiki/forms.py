@@ -11,8 +11,8 @@
 from datetime import datetime
 
 from django import forms
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 
 from inyoka.markup.base import StackExhaused, parse
 from inyoka.utils.diff3 import merge
@@ -28,10 +28,10 @@ from inyoka.wiki.utils import has_conflicts
 class NewArticleForm(SurgeProtectionMixin, forms.Form):
     """Form for creating new wiki articles."""
     name = forms.CharField(widget=forms.TextInput(), required=True,
-                           label=ugettext_lazy('The title of the article you want to '
+                           label=gettext_lazy('The title of the article you want to '
                                    'create.'))
     template = forms.ChoiceField(required=False,
-                                 label=ugettext_lazy('The template that this new article '
+                                 label=gettext_lazy('The template that this new article '
                                          'should be using.'))
 
     def __init__(self, user=None, reserved_names=[], template_choices=[],
@@ -117,7 +117,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         revision.
     """
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 50}))
-    note = forms.CharField(label=ugettext_lazy('Edit summary'),
+    note = forms.CharField(label=gettext_lazy('Edit summary'),
                            widget=forms.TextInput(attrs={'size': 50, 'spellcheck': 'true'}),
                            max_length=512, required=True,
                            help_text=storage['wiki_edit_note_rendered'])
@@ -221,16 +221,16 @@ class AddAttachmentForm(forms.Form):
     attachment = forms.FileField(required=True)
 
     filename = forms.CharField(max_length=512, required=False,
-                help_text=ugettext_lazy('Rename the file after upload'))
+                help_text=gettext_lazy('Rename the file after upload'))
 
-    override = forms.BooleanField(label=ugettext_lazy('Overwrite existing file with same name'),
+    override = forms.BooleanField(label=gettext_lazy('Overwrite existing file with same name'),
                                   required=False)
 
-    text = forms.CharField(label=ugettext_lazy('Description of attachment'),
+    text = forms.CharField(label=gettext_lazy('Description of attachment'),
                            widget=forms.Textarea,
                            required=False)
 
-    note = forms.CharField(label=ugettext_lazy('Edit summary'), max_length=512, required=False)
+    note = forms.CharField(label=gettext_lazy('Edit summary'), max_length=512, required=False)
 
 
 class EditAttachmentForm(forms.Form):
@@ -239,10 +239,10 @@ class EditAttachmentForm(forms.Form):
     description, have a look at the AddAttachmentForm.
     """
     attachment = forms.FileField(required=False)
-    text = forms.CharField(label=ugettext_lazy('Description of attachment'),
+    text = forms.CharField(label=gettext_lazy('Description of attachment'),
                            widget=forms.Textarea,
                            required=False)
-    note = forms.CharField(label=ugettext_lazy('Edit summary'),
+    note = forms.CharField(label=gettext_lazy('Edit summary'),
                            max_length=512, required=False)
 
 
@@ -253,8 +253,8 @@ class ManageDiscussionForm(forms.Form):
 
 class MvBaustelleForm(forms.Form):
     """Move page to the "Baustelle"""
-    new_name = forms.CharField(label=ugettext_lazy('New page name'), required=True)
-    user = UserField(label=ugettext_lazy('Edited by'), required=True)
-    completion_date = forms.DateField(label=ugettext_lazy('Completion date'),
+    new_name = forms.CharField(label=gettext_lazy('New page name'), required=True)
+    user = UserField(label=gettext_lazy('Edited by'), required=True)
+    completion_date = forms.DateField(label=gettext_lazy('Completion date'),
                                       required=False, widget=DateWidget,
                                       localize=True)

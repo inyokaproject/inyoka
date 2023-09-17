@@ -17,7 +17,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils import datetime_safe
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 
 from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
@@ -160,10 +160,10 @@ class EventManager(models.Manager):
 
 class Category(models.Model):
     name = models.CharField(max_length=180)
-    slug = models.CharField(ugettext_lazy('Slug'), max_length=100,
+    slug = models.CharField(gettext_lazy('Slug'), max_length=100,
             blank=True, unique=True, db_index=True)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-                             verbose_name=ugettext_lazy('Icon'), on_delete=models.SET_NULL)
+                             verbose_name=gettext_lazy('Icon'), on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
@@ -183,8 +183,8 @@ class Category(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = ugettext_lazy('Category')
-        verbose_name_plural = ugettext_lazy('Categories')
+        verbose_name = gettext_lazy('Category')
+        verbose_name_plural = gettext_lazy('Categories')
 
 
 class Article(models.Model, LockableObject):
@@ -193,26 +193,26 @@ class Article(models.Model, LockableObject):
     objects = ArticleManager(all=True)
     published = ArticleManager(public=True)
 
-    pub_date = models.DateField(ugettext_lazy('Date'), db_index=True)
-    pub_time = models.TimeField(ugettext_lazy('Time'))
-    updated = models.DateTimeField(ugettext_lazy('Last change'), blank=True,
+    pub_date = models.DateField(gettext_lazy('Date'), db_index=True)
+    pub_time = models.TimeField(gettext_lazy('Time'))
+    updated = models.DateTimeField(gettext_lazy('Last change'), blank=True,
                 null=True, db_index=True)
     author = models.ForeignKey(User, related_name='article_set',
-                               verbose_name=ugettext_lazy('Author'), on_delete=models.CASCADE)
-    subject = models.CharField(ugettext_lazy('Headline'), max_length=180)
-    category = models.ForeignKey(Category, verbose_name=ugettext_lazy('Category'),
+                               verbose_name=gettext_lazy('Author'), on_delete=models.CASCADE)
+    subject = models.CharField(gettext_lazy('Headline'), max_length=180)
+    category = models.ForeignKey(Category, verbose_name=gettext_lazy('Category'),
                                  on_delete=models.PROTECT)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-            verbose_name=ugettext_lazy('Icon'), on_delete=models.SET_NULL)
-    intro = InyokaMarkupField(verbose_name=ugettext_lazy('Introduction'), application='ikhaya')
-    text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='ikhaya')
-    public = models.BooleanField(ugettext_lazy('Public'), default=False)
-    slug = models.SlugField(ugettext_lazy('Slug'), max_length=100,
-            blank=True, db_index=True, help_text=ugettext_lazy('Unique URL-part for the article. If not given, the slug will be generated from title.'))
-    is_xhtml = models.BooleanField(ugettext_lazy('XHTML Markup'),
+            verbose_name=gettext_lazy('Icon'), on_delete=models.SET_NULL)
+    intro = InyokaMarkupField(verbose_name=gettext_lazy('Introduction'), application='ikhaya')
+    text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='ikhaya')
+    public = models.BooleanField(gettext_lazy('Public'), default=False)
+    slug = models.SlugField(gettext_lazy('Slug'), max_length=100,
+            blank=True, db_index=True, help_text=gettext_lazy('Unique URL-part for the article. If not given, the slug will be generated from title.'))
+    is_xhtml = models.BooleanField(gettext_lazy('XHTML Markup'),
                 default=False)
     comment_count = models.IntegerField(default=0)
-    comments_enabled = models.BooleanField(ugettext_lazy('Allow comments'),
+    comments_enabled = models.BooleanField(gettext_lazy('Allow comments'),
                         default=True)
 
     def get_intro(self):
@@ -333,8 +333,8 @@ class Article(models.Model, LockableObject):
         self.id = id
 
     class Meta:
-        verbose_name = ugettext_lazy('Article')
-        verbose_name_plural = ugettext_lazy('Articles')
+        verbose_name = gettext_lazy('Article')
+        verbose_name_plural = gettext_lazy('Articles')
         ordering = ['-pub_date', '-pub_time', 'author']
         unique_together = ('pub_date', 'slug')
         permissions = (
@@ -369,11 +369,11 @@ class Suggestion(models.Model):
 
     author = models.ForeignKey(User, related_name='suggestion_set', on_delete=models.CASCADE)
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
-    title = models.CharField(ugettext_lazy('Title'), max_length=100)
-    text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='ikhaya')
-    intro = InyokaMarkupField(verbose_name=ugettext_lazy('Introduction'), application='ikhaya')
+    title = models.CharField(gettext_lazy('Title'), max_length=100)
+    text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='ikhaya')
+    intro = InyokaMarkupField(verbose_name=gettext_lazy('Introduction'), application='ikhaya')
     notes = InyokaMarkupField(
-        verbose_name=ugettext_lazy('Annotations to the team'),
+        verbose_name=gettext_lazy('Annotations to the team'),
         blank=True,
         default='',
         application='ikhaya')
@@ -381,8 +381,8 @@ class Suggestion(models.Model):
                               null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = ugettext_lazy('Article suggestion')
-        verbose_name_plural = ugettext_lazy('Article suggestions')
+        verbose_name = gettext_lazy('Article suggestion')
+        verbose_name_plural = gettext_lazy('Article suggestions')
 
     def get_absolute_url(self):
         return href('ikhaya', 'suggestions', _anchor=self.id)
@@ -432,9 +432,9 @@ class Event(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=128, blank=True)
     location_town = models.CharField(max_length=56, blank=True)
-    location_lat = models.FloatField(ugettext_lazy('Degree of latitude'),
+    location_lat = models.FloatField(gettext_lazy('Degree of latitude'),
                                      blank=True, null=True)
-    location_long = models.FloatField(ugettext_lazy('Degree of longitude'),
+    location_long = models.FloatField(gettext_lazy('Degree of longitude'),
                                       blank=True, null=True)
     visible = models.BooleanField(default=False)
 
