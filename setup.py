@@ -51,7 +51,7 @@ setup(
         'celery[redis]',
         'certifi',
         'defusedxml',
-        'django-filter<22', # last version to support django 2.2
+        'django-filter',
         'django-guardian',
         'django-hosts',
         'django-redis',
@@ -79,7 +79,7 @@ setup(
                 'bump2version',
                 'coverage',
                 'django-codemod',
-                'django-debug-toolbar<3.3', # last version to support django 2.2
+                'django-debug-toolbar',
                 'django-upgrade',
                 'flake8==3.5.0',
                 'freezegun',
