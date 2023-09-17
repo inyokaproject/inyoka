@@ -48,7 +48,7 @@ urlpatterns = [
     path('usercp/deactivate/', views.usercp_deactivate),
     path('privmsg/', views.privmsg),
     path('privmsg/new/', views.privmsg_new),
-    path('privmsg/new/<path:username>/', views.privmsg_new),
+    path('privmsg/new/<str:username>/', views.privmsg_new),
     re_path(r'^privmsg/(?P<folder>[a-z]+)/$', views.privmsg),
     re_path(r'^privmsg/(?P<folder>[a-z]+)/page/$', views.privmsg),
     re_path(r'^privmsg/(?P<folder>[a-z]+)/page/(?P<page>\d+)/$', views.privmsg),
