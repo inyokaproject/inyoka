@@ -26,7 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.db import models, transaction
-from django.db.models import F, Count, Max, Sum
+from django.db.models import Count, F, Max, Sum
 from django.utils.encoding import DjangoUnicodeDecodeError, force_text
 from django.utils.html import escape, format_html
 from django.utils.translation import ugettext as _

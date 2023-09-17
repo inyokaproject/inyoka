@@ -21,7 +21,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.generic import CreateView, DetailView, UpdateView

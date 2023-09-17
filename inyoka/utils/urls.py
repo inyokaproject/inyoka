@@ -13,7 +13,7 @@
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.utils.encoding import force_str
-from django.utils.http import urlencode, urlquote, urlquote_plus, is_safe_url
+from django.utils.http import is_safe_url, urlencode, urlquote, urlquote_plus
 from django_hosts.resolvers import get_host, get_host_patterns
 
 

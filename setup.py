@@ -78,6 +78,7 @@ setup(
         'dev': ['allure-behave',
                 'bump2version',
                 'coverage',
+                'django-codemod',
                 'django-debug-toolbar<3.3', # last version to support django 2.2
                 'flake8==3.5.0',
                 'freezegun',
