@@ -18,7 +18,7 @@
     :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse, quote_plus
 
 from django.apps import apps
 from django.conf import settings
@@ -30,7 +30,7 @@ from inyoka.markup.utils import debug_repr
 from inyoka.utils.html import striptags, build_html_tag
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import slugify, get_pagetitle, normalize_pagename
-from inyoka.utils.urls import href, urlquote_plus
+from inyoka.utils.urls import href
 
 
 def error_box(title, message):
@@ -465,7 +465,7 @@ class InternalLink(Element):
             self.existing = Page.objects.exists(self.page)
         url = href('wiki', self.page)
         if self.anchor:
-            url += '#' + urlquote_plus(self.anchor)
+            url += '#' + quote_plus(self.anchor)
         yield build_html_tag('a',
             href=url,
             id=self.id,
