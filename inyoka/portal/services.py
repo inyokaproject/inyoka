@@ -34,7 +34,7 @@ dispatcher = SimpleDispatcher()
 def autocompletable(string):
     """
     Returns `True` if `string` is autocompletable, e.g. at least
-    as long than `MIN_AUTOCOMPLETE_CHARS`.
+    as long as `MIN_AUTOCOMPLETE_CHARS`.
     """
     return len(string) >= MIN_AUTOCOMPLETE_CHARS
 

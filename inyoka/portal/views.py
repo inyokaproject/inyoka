@@ -319,11 +319,11 @@ def activate(request, action='', username='', activation_key=''):
 class InyokaPasswordResetView(SuccessMessageMixin, PasswordResetView):
     """
     If a users has lost his password, it is here possible to send an email
-    with an one time link to his account-email-address. With this link he
+    with a one time link to his account-email-address. With this link he
     can set a new password at `InyokaPasswordResetConfirmView`.
 
     Customized to show an error, if the user is already logged in and
-    to show an success message.
+    to show a success message.
     """
     template_name = 'portal/lost_password.html'
     email_template_name = 'mails/new_user_password.txt'

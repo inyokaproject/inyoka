@@ -549,7 +549,7 @@ class Forum(models.Model):
 
 class Topic(models.Model):
     """A topic symbolizes a bunch of posts (at least one) that is located
-    insside a forum.  Wen creating a new topic, a new post is added to it
+    inside a forum. When creating a new topic, a new post is added to it
     automatically.
     """
     objects = TopicManager()
@@ -594,7 +594,7 @@ class Topic(models.Model):
         Topic.objects.filter(id=self.id).update(view_count=F('view_count') + 1)
 
     def move(self, new_forum):
-        """Move the topic to an other forum."""
+        """Move the topic to another forum."""
         old_forums = [parent for parent in self.forum.parents]
         old_forums.append(self.forum)
         new_forums = [parent for parent in new_forum.parents]
@@ -654,7 +654,7 @@ class Topic(models.Model):
         self.save()
 
         # We need to call the delete() method explicitly to delete attachments
-        # too. Otherwise only the database entries are deleted.
+        # too. Otherwise, only the database entries are deleted.
         for post in self.posts.all():
             post.delete()
 
@@ -1202,7 +1202,7 @@ class Attachment(models.Model):
             exists = False
 
         if not exists:
-            # create a temporary filename so we can identify the attachment
+            # create a temporary filename, so we can identify the attachment
             # on binding to the posts
             fn = md5((str(time()) + name).encode('utf-8')).hexdigest()
             attachment = Attachment(name=name, mimetype=mime, **kwargs)

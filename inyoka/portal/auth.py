@@ -20,7 +20,7 @@ class InyokaAuthBackend(BaseBackend):
     Customized authentication backend to support Inyoka specific features:
 
     * user banning
-    * workaround for case (in)sensitive user names
+    * workaround for case (in)sensitive usernames
     * login by username or email
     * anonymous permissions
     """

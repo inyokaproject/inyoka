@@ -86,7 +86,7 @@ class InyokaClient(Client):
         """Try to authenticate a user with username and password.
 
         :param username: The username of the :class:`~inyoka.portal.user.User`
-            to login
+            to log in
         :param password: The password of the user to login
         :type username: str
         :type password: str

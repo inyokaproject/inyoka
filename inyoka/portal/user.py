@@ -183,7 +183,7 @@ def send_activation_mail(user):
 
 class UserManager(BaseUserManager):
     def get_by_username_or_email(self, name):
-        """Get a user by it's username or email address"""
+        """Get a user by its username or email address"""
         try:
             user = User.objects.get(username__iexact=name)
         except User.DoesNotExist as exc:
@@ -198,10 +198,12 @@ class UserManager(BaseUserManager):
         now = datetime.utcnow()
         user = self.model(username=username, email=email.strip().lower(),
                           status=User.STATUS_INACTIVE, date_joined=now, last_login=now)
+
         if password:
             user.set_password(password)
         else:
             user.set_unusable_password()
+
         user.save()
         return user
 

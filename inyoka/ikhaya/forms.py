@@ -78,7 +78,7 @@ class EditArticleForm(forms.ModelForm):
             instance.pub_time = self.cleaned_data['pub_time']
         if self.cleaned_data.get('updated', None):
             instance.updated = self.cleaned_data['updated']
-        elif set(('pub_date', 'pub_time')) in set(self.cleaned_data.keys()):
+        elif {'pub_date', 'pub_time'} in set(self.cleaned_data.keys()):
             instance.updated = date_time_to_datetime(
                 self.cleaned_data['pub_date'],
                 self.cleaned_data['pub_time'])

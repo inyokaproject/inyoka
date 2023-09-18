@@ -536,11 +536,11 @@ class PageManager(models.Manager):
         :Parameters:
 
             name
-                This must be a *normaliezd* version of the page name.  The
+                This must be a *normalized* version of the page name.  The
                 default action dispatcher (`inyoka.wiki.views.show_page`)
                 automatically normalizes incoming page names so this is no
-                issue from the web layer.  However shell scripts, converters,
-                crons etc have to normalize this parameter themselves.
+                issue from the web layer.  However, shell scripts, converters,
+                crons etc. have to normalize this parameter themselves.
 
             text
                 Either a text object or a text that represents the text.  If
@@ -548,12 +548,12 @@ class PageManager(models.Manager):
                 a text with the same value in the database.
 
             user
-                If this paramter is `None` the inoyka system user will be the
-                author of the created revision.  Otherwise it can either be a
+                If this parameter is `None` the inyoka system user will be the
+                author of the created revision.  Otherwise, it can either be a
                 User or an AnoymousUser object from the auth contrib module.
 
             change_date
-                If this is not provided the current date is used.  Otherwise
+                If this is not provided the current date is used.  Otherwise,
                 it should be an UTC timestamp in form of a `datetime.datetime`
                 object.
 
@@ -571,7 +571,7 @@ class PageManager(models.Manager):
                 probably will support a file descriptor here.
 
             deleted
-                If this is `True` the page is created as an deleted page.
+                If this is `True` the page is created as a deleted page.
                 This operation doesn't make sense and creates suprising
                 displays in the revision log if the `note` is not changed to
                 something reasonable.
@@ -929,7 +929,7 @@ class Page(models.Model):
         most recent revision, never on the revision attached to the page. If
         there is no revision in the database yet this method fails silently.
 
-        Thus the page create method has to call this after the revision was
+        Thus, the page create method has to call this after the revision was
         saved manually.
         """
         try:

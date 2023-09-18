@@ -5,7 +5,7 @@
 
     This module provides a command to the Django ``manage.py`` file to add a
     new user to the user table with full permissions on all forums that exist
-    and will all rights to modify e.g. users or user content (e.g forum,
+    and will all rights to modify e.g. users or user content (e.g. forum,
     ikhaya, wiki, etc.)
 
     :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
