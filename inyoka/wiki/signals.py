@@ -10,7 +10,4 @@
 """
 import django.dispatch
 
-build_picture_node = django.dispatch.Signal(providing_args=[
-    'context',
-    'format'
-])
+build_picture_node = django.dispatch.Signal() # arguments: 'context', 'format'
