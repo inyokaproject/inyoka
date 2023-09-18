@@ -9,12 +9,13 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
+from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.models import Permission
 
 from inyoka.portal.user import User, UserBanned
 
 
-class InyokaAuthBackend(object):
+class InyokaAuthBackend(BaseBackend):
     """
     Customized authentication backend to support Inyoka specific features:
 
