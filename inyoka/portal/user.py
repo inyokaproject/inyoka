@@ -27,8 +27,8 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.dispatch import receiver
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 from guardian.mixins import GuardianUserMixin
 from guardian.shortcuts import get_perms
 
@@ -183,7 +183,7 @@ def send_activation_mail(user):
 
 class UserManager(BaseUserManager):
     def get_by_username_or_email(self, name):
-        """Get a user by it's username or email address"""
+        """Get a user by its username or email address"""
         try:
             user = User.objects.get(username__iexact=name)
         except User.DoesNotExist as exc:
@@ -198,10 +198,12 @@ class UserManager(BaseUserManager):
         now = datetime.utcnow()
         user = self.model(username=username, email=email.strip().lower(),
                           status=User.STATUS_INACTIVE, date_joined=now, last_login=now)
+
         if password:
             user.set_password(password)
         else:
             user.set_unusable_password()
+
         user.save()
         return user
 
@@ -260,50 +262,50 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     STATUS_BANNED = 2
     STATUS_DELETED = 3
     STATUS_CHOICES = (
-        (STATUS_INACTIVE, ugettext_lazy('not yet activated')),
-        (STATUS_ACTIVE, ugettext_lazy('active')),
-        (STATUS_BANNED, ugettext_lazy('banned')),
-        (STATUS_DELETED, ugettext_lazy('deleted himself')),
+        (STATUS_INACTIVE, gettext_lazy('not yet activated')),
+        (STATUS_ACTIVE, gettext_lazy('active')),
+        (STATUS_BANNED, gettext_lazy('banned')),
+        (STATUS_DELETED, gettext_lazy('deleted himself')),
     )
     #: Assign the `username` field
     USERNAME_FIELD = 'username'
 
     objects = UserManager()
 
-    username = models.CharField(verbose_name=ugettext_lazy('Username'),
+    username = models.CharField(verbose_name=gettext_lazy('Username'),
                                 max_length=30, unique=True, db_index=True)
-    email = models.EmailField(verbose_name=ugettext_lazy('Email address'),
+    email = models.EmailField(verbose_name=gettext_lazy('Email address'),
                               unique=True, db_index=True)
-    status = models.IntegerField(verbose_name=ugettext_lazy('Activation status'),
+    status = models.IntegerField(verbose_name=gettext_lazy('Activation status'),
                                  default=STATUS_INACTIVE,
                                  choices=STATUS_CHOICES)
-    date_joined = models.DateTimeField(verbose_name=ugettext_lazy('Member since'),
+    date_joined = models.DateTimeField(verbose_name=gettext_lazy('Member since'),
                                        default=datetime.utcnow)
 
-    banned_until = models.DateTimeField(verbose_name=ugettext_lazy('Banned until'),
+    banned_until = models.DateTimeField(verbose_name=gettext_lazy('Banned until'),
                                         null=True, blank=True,
-                                        help_text=ugettext_lazy('leave empty to ban permanent'))
+                                        help_text=gettext_lazy('leave empty to ban permanent'))
 
     # profile attributes
-    avatar = models.ImageField(ugettext_lazy('Avatar'), upload_to=upload_to_avatar,
+    avatar = models.ImageField(gettext_lazy('Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
-    jabber = models.CharField(ugettext_lazy('Jabber'), max_length=200, blank=True)
-    signature = InyokaMarkupField(verbose_name=ugettext_lazy('Signature'), blank=True)
-    location = models.CharField(ugettext_lazy('Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy('GPG fingerprint'), max_length=255, blank=True)
-    website = models.URLField(ugettext_lazy('Website'), blank=True)
-    launchpad = models.CharField(ugettext_lazy('Launchpad username'), max_length=50, blank=True)
-    settings = JSONField(ugettext_lazy('Settings'), default={})
+    jabber = models.CharField(gettext_lazy('Jabber'), max_length=200, blank=True)
+    signature = InyokaMarkupField(verbose_name=gettext_lazy('Signature'), blank=True)
+    location = models.CharField(gettext_lazy('Residence'), max_length=200, blank=True)
+    gpgkey = models.CharField(gettext_lazy('GPG fingerprint'), max_length=255, blank=True)
+    website = models.URLField(gettext_lazy('Website'), blank=True)
+    launchpad = models.CharField(gettext_lazy('Launchpad username'), max_length=50, blank=True)
+    settings = JSONField(gettext_lazy('Settings'), default={})
 
     # forum attribute
-    forum_read_status = models.BinaryField(ugettext_lazy('Read posts'), blank=True)
+    forum_read_status = models.BinaryField(gettext_lazy('Read posts'), blank=True)
 
     # member title
-    member_title = models.CharField(ugettext_lazy('Team affiliation / Member title'),
+    member_title = models.CharField(gettext_lazy('Team affiliation / Member title'),
                                     blank=True, null=True, max_length=200)
 
     # member icon
-    icon = models.FilePathField(ugettext_lazy('Group icon'),
+    icon = models.FilePathField(gettext_lazy('Group icon'),
                                 path=os.path.join(inyoka_settings.MEDIA_ROOT, 'portal/team_icons'),
                                 match='.*\.png', blank=True, null=True, recursive=True)
 

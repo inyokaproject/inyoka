@@ -14,7 +14,7 @@ from time import time
 
 from django.core.cache import cache
 from django.forms import ValidationError
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 
 from inyoka.utils.local import current_request
 from inyoka.utils.storage import storage
@@ -64,7 +64,7 @@ class SurgeProtectionMixin(object):
     """
 
     surge_protection_timeout = 15
-    surge_protection_message = ugettext_lazy(
+    surge_protection_message = gettext_lazy(
         'You cannot send data that fast in a row. '
         'Please wait a bit until you submit the form again.'
     )

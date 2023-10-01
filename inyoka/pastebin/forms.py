@@ -9,64 +9,64 @@
     :license: BSD, see LICENSE for more details.
 """
 from django import forms
-from django.utils.translation import ugettext, ugettext_lazy
+from django.utils.translation import gettext, gettext_lazy
 
 from inyoka.pastebin.models import Entry
 
 # languages for highlighting. We do not use the full list of pygments
 # lexers because that is just insane ;-)
 LANGUAGES = [
-    ('text', ugettext_lazy('Plain text')),
-    ('apache', ugettext_lazy('Apache Config (.htaccess)')),
-    ('bash', ugettext_lazy('Bash')),
-    ('bat', ugettext_lazy('Batch (.bat)')),
-    ('c', ugettext_lazy('C')),
-    ('csharp', ugettext_lazy('C#')),
-    ('cpp', ugettext_lazy('C++')),
-    ('css', ugettext_lazy('CSS')),
-    ('d', ugettext_lazy('D')),
-    ('html+django', ugettext_lazy('Django / Jinja Templates')),
-    ('rhtml', ugettext_lazy('eRuby / rhtml')),
-    ('html+genshi', ugettext_lazy('Genshi Templates')),
-    ('haskell', ugettext_lazy('Haskell')),
-    ('html', ugettext_lazy('HTML')),
-    ('irc', ugettext_lazy('IRC Logs')),
-    ('java', ugettext_lazy('Java')),
-    ('js', ugettext_lazy('JavaScript')),
-    ('jsp', ugettext_lazy('JSP')),
-    ('lua', ugettext_lazy('Lua')),
-    ('html+mako', ugettext_lazy('Mako Templates')),
-    ('minid', ugettext_lazy('MiniD')),
-    ('html+myghty', ugettext_lazy('Myghty Templates')),
-    ('ocaml', ugettext_lazy('OCaml')),
-    ('perl', ugettext_lazy('Perl')),
-    ('html+php', ugettext_lazy('PHP')),
-    ('python', ugettext_lazy('Python')),
-    ('pycon', ugettext_lazy('Python Console Sessions')),
-    ('pytb', ugettext_lazy('Python Tracebacks')),
-    ('rst', ugettext_lazy('reStructuredText')),
-    ('ruby', ugettext_lazy('Ruby')),
-    ('scheme', ugettext_lazy('Scheme')),
-    ('smarty', ugettext_lazy('Smarty')),
-    ('sourceslist', ugettext_lazy('sources.list')),
-    ('sql', ugettext_lazy('SQL')),
-    ('squidconf', ugettext_lazy('SquidConf')),
-    ('tex', ugettext_lazy('TeX / LaTeX')),
-    ('diff', ugettext_lazy('Unified Diff')),
-    ('vim', ugettext_lazy('Vim Scripts')),
-    ('xml', ugettext_lazy('XML')),
+    ('text', gettext_lazy('Plain text')),
+    ('apache', gettext_lazy('Apache Config (.htaccess)')),
+    ('bash', gettext_lazy('Bash')),
+    ('bat', gettext_lazy('Batch (.bat)')),
+    ('c', gettext_lazy('C')),
+    ('csharp', gettext_lazy('C#')),
+    ('cpp', gettext_lazy('C++')),
+    ('css', gettext_lazy('CSS')),
+    ('d', gettext_lazy('D')),
+    ('html+django', gettext_lazy('Django / Jinja Templates')),
+    ('rhtml', gettext_lazy('eRuby / rhtml')),
+    ('html+genshi', gettext_lazy('Genshi Templates')),
+    ('haskell', gettext_lazy('Haskell')),
+    ('html', gettext_lazy('HTML')),
+    ('irc', gettext_lazy('IRC Logs')),
+    ('java', gettext_lazy('Java')),
+    ('js', gettext_lazy('JavaScript')),
+    ('jsp', gettext_lazy('JSP')),
+    ('lua', gettext_lazy('Lua')),
+    ('html+mako', gettext_lazy('Mako Templates')),
+    ('minid', gettext_lazy('MiniD')),
+    ('html+myghty', gettext_lazy('Myghty Templates')),
+    ('ocaml', gettext_lazy('OCaml')),
+    ('perl', gettext_lazy('Perl')),
+    ('html+php', gettext_lazy('PHP')),
+    ('python', gettext_lazy('Python')),
+    ('pycon', gettext_lazy('Python Console Sessions')),
+    ('pytb', gettext_lazy('Python Tracebacks')),
+    ('rst', gettext_lazy('reStructuredText')),
+    ('ruby', gettext_lazy('Ruby')),
+    ('scheme', gettext_lazy('Scheme')),
+    ('smarty', gettext_lazy('Smarty')),
+    ('sourceslist', gettext_lazy('sources.list')),
+    ('sql', gettext_lazy('SQL')),
+    ('squidconf', gettext_lazy('SquidConf')),
+    ('tex', gettext_lazy('TeX / LaTeX')),
+    ('diff', gettext_lazy('Unified Diff')),
+    ('vim', gettext_lazy('Vim Scripts')),
+    ('xml', gettext_lazy('XML')),
 ]
 
 
 class AddPasteForm(forms.ModelForm):
-    title = forms.CharField(max_length=40, required=False, label=ugettext_lazy('Title'))
-    lang = forms.ChoiceField(widget=forms.Select, label=ugettext_lazy('Language'),
+    title = forms.CharField(max_length=40, required=False, label=gettext_lazy('Title'))
+    lang = forms.ChoiceField(widget=forms.Select, label=gettext_lazy('Language'),
                              choices=LANGUAGES)
 
     def save(self, user, commit=True):
         entry = super(AddPasteForm, self).save(commit=False)
         entry.author = user
-        entry.title = entry.title or ugettext('Untitled')
+        entry.title = entry.title or gettext('Untitled')
         if commit:
             entry.save()
         return entry

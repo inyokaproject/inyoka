@@ -131,6 +131,8 @@ jobs:
         python manage.py makemigrations --check --dry-run --settings tests.settings.${{ matrix.database }}
 
     - name: Run Tests
+      env:
+        PYTHONWARNINGS: 'always'
       run: |
         . ~/venv/bin/activate
         coverage run manage.py test --settings tests.settings.${{ matrix.database }}

@@ -12,7 +12,7 @@ import os
 from contextlib import closing
 
 from django.conf import settings
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from PIL import Image
 
 from inyoka.utils.urls import is_safe_domain
@@ -95,7 +95,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
 
     format = 'png'
     # force unicode because of posixpath
-    destination = force_text(destination)
+    destination = force_str(destination)
     destination = '%s.%s' % (destination.rsplit('.', 1)[0], format)
     fn = os.path.join(settings.MEDIA_ROOT, destination)
     if os.path.exists(fn):

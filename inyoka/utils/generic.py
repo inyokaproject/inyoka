@@ -15,8 +15,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin as _PermissionReq
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 from django.views.generic import base, edit, list
 
 from inyoka.utils.database import get_simplified_queryset
@@ -153,7 +153,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
-    message = ugettext_lazy('{verbose_name} “{object_name}” was deleted successfully!')
+    message = gettext_lazy('{verbose_name} “{object_name}” was deleted successfully!')
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url

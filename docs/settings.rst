@@ -18,7 +18,7 @@ Every configuration directive can be overridden by using a custom settings file
     $ export DJANGO_SETTINGS_MODULE="settings"
 
 Any settings variable that is shown in the `Django settings documentation
-<https://docs.djangoproject.com/en/2.2/ref/settings/>`_ can be used.
+<https://docs.djangoproject.com/en/3.2/ref/settings/>`_ can be used.
 
 The development, test and production configuration files should start with::
 
@@ -45,7 +45,7 @@ Generics
         }
 
     The caches that will be used by Inyoka and Django. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#caches
+    https://docs.djangoproject.com/en/3.2/ref/settings/#caches
 
 .. py:data:: DATABASES
 
@@ -59,21 +59,21 @@ Generics
         }
 
     Defines the available databases. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+    https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 .. py:data:: DEBUG
 
     Defaults to: ``False``
 
     Enable or disable debugging. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#DEBUG
+    https://docs.djangoproject.com/en/3.2/ref/settings/#DEBUG
 
 .. py:data:: DEBUG_PROPAGATE_EXCEPTIONS
 
     Defaults to: ``False``
 
     Enable or disable Django to push exceptions to a higher level. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#debug-propagate-exceptions
+    https://docs.djangoproject.com/en/3.2/ref/settings/#debug-propagate-exceptions
 
 .. py:data:: FILE_UPLOAD_HANDLERS
 
@@ -85,7 +85,7 @@ Generics
 
     We only allow uploads via memory up to 2.5mb and do not stream into
     temporary files. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#file-upload-handlers
+    https://docs.djangoproject.com/en/3.2/ref/settings/#file-upload-handlers
 
 
 Installation settings
@@ -287,7 +287,7 @@ Paths and URLs
 
     Defaults to: ``('~/inyoka/inyoka/locale',)``
 
-    See https://docs.djangoproject.com/en/2.2/ref/settings/#locale-paths
+    See https://docs.djangoproject.com/en/3.2/ref/settings/#locale-paths
 
     .. seealso:: :py:data:`BASE_PATH`
 
@@ -296,7 +296,7 @@ Paths and URLs
     Defaults to: ``'~/inyoka/inyoka/media'``
 
     Absolute path to the directory that holds media and the URL. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#media-root
+    https://docs.djangoproject.com/en/3.2/ref/settings/#media-root
 
     .. seealso:: :py:data:`BASE_PATH`
 
@@ -304,7 +304,7 @@ Paths and URLs
 
     Defaults to: ``'http://media.example.com'``
 
-    See https://docs.djangoproject.com/en/2.2/ref/settings/#media-url
+    See https://docs.djangoproject.com/en/3.2/ref/settings/#media-url
 
     .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
@@ -319,14 +319,14 @@ Paths and URLs
     Defaults to: ``'inyoka.portal.urls'``
 
     This URL conf is used for contrib stuff like the auth system. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#root-urlconf
+    https://docs.djangoproject.com/en/3.2/ref/settings/#root-urlconf
 
 .. py:data:: SESSION_COOKIE_DOMAIN
 
     Defaults to: ``'.example.com'``
 
     See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#session-cookie-domain
+    https://docs.djangoproject.com/en/3.2/ref/settings/#session-cookie-domain
 
     .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
@@ -334,7 +334,7 @@ Paths and URLs
 
     Defaults to: ``'~/inyoka/inyoka/static-collected'``
 
-    See https://docs.djangoproject.com/en/2.2/ref/settings/#static-root
+    See https://docs.djangoproject.com/en/3.2/ref/settings/#static-root
 
     .. seealso:: :py:data:`BASE_PATH`
 
@@ -342,7 +342,7 @@ Paths and URLs
 
     Defaults to: ``'http://static.example.com'``
 
-    See https://docs.djangoproject.com/en/2.2/ref/settings/#static-url
+    See https://docs.djangoproject.com/en/3.2/ref/settings/#static-url
 
     .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
@@ -354,7 +354,7 @@ Security
     Defaults to: ``None``
 
     Make this unique, and don't share it with anybody. See
-    https://docs.djangoproject.com/en/2.2/ref/settings/#secret-key
+    https://docs.djangoproject.com/en/3.2/ref/settings/#secret-key
 
 ..
     .. py:data:: INTERNAL_IPS

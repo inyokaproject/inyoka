@@ -10,6 +10,7 @@
 """
 import json
 from datetime import date
+from urllib.parse import quote
 
 from django.apps import apps
 from django.conf import settings
@@ -21,8 +22,9 @@ from django.template.loaders.app_directories import Loader
 from django.template.backends.jinja2 import Jinja2
 from django.template.backends.utils import csrf_input
 from django.utils import translation
+from django.utils.http import urlencode
 
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.functional import Promise
 from django.utils.timesince import timesince
 import jinja2
@@ -37,7 +39,7 @@ from inyoka.utils.dates import (
 from inyoka.utils.local import current_request
 from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
-from inyoka.utils.urls import href, url_for, urlencode, urlquote
+from inyoka.utils.urls import href, url_for
 
 
 def context_data(request):
@@ -164,7 +166,7 @@ def urlencode_filter(value):
     """URL encode a string or dict."""
     if isinstance(value, dict):
         return urlencode(value)
-    return urlquote(value)
+    return quote(value)
 
 
 def ischeckbox_filter(input):
@@ -178,7 +180,7 @@ class LazyJSONEncoder(json.JSONEncoder):
     """
     def default(self, obj):
         if isinstance(obj, Promise):
-            return force_text(obj)
+            return force_str(obj)
         return super(LazyJSONEncoder, self).default(obj)
 
 

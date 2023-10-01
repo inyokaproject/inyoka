@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications
@@ -22,7 +22,7 @@ def send_new_suggestion_notifications(user, suggestion):
           'suggestion_url': suggestion.get_absolute_url()}
 
     queue_notifications.delay(user, 'new_suggestion',
-        ugettext('New article suggestion “%(suggestion)s”') % {
+        gettext('New article suggestion “%(suggestion)s”') % {
             'suggestion': data.get('suggestion_title')},
         data,
         filter={'content_type_id': ctype(Suggestion).pk})
@@ -39,7 +39,7 @@ def send_comment_notifications(user, comment, article):
           'comment_url': comment.get_absolute_url()}
 
     queue_notifications.delay(user, 'new_comment',
-        ugettext('New comment on article “%(article)s”') % {
+        gettext('New comment on article “%(article)s”') % {
             'article': data.get('article_subject')},
         data,
         filter={'content_type_id': ctype(Article).pk,

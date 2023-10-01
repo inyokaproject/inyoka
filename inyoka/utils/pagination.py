@@ -56,7 +56,7 @@
 
 
 from django.http import Http404
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from inyoka.utils.urls import urlencode
 
@@ -109,7 +109,7 @@ class Pagination(object):
         # This unicode/utf-8 conversion exists because of some fancy hacker-bots
         # that try to fuzz the pagination with some extremly invalid unicode data.
         # Catching those here fixes vulerabilty of the whole application.
-        enc = lambda v: force_text(v).encode('utf-8') if isinstance(v, str) else v
+        enc = lambda v: force_str(v).encode('utf-8') if isinstance(v, str) else v
         self.params = {enc(k): enc(v) for k, v in self.request.GET.items()}
 
     def _get_base_link(self, link):

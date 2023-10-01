@@ -23,7 +23,7 @@ from django.core import validators
 from django.forms import MultipleChoiceField
 from django.forms.widgets import Input, TextInput
 from django.utils.timezone import get_current_timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.forum.models import Topic
 from inyoka.markup.base import StackExhaused, parse

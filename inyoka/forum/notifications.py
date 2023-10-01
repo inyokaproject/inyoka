@@ -11,7 +11,7 @@
 from celery import shared_task
 from django.conf import settings
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.portal.user import User
 from inyoka.utils import ctype

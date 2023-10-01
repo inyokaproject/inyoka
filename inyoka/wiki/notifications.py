@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications

@@ -43,7 +43,7 @@ setup(
     packages=find_packages(include=('inyoka*',)),
     python_requires='>=3.9, <4',
     install_requires=[
-        'Django<2.3',
+        'Django<4.0',
         'pip-tools',
 
         'Babel',
@@ -51,7 +51,7 @@ setup(
         'celery[redis]',
         'certifi',
         'defusedxml',
-        'django-filter<22', # last version to support django 2.2
+        'django-filter',
         'django-guardian',
         'django-hosts',
         'django-redis',
@@ -78,7 +78,9 @@ setup(
         'dev': ['allure-behave',
                 'bump2version',
                 'coverage',
-                'django-debug-toolbar<3.3', # last version to support django 2.2
+                'django-codemod',
+                'django-debug-toolbar',
+                'django-upgrade',
                 'flake8==3.5.0',
                 'freezegun',
                 'isort',

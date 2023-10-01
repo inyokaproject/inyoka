@@ -19,7 +19,7 @@ from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 from werkzeug import cached_property
 
 from inyoka.portal.user import User
@@ -79,10 +79,10 @@ class SubscriptionManager(ContentTypeManager):
 
 
 PRIVMSG_FOLDERS_DATA = (
-    (0, 'sent', ugettext_lazy('Sent')),
-    (1, 'inbox', ugettext_lazy('Inbox')),
-    (2, 'trash', ugettext_lazy('Trash')),
-    (3, 'archive', ugettext_lazy('Archive')))
+    (0, 'sent', gettext_lazy('Sent')),
+    (1, 'inbox', gettext_lazy('Inbox')),
+    (2, 'trash', gettext_lazy('Trash')),
+    (3, 'archive', gettext_lazy('Archive')))
 
 
 PRIVMSG_FOLDERS = {}
@@ -96,9 +96,9 @@ class PrivateMessage(models.Model):
     This model represent one of these messages.
     """
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    subject = models.CharField(ugettext_lazy('Title'), max_length=255)
-    pub_date = models.DateTimeField(ugettext_lazy('Date'))
-    text = InyokaMarkupField(verbose_name=ugettext_lazy('Text'), application='portal')
+    subject = models.CharField(gettext_lazy('Title'), max_length=255)
+    pub_date = models.DateTimeField(gettext_lazy('Date'))
+    text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='portal')
 
     class Meta:
         ordering = ('-pub_date',)
@@ -146,8 +146,8 @@ class PrivateMessageEntry(models.Model):
     """
     message = models.ForeignKey('PrivateMessage', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    read = models.BooleanField(ugettext_lazy('Read'), default=False)
-    folder = models.SmallIntegerField(ugettext_lazy('Folder'),
+    read = models.BooleanField(gettext_lazy('Read'), default=False)
+    folder = models.SmallIntegerField(gettext_lazy('Folder'),
         null=True,
         choices=[(f[0], f[1]) for f in PRIVMSG_FOLDERS_DATA])
 
@@ -220,21 +220,21 @@ class StaticPage(models.Model):
     """
     Stores static pages (imprint, license, etc.)
     """
-    key = models.SlugField(ugettext_lazy('Key'),
+    key = models.SlugField(gettext_lazy('Key'),
         max_length=25, primary_key=True,
         unique=True, db_index=True,
-        help_text=ugettext_lazy('Will be used to generate the URL. '
+        help_text=gettext_lazy('Will be used to generate the URL. '
                                 'Cannot be changed later.'))
-    title = models.CharField(ugettext_lazy('Title'), max_length=200)
+    title = models.CharField(gettext_lazy('Title'), max_length=200)
     content = InyokaMarkupField(
-        verbose_name=ugettext_lazy('Content'),
-        help_text=ugettext_lazy('Inyoka syntax required.'),
+        verbose_name=gettext_lazy('Content'),
+        help_text=gettext_lazy('Inyoka syntax required.'),
         application='portal',
     )
 
     class Meta:
-        verbose_name = ugettext_lazy('Static page')
-        verbose_name_plural = ugettext_lazy('Static pages')
+        verbose_name = gettext_lazy('Static page')
+        verbose_name_plural = gettext_lazy('Static pages')
 
     def __repr__(self):
         return '<%s:%s "%s">' % (
@@ -255,18 +255,18 @@ class StaticPage(models.Model):
 
 
 class StaticFile(models.Model):
-    identifier = models.CharField(ugettext_lazy('Identifier'),
+    identifier = models.CharField(gettext_lazy('Identifier'),
         max_length=100, unique=True, db_index=True)
-    file = models.FileField(ugettext_lazy('File'), upload_to='portal/files')
+    file = models.FileField(gettext_lazy('File'), upload_to='portal/files')
     is_ikhaya_icon = models.BooleanField(
-        ugettext_lazy('Is Ikhaya icon'),
+        gettext_lazy('Is Ikhaya icon'),
         default=False,
-        help_text=ugettext_lazy('Choose this if the file should appear '
+        help_text=gettext_lazy('Choose this if the file should appear '
                                 'as a article or category icon possibility'))
 
     class Meta:
-        verbose_name = ugettext_lazy('Static file')
-        verbose_name_plural = ugettext_lazy('Static files')
+        verbose_name = gettext_lazy('Static file')
+        verbose_name_plural = gettext_lazy('Static files')
 
     def __str__(self):
         return self.identifier
@@ -288,7 +288,7 @@ class Subscription(models.Model):
     objects = SubscriptionManager()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     notified = models.BooleanField(
-        ugettext_lazy('User was already notified'),
+        gettext_lazy('User was already notified'),
         default=False)
     ubuntu_version = models.CharField(max_length=5, null=True)
 
@@ -436,12 +436,12 @@ class Linkmap(models.Model):
     CACHE_KEY_CSS = 'portal:linkmap:css-filname'
 
     token_validator = RegexValidator(regex=r'^[a-z\-_]+[1-9]*$',
-                                     message=ugettext_lazy(u'Only lowercase letters, - and _ allowed. Numbers as postfix.'))
+                                     message=gettext_lazy(u'Only lowercase letters, - and _ allowed. Numbers as postfix.'))
 
-    token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True,
+    token = models.CharField(gettext_lazy(u'Token'), max_length=128, unique=True,
                              validators=[token_validator])
-    url = models.URLField(ugettext_lazy(u'Link'))
-    icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to='linkmap/icons', blank=True)
+    url = models.URLField(gettext_lazy(u'Link'))
+    icon = models.ImageField(gettext_lazy(u'Icon'), upload_to='linkmap/icons', blank=True)
 
     objects = LinkmapManager()
 

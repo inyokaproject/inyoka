@@ -9,28 +9,28 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include, path, re_path
 
 from . import views
 from ..utils.http import global_not_found, server_error
 
 urlpatterns = [
-    url(r'^$', views.index),
-    url(r'^(\d+)/$', views.index),
-    url(r'^hide/(?P<id>\d+)/$', views.hide_entry),
-    url(r'^suggest/$', views.suggest),
-    url(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.feed),
-    url(r'^blogs/$', views.blog_list),
-    url(r'^blogs/(?P<page>\d)/$', views.blog_list),
-    url(r'^blogs/export/(?P<export_type>[a-z]+)/$', views.export),
-    url(r'^blog/new/$', views.blog_edit),
-    url(r'^blog/(?P<blog>\d+)/edit/$', views.blog_edit),
+    path('', views.index),
+    re_path(r'^(\d+)/$', views.index),
+    path('hide/<int:id>/', views.hide_entry),
+    path('suggest/', views.suggest),
+    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.feed),
+    path('blogs/', views.blog_list),
+    re_path(r'^blogs/(?P<page>\d)/$', views.blog_list),
+    re_path(r'^blogs/export/(?P<export_type>[a-z]+)/$', views.export),
+    path('blog/new/', views.blog_edit),
+    path('blog/<int:blog>/edit/', views.blog_edit),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns.append(
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        path('__debug__/', include(debug_toolbar.urls)),
     )
 
 handler404 = global_not_found

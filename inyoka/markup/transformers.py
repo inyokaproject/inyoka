@@ -18,7 +18,7 @@
 import re
 
 from django.conf import settings
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 from django.utils.functional import cached_property
 
 from inyoka.markup import nodes
@@ -187,7 +187,7 @@ class SmileyInjector(Transformer):
         As DEFAULT_TRANSFORMERS instances this class and it's passed around,
         this property will be cached until the python process dies.
         """
-        helper = '|'.join(re.escape(smart_text(s)) for s in self.smilies)
+        helper = '|'.join(re.escape(smart_str(s)) for s in self.smilies)
         helper += '|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
         regex = (
             '(?<![\d\w])'  # don't precede smileys with alnum chars
