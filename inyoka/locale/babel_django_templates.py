@@ -91,12 +91,7 @@ def extract_django(fileobj, keywords, comment_tags, options):
     encoding = options.get('encoding', 'utf8')
     text = fileobj.read().decode(encoding)
 
-    try:
-        text_lexer = Lexer(text)
-    except TypeError:
-        # Django 1.9 changed the way we invoke Lexer; older versions
-        # require two parameters.
-        text_lexer = Lexer(text, None)
+    text_lexer = Lexer(text)
 
     for t in text_lexer.tokenize():
         lineno += t.contents.count('\n')
