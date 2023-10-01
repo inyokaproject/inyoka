@@ -1,6 +1,9 @@
 !.coveragerc
 !.tx/config
 
+build/
+*.egg-info
+
 *_settings.py
 *.py[co]
 inyoka.xapdb/
