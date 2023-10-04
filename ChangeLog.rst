@@ -39,6 +39,8 @@ Deployment notes
 🏗 Changes
 ----------
 
+* Added babel extractor for django templates
+
 🗑 Deprecations
 --------------
 
@@ -51,7 +53,7 @@ Deployment notes
 🔒 Security
 -----------
 
-* Update requirements (at least the dependencies ``certifi``, ``Pillow``  include known security fixes)
+* Update requirements (at least the dependencies ``certifi``, ``django``, ``urllib3``, ``Pillow``  include known security fixes)
 
 
 0.29.0 (2023-07-21)
