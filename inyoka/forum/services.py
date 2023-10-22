@@ -68,12 +68,15 @@ def toggle_categories(request):
 def toggle_category(request):
     if request.user.is_anonymous:
         return False
+
     try:
         category_id = int(request.GET.get('id'))
     except TypeError:
         return False
+
     hidden_categories = request.user.settings.get('hidden_forum_categories', [])
     state = request.GET.get('state')
+
     if state == 'hide':
         hidden_categories.append(category_id)
     elif state == 'show':
@@ -83,6 +86,7 @@ def toggle_category(request):
             return False
     else:
         return False
+
     request.user.settings['hidden_forum_categories'] = tuple(set(hidden_categories))
     request.user.save()
     return True
@@ -93,17 +97,17 @@ def toggle_category(request):
 @dispatcher.register()
 def subscription_action(request, action=None):
     assert action is not None and action in ('subscribe', 'unsubscribe')
-    type = request.POST['type']
+
+    subscription_type = request.POST['type']
     slug = request.POST['slug']
     cls = None
 
-    if type == 'forum':
+    if subscription_type == 'forum':
         cls = Forum
-    elif type == 'topic':
+    elif subscription_type == 'topic':
         cls = Topic
 
     obj = cls.objects.get(slug=slug)
-
     if isinstance(obj, Topic):
         forum = obj.forum
     else:
@@ -112,6 +116,7 @@ def subscription_action(request, action=None):
     if request.user.is_anonymous \
        or not request.user.has_perm('forum.view_forum', forum):
         return abort_access_denied(request)
+
     try:
         subscription = Subscription.objects.get_for_user(request.user, obj)
     except Subscription.DoesNotExist:
@@ -128,10 +133,13 @@ def subscription_action(request, action=None):
 def change_status(request, solved=None):
     if 'slug' not in request.POST:
         return
+
     topic = Topic.objects.get(slug=request.POST['slug'])
     can_read = request.user.has_perm('forum.view_forum', topic.forum)
+
     if request.user.is_anonymous or not can_read:
         return abort_access_denied(request)
+
     if solved is not None:
         topic.solved = solved
         topic.save()

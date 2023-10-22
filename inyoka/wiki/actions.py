@@ -26,7 +26,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import models, transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.markup.base import RenderContext, parse
 from inyoka.portal.models import Subscription

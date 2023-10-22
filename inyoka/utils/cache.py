@@ -18,7 +18,7 @@ from time import sleep
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models.aggregates import Count
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django_redis.cache import RedisCache as _RedisCache
 
 

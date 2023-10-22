@@ -27,7 +27,7 @@
 """
 from datetime import datetime
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
 from inyoka.markup.utils import debug_repr, filter_style, ArgumentCollector

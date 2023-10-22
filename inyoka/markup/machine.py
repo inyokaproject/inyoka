@@ -13,7 +13,7 @@
 """
 from pickle import dumps, loads, HIGHEST_PROTOCOL
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.utils import get_request_context
 

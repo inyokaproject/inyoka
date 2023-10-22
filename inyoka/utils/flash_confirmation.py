@@ -10,7 +10,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.forum.models import PostRevision
 from inyoka.utils.decorators import patch_wrapper

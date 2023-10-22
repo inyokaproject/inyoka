@@ -13,7 +13,8 @@
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.utils.encoding import force_str
-from django.utils.http import urlencode, urlquote, urlquote_plus, is_safe_url
+from urllib.parse import quote, quote_plus
+from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django_hosts.resolvers import get_host, get_host_patterns
 
 
@@ -21,7 +22,7 @@ def href(_module='portal', *parts, **query):
     """Generates an internal URL for different subdomains."""
     anchor = query.pop('_anchor', None)
     append_slash = _module not in ['static', 'media']
-    path = '/'.join(urlquote(force_str(x)) for x in parts if x is not None)
+    path = '/'.join(quote(force_str(x)) for x in parts if x is not None)
 
     if not append_slash:
         base_url = {
@@ -38,7 +39,7 @@ def href(_module='portal', *parts, **query):
         path,
         append_slash and path and not path.endswith('/') and '/' or '',
         query and '?' + urlencode(query) or '',
-        anchor and '#' + urlquote_plus(force_str(anchor)) or ''
+        anchor and '#' + quote_plus(force_str(anchor)) or ''
     )
 
 
@@ -75,6 +76,6 @@ def is_safe_domain(url):
     safe_hostnames = ['{}.{}'.format(service, settings.BASE_DOMAIN_NAME).lstrip('.') for service in services]
     # Only one successfully matching is_safe_url() must match:
     for hostname in safe_hostnames:
-        if is_safe_url(url, allowed_hosts=hostname):
+        if url_has_allowed_host_and_scheme(url, allowed_hosts=hostname):
             return True
     return False

@@ -25,6 +25,37 @@ Inyoka Changelog
    -----------
 
 
+Unreleased 0.30.0 (2023-MM-DD)
+==============================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+* Added babel extractor for django templates
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``certifi``, ``django``, ``urllib3``, ``Pillow``  include known security fixes)
+
+
 0.29.0 (2023-07-21)
 =====================
 

@@ -10,8 +10,8 @@
 """
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 
 from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Forum
@@ -237,7 +237,7 @@ class AddAttachmentForm(forms.Form):
     attachment = forms.FileField()
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
-    comment = forms.CharField(label=ugettext_lazy('Description'), required=False,
+    comment = forms.CharField(label=gettext_lazy('Description'), required=False,
                   widget=forms.TextInput(attrs={'size': '60'}))
 
     use_required_attribute = False
@@ -259,7 +259,7 @@ class ReportTopicForm(forms.Form):
     It's only field is a text field where the user can write why he thinks
     that the moderators should have a look at this topic.
     """
-    text = forms.CharField(label=ugettext_lazy('Reason'),
+    text = forms.CharField(label=gettext_lazy('Reason'),
                            widget=forms.Textarea(attrs={'spellcheck': 'true'}))
 
 
@@ -290,19 +290,19 @@ class EditForumForm(forms.ModelForm):
     def clean_welcome_title(self):
         data = self.cleaned_data
         if data.get('welcome_text') and not data.get('welcome_title'):
-            raise forms.ValidationError(ugettext_lazy('You must enter a title '
+            raise forms.ValidationError(gettext_lazy('You must enter a title '
                 'in order to set the welcome message'))
         return data['welcome_title']
 
     def clean_welcome_msg_text(self):
         data = self.cleaned_data
         if data.get('welcome_title') and not data.get('welcome_text'):
-            raise forms.ValidationError(ugettext_lazy('You must enter a text '
+            raise forms.ValidationError(gettext_lazy('You must enter a text '
                 'in order to set the welcome message'))
         return data['welcome_text']
 
     def clean_slug(self):
         data = slugify(self.cleaned_data['slug'])
         if data == 'new':
-            raise forms.ValidationError(ugettext_lazy('“new” is not a valid forum slug'))
+            raise forms.ValidationError(gettext_lazy('“new” is not a valid forum slug'))
         return data

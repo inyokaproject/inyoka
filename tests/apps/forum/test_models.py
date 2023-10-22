@@ -154,7 +154,7 @@ class TestPostModel(ForumTestCase):
     def test_plaintext_get_text(self):
         post = Post(text="'''test'''", is_plaintext=True)
 
-        self.assertEqual(post.get_text(), "&#39;&#39;&#39;test&#39;&#39;&#39;")
+        self.assertEqual(post.get_text(), "&#x27;&#x27;&#x27;test&#x27;&#x27;&#x27;")
 
 
 class TestPostRevisionModel(TestCase):

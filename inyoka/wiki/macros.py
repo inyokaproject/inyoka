@@ -12,7 +12,7 @@ import itertools
 import operator
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.markup import macros, nodes
 from inyoka.markup.parsertools import MultiMap, flatten_iterator

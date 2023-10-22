@@ -86,7 +86,7 @@ jobs:
       working-directory: ./theme-ubuntuusers
       run: |
         . ~/venv/bin/activate
-        python setup.py develop
+        pip install -e .
 
     - name: Build static files
       working-directory: ./theme-ubuntuusers
@@ -131,6 +131,8 @@ jobs:
         python manage.py makemigrations --check --dry-run --settings tests.settings.${{ matrix.database }}
 
     - name: Run Tests
+      env:
+        PYTHONWARNINGS: 'always'
       run: |
         . ~/venv/bin/activate
         coverage run manage.py test --settings tests.settings.${{ matrix.database }}

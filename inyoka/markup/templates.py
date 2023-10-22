@@ -30,8 +30,8 @@ import random
 import operator
 from functools import total_ordering, partial
 
-from django.utils.encoding import smart_text
-from django.utils.translation import ugettext as _
+from django.utils.encoding import smart_str
+from django.utils.translation import gettext as _
 
 from inyoka.markup.base import escape, unescape_string
 from inyoka.markup.parsertools import TokenStream
@@ -110,7 +110,7 @@ class Lexer(object):
         return TokenStream.from_tuple_iter(self._tokenize(code))
 
     def _tokenize(self, code):
-        code = '\n'.join(smart_text(obj) for obj in code.splitlines())
+        code = '\n'.join(smart_str(obj) for obj in code.splitlines())
         pos = 0
         end = len(code)
         stack = ['root']

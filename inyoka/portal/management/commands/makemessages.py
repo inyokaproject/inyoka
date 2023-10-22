@@ -28,8 +28,8 @@ class Command(BaseCommand):
         babel_cfg_path = path.abspath('extra/babel.cfg')
         args_extract = [
             'pybabel', 'extract', '-F', babel_cfg_path,
-            '-k', '_', '-k', 'gettext', '-k', 'pgettext:1c,2', '-k',
-            'ugettext', '-k', 'ugettext_lazy', '-k', 'ungettext_lazy',
+            '-k', '_', '-k', 'gettext', '-k', 'pgettext:1c,2',
+            '-k', 'gettext_lazy', '-k', 'ngettext_lazy',
             '--no-wrap', '--no-location', '--sort-output',
             '--copyright-holder=Inyoka Team (see AUTHORS)',
             '--project=Inyoka Project', '--version=' + INYOKA_VERSION
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 cwd = path.normpath(path.join(base_path, '..'))
                 basename = path.basename(base_path)
                 locale_dir = path.join(basename, 'locale')
-                template_dir = path.join(basename, 'templates')
+                template_dir = path.join(basename, 'jinja2')
                 args = args_extract + [
                     '-o', path.join(locale_dir, 'django.pot'),
                     template_dir,

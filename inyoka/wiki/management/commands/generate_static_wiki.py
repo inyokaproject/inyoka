@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.translation import activate
 from werkzeug.urls import url_unquote
 
@@ -172,7 +172,7 @@ class Command(BaseCommand):
         rel_path = sub('\?v=v[\d\.]*', '', rel_path)
         if rel_path:
             abs_path = path.join(base, rel_path)
-            hash_code = sha1(force_text(rel_path).encode('utf-8')).hexdigest()
+            hash_code = sha1(force_str(rel_path).encode('utf-8')).hexdigest()
             if hash_code not in DONE_SRCS:
                 ext = path.splitext(rel_path)[1]
                 fname = '%s%s' % (hash_code, ext)

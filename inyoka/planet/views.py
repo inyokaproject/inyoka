@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Max
 from django.utils.html import escape, smart_urlquote
 from django.utils.text import Truncator
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
 from inyoka.planet.models import Blog, Entry
