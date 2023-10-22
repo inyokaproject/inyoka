@@ -25,30 +25,19 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 0.30.0 (2023-MM-DD)
-==============================
+0.30.0 (2023-10-22)
+===================
 
 Deployment notes
 ----------------
 
 #. Update requirements
-
-✨ New features
----------------
+#. Execute database migration
 
 🏗 Changes
 ----------
 
 * Added babel extractor for django templates
-
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
-
-🐛 Fixes
---------
 
 🔒 Security
 -----------
