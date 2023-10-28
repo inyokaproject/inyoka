@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.portal.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,7 +38,7 @@ class TestViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestViews, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.admin.is_superuser = True
@@ -175,7 +174,7 @@ class TestAuthViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestAuthViews, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
 
     def test_valid_login(self):
@@ -501,7 +500,7 @@ class TestRegister(TestCase):
     username = 'Emma29'
 
     def setUp(self):
-        super(TestRegister, self).setUp()
+        super().setUp()
         self.url = '/register/'
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
@@ -552,7 +551,7 @@ class TestPrivMsgViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestPrivMsgViews, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME

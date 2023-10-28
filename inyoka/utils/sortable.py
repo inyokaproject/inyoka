@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.sortable
     ~~~~~~~~~~~~~~~~~~~~~
@@ -69,7 +68,7 @@
 from django.utils.html import escape
 
 
-class Sortable(object):
+class Sortable:
 
     def __init__(self, objects, args, default, columns=None):
         self.objects = objects

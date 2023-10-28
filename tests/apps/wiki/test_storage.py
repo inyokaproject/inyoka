@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from os.path import dirname
 
 from django.conf import settings
@@ -18,7 +17,7 @@ class StorageTest(TestCase):
     storage_type = ''
 
     def setUp(self):
-        super(StorageTest, self).setUp()
+        super().setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
 
@@ -37,7 +36,7 @@ class StorageTest(TestCase):
 class TestACLStorage(StorageTest):
 
     def setUp(self):
-        super(TestACLStorage, self).setUp()
+        super().setUp()
         User.objects.register_user('hacker', 'hacker', 'hacker', False)
 
     def test_single_valid(self):

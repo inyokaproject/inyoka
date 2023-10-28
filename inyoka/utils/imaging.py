@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.imaging
     ~~~~~~~~~~~~~~~~~~~~
@@ -112,7 +111,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
             real_filename = os.path.join(settings.MEDIA_ROOT, destination)
             os.makedirs(os.path.dirname(real_filename), exist_ok=True)
             img.save(real_filename, quality=100)
-    except IOError:
+    except OSError:
         # the image could not be identified
         return
 

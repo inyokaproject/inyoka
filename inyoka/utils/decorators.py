@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.decorators
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +17,7 @@ def patch_wrapper(decorator, base):
     return decorator
 
 
-class deferred(object):
+class deferred:
     """
     Deferred properties.  Calculated once and then it replaces the
     property object.

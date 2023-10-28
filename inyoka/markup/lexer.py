@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup.lexer
     ~~~~~~~~~~~~~~~~~~~
@@ -67,7 +66,7 @@ class include(str):
     __slots__ = ()
 
 
-class rule(object):
+class rule:
     """
     This represents a parsing rule.
     """
@@ -361,8 +360,7 @@ _block_end_re = re.compile(r'(?<!\\)\}\}\}')
 def iter_rules(x):
     for rule in rules[x]:
         if rule.__class__ is include:
-            for item in iter_rules(rule):
-                yield item
+            yield from iter_rules(rule)
         else:
             yield rule
 
@@ -417,8 +415,7 @@ def tokenize_block(string, _escape_hint=None):
 
                 # now process the data
                 if callable(rule.token):
-                    for item in rule.token(m):
-                        yield item
+                    yield from rule.token(m)
                 elif rule.token is not None:
                     yield rule.token, m.group()
 
@@ -487,7 +484,7 @@ def escape(text):
     return text
 
 
-class Lexer(object):
+class Lexer:
 
     def tokenize(self, string):
         """
@@ -498,8 +495,7 @@ class Lexer(object):
         open_blocks = [False]
 
         def tokenize_buffer():
-            for item in tokenize_block('\n'.join(smart_str(obj) for obj in buffer)):
-                yield item
+            yield from tokenize_block('\n'.join(smart_str(obj) for obj in buffer))
             del buffer[:]
 
         def changes_block_state(line, reverse):
@@ -529,15 +525,13 @@ class Lexer(object):
                         level = len(m.group(1))
                         line = line[m.end():]
                     if level > stack[-1]:
-                        for item in tokenize_buffer():
-                            yield item
+                        yield from tokenize_buffer()
                         for new_level in range(stack[-1] + 1, level + 1):
                             stack.append(new_level)
                             open_blocks.append(False)
                             yield 'quote_begin', None
                     elif level < stack[-1]:
-                        for item in tokenize_buffer():
-                            yield item
+                        yield from tokenize_buffer()
                         for x in range(stack[-1] - level):
                             stack.pop()
                             open_blocks.pop()
@@ -550,8 +544,7 @@ class Lexer(object):
                     open_blocks[-1] = False
                 buffer.append(line)
 
-            for item in tokenize_buffer():
-                yield item
+            yield from tokenize_buffer()
             while stack:
                 if stack.pop():
                     yield 'quote_end', None

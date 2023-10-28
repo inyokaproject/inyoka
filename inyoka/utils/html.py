@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.html
     ~~~~~~~~~~~~~~~~~
@@ -142,7 +141,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     return force_str(b''.join(rv))
 
 
-class CleanupFilter(object):
+class CleanupFilter:
     """
     A simple filter that replaces XHTML deprecated elements with others.
     """
@@ -177,8 +176,7 @@ class CleanupFilter(object):
                         if key == 'href':
                             link['data'][idx] = [key, '#' + id_map[target_id]]
                             break
-        for item in result:
-            yield item
+        yield from result
 
     def walk(self, id_map, deferred_links):
         tracked_ids = set()

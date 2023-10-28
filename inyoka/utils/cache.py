@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.cache
     ~~~~~~~~~~~~~~~~~~
@@ -22,7 +21,7 @@ from django.utils.translation import gettext as _
 from django_redis.cache import RedisCache as _RedisCache
 
 
-class QueryCounter(object):
+class QueryCounter:
     """
     Calls .count() for a query and saves this value into redis.
     """

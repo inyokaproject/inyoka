@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.generic
     ~~~~~~~~~~~~~~~~~~~~
@@ -48,13 +47,13 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
                                    context=context)
 
 
-class EditMixin(object):
+class EditMixin:
     """Provides a flash message and success url"""
     urlgroup_name = ''
 
     def form_valid(self, form):
         model = self.model or self.queryset.query.model
-        response = super(EditMixin, self).form_valid(form)
+        response = super().form_valid(form)
         format_args = {'verbose_name': model._meta.verbose_name,
                        'object_name': escape(str(self.object))}
         if self.create:
@@ -72,7 +71,7 @@ class EditMixin(object):
         return self.urlgroup_name or self.context_object_name
 
 
-class FilterMixin(object):
+class FilterMixin:
     filtersets = []
 
     def render_to_response(self, context, **kwargs):
@@ -82,7 +81,7 @@ class FilterMixin(object):
         return TemplateResponseMixin.render_to_response(self, context, **kwargs)
 
     def get_queryset(self):
-        qs = super(FilterMixin, self).get_queryset()
+        qs = super().get_queryset()
         for f in self.filtersets:
             instance = f(self.request.GET or None, queryset=qs)
             qs = instance.qs
@@ -99,7 +98,7 @@ class PermissionRequiredMixin(_PermissionRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if self.login_required and not request.user.is_authenticated:
             return self.handle_no_authentication()
-        return super(PermissionRequiredMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class CreateView(PermissionRequiredMixin, TemplateResponseMixin, EditMixin,
@@ -157,7 +156,7 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url
-        return super(BaseDeleteView, self).get_success_url()
+        return super().get_success_url()
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -173,7 +172,7 @@ class BaseDeleteView(edit.BaseDeleteView):
         if 'cancel' in request.POST:
             messages.info(request, _('Canceled.'))
         else:
-            super(BaseDeleteView, self).post(request, *args, **kwargs)
+            super().post(request, *args, **kwargs)
             format_args = {
                 'verbose_name': self.model._meta.verbose_name,
                 'object_name': escape(str(self.object)),

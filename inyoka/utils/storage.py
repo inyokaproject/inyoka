@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.storage
     ~~~~~~~~~~~~~~~~~~~~
@@ -13,7 +12,7 @@ from django.db import transaction
 from django.utils.functional import lazy
 
 
-class CachedStorage(object):
+class CachedStorage:
     """
     This is a dict like interface for the `Storage` model from the portal.
     It's used to store cached values also in the database.

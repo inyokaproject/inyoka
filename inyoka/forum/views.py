@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.forum.views
     ~~~~~~~~~~~~~~~~~~
@@ -1015,7 +1014,7 @@ def reportlist(request):
 
 def reported_topics_subscription(request, mode):
     subscribers = storage['reported_topics_subscribers'] or ''
-    users = set(int(i) for i in subscribers.split(',') if i)
+    users = {int(i) for i in subscribers.split(',') if i}
 
     if mode == 'subscribe':
         if not request.user.has_perm('forum.manage_reported_topic'):
@@ -1761,7 +1760,7 @@ class WelcomeMessageView(GuardianPermissionRequiredMixin, DetailView):
         self.object = self.get_object()
         if not self.object.welcome_title:
             raise Http404()
-        return super(WelcomeMessageView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         """
@@ -1813,7 +1812,7 @@ class ForumEditMixin(PermissionRequiredMixin):
     def form_valid(self, form):
         if self.object and ('welcome_title' in form.changed_data or 'welcome_text' in form.changed_data):
             self.object.clear_welcome()
-        return super(ForumEditMixin, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class ForumCreateView(ForumEditMixin, CreateView):

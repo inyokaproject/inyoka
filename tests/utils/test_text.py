@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_utils
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -70,7 +69,7 @@ class TestJoinPageName(TestCase):
         self.assertEqual(join_pagename("Bar", None), "Bar")
 
     def test_join_pagename_with_objects(self):
-        class PageDummy(object):
+        class PageDummy:
             name = "Dummy"
 
         self.assertEqual(join_pagename(PageDummy(), PageDummy()), "Dummy/Dummy")

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.ikhaya.models
     ~~~~~~~~~~~~~~~~~~~~
@@ -48,7 +47,7 @@ class ArticleManager(models.Manager):
         self._all = all
 
     def get_queryset(self):
-        q = super(ArticleManager, self).get_queryset()
+        q = super().get_queryset()
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
@@ -178,7 +177,7 @@ class Category(models.Model):
         # only set the slug on first save.
         if not self.pk:
             self.slug = find_next_increment(Category, 'slug', slugify(self.name))
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         cache.delete('ikhaya/categories')
 
     class Meta:
@@ -313,7 +312,7 @@ class Article(models.Model, LockableObject):
         else:
             self.slug = slugify(self.slug)
 
-        super(Article, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # now that we have the article id we can put it into the slug
         if suffix_id:
@@ -329,7 +328,7 @@ class Article(models.Model, LockableObject):
         Subscriptions are removed by a Django signal `pre_delete`
         """
         id = self.id
-        super(Article, self).delete()
+        super().delete()
         self.id = id
 
     class Meta:
@@ -412,7 +411,7 @@ class Comment(models.Model):
             self.article = Article.objects.get(id=self.article.id)
             self.article.comment_count = self.article.comment_count + 1
             self.article.save()
-        super(Comment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if self.id:
             cache.delete('ikhaya/comment/{}'.format(self.id))
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.testing
     ~~~~~~~~~~~~~~
@@ -75,7 +74,7 @@ class InyokaClient(Client):
         default. To change the user, call :meth:`InyokaClient.login(user)`.
 
         """
-        super(InyokaClient, self).__init__(enforce_csrf_checks, **defaults)
+        super().__init__(enforce_csrf_checks, **defaults)
         if isinstance(host, str):
             self.defaults['HTTP_HOST'] = host
         else:
@@ -132,7 +131,7 @@ class InyokaClient(Client):
             return False
 
 
-class AntiSpamTestCaseMixin(object):
+class AntiSpamTestCaseMixin:
 
     def make_valid_key(self):
         responses.add(
@@ -167,7 +166,7 @@ class TestCase(_TestCase):
     """
 
     def _post_teardown(self):
-        super(TestCase, self)._post_teardown()
+        super()._post_teardown()
         content_cache = caches['content']
         content_cache.delete_pattern("*")
         default_cache = caches['default']

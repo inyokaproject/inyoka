@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.captcha
     ~~~~~~~~~~~~~~~~~~~~
@@ -59,7 +58,7 @@ def random_color(saturation=0.5, lumination=None):
     )
 
 
-class Captcha(object):
+class Captcha:
     """
     Represents a captcha.
     """
@@ -92,7 +91,7 @@ class Captcha(object):
         return response
 
 
-class Layer(object):
+class Layer:
     """
     Baseclass for a captcha layer.
     """

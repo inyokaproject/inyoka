@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.forms
     ~~~~~~~~~~~~~~~~~~
@@ -102,7 +101,7 @@ class MultiField(forms.Field):
     widget = forms.SelectMultiple
 
     def __init__(self, fields=(), *args, **kwargs):
-        super(MultiField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields = fields
 
     def clean(self, value):
@@ -183,11 +182,11 @@ class DateTimeField(forms.DateTimeField):
             return ''
         if isinstance(data, str):
             return data
-        datetime = super(DateTimeField, self).prepare_value(data)
+        datetime = super().prepare_value(data)
         return datetime_to_timezone(datetime).replace(tzinfo=None)
 
     def clean(self, value):
-        datetime = super(DateTimeField, self).clean(value)
+        datetime = super().clean(value)
         if not datetime:
             return
         datetime = (
@@ -246,7 +245,7 @@ class HiddenCaptchaField(forms.Field):
 
     def __init__(self, *args, **kwargs):
         kwargs['required'] = False
-        super(HiddenCaptchaField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self, value):
         if not value:
@@ -274,7 +273,7 @@ class ImageCaptchaField(forms.Field):
         forms.Field.__init__(self, *args, **kwargs)
 
     def clean(self, value):
-        value = super(ImageCaptchaField, self).clean(value)
+        value = super().clean(value)
         solution = current_request.session.get('captcha_solution')
         if value:
             h = md5(settings.SECRET_KEY.encode())
@@ -289,7 +288,7 @@ class CaptchaWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         # The HiddenInput is a honey-pot
         widgets = ImageCaptchaWidget, forms.HiddenInput
-        super(CaptchaWidget, self).__init__(widgets, attrs)
+        super().__init__(widgets, attrs)
 
     def decompress(self, value):
         return [None, None]
@@ -302,7 +301,7 @@ class CaptchaField(forms.MultiValueField):
         kwargs['required'] = True
         self.only_anonymous = kwargs.pop('only_anonymous', False)
         fields = (ImageCaptchaField(), HiddenCaptchaField())
-        super(CaptchaField, self).__init__(fields, *args, **kwargs)
+        super().__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
         pass  # CaptchaField doesn't have a useful value to return.
@@ -311,14 +310,14 @@ class CaptchaField(forms.MultiValueField):
         if current_request.user.is_authenticated and self.only_anonymous:
             return [None, None]
         value[1] = False  # Prevent being catched by validators.EMPTY_VALUES
-        return super(CaptchaField, self).clean(value)
+        return super().clean(value)
 
 
 class TopicField(forms.CharField):
     label = _('URL of the topic')
 
     def clean(self, value):
-        value = super(TopicField, self).clean(value)
+        value = super().clean(value)
 
         if not value:
             return None

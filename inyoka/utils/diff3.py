@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.diff3
     ~~~~~~~~~~~~~~~~~~
@@ -94,8 +93,7 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
             # other is unchanged
             if match(old, other, old_lineno, other_lineno,
                      new_changed_lines) == new_changed_lines:
-                for item in new[new_lineno:new_match[1]]:
-                    yield item
+                yield from new[new_lineno:new_match[1]]
                 old_lineno = new_match[0]
                 new_lineno = new_match[1]
                 other_lineno += new_changed_lines
@@ -107,11 +105,9 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
                 old_m, other_m, new_m = tripple_match(old, other, new,
                                                       other_match, new_match)
                 yield left_marker
-                for item in other[other_lineno:other_m]:
-                    yield item
+                yield from other[other_lineno:other_m]
                 yield middle_marker
-                for item in new[new_lineno:new_m]:
-                    yield item
+                yield from new[new_lineno:new_m]
                 yield right_marker
                 old_lineno = old_m
                 other_lineno = other_m
@@ -124,8 +120,7 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
             # new is unchanged
             if match(old, new, old_lineno, new_lineno,
                      other_changed_lines) == other_changed_lines:
-                for item in other[other_lineno:other_match[1]]:
-                    yield item
+                yield from other[other_lineno:other_match[1]]
                 old_lineno = other_match[0]
                 other_lineno = other_match[1]
                 new_lineno += other_changed_lines
@@ -138,11 +133,9 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
                 old_m, other_m, new_m = tripple_match(old, other, new,
                                                       other_match, new_match)
                 yield left_marker
-                for item in other[other_lineno:other_m]:
-                    yield item
+                yield from other[other_lineno:other_m]
                 yield middle_marker
-                for item in new[new_lineno:new_m]:
-                    yield item
+                yield from new[new_lineno:new_m]
                 yield right_marker
                 old_lineno = old_m
                 other_lineno = other_m
@@ -156,13 +149,11 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
 
     # new added lines
     if old_lineno == old_len and other_lineno == other_len:
-        for item in new[new_lineno:]:
-            yield item
+        yield from new[new_lineno:]
 
     # other added lines
     elif old_lineno == old_len and new_lineno == new_len:
-        for item in other[other_lineno:]:
-            yield item
+        yield from other[other_lineno:]
 
     # conflict
     elif not (
@@ -175,17 +166,14 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
          match(old, new, old_lineno, new_lineno, old_len - old_lineno)
          == old_len - old_lineno)):
         if new == other:
-            for item in new[new_lineno:]:
-                yield item
+            yield from new[new_lineno:]
         else:
             if not allow_conflicts:
                 raise DiffConflict(old_lineno, other_lineno, new_lineno)
             yield left_marker
-            for item in other[other_lineno:]:
-                yield item
+            yield from other[other_lineno:]
             yield middle_marker
-            for item in new[new_lineno:]:
-                yield item
+            yield from new[new_lineno:]
             yield right_marker
 
 
@@ -351,7 +339,7 @@ def process_line(line, start, end):
         line['line'][last:])
 
 
-class DiffRenderer(object):
+class DiffRenderer:
     """
     Give it a unified diff and it returns a list of the files that were
     mentioned in the diff together with a dict of meta information that
@@ -422,7 +410,7 @@ class DiffRenderer(object):
                     chunks.append(lines)
 
                     old_line, old_end, new_line, new_end = \
-                        [int(x or 1) for x in match.groups()]
+                        (int(x or 1) for x in match.groups())
                     old_line -= 1
                     new_line -= 1
                     old_end += old_line

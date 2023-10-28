@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.wiki.test_forms
     ~~~~~~~~~~~~~~~~~~~~~
@@ -24,7 +23,7 @@ from inyoka.wiki.models import Page
 class TestNewArticleForm(TestCase):
 
     def setUp(self):
-        super(TestNewArticleForm, self).setUp()
+        super().setUp()
 
         self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
@@ -64,7 +63,7 @@ class TestNewArticleForm(TestCase):
 class TestManageDiscussionForm(TestCase):
 
     def setUp(self):
-        super(TestManageDiscussionForm, self).setUp()
+        super().setUp()
 
         # globally the storage table would not exist
         from inyoka.wiki.forms import ManageDiscussionForm

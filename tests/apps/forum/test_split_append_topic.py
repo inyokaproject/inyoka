@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_split_append_topic
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +18,7 @@ class TestPostSplit(TestCase):
     """Test for splitting posts and appending them to an existing topic"""
 
     def setUp(self):
-        super(TestPostSplit, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum(name='category')

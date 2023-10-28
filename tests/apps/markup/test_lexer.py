@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.markup.test_lexer
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.models
     ~~~~~~~~~~~~~~~~~~
@@ -271,7 +270,7 @@ class PageManager(models.Manager):
         Returns a cached slugified list of all wiki pages, useful to speed up
         our parser a lot. Avoids many cache or db hits on big pages/texts.
         """
-        make_sluglist = lambda: set([wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)])
+        make_sluglist = lambda: {wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)}
         key = 'wiki/objects_slugs'
         return cache.get_or_set(key, make_sluglist, settings.WIKI_CACHE_TIMEOUT)
 
@@ -348,7 +347,7 @@ class PageManager(models.Manager):
         of unicode strings, not the actual page object.  This ignores
         attachments!
         """
-        ignore = set([settings.WIKI_MAIN_PAGE])
+        ignore = {settings.WIKI_MAIN_PAGE}
         pages = set(self.get_page_list())
         linked_pages = set(MetaData.objects.values_list('value', flat=True)
                                            .filter(key='X-Link').all())
@@ -680,7 +679,7 @@ class RevisionManager(models.Manager):
         return revisions[:count]
 
 
-class Diff(object):
+class Diff:
     """
     This class represents the results of a page comparison.  You can get
     useful instances of this class by using the ``compare`` function on

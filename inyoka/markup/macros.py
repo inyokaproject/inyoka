@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.macros
     ~~~~~~~~~~~~~~~~~~~
@@ -59,7 +58,7 @@ def register(cls):
         ALL_MACROS[name] = cls
 
 
-class Macro(object, metaclass=ArgumentCollector):
+class Macro(metaclass=ArgumentCollector):
     """
     Baseclass for macros.  All macros should extend from that or implement
     the same attributes.  The preferred way however is subclassing.

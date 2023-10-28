@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup.machine
     ~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +17,7 @@ from django.utils.translation import gettext as _
 from inyoka.utils import get_request_context
 
 
-class NodeCompiler(object):
+class NodeCompiler:
     """
     MixIn class for node instruction compiling.  Most nodes mix this class in
     and obtain the `compile` method because of that.
@@ -48,7 +47,7 @@ class NodeCompiler(object):
         return '@' + dumps((format, result), HIGHEST_PROTOCOL)
 
 
-class NodeRenderer(object):
+class NodeRenderer:
     """
     MixedIn on all nodes so that you can render a node without compiling.
 
@@ -68,7 +67,7 @@ class NodeRenderer(object):
         return Renderer(self).render(context, format)
 
 
-class NodeQueryInterface(object):
+class NodeQueryInterface:
     """
     Adds a `query` property to nodes implementing this interface.  The query
     attribute returns a new `Query` object for the node that implements the
@@ -80,7 +79,7 @@ class NodeQueryInterface(object):
         return Query((self,))
 
 
-class Query(object):
+class Query:
     """
     Helper class to traverse a tree of nodes.  Useful for tree processor
     macros that collect data from the final tree.
@@ -118,8 +117,7 @@ class Query(object):
             for node in nodes:
                 yield node
                 if self.recurse and node.is_container:
-                    for result in walk(node.children):
-                        yield result
+                    yield from walk(node.children)
         return Query(walk(self))
 
     def by_type(self, type):
@@ -131,7 +129,7 @@ class Query(object):
         return Query(n for n in self.all if n.is_text_node)
 
 
-class RenderContext(object):
+class RenderContext:
     """
     Holds information for the rendering systems.  This can be used by macros
     to get a reference to the current context object, the wiki page that
@@ -158,7 +156,7 @@ class RenderContext(object):
         return get_request_context(self.request)
 
 
-class Renderer(object):
+class Renderer:
     """
     This class can render nodes and compiled structures.  One can pass it a
     node or a compiler instruction set (compiled by a `NodeCompiler`).  In

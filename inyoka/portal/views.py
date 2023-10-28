@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.views
     ~~~~~~~~~~~~~~~~~~~
@@ -1053,10 +1052,10 @@ def privmsg_new(request, username=None):
                     auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
-            recipient_names = set(r.strip() for r in
-                                  d['recipient'].split(';') if r)
-            group_recipient_names = set(r.strip() for r in
-                                  d['group_recipient'].split(';') if r)
+            recipient_names = {r.strip() for r in
+                                  d['recipient'].split(';') if r}
+            group_recipient_names = {r.strip() for r in
+                                  d['group_recipient'].split(';') if r}
 
             recipients = set()
 

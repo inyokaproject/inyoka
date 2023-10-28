@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.forum.models
     ~~~~~~~~~~~~~~~~~~~
@@ -142,7 +141,7 @@ class ForumManager(models.Manager):
             # not cached yet.
             forum = cache.get('forum/forums/{}'.format(slug))
             if forum is None:
-                forum = super(ForumManager, self).get(slug=slug)
+                forum = super().get(slug=slug)
                 if forum:
                     forum.__dict__.pop('last_post', None)
                     cache.set('forum/forums/{}'.format(slug), forum, 300)
@@ -490,8 +489,7 @@ class Forum(models.Model):
         matched_forums = [f for f in forums if f.parent_id == parent]
         for f in matched_forums:
             yield offset, f
-            for l in Forum.get_children_recursive(forums, f, offset + 1):
-                yield l
+            yield from Forum.get_children_recursive(forums, f, offset + 1)
 
     def get_supporters(self):
         if self.support_group is None:
@@ -665,7 +663,7 @@ class Topic(models.Model):
         # remove wiki page discussions and clear caches
         WikiPage.objects.clear_topic(self)
 
-        return super(Topic, self).delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
     def get_absolute_url(self, action='show', **query):
         if action in ('show',):
@@ -792,7 +790,7 @@ class PostManager(models.Manager):
             last_posts = query.filter(id__in=ids) \
                 .select_related('author') \
                 .only('id', 'pub_date', 'author__username').all()
-            last_post_map = dict([(post.id, post) for post in last_posts])
+            last_post_map = {post.id: post for post in last_posts}
         return last_post_map
 
 
@@ -888,7 +886,7 @@ class Post(models.Model, LockableObject):
                 attachment.delete()
 
         if not self.topic:
-            return super(Post, self).delete()
+            return super().delete()
 
         # degrade user post count
         if self.topic.forum.user_count_posts and not self.hidden:
@@ -923,7 +921,7 @@ class Post(models.Model, LockableObject):
             # https://github.com/niwinz/django-redis/pull/162
             cache.delete_many('forum/forums/{}'.format(f.slug) for f in parent_forums)
 
-        return super(Post, self).delete()
+        return super().delete()
 
     def hide(self, change_post_counter=True):
         if change_post_counter:
@@ -1218,7 +1216,7 @@ class Attachment(models.Model):
         if thumb_path and path.exists(thumb_path):
             os.remove(thumb_path)
         self.file.delete(save=False)
-        super(Attachment, self).delete()
+        super().delete()
 
     @staticmethod
     def update_post_ids(att_ids, post):
@@ -1402,7 +1400,7 @@ class Poll(models.Model):
         return not self.ended and not self.participated
 
 
-class ReadStatus(object):
+class ReadStatus:
     """
     Manages the read status of forums and topics for a specific user.
     """

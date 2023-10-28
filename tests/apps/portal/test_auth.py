@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.portal.test_auth
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,7 +20,7 @@ from inyoka.portal.user import User, UserBanned
 
 class TestInyokaAuthBackend(TestCase):
     def setUp(self):
-        super(TestInyokaAuthBackend, self).setUp()
+        super().setUp()
         self.backend = InyokaAuthBackend()
         self.anonymous_user = User.objects.get(username=settings.ANONYMOUS_USER_NAME)
         self.anonymous_user.set_password('inyoka')
@@ -82,7 +81,7 @@ class TestInyokaAuthBackend(TestCase):
         self.assertEqual(self.backend.get_group_permissions(self.unprivileged_user, True), set())
 
     def test_get_group_permissions(self):
-        excepted_permissions = set(('portal.change_user',))
+        excepted_permissions = {'portal.change_user'}
         self.assertEqual(self.backend.get_group_permissions(self.privileged_user), excepted_permissions)
 
     def test_get_all_permissions(self):

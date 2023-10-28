@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.terminal
     ~~~~~~~~~~~~~~~~~~~~~
@@ -36,7 +35,7 @@ def get_dimensions():
         return (80, 24)
 
 
-class FancyPrinter(object):
+class FancyPrinter:
     """
     Prints colorful text into a terminal stream.
     """
@@ -85,7 +84,7 @@ class FancyPrinter(object):
 
 
 # original from Jochen Kupperschmidt with some modifications
-class ProgressBar(object):
+class ProgressBar:
     """Visualize a status bar on the console."""
 
     def __init__(self, max_width):

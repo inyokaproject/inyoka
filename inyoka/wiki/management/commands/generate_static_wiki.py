@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.management.commands.generate_static_wiki
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -212,7 +211,7 @@ class Command(BaseCommand):
                     abs_path = path.join(FOLDER, 'files', rel_path)
                     if path.isfile(abs_path):
                         content = ''
-                        with open(abs_path, 'r') as f:
+                        with open(abs_path) as f:
                             content = f.read()
 
                         _re = compile(r'\?[0-9a-f]{32}')
@@ -472,5 +471,5 @@ class Command(BaseCommand):
                 pb.update(percent)
 
         if verbosity >= 1:
-            print(("\nCreated Wikisnapshot with %s pages; excluded %s pages"
-                % (len(todo), num_excluded)))
+            print("\nCreated Wikisnapshot with %s pages; excluded %s pages"
+                % (len(todo), num_excluded))

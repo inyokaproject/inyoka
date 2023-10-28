@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.user
     ~~~~~~~~~~~~~~~~~~
@@ -314,7 +313,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         cache.delete_many(['portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
 

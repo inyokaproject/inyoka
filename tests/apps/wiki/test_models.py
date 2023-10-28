@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.core.cache import cache, caches
 
 from inyoka.utils.test import TestCase

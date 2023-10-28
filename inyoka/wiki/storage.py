@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.storage
     ~~~~~~~~~~~~~~~~~~~
@@ -43,7 +42,7 @@ from inyoka.wiki.models import MetaData
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 
 
-class StorageManager(object):
+class StorageManager:
     """
     Manager multiple storages.
     """
@@ -67,7 +66,7 @@ class StorageManager(object):
                 pass
 
 
-class BaseStorage(object):
+class BaseStorage:
     """
     Abstract base class for all the storage objects that contains the shared
     logic like flushing the cache and storing back to it.

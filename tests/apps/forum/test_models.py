@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_models
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -264,7 +263,7 @@ class TestPostMove(ForumTestCaseWithSecondItems):
 class PostDeletionTest(ForumTestCase):
 
     def setUp(self):
-        super(PostDeletionTest, self).setUp()
+        super().setUp()
 
         self.first_post = self.topic_posts[0]
         self.second_last_post = self.topic_posts[-2]

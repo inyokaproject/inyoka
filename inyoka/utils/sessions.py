@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.sessions
     ~~~~~~~~~~~~~~~~~~~~~
@@ -57,7 +56,7 @@ def set_session_info(request):
     cache.set(key, session, timeout=SESSION_DELTA)
 
 
-class SurgeProtectionMixin(object):
+class SurgeProtectionMixin:
     """
     Mixin for forms to override the `clean()` method to perform an additional
     surge protection.  Give this method a higher MRO than the form baseclass!
@@ -81,7 +80,7 @@ class SurgeProtectionMixin(object):
             if session['sp'].get(identifier, 0) >= time():
                 raise ValidationError(self.surge_protection_message)
             session['sp'][identifier] = time() + self.surge_protection_timeout
-        return super(SurgeProtectionMixin, self).clean()
+        return super().clean()
 
     def get_surge_protection_identifier(self):
         return self.surge_protection_identifier or \

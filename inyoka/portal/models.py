@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.models
     ~~~~~~~~~~~~~~~~~~~~
@@ -436,12 +435,12 @@ class Linkmap(models.Model):
     CACHE_KEY_CSS = 'portal:linkmap:css-filname'
 
     token_validator = RegexValidator(regex=r'^[a-z\-_]+[1-9]*$',
-                                     message=gettext_lazy(u'Only lowercase letters, - and _ allowed. Numbers as postfix.'))
+                                     message=gettext_lazy('Only lowercase letters, - and _ allowed. Numbers as postfix.'))
 
-    token = models.CharField(gettext_lazy(u'Token'), max_length=128, unique=True,
+    token = models.CharField(gettext_lazy('Token'), max_length=128, unique=True,
                              validators=[token_validator])
-    url = models.URLField(gettext_lazy(u'Link'))
-    icon = models.ImageField(gettext_lazy(u'Icon'), upload_to='linkmap/icons', blank=True)
+    url = models.URLField(gettext_lazy('Link'))
+    icon = models.ImageField(gettext_lazy('Icon'), upload_to='linkmap/icons', blank=True)
 
     objects = LinkmapManager()
 

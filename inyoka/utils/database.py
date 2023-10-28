@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.database
     ~~~~~~~~~~~~~~~~~~~~~
@@ -71,7 +70,7 @@ def find_next_increment(model, column, string, **query_opts):
             "No suitable slug increment for %s found. No unused increment "
             "or max_length not None." % slug
         )
-    return '{0}-{1}'.format(slug, num)
+    return '{}-{}'.format(slug, num)
 
 
 def get_simplified_queryset(queryset):
@@ -104,7 +103,7 @@ def model_or_none(pk, reference):
         return None
 
 
-class LockableObject(object):
+class LockableObject:
 
     #: Must be defined by an inherited model.
     lock_key_base = None
@@ -125,7 +124,7 @@ class LockableObject(object):
         cache.delete(self._get_lock_key())
 
 
-class SimpleDescriptor(object):
+class SimpleDescriptor:
     def __init__(self, field):
         self.field = field
 

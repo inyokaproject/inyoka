@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_split_new_topic
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +18,7 @@ class TestPostSplitNewTopic(TestCase):
     """Test for splitting posts and creating a new topic"""
 
     def setUp(self):
-        super(TestPostSplitNewTopic, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum(name='category')

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.forms
     ~~~~~~~~~~~~~~~~~~~
@@ -272,7 +271,7 @@ class UserCPSettingsForm(forms.Form):
                                         help_text=gettext_lazy('If enabled, less animations are used.'))
 
     def __init__(self, *args, **kwargs):
-        super(UserCPSettingsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_simple_version_choices()
 
     def clean_notify(self):
@@ -312,10 +311,10 @@ class UserCPProfileForm(forms.ModelForm):
         # kwargs['initial'] can already exist from subclass EditUserProfileForm
         initial = kwargs['initial'] = kwargs.get('initial', {})
 
-        initial.update(dict(
-            ((k, v) for k, v in instance.settings.items()
-             if k.startswith('show_'))
-        ))
+        initial.update({
+            k: v for k, v in instance.settings.items()
+             if k.startswith('show_')
+        })
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
 
@@ -481,7 +480,7 @@ class EditUserGroupsForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('instance', None)
-        super(EditUserGroupsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class CreateUserForm(forms.Form):
@@ -653,7 +652,7 @@ def make_permission_choices(application, filtered=None):
     return functools.partial(get_permissions_for_app, application, filtered)
 
 def permission_choices_to_permission_strings(application):
-    return set(perm[0] for perm in get_permissions_for_app(application))
+    return {perm[0] for perm in get_permissions_for_app(application)}
 
 
 def permission_to_string(permission):
@@ -774,11 +773,11 @@ class GroupGlobalPermissionForm(forms.Form):
         active_permissions = set()
         if self.cleaned_data['%s_permissions' % modulename]:
             active_permissions = set(self.cleaned_data['%s_permissions' % modulename])
-        current_permissions = set([
+        current_permissions = {
             perm
             for perm in self.instance_permissions
             if perm.startswith(modulename)
-        ])
+        }
         remove_permissions = current_permissions - active_permissions
         assign_permissions = active_permissions - current_permissions
         for perm in remove_permissions:
@@ -826,7 +825,7 @@ class GroupGlobalPermissionForm(forms.Form):
                     if perm.startswith(field)
                 ]
                 initial['%s_permissions' % field] = field_permissions
-        super(GroupGlobalPermissionForm, self).__init__(initial=initial, *args, **kwargs)
+        super().__init__(initial=initial, *args, **kwargs)
 
 
 class GroupForumPermissionForm(forms.Form):
@@ -1138,7 +1137,7 @@ class TokenForm(forms.Form):
     def __init__(self, *args, **kwargs):
         if 'action' in kwargs:
             self.action = kwargs.pop('action')
-        super(TokenForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_token(self):
         def get_action_and_limit():

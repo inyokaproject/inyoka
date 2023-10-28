@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup
     ~~~~~~~~~~~~~
@@ -194,7 +193,7 @@ class StackExhaused(ValueError):
     """
 
 
-class Parser(object):
+class Parser:
     """
     The wiki syntax parser.  Never use this class directly, always do this
     via the public `parse()` function of this module.  The behavior of this

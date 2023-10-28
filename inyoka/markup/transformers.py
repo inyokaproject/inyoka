@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup.transformers
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,7 +26,7 @@ _newline_re = re.compile(r'(\n)')
 _paragraph_re = re.compile(r'(\s*?\n){2,}')
 
 
-class Transformer(object):
+class Transformer:
     """
     Baseclass for all transformers.
     """
@@ -66,11 +65,9 @@ class AutomaticParagraphs(Transformer):
             if child.is_text_node:
                 text_buf.append(child.text)
             else:
-                for item in flush_text_buf():
-                    yield item
+                yield from flush_text_buf()
                 yield child
-        for item in flush_text_buf():
-            yield item
+        yield from flush_text_buf()
 
     def transform(self, parent):
         """

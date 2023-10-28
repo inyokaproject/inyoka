@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.tasks
     ~~~~~~~~~~~~~~~~~~~~
@@ -43,9 +42,9 @@ def clean_expired_users():
 
     for user in (User.objects.filter(status=0)
                      .filter(date_joined__lte=expired_datetime)
-                     .exclude(username__in=set([
+                     .exclude(username__in={
                          settings.ANONYMOUS_USER_NAME,
-                         settings.INYOKA_SYSTEM_USER]))):
+                         settings.INYOKA_SYSTEM_USER})):
         if not user.has_content():
             logger.info('Deleting expiered User %s' % user.username)
             user.delete()
@@ -61,9 +60,9 @@ def clean_inactive_users():
 
     for user in (User.objects
                      .filter(last_login__lte=inactive_datetime)
-                     .exclude(username__in=set([
+                     .exclude(username__in={
                          settings.ANONYMOUS_USER_NAME,
-                         settings.INYOKA_SYSTEM_USER]))):
+                         settings.INYOKA_SYSTEM_USER})):
         if not user.has_content():
             logger.info('Deleting inactive User %s' % user.username)
             user.delete()

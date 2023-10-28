@@ -17,7 +17,7 @@ class CaseSensitiveException(Exception):
     """
     def __init__(self, page, *args, **kwargs):
         self.page = page
-        super(CaseSensitiveException, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class CircularRedirectException(Exception):

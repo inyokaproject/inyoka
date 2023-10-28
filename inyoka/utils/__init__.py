@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils
     ~~~~~~~~~~~~
@@ -18,7 +17,7 @@ def ctype(model):
     return ContentType.objects.get_for_model(model)
 
 
-class classproperty(object):
+class classproperty:
     """
     A mix out of the built-in `classmethod` and
     `property` so that we can achieve a property
