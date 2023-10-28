@@ -226,7 +226,7 @@ class TestTemplateHtmlRenderer(TestCase):
         </p>""")
 
     def test_template_inside_template(self):
-        markup = """{{{#!vorlage Note
+        markup = r"""{{{#!vorlage Note
 Type the following
 {{{#!vorlage Command
 start

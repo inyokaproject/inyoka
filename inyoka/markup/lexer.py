@@ -107,7 +107,7 @@ rules = {
     ),
     'block': ruleset(
         rule('^##.*?(\n|$)(?m)', None),
-        rule('^#\s*(.*?)\s*:\s*(?m)', bygroups('metadata_key'),
+        rule(r'^#\s*(.*?)\s*:\s*(?m)', bygroups('metadata_key'),
              enter='metadata'),
         rule(r'^={1,5}\s*(?m)', enter='headline'),
         rule(r'^[ \t]+((?!::).*?)::\s+(?m)', bygroups('definition_term'),
@@ -127,7 +127,7 @@ rules = {
         rule('`', enter='code'),
         rule('__', enter='underline'),
         rule(r'--\(', enter='stroke'),
-        rule('~-\(', enter='small'),
+        rule(r'~-\(', enter='small'),
         rule(r'~\+\(', enter='big'),
         rule(r',,\(', enter='sub'),
         rule(r'\^\^\(', enter='sup'),
@@ -218,11 +218,11 @@ rules = {
         include('inline_with_links')
     ),
     'stroke': ruleset(
-        rule('\)--', leave=1),
+        rule(r'\)--', leave=1),
         include('inline_with_links')
     ),
     'small': ruleset(
-        rule('\)-~', leave=1),
+        rule(r'\)-~', leave=1),
         include('inline_with_links')
     ),
     'big': ruleset(
@@ -345,7 +345,7 @@ rules = {
     # function calls (parse string arguments and implicit strings)
     'function_call': ruleset(
         rule(',', 'func_argument_delimiter'),
-        rule('\s+', None),
+        rule(r'\s+', None),
         rule(r"('([^'\\]*(?:\\.[^'\\]*)*)'|"
              r'"([^"\\]*(?:\\.[^"\\]*)*)")(?s)', 'func_string_arg'),
         rule(r'([\w_]+)\s*=', bygroups('func_kwarg'))

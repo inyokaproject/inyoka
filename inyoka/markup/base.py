@@ -681,7 +681,7 @@ class Parser:
         """
         stream.expect('wiki_link_begin')
         wiki, page = stream.expect('link_target').value
-        page = page.replace('\:', ':')
+        page = page.replace(r'\:', ':')
         if '#' in page:
             page, anchor = page.split('#', 1)
         else:

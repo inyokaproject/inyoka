@@ -306,7 +306,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     # member icon
     icon = models.FilePathField(gettext_lazy('Group icon'),
                                 path=os.path.join(inyoka_settings.MEDIA_ROOT, 'portal/team_icons'),
-                                match='.*\.png', blank=True, null=True, recursive=True)
+                                match=r'.*\.png', blank=True, null=True, recursive=True)
 
     def save(self, *args, **kwargs):
         """

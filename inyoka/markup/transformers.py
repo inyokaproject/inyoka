@@ -185,11 +185,11 @@ class SmileyInjector(Transformer):
         this property will be cached until the python process dies.
         """
         helper = '|'.join(re.escape(smart_str(s)) for s in self.smilies)
-        helper += '|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
+        helper += r'|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
         regex = (
-            '(?<![\d\w])'  # don't precede smileys with alnum chars
+            r'(?<![\d\w])'  # don't precede smileys with alnum chars
             '({helper})'
-            '(?![\d\w])'.format(helper=helper))
+            r'(?![\d\w])'.format(helper=helper))
         return re.compile(regex, re.UNICODE)
 
 

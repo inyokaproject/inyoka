@@ -371,7 +371,7 @@ class TestBinaryFunctions(unittest.TestCase):
     def test_matches_regex(self):
         code = '<@ if $a matches_regex $b @>True<@ endif @>'
 
-        context = [('a', '1234'), ('b', '\d+')]
+        context = [('a', '1234'), ('b', r'\d+')]
         self.assertEqual(templates.process(code, context), 'True')
 
         context = [('a', 'FooBar'), ('b', '[a-z]')]
