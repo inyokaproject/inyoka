@@ -98,7 +98,7 @@ class TestSuggestionModel(TestCase):
         self.suggestion1.save()
 
     def test_url(self):
-        url = 'http://ikhaya.{}/suggestions/#{}'.format(settings.BASE_DOMAIN_NAME, self.suggestion1.id)
+        url = f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/suggestions/#{self.suggestion1.id}'
         self.assertEqual(url_for(self.suggestion1), url)
 
 

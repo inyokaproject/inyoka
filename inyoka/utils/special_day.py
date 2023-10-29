@@ -83,7 +83,7 @@ def collect_styles(year: int) -> Dict[date, str]:
 
     for w in range(1, 5):
         for d in advent_week(w, year):
-            special_styles[d] = 'advent_{}.css'.format(w)
+            special_styles[d] = f'advent_{w}.css'
 
     return special_styles
 

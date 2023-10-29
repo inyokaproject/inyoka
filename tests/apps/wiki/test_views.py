@@ -186,7 +186,7 @@ class TestDoShow(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_redirect(self):
-        text = '# X-Redirect: {page}\nfoobar content'.format(page=self.page_name)
+        text = f'# X-Redirect: {self.page_name}\nfoobar content'
         redirect = Page.objects.create(user=self.user, name='redirect', remote_addr='', text=text)
 
         response = self.client.get(redirect.get_absolute_url('show'), follow=True)
@@ -199,7 +199,7 @@ class TestDoShow(TestCase):
 
     def test_redirect_loop(self):
         name = 'redirect'
-        text = '# X-Redirect: {page}\nfoobar content'.format(page=name)
+        text = f'# X-Redirect: {name}\nfoobar content'
         redirect = Page.objects.create(user=self.user, name=name, remote_addr='', text=text)
 
         response = self.client.get(redirect.get_absolute_url('show'), follow=True)

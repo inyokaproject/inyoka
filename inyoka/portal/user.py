@@ -468,7 +468,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     @property
     def post_count(self):
         return QueryCounter(
-            cache_key="user_post_count:{}".format(self.id),
+            cache_key=f"user_post_count:{self.id}",
             query=self.post_set
                       .filter(hidden=False)
                       .filter(topic__forum__user_count_posts=True),

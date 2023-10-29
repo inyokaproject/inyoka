@@ -103,5 +103,5 @@ def post_save_post(sender, instance, created, raw, **kwargs):
 
         # Invalidate Cache
         instance.topic.forum.invalidate_topic_cache()
-        cache_keys = ['forum/forums/{}'.format(forum.slug) for forum in parent_forums]
+        cache_keys = [f'forum/forums/{forum.slug}' for forum in parent_forums]
         cache.delete_many(cache_keys)

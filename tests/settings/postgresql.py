@@ -5,7 +5,7 @@ from .base import *  # noqa
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'inyoka_{}'.format(uuid1()),
+        'NAME': f'inyoka_{uuid1()}',
         'USER': 'postgres',
         'HOST': test_host,
     }

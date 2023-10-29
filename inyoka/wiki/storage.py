@@ -58,7 +58,7 @@ class StorageManager:
     def clear_cache(self):
         """Clear all active caches."""
         for obj in self.storages.values():
-            cache.delete('wiki/storage/{}'.format(obj.behavior_key))
+            cache.delete(f'wiki/storage/{obj.behavior_key}')
             try:
                 key = obj.behavior_key.lower().replace('-', '_')
                 delattr(local_cache, key)
@@ -77,7 +77,7 @@ class BaseStorage:
     behavior_key = None
 
     def __init__(self):
-        key = 'wiki/storage/{}'.format(self.behavior_key)
+        key = f'wiki/storage/{self.behavior_key}'
         local_key = self.behavior_key.lower().replace('-', '_')
 
         if not hasattr(local_cache, local_key):

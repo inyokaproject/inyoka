@@ -319,9 +319,9 @@ class Article(models.Model, LockableObject):
             self.slug = '%s-%s' % (self.slug, self.id)
             Article.objects.filter(id=self.id).update(slug=self.slug)
         cache.delete('ikhaya/archive')
-        cache.delete('ikhaya/article_text/{}'.format(self.id))
-        cache.delete('ikhaya/article_intro/{}'.format(self.id))
-        cache.delete('ikhaya/article/{}'.format(self.slug))
+        cache.delete(f'ikhaya/article_text/{self.id}')
+        cache.delete(f'ikhaya/article_intro/{self.id}')
+        cache.delete(f'ikhaya/article/{self.slug}')
 
     def delete(self):
         """
@@ -413,7 +413,7 @@ class Comment(models.Model):
             self.article.save()
         super().save(*args, **kwargs)
         if self.id:
-            cache.delete('ikhaya/comment/{}'.format(self.id))
+            cache.delete(f'ikhaya/comment/{self.id}')
 
 
 class Event(models.Model):
@@ -456,7 +456,7 @@ class Event(models.Model):
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
-        cache.delete('ikhaya/event/{}'.format(self.id))
+        cache.delete(f'ikhaya/event/{self.id}')
         cache.delete('ikhaya/event_count')
 
     def friendly_title(self, with_html_link=False):

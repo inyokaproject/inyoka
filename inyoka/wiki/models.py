@@ -121,7 +121,7 @@ def is_privileged_wiki_page(name):
     return any(name.startswith(n) for n in settings.WIKI_PRIVILEGED_PAGES)
 
 
-to_page_by_slug_key = lambda name: 'wiki/page_by_slug/{}'.format(wiki_slugify(name))
+to_page_by_slug_key = lambda name: f'wiki/page_by_slug/{wiki_slugify(name)}'
 
 
 class PageManager(models.Manager):
@@ -403,7 +403,7 @@ class PageManager(models.Manager):
         """
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
-        cache_key = 'wiki/page/{}'.format(name.lower())
+        cache_key = f'wiki/page/{name.lower()}'
         rev = cache.get(cache_key) if cached else None
         if rev is None:
             try:
@@ -621,7 +621,7 @@ class PageManager(models.Manager):
         """Unset the topic from all pages associated with it."""
         pages = Page.objects.filter(topic=topic)
         names = pages.values_list('name', flat=True)
-        keys = ['wiki/page/{}'.format(n).lower() for n in names]
+        keys = [f'wiki/page/{n}'.lower() for n in names]
         if pages.update(topic=None) > 0:
             cache.delete_many(keys)
 
@@ -630,7 +630,7 @@ class PageManager(models.Manager):
             if isinstance(names, str):
                 names = [names, ]
             lower_names = [name.lower() for name in names]
-            cache.delete_many(['wiki/page/{}'.format(name) for name in lower_names])
+            cache.delete_many([f'wiki/page/{name}' for name in lower_names])
             cache.delete_many([to_page_by_slug_key(name) for name in lower_names])
         cache.delete_pattern('wiki/objects_*')
         update_page_by_slug.delay()
@@ -1367,9 +1367,9 @@ class Revision(models.Model):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
 
-        cache.delete('wiki/page/{}'.format(self.page.name.lower()))
+        cache.delete(f'wiki/page/{self.page.name.lower()}')
         cache.delete('wiki/latest_revisions')
-        cache.delete('wiki/latest_revisions/{}'.format(self.page.name))
+        cache.delete(f'wiki/latest_revisions/{self.page.name}')
 
     def __str__(self):
         return _('Revision %(id)d (%(title)s)') % {

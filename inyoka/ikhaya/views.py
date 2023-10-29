@@ -331,9 +331,9 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
                             title=escape(article.subject)))
 
                     cache_keys = [
-                        'ikhaya/article/{}/{}'.format(article.pub_date, article.slug),
+                        f'ikhaya/article/{article.pub_date}/{article.slug}',
                         'ikhaya/latest_articles',
-                        'ikhaya/latest_articles/{}'.format(article.category.slug)]
+                        f'ikhaya/latest_articles/{article.category.slug}']
                     cache.delete_many(cache_keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:

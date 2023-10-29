@@ -70,7 +70,7 @@ def find_next_increment(model, column, string, **query_opts):
             "No suitable slug increment for %s found. No unused increment "
             "or max_length not None." % slug
         )
-    return '{}-{}'.format(slug, num)
+    return f'{slug}-{num}'
 
 
 def get_simplified_queryset(queryset):
@@ -306,7 +306,7 @@ class InyokaMarkupField(BaseMarkupField):
             try:
                 render_context = getattr(
                     inst_self,
-                    'get_{}_render_context_kwargs'.format(field_name),
+                    f'get_{field_name}_render_context_kwargs',
                 )()
             except AttributeError:
                 render_context = {}

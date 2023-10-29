@@ -139,12 +139,12 @@ class ForumManager(models.Manager):
         if slug:
             # we only select one forum and query only one if it's
             # not cached yet.
-            forum = cache.get('forum/forums/{}'.format(slug))
+            forum = cache.get(f'forum/forums/{slug}')
             if forum is None:
                 forum = super().get(slug=slug)
                 if forum:
                     forum.__dict__.pop('last_post', None)
-                    cache.set('forum/forums/{}'.format(slug), forum, 300)
+                    cache.set(f'forum/forums/{slug}', forum, 300)
             return forum
         # return all forums instead
         return list(self.get_all_forums_cached().values())
@@ -470,7 +470,7 @@ class Forum(models.Model):
 
     def invalidate_topic_cache(self):
         cache.delete_many(
-            'forum/topics/{}/{}'.format(self.id, page + 1)
+            f'forum/topics/{self.id}/{page + 1}'
             for page in range(CACHE_PAGES_COUNT))
 
     @staticmethod
@@ -519,7 +519,7 @@ class Forum(models.Model):
             pass
         forums = self.descendants + [self]
         self._post_count_query_counter = QueryCounter(
-            cache_key="forum_post_count:{}".format(self.id),
+            cache_key=f"forum_post_count:{self.id}",
             query=Post.objects.filter(topic__forum__in=forums),
             use_task=False)
         return self._post_count_query_counter
@@ -539,7 +539,7 @@ class Forum(models.Model):
             pass
 
         self._topic_count_query_counter = QueryCounter(
-            cache_key="forum_topic_count:{}".format(self.id),
+            cache_key=f"forum_topic_count:{self.id}",
             query=self.topics.all(),
             use_task=False)
         return self._topic_count_query_counter
@@ -742,7 +742,7 @@ class Topic(models.Model):
     @property
     def post_count(self):
         return QueryCounter(
-            cache_key="topic_post_count:{}".format(self.id),
+            cache_key=f"topic_post_count:{self.id}",
             query=self.posts.all(),
             use_task=False)
 
@@ -919,7 +919,7 @@ class Post(models.Model, LockableObject):
             # django_redis has a bug, that delete_many does not work with
             # empty generators. See:
             # https://github.com/niwinz/django-redis/pull/162
-            cache.delete_many('forum/forums/{}'.format(f.slug) for f in parent_forums)
+            cache.delete_many(f'forum/forums/{f.slug}' for f in parent_forums)
 
         return super().delete()
 

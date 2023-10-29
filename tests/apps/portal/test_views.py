@@ -710,7 +710,7 @@ class TestStaticPageEdit(TestCase):
                                      'content': 'My great content',
                                      'key': self.page.key}, follow=True)
 
-        msg = 'The page “{}” was changed successfully.'.format(new_title)
+        msg = f'The page “{new_title}” was changed successfully.'
         self.assertContains(response, msg)
 
     def test_edit_page__redirect_url(self):
