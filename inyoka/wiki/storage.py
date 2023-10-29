@@ -39,7 +39,7 @@ from inyoka.utils.local import local as local_cache
 from inyoka.utils.text import normalize_pagename
 from inyoka.wiki.models import MetaData
 
-_block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
+_block_re = re.compile(r'(?sm)\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}')
 
 
 class StorageManager:

@@ -106,21 +106,21 @@ rules = {
         include('links')
     ),
     'block': ruleset(
-        rule('^##.*?(\n|$)(?m)', None),
-        rule(r'^#\s*(.*?)\s*:\s*(?m)', bygroups('metadata_key'),
+        rule('(?m)^##.*?(\n|$)', None),
+        rule(r'(?m)^#\s*(.*?)\s*:\s*', bygroups('metadata_key'),
              enter='metadata'),
-        rule(r'^={1,5}\s*(?m)', enter='headline'),
-        rule(r'^[ \t]+((?!::).*?)::\s+(?m)', bygroups('definition_term'),
+        rule(r'(?m)^={1,5}\s*', enter='headline'),
+        rule(r'(?m)^[ \t]+((?!::).*?)::\s+', bygroups('definition_term'),
              enter='definition'),
-        rule(r'^\|\|(?m)', enter='table_row'),
-        rule(r'^[ \t]+(?:[*-]|[01aAiI]\.)\s*(?m)', enter='list_item'),
+        rule(r'(?m)^\|\|', enter='table_row'),
+        rule(r'(?m)^[ \t]+(?:[*-]|[01aAiI]\.)\s*', enter='list_item'),
         rule(r'\{\{\|', enter='box'),
         rule(r'\{\{\{', enter='pre'),
-        rule(r'^<{40}\s*$(?m)', enter='conflict'),
-        rule(r'^----+\s*(\n|$)(?m)', 'ruler')
+        rule(r'(?m)^<{40}\s*$', enter='conflict'),
+        rule(r'(?m)^----+\s*(\n|$)', 'ruler')
     ),
     'inline': ruleset(
-        rule('<!--.*?-->(?s)', None),
+        rule('(?s)<!--.*?-->', None),
         rule("'''", enter='strong'),
         rule("''", enter='emphasized'),
         rule('``', enter='escaped_code'),
@@ -147,7 +147,7 @@ rules = {
         rule(r'\[edit\s*=\s*(.*?)\s*\]', bygroups('username'),
              enter='edit'),
         rule(r'\[raw\](.*?)\[/raw\]', bygroups('raw')),
-        rule(r'\\\\[^\S\n]*(\n|$)(?m)', 'nl'),
+        rule(r'(?m)\\\\[^\S\n]*(\n|$)', 'nl'),
         include('highlightable_with_inlines')
     ),
     'links': ruleset(
@@ -178,24 +178,24 @@ rules = {
     ),
     # metadata defs
     'metadata': ruleset(
-        rule(r'\s*(\n|$)(?m)', leave=1),
+        rule(r'(?m)\s*(\n|$)', leave=1),
         rule(r'\s*,\s*', 'func_argument_delimiter'),
-        rule(r"('([^'\\]*(?:\\.[^'\\]*)*)'|"
-             r'"([^"\\]*(?:\\.[^"\\]*)*)")(?s)', 'func_string_arg'),
+        rule(r"(?s)('([^'\\]*(?:\\.[^'\\]*)*)'|"
+             r'"([^"\\]*(?:\\.[^"\\]*)*)")', 'func_string_arg'),
     ),
     # conflict blocks
     'conflict': ruleset(
-        rule(r'^={40}\s*$(?m)', 'conflict_switch'),
-        rule(r'^>{40}\s*$(?m)', leave=1),
+        rule(r'(?m)^={40}\s*$', 'conflict_switch'),
+        rule(r'(?m)^>{40}\s*$', leave=1),
         include('everything')
     ),
     # In difference to moin we allow arbitrary markup in headlines.
     'headline': ruleset(
-        rule(r'\s*=+\s*$(?m)', leave=1),
+        rule(r'(?m)\s*=+\s*$', leave=1),
         include('inline_with_links')
     ),
     'definition': ruleset(
-        rule(r'(\n|$)(?m)', leave=1),
+        rule(r'(?m)(\n|$)', leave=1),
         include('inline_with_links')
     ),
     'strong': ruleset(
@@ -242,7 +242,7 @@ rules = {
         include('everything')
     ),
     'list_item': ruleset(
-        rule(r'(\n|$)(?m)', leave=1),
+        rule(r'(?m)(\n|$)', leave=1),
         include('everything')
     ),
     'color': ruleset(
@@ -281,7 +281,7 @@ rules = {
         switch('pre_data')
     ),
     'parser_arguments': ruleset(
-        rule(r'(?=\n|$)(?m)', 'parser_end', switch='parser_data'),
+        rule(r'(?m)(?=\n|$)', 'parser_end', switch='parser_data'),
         rule(r'[^\S\n]+', None),
         include('function_call')
     ),
@@ -302,7 +302,7 @@ rules = {
         include('function_call')
     ),
     'table_contents': ruleset(
-        rule(r'\|\|\s*?(\n|$)(?m)', leave=1),
+        rule(r'(?m)\|\|\s*?(\n|$)', leave=1),
         rule(r'\|\|', 'table_col_switch', switch='table_row'),
         include('everything')
     ),
@@ -316,7 +316,7 @@ rules = {
         include('function_call')
     ),
     'box_contents': ruleset(
-        rule(r'\|\}\}(?m)', leave=1),
+        rule(r'(?m)\|\}\}', leave=1),
         include('everything')
     ),
     # the macro base is that part where the lexer waits for an upcoming
@@ -346,13 +346,13 @@ rules = {
     'function_call': ruleset(
         rule(',', 'func_argument_delimiter'),
         rule(r'\s+', None),
-        rule(r"('([^'\\]*(?:\\.[^'\\]*)*)'|"
-             r'"([^"\\]*(?:\\.[^"\\]*)*)")(?s)', 'func_string_arg'),
+        rule(r"(?s)('([^'\\]*(?:\\.[^'\\]*)*)'|"
+             r'"([^"\\]*(?:\\.[^"\\]*)*)")', 'func_string_arg'),
         rule(r'([\w_]+)\s*=', bygroups('func_kwarg'))
     )
 }
 
-_quote_re = re.compile(r'^(>+) ?(?m)')
+_quote_re = re.compile(r'(?m)^(>+) ?')
 _block_start_re = re.compile(r'(?<!\\)\{\{\{')
 _block_end_re = re.compile(r'(?<!\\)\}\}\}')
 

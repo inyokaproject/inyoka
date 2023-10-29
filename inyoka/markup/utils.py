@@ -172,9 +172,9 @@ def simple_match(pattern, string, case_sensitive=False):
     """
     Match a string against a pattern.  Works like `simple_filter`.
     """
-    return re.compile('^%s$%s' % (
+    return re.compile('%s^%s$' % (
+        not case_sensitive and '(?i)' or '',
         re.escape(pattern).replace('\\*', '.*?'),
-        not case_sensitive and '(?i)' or ''
     )).match(string) is not None
 
 
@@ -184,7 +184,7 @@ def simple_filter(pattern, iterable, case_sensitive=True):
     only special thing is that "*" is a wildcard.  The return value is an
     iterator, not a list.
     """
-    return filter(re.compile('^%s$%s' % (
+    return filter(re.compile('%s^%s$' % (
+        not case_sensitive and '(?i)' or '',
         re.escape(pattern).replace('\\*', '.*?'),
-        not case_sensitive and '(?i)' or ''
     )).match, iterable)

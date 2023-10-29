@@ -24,7 +24,7 @@ from lxml.html.defs import empty_tags
 from inyoka.utils.text import increment_string
 
 _entity_re = re.compile(r'&([^;]+);')
-_strip_re = re.compile(r'<!--.*?-->|<[^>]*>(?s)')
+_strip_re = re.compile(r'(?s)<!--.*?-->|<[^>]*>')
 
 
 #: a dict of html entities to codepoints. This includes the problematic
