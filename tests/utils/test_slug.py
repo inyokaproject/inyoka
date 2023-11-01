@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_slug
     ~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +17,7 @@ from inyoka.utils.test import TestCase
 
 class TestUtilsSlug(TestCase):
     def setUp(self):
-        super(TestUtilsSlug, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('slugadmin', 'slugadmin', 'slugadmin', False)
 
         # creating forums

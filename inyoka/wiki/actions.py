@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.actions
     ~~~~~~~~~~~~~~~~~~~
@@ -286,11 +285,11 @@ def _rename(request, page, new_name, force=False, new_text=None):
 
     def get_attachment_set_from_pagename(pagename):
         attachment_pages = Page.objects.get_attachment_list(pagename, existing_only=False)
-        return set((
+        return {
             attachment_page.split('/')[-1]
             for attachment_page
             in attachment_pages
-        ))
+        }
 
     new_page_attachments = get_attachment_set_from_pagename(new_name)
     old_page_attachments = get_attachment_set_from_pagename(old_name)

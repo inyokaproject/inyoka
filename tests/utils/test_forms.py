@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_forms
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +18,7 @@ class TestTopicField(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(TestTopicField, cls).setUpClass()
+        super().setUpClass()
 
         topic = Topic.objects.create(slug='valid-slug',
                                      author=User.objects.get_anonymous_user(),

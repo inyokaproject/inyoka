@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.highlight
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -65,7 +64,7 @@ def highlight_code(code, lang=None, filename=None, mimetype=None):
     return mark_safe(highlight(code, lexer, _pygments_formatter))
 
 
-class Highlighter(object):
+class Highlighter:
     css_class = 'highlight'
     html_tag = 'em'
     max_length = 200
@@ -75,9 +74,9 @@ class Highlighter(object):
         self.query = query
         # ignore short words (since we actually search in the text and not
         # for whole words).
-        self.query_words = set(word.lower()
+        self.query_words = {word.lower()
                                for word in query.split()
-                               if not word.startswith('-') and len(word) > 2)
+                               if not word.startswith('-') and len(word) > 2}
 
     def highlight(self, text_block):
         self.text_block = striptags(text_block)

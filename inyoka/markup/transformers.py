@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup.transformers
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,7 +26,7 @@ _newline_re = re.compile(r'(\n)')
 _paragraph_re = re.compile(r'(\s*?\n){2,}')
 
 
-class Transformer(object):
+class Transformer:
     """
     Baseclass for all transformers.
     """
@@ -66,11 +65,9 @@ class AutomaticParagraphs(Transformer):
             if child.is_text_node:
                 text_buf.append(child.text)
             else:
-                for item in flush_text_buf():
-                    yield item
+                yield from flush_text_buf()
                 yield child
-        for item in flush_text_buf():
-            yield item
+        yield from flush_text_buf()
 
     def transform(self, parent):
         """
@@ -188,11 +185,11 @@ class SmileyInjector(Transformer):
         this property will be cached until the python process dies.
         """
         helper = '|'.join(re.escape(smart_str(s)) for s in self.smilies)
-        helper += '|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
+        helper += r'|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
         regex = (
-            '(?<![\d\w])'  # don't precede smileys with alnum chars
+            r'(?<![\d\w])'  # don't precede smileys with alnum chars
             '({helper})'
-            '(?![\d\w])'.format(helper=helper))
+            r'(?![\d\w])'.format(helper=helper))
         return re.compile(regex, re.UNICODE)
 
 

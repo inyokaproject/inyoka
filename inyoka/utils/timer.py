@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.timer
     ~~~~~~~~~~~~~~~~~~
@@ -9,7 +8,7 @@
 import time
 
 
-class StopWatch(object):
+class StopWatch:
     """Very simple timer abstraction"""
 
     def __init__(self):

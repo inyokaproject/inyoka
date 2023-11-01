@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.user
     ~~~~~~~~~~~~~~~~~~
@@ -307,14 +306,14 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     # member icon
     icon = models.FilePathField(gettext_lazy('Group icon'),
                                 path=os.path.join(inyoka_settings.MEDIA_ROOT, 'portal/team_icons'),
-                                match='.*\.png', blank=True, null=True, recursive=True)
+                                match=r'.*\.png', blank=True, null=True, recursive=True)
 
     def save(self, *args, **kwargs):
         """
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         cache.delete_many(['portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
 
@@ -469,7 +468,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     @property
     def post_count(self):
         return QueryCounter(
-            cache_key="user_post_count:{}".format(self.id),
+            cache_key=f"user_post_count:{self.id}",
             query=self.post_set
                       .filter(hidden=False)
                       .filter(topic__forum__user_count_posts=True),

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.views
     ~~~~~~~~~~~~~~~~~~~
@@ -952,7 +951,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})
             entries = [s for s in entries if str(s.id) not in d['delete']]
-            cache.delete('portal/pm_count/{}'.format(request.user.id))
+            cache.delete(f'portal/pm_count/{request.user.id}')
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
 
@@ -963,7 +962,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         if not entry.read:
             entry.read = True
             entry.save()
-            cache.delete('portal/pm_count/{}'.format(request.user.id))
+            cache.delete(f'portal/pm_count/{request.user.id}')
         action = request.GET.get('action')
         if action:
             if request.method == 'POST':
@@ -1053,10 +1052,10 @@ def privmsg_new(request, username=None):
                     auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
-            recipient_names = set(r.strip() for r in
-                                  d['recipient'].split(';') if r)
-            group_recipient_names = set(r.strip() for r in
-                                  d['group_recipient'].split(';') if r)
+            recipient_names = {r.strip() for r in
+                                  d['recipient'].split(';') if r}
+            group_recipient_names = {r.strip() for r in
+                                  d['group_recipient'].split(';') if r}
 
             recipients = set()
 

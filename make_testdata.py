@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
     inyoka.scripts.make_testadata
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -149,7 +148,7 @@ def make_users():
             name, '%s@ubuntuusers.local' % name, name, False)
         u.date_joined = randtime()
         u.last_login = randtime()
-        u.groups.set(list(set(choice(groups) for _ in range(randint(0, 5)))))
+        u.groups.set(list({choice(groups) for _ in range(randint(0, 5))}))
         u.jabber = '%s@%s.local' % (word(markup=False), word(markup=False))
         u.icq = word(markup=False)[:16]
         u.msn = word(markup=False)

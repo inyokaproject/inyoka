@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.pagination
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,7 +60,7 @@ from django.utils.encoding import force_str
 from inyoka.utils.urls import urlencode
 
 
-class Pagination(object):
+class Pagination:
     """ Handle pagination """
 
     def __init__(self, request, query, page=1, per_page=10, link=None, total=None,
@@ -138,8 +137,8 @@ class Pagination(object):
         index_last = index_first + self.per_page
 
         if self.rownum_column:
-            expr = {'{}__gte'.format(self.rownum_column): index_first,
-                    '{}__lt'.format(self.rownum_column): index_last}
+            expr = {f'{self.rownum_column}__gte': index_first,
+                    f'{self.rownum_column}__lt': index_last}
             self._queryset = self.query.filter(**expr)
         else:
             self._queryset = self.query[index_first:index_last]
@@ -156,9 +155,9 @@ class Pagination(object):
         if page == 1:
             url = self.base_link
         else:
-            url = '{}{}/'.format(self.base_link, page)
+            url = f'{self.base_link}{page}/'
         if self.params:
-            url = url + '?{}'.format(urlencode(self.params))
+            url = url + f'?{urlencode(self.params)}'
         return url
 
     @property

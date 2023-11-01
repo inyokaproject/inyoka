@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.wiki.test_admin
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_database
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -13,14 +12,14 @@ from inyoka.utils.test import TestCase
 from .models import JSONEntry
 
 
-class A(object):
+class A:
     def f(self, x):
         return x * x
 
 
 class JSONTest(TestCase):
     def setUp(self):
-        super(JSONTest, self).setUp()
+        super().setUp()
         self.model = JSONEntry
         self.manager = self.model.objects
 

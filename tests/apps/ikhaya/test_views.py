@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.ikhaya.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,7 +27,7 @@ class TestViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestViews, self).setUp()
+        super().setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
         self.admin.is_superuser = True

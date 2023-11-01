@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.notification
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,6 +96,6 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
     if callback is not None:
         subtask(callback).delay(list(notified_users))
 
-    logger.debug('Notified for {}: {}'.format(template, notified_users))
+    logger.debug(f'Notified for {template}: {notified_users}')
 
     return list(notified_users)

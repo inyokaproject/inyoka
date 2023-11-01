@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.acl
     ~~~~~~~~~~~~~~~
@@ -70,7 +69,7 @@ privilege_map = {
 }
 
 
-class PrivilegeTest(object):
+class PrivilegeTest:
     """
     An instance of this class is passed to all the action templates.  Attribute
     access can then be used to check if the current user has a privilege the
@@ -90,7 +89,7 @@ class PrivilegeTest(object):
         return self._privilege_cache.get(name, False)
 
 
-class GroupContainer(object):
+class GroupContainer:
     """
     This class fetches the groups for an user in a lazy way.  This is used by
     the `get_privilege_flags` to not load groups if they are not used for a
@@ -126,7 +125,7 @@ class GroupContainer(object):
         return obj in self.cache
 
 
-class MultiPrivilegeTest(object):
+class MultiPrivilegeTest:
     """
     Efficient way for multiple privilege tests for one users to many pages.
     """
@@ -138,7 +137,7 @@ class MultiPrivilegeTest(object):
 
     def get_groups(self, page_name):
         if page_name in self.owned_pages:
-            return self.groups & set([GROUP_OWNER])
+            return self.groups & {GROUP_OWNER}
         return self.groups
 
     def get_privilege_flags(self, page_name):

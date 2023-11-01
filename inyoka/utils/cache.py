@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.cache
     ~~~~~~~~~~~~~~~~~~
@@ -22,7 +21,7 @@ from django.utils.translation import gettext as _
 from django_redis.cache import RedisCache as _RedisCache
 
 
-class QueryCounter(object):
+class QueryCounter:
     """
     Calls .count() for a query and saves this value into redis.
     """
@@ -87,7 +86,7 @@ class QueryCounter(object):
                 # Try to set a status_key. If this fails, then the task is
                 # already delayed.
                 redis = cache.client.get_client()
-                status_key = '{}:status'.format(cache.make_key(self.cache_key))
+                status_key = f'{cache.make_key(self.cache_key)}:status'
                 if redis.set(status_key, 'updating', ex=60, nx=True):
                     from inyoka.portal.tasks import query_counter_task
                     # Build a queryset like query.count()

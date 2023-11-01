@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.ikhaya.models
     ~~~~~~~~~~~~~~~~~~~~
@@ -48,7 +47,7 @@ class ArticleManager(models.Manager):
         self._all = all
 
     def get_queryset(self):
-        q = super(ArticleManager, self).get_queryset()
+        q = super().get_queryset()
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
@@ -178,7 +177,7 @@ class Category(models.Model):
         # only set the slug on first save.
         if not self.pk:
             self.slug = find_next_increment(Category, 'slug', slugify(self.name))
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         cache.delete('ikhaya/categories')
 
     class Meta:
@@ -313,23 +312,23 @@ class Article(models.Model, LockableObject):
         else:
             self.slug = slugify(self.slug)
 
-        super(Article, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # now that we have the article id we can put it into the slug
         if suffix_id:
             self.slug = '%s-%s' % (self.slug, self.id)
             Article.objects.filter(id=self.id).update(slug=self.slug)
         cache.delete('ikhaya/archive')
-        cache.delete('ikhaya/article_text/{}'.format(self.id))
-        cache.delete('ikhaya/article_intro/{}'.format(self.id))
-        cache.delete('ikhaya/article/{}'.format(self.slug))
+        cache.delete(f'ikhaya/article_text/{self.id}')
+        cache.delete(f'ikhaya/article_intro/{self.id}')
+        cache.delete(f'ikhaya/article/{self.slug}')
 
     def delete(self):
         """
         Subscriptions are removed by a Django signal `pre_delete`
         """
         id = self.id
-        super(Article, self).delete()
+        super().delete()
         self.id = id
 
     class Meta:
@@ -412,9 +411,9 @@ class Comment(models.Model):
             self.article = Article.objects.get(id=self.article.id)
             self.article.comment_count = self.article.comment_count + 1
             self.article.save()
-        super(Comment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if self.id:
-            cache.delete('ikhaya/comment/{}'.format(self.id))
+            cache.delete(f'ikhaya/comment/{self.id}')
 
 
 class Event(models.Model):
@@ -457,7 +456,7 @@ class Event(models.Model):
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
-        cache.delete('ikhaya/event/{}'.format(self.id))
+        cache.delete(f'ikhaya/event/{self.id}')
         cache.delete('ikhaya/event_count')
 
     def friendly_title(self, with_html_link=False):

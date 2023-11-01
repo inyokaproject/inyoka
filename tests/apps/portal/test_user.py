@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.portal.test_user
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,7 +26,7 @@ from inyoka.wiki.models import Page
 
 class TestUserModel(TestCase):
     def setUp(self):
-        super(TestUserModel, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
 
@@ -113,7 +112,7 @@ class TestUserModel(TestCase):
 
 class TestUserHasContent(TestCase):
     def setUp(self):
-        super(TestUserHasContent, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user(
             'testing',
             'example@example.com',

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.planet.models
     ~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +48,7 @@ class Blog(models.Model):
 
     def delete(self):
         self.icon.delete(save=False)
-        super(Blog, self).delete()
+        super().delete()
 
     def __str__(self):
         return self.name
@@ -106,11 +105,11 @@ class Entry(models.Model):
             }[action])
 
     def save(self, *args, **kwargs):
-        super(Entry, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         blog = self.blog
 
     def delete(self):
-        super(Entry, self).delete()
+        super().delete()
 
     class Meta:
         verbose_name = gettext_lazy('Entry')

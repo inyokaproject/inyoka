@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.management.commands.generate_requirements
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +34,7 @@ class Command(BaseCommand):
 
     def _get_requirements_path(self, stage: str) -> str:
         py_major, py_minor, _ = platform.python_version_tuple()
-        file = '{}-py{}.{}-{}.txt'.format(sys.platform, py_major, py_minor, stage)
+        file = f'{sys.platform}-py{py_major}.{py_minor}-{stage}.txt'
         full_path = os.path.join(self.requirements_path, file)
 
         return full_path
@@ -73,7 +72,7 @@ class Command(BaseCommand):
         print('Generating', full_path)
         try:
             subprocess.run([program_name] + arguments, check=True, env=custom_env,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           capture_output=True)
         except subprocess.CalledProcessError as e:
             print('stdout')
             print(e.stdout.decode())

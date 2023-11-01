@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.text
     ~~~~~~~~~~~~~~~~~
@@ -48,7 +47,7 @@ def increment_string(s):
         next = str(int(m.group(1)) + 1)
         start, end = m.span(1)
         if start or end:
-            return '{0}-{1}{2}'.format(
+            return '{}-{}{}'.format(
                 s[:max(end - len(next), start)],
                 next,
                 s[end:])

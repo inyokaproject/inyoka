@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
     inyoka.markup.templates
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,7 +84,7 @@ def rule(regexp, tokentype=None, enter=None, leave=None):
 number_re = re.compile(r'^\d+(?:\.\d*)?$')
 
 
-class Lexer(object):
+class Lexer:
     """
     Tokenize template code.
     """
@@ -96,11 +95,11 @@ class Lexer(object):
         ),
         'tag': ruleset(
             rule(r'@>', 'tag_end', leave=1),
-            rule(r'#.*?$(?m)'),
+            rule(r'(?m)#.*?$'),
             rule(r'\s+'),
             rule(r'\d+(\.\d*)?', 'number'),
-            rule(r"('([^'\\]*(?:\\.[^'\\]*)*)'|"
-                 r'"([^"\\]*(?:\\.[^"\\]*)*)")(?s)', 'string'),
+            rule(r"(?s)('([^'\\]*(?:\\.[^'\\]*)*)'|"
+                 r'"([^"\\]*(?:\\.[^"\\]*)*)")', 'string'),
             rule(r'(<=?|>=?|=>|[!=]?=)|[()\[\]&.,*%/+-]', 'operator'),
             rule(r'\$[^\W\d][^\W]*', 'variable')
         )
@@ -143,7 +142,7 @@ class Lexer(object):
             yield 'raw', flatten(text_buffer)
 
 
-class Parser(object):
+class Parser:
     """
     Parse template code.
     """
@@ -477,7 +476,7 @@ class TemplateSyntaxError(Exception):
         return Data("\n\n'''%s''' %s\n\n" % (msg, self.message))
 
 
-class Context(object):
+class Context:
     """
     Creates a context of values out of a list of tuples in the form
     ``(key, value)``.
@@ -549,7 +548,7 @@ class Context(object):
         self.stack[-1][key] = value
 
 
-class Node(object):
+class Node:
 
     __repr__ = debug_repr
 
@@ -567,8 +566,7 @@ class Compound(Node):
 
     def stream_markup(self, context):
         for node in self.nodes:
-            for item in node.stream_markup(context):
-                yield item
+            yield from node.stream_markup(context)
 
 
 class Template(Node):
@@ -577,8 +575,7 @@ class Template(Node):
         self.body = body
 
     def stream_markup(self, context):
-        for item in self.body.stream_markup(context):
-            yield item
+        yield from self.body.stream_markup(context)
 
 
 class Data(Node):
@@ -612,8 +609,7 @@ class For(Node):
                 'first': idx == 0,
                 'last': idx == length - 1
             })
-            for item in self.body.stream_markup(context):
-                yield item
+            yield from self.body.stream_markup(context)
         context.pop()
 
 
@@ -626,13 +622,11 @@ class If(Node):
     def stream_markup(self, context):
         for test, body in self.tests:
             if test.evaluate(context):
-                for item in body.stream_markup(context):
-                    yield item
+                yield from body.stream_markup(context)
                 break
         else:
             if self.else_body:
-                for item in self.else_body.stream_markup(context):
-                    yield item
+                yield from self.else_body.stream_markup(context)
 
 
 class Expr(Node):
@@ -673,8 +667,7 @@ class Value(Expr):
 
     def __iter__(self):
         if isinstance(self.value, (tuple, list, str)):
-            for item in self.value:
-                yield item
+            yield from self.value
         elif isinstance(self.value, dict):
             for key, value in self.value.items():
                 yield {'key': key, 'value': value}

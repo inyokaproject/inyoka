@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
@@ -77,6 +74,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='article',
-            unique_together=set([('pub_date', 'slug')]),
+            unique_together={('pub_date', 'slug')},
         ),
     ]

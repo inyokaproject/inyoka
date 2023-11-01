@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup.parsers
     ~~~~~~~~~~~~~~~~~~~~~
@@ -36,7 +35,7 @@ def get_parser(name, args, kwargs, data):
     return cls(data, args, kwargs)
 
 
-class Parser(object, metaclass=ArgumentCollector):
+class Parser(metaclass=ArgumentCollector):
     """
     baseclass for parsers.  Concrete parsers should either subclass this or
     implement the same attributes and methods.

@@ -157,23 +157,23 @@ Tablet,167759,1843644,9.1%,8.63
 
     def test_heading_contains_arrow(self):
         html = render_smilies('= => g =')
-        self.assertHTMLEqual(html, u'<h2 id="g">\u21d2 g<a href="#g" class="headerlink">\xb6</a></h2>')
+        self.assertHTMLEqual(html, '<h2 id="g">\u21d2 g<a href="#g" class="headerlink">\xb6</a></h2>')
 
     def test_arrows(self):
         html = render_smilies('a => this')
-        self.assertHTMLEqual(html, u'a \u21d2 this')
+        self.assertHTMLEqual(html, 'a \u21d2 this')
 
     def test_list_with_arrow(self):
         html = render_smilies(' - -> this')
-        self.assertHTMLEqual(html, u'<ul><li>\u2192 this</li></ul>')
+        self.assertHTMLEqual(html, '<ul><li>\u2192 this</li></ul>')
 
     def test_strikethrough_with_dash(self):
         html = render_smilies('a -- --(dvdfv)--')
-        self.assertHTMLEqual(html, u'a \u2013 <del>dvdfv</del>')
+        self.assertHTMLEqual(html, 'a \u2013 <del>dvdfv</del>')
 
     def test_arrow_in_bracket(self):
         html = render_smilies('(-> d)')
-        self.assertHTMLEqual(html, u'(\u2192 d)')
+        self.assertHTMLEqual(html, '(\u2192 d)')
 
     def test_compile(self):
         """
@@ -226,7 +226,7 @@ class TestTemplateHtmlRenderer(TestCase):
         </p>""")
 
     def test_template_inside_template(self):
-        markup = """{{{#!vorlage Note
+        markup = r"""{{{#!vorlage Note
 Type the following
 {{{#!vorlage Command
 start

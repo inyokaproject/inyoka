@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.ikhaya.test_models
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,7 +20,7 @@ from inyoka.utils.urls import url_for
 class TestArticleModel(TestCase):
 
     def setUp(self):
-        super(TestArticleModel, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin',
                 False)
 
@@ -92,21 +91,21 @@ class TestCategoryModel(TestCase):
 class TestSuggestionModel(TestCase):
 
     def setUp(self):
-        super(TestSuggestionModel, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin',
             False)
         self.suggestion1 = Suggestion(author=self.user)
         self.suggestion1.save()
 
     def test_url(self):
-        url = 'http://ikhaya.{0}/suggestions/#{1}'.format(settings.BASE_DOMAIN_NAME, self.suggestion1.id)
+        url = f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/suggestions/#{self.suggestion1.id}'
         self.assertEqual(url_for(self.suggestion1), url)
 
 
 class TestEventModel(TestCase):
 
     def setUp(self):
-        super(TestEventModel, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin',
             False)
 

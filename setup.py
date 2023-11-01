@@ -47,7 +47,7 @@ setup(
         'pip-tools',
 
         'Babel',
-        'beautifulsoup4==4.6.0',
+        'beautifulsoup4',
         'celery[redis]',
         'certifi',
         'defusedxml',

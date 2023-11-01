@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.utils
     ~~~~~~~~~~~~~~~~~~~
@@ -158,7 +157,7 @@ class UbuntuVersion:
 def get_ubuntu_versions():
     #: we need that try-except block to avoid failing `./manage syncdb`
     sid = transaction.savepoint()
-    versions = set([])
+    versions = set()
     try:
         jsonobjs = json.loads(storage['distri_versions'])
         for obj in jsonobjs:

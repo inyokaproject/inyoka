@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 """
     inyoka.filters
     ~~~~~~~~~~~~~~
@@ -31,7 +30,7 @@ SUPPORTED_SUBSCRIPTION_TYPES = {
 class LinkWidget(BaseLinkWidget):
 
     def render_options(self, choices, selected_choices, name):
-        selected_choices = set(force_str(v) for v in selected_choices)
+        selected_choices = {force_str(v) for v in selected_choices}
         output = []
         for option_value, option_label in chain(self.choices, choices):
             if option_label:

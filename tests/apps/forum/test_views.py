@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -434,7 +433,7 @@ class TestUserPostCounter(TestCase):
         post2 = Post.objects.create(author=self.user, topic=topic)
         cache.set(self.user.post_count.cache_key, 2)
 
-        self.client.post('/post/{}/hide/'.format(post2.id), {'confirm': 'yes'})
+        self.client.post(f'/post/{post2.id}/hide/', {'confirm': 'yes'})
 
         self.assertEqual(self.user.post_count.value(), 1)
 
@@ -447,7 +446,7 @@ class TestUserPostCounter(TestCase):
         post2 = Post.objects.create(author=self.user, topic=topic, hidden=True)
         cache.set(self.user.post_count.cache_key, 1)
 
-        self.client.post('/post/{}/restore/'.format(post2.id), {'confirm': 'yes'})
+        self.client.post(f'/post/{post2.id}/restore/', {'confirm': 'yes'})
 
         self.assertEqual(self.user.post_count.value(), 2)
 
@@ -460,7 +459,7 @@ class TestUserPostCounter(TestCase):
         post2 = Post.objects.create(author=self.user, topic=topic, hidden=True)
         cache.set(self.user.post_count.cache_key, 1)
 
-        self.client.post('/post/{}/delete/'.format(post2.id), {'confirm': 'yes'})
+        self.client.post(f'/post/{post2.id}/delete/', {'confirm': 'yes'})
 
         self.assertEqual(self.user.post_count.value(), 1)
 
@@ -1554,7 +1553,7 @@ class TestMarkRead(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertRedirects(response, url_for(self.public_forum))
-        self.assertContains(response, 'The forum “{}” was marked as read.'.format(self.public_forum.name))
+        self.assertContains(response, f'The forum “{self.public_forum.name}” was marked as read.')
 
     def test_no_existing_forum(self):
         self.client.force_login(user=self.user)

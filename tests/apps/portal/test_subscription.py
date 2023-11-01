@@ -15,7 +15,7 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestSubscription, self).setUp()
+        super().setUp()
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)

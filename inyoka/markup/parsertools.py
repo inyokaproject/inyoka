@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markuptools
     ~~~~~~~~~~~~~~~~~~
@@ -15,7 +14,7 @@ from collections import namedtuple
 Token = namedtuple('Token', ('type', 'value'))
 
 
-class TokenStreamIterator(object):
+class TokenStreamIterator:
     """
     The iterator for tokenstreams.  Iterate over the stream
     until the eof token is reached.
@@ -35,7 +34,7 @@ class TokenStreamIterator(object):
         return token
 
 
-class TokenStream(object):
+class TokenStream:
     """
     A token stream wraps a generator and supports pushing tokens back.
     It also provides some functions to expect tokens and similar stuff.
@@ -192,7 +191,6 @@ def flatten_iterator(iter):
     """Flatten an iterator to one without any sub-elements"""
     for item in iter:
         if hasattr(item, '__iter__') and not isinstance(item, str):
-            for sub in flatten_iterator(item):
-                yield sub
+            yield from flatten_iterator(item)
         else:
             yield item

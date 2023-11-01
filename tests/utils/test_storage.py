@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_storage
     ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -22,7 +21,7 @@ from inyoka.utils.test import TestCase
 class TestStorage(TestCase):
 
     def setUp(self):
-        super(TestStorage, self).setUp()
+        super().setUp()
         local.cache = {}
         self.cache = caches['default']
 

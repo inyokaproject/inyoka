@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
 
 from django.conf import settings
@@ -14,7 +13,7 @@ class TestViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestViews, self).setUp()
+        super().setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.admin.is_superuser = True
         self.admin.save()

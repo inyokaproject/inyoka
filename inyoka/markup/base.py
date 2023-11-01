@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup
     ~~~~~~~~~~~~~
@@ -194,7 +193,7 @@ class StackExhaused(ValueError):
     """
 
 
-class Parser(object):
+class Parser:
     """
     The wiki syntax parser.  Never use this class directly, always do this
     via the public `parse()` function of this module.  The behavior of this
@@ -682,7 +681,7 @@ class Parser(object):
         """
         stream.expect('wiki_link_begin')
         wiki, page = stream.expect('link_target').value
-        page = page.replace('\:', ':')
+        page = page.replace(r'\:', ':')
         if '#' in page:
             page, anchor = page.split('#', 1)
         else:

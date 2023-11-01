@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_user
     ~~~~~~~~~~~~~~~~~~~~~
@@ -17,7 +16,7 @@ from inyoka.utils.test import TestCase
 
 class TestUtilsUser(TestCase):
     def setUp(self):
-        super(TestUtilsUser, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
 

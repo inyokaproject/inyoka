@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.models
     ~~~~~~~~~~~~~~~~~~
@@ -122,7 +121,7 @@ def is_privileged_wiki_page(name):
     return any(name.startswith(n) for n in settings.WIKI_PRIVILEGED_PAGES)
 
 
-to_page_by_slug_key = lambda name: 'wiki/page_by_slug/{}'.format(wiki_slugify(name))
+to_page_by_slug_key = lambda name: f'wiki/page_by_slug/{wiki_slugify(name)}'
 
 
 class PageManager(models.Manager):
@@ -271,7 +270,7 @@ class PageManager(models.Manager):
         Returns a cached slugified list of all wiki pages, useful to speed up
         our parser a lot. Avoids many cache or db hits on big pages/texts.
         """
-        make_sluglist = lambda: set([wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)])
+        make_sluglist = lambda: {wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)}
         key = 'wiki/objects_slugs'
         return cache.get_or_set(key, make_sluglist, settings.WIKI_CACHE_TIMEOUT)
 
@@ -348,7 +347,7 @@ class PageManager(models.Manager):
         of unicode strings, not the actual page object.  This ignores
         attachments!
         """
-        ignore = set([settings.WIKI_MAIN_PAGE])
+        ignore = {settings.WIKI_MAIN_PAGE}
         pages = set(self.get_page_list())
         linked_pages = set(MetaData.objects.values_list('value', flat=True)
                                            .filter(key='X-Link').all())
@@ -404,7 +403,7 @@ class PageManager(models.Manager):
         """
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
-        cache_key = 'wiki/page/{}'.format(name.lower())
+        cache_key = f'wiki/page/{name.lower()}'
         rev = cache.get(cache_key) if cached else None
         if rev is None:
             try:
@@ -622,7 +621,7 @@ class PageManager(models.Manager):
         """Unset the topic from all pages associated with it."""
         pages = Page.objects.filter(topic=topic)
         names = pages.values_list('name', flat=True)
-        keys = ['wiki/page/{}'.format(n).lower() for n in names]
+        keys = [f'wiki/page/{n}'.lower() for n in names]
         if pages.update(topic=None) > 0:
             cache.delete_many(keys)
 
@@ -631,7 +630,7 @@ class PageManager(models.Manager):
             if isinstance(names, str):
                 names = [names, ]
             lower_names = [name.lower() for name in names]
-            cache.delete_many(['wiki/page/{}'.format(name) for name in lower_names])
+            cache.delete_many([f'wiki/page/{name}' for name in lower_names])
             cache.delete_many([to_page_by_slug_key(name) for name in lower_names])
         cache.delete_pattern('wiki/objects_*')
         update_page_by_slug.delay()
@@ -680,7 +679,7 @@ class RevisionManager(models.Manager):
         return revisions[:count]
 
 
-class Diff(object):
+class Diff:
     """
     This class represents the results of a page comparison.  You can get
     useful instances of this class by using the ``compare`` function on
@@ -1368,9 +1367,9 @@ class Revision(models.Model):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
 
-        cache.delete('wiki/page/{}'.format(self.page.name.lower()))
+        cache.delete(f'wiki/page/{self.page.name.lower()}')
         cache.delete('wiki/latest_revisions')
-        cache.delete('wiki/latest_revisions/{}'.format(self.page.name))
+        cache.delete(f'wiki/latest_revisions/{self.page.name}')
 
     def __str__(self):
         return _('Revision %(id)d (%(title)s)') % {

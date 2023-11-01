@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.macros
     ~~~~~~~~~~~~~~~~~~
@@ -296,11 +295,11 @@ class FilterByMetaData(macros.Macro):
             includes = [x for x in values if not x.startswith('NOT ')]
             kwargs = {'key': key, 'value__in': includes}
             q = MetaData.objects.select_related('page').filter(**kwargs)
-            res = set(
+            res = {
                 x.page
                 for x in q
                 if not is_privileged_wiki_page(x.page.name)
-            )
+            }
             pages = pages.union(res)
 
         # filter the pages with `AND`

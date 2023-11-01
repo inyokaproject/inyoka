@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.markup.test_templates
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -372,13 +371,13 @@ class TestBinaryFunctions(unittest.TestCase):
     def test_matches_regex(self):
         code = '<@ if $a matches_regex $b @>True<@ endif @>'
 
-        context = [('a', '1234'), ('b', '\d+')]
+        context = [('a', '1234'), ('b', r'\d+')]
         self.assertEqual(templates.process(code, context), 'True')
 
         context = [('a', 'FooBar'), ('b', '[a-z]')]
         self.assertEqual(templates.process(code, context), '')
 
-        context = [('a', 'Fo0Bar'), ('b', '[a-z0-9](?i)')]
+        context = [('a', 'Fo0Bar'), ('b', '(?i)[a-z0-9]')]
         self.assertEqual(templates.process(code, context), 'True')
 
         context = [('a', 112.34), ('b', 12.3)]

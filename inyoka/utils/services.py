@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.services
     ~~~~~~~~~~~~~~~~~~~~~
@@ -13,7 +12,7 @@
 from django.http import Http404
 
 
-class SimpleDispatcher(object):
+class SimpleDispatcher:
     """
     A very basic dispatcher.
     """

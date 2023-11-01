@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.pastebin.forms
     ~~~~~~~~~~~~~~~~~~~~~
@@ -64,7 +63,7 @@ class AddPasteForm(forms.ModelForm):
                              choices=LANGUAGES)
 
     def save(self, user, commit=True):
-        entry = super(AddPasteForm, self).save(commit=False)
+        entry = super().save(commit=False)
         entry.author = user
         entry.title = entry.title or gettext('Untitled')
         if commit:

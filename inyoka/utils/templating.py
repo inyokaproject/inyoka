@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.templating
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,7 +180,7 @@ class LazyJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Promise):
             return force_str(obj)
-        return super(LazyJSONEncoder, self).default(obj)
+        return super().default(obj)
 
 
 def json_filter(value):
