@@ -893,14 +893,14 @@ class Page(models.Model):
 
     @deferred
     def embedders(self):
-        """List of `Page` objects that embbed this page as attachment."""
+        """List of `Page` objects that embed this page as attachment."""
         return Page.objects.find_by_metadata('X-Attach', self.name)
 
     @deferred
     def links(self):
         """
         Internal wiki links on this page.  Because there could be links to
-        non existing pages the list returned contains just the link targets
+        non-existing pages the list returned contains just the link targets
         in normalized format, not the page objects as such.
         """
         return MetaData.objects.filter(page=self.id, key='X-Link')\
@@ -1022,11 +1022,11 @@ class Page(models.Model):
 
             user
                 If this parameter is `None` the inyoka system user will be the
-                author of the created revision.  Otherwise it can either be a
-                User or an AnoymousUser object from the auth contrib module.
+                author of the created revision.  Otherwise, it can either be a
+                User or an AnonymousUser object from the auth contrib module.
 
             change_date
-                If this is not provided the current date is used.  Otherwise
+                If this is not provided the current date is used.  Otherwise,
                 it should be an UTC timestamp in form of a `datetime.datetime`
                 object.
 
@@ -1046,7 +1046,7 @@ class Page(models.Model):
                 be a page or attachment depending on the last revision.
 
             deleted
-                If this is `True` the page is created as an deleted page.
+                If this is `True` the page is created as a deleted page.
                 This operation doesn't make sense and creates surprising
                 displays in the revision log if the `note` is not changed to
                 something reasonable.
