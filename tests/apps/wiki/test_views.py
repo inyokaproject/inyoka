@@ -185,6 +185,12 @@ class TestDoShow(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
+    def test_no_existing_revision(self):
+        p = Page.objects.get_by_name(self.page_name)
+        url = p.get_absolute_url(revision=123456)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
     def test_redirect(self):
         text = f'# X-Redirect: {self.page_name}\nfoobar content'
         redirect = Page.objects.create(user=self.user, name='redirect', remote_addr='', text=text)
@@ -204,6 +210,25 @@ class TestDoShow(TestCase):
 
         response = self.client.get(redirect.get_absolute_url('show'), follow=True)
         self.assertRedirects(response, redirect.get_absolute_url('show_no_redirect'))
+
+    def test_view_old_revision(self):
+        p = Page.objects.get_by_name(self.page_name)
+        old_rev = p.last_rev_id
+        p.edit(text='foo', user=self.user)
+
+        url = p.get_absolute_url('revision', old_rev)
+        response = self.client.get(url, follow=True)
+        self.assertContains(
+            response,
+            'You are viewing an old revision of this wiki page.'
+        )
+
+    def test_deleted_page(self):
+        p = Page.objects.get_by_name(self.page_name)
+        p.edit(user=self.user, deleted=True, note='deleted')
+
+        response = self.client.get(p.get_absolute_url('show'), follow=True)
+        self.assertEqual(response.status_code, 404)
 
 
 class TestDoMetaExport(TestCase):

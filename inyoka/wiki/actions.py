@@ -111,9 +111,8 @@ def do_show(request, name, rev=None, allow_redirect=True):
             marked as deleted.
     """
     try:
-        if rev is None or not rev.isdigit():
+        if rev is None:
             page = Page.objects.get_by_name(name)
-            rev = None
         else:
             page = Page.objects.get_by_name_and_rev(name, rev)
     except Page.DoesNotExist:
