@@ -92,20 +92,10 @@ class LoginForm(forms.Form):
     """Simple form for the login dialog"""
     username = forms.CharField(label=gettext_lazy('Username or email address'),
         widget=forms.TextInput(attrs={'tabindex': '1'}))
-    password = forms.CharField(label=gettext_lazy('Password'), required=False,
+    password = forms.CharField(label=gettext_lazy('Password'),
         widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),)
     permanent = forms.BooleanField(label=gettext_lazy('Keep logged in'),
         required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
-
-    def clean(self):
-        data = self.cleaned_data
-        if ('username' in data and
-                not (data['username'].startswith('http://') or
-                     data['username'].startswith('https://')) and
-                data['password'] == ''):
-            msg = _('This field is required')
-            self._errors['password'] = self.error_class([msg])
-        return data
 
 
 class RegisterForm(forms.Form):

@@ -16,7 +16,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from inyoka.portal.models import StaticPage, StaticFile
 from inyoka.utils.test import TestCase
 
-from inyoka.portal.forms import EditFileForm, EditStaticPageForm
+from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm
 
 
 class TestEditStaticPageForm(TestCase):
@@ -174,3 +174,22 @@ class TestEditFileForm(TestCase):
             form = EditFileForm(files={'file': upload_object})
             self.assertFalse(form.is_valid())
             self.assertIn('Another file with this name already exists. Please edit this file.', form.errors['file'])
+
+
+class TestLoginForm(TestCase):
+    form = LoginForm
+
+    def test_no_password(self):
+        """Obviously, a login form should miss the password, if no password was submitted."""
+        data = {'username': 'user'}
+        form = self.form(data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required.', form.errors['password'])
+
+    def test_password_nul_byte(self):
+        data = {'username': 'wUmrLVWz', 'password': '\x00'}
+        form = self.form(data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('Null characters are not allowed.', form.errors['password'])
