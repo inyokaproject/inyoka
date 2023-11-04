@@ -28,7 +28,7 @@ class SimpleDispatcher:
 
     def __call__(self, request, name):
         if name not in self.methods:
-            return Http404('Service not found.')
+            raise Http404('Service not found.')
         return self.methods[name](request)
 
 
