@@ -25,3 +25,12 @@ class TestNULByte(TestCase):
         url = f'http://{ settings.BASE_DOMAIN_NAME }/2023/11/18/lpd-2023-10\x00EF2522/ics/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 400)
+
+
+class TestServiceMiddleware(TestCase):
+
+
+    def test_http_not_found(self):
+        url = f'http://{ settings.BASE_DOMAIN_NAME }/?__service__=portal.toggle_sidebar%27%7C%7CDBMS_PIPE.RECEIVE'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
