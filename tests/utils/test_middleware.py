@@ -29,6 +29,10 @@ class TestNULByte(TestCase):
 
 class TestServiceMiddleware(TestCase):
 
+    def test_invalid_module(self):
+        url = f'http://{ settings.BASE_DOMAIN_NAME }/?__service__=%40%40rKhiI&component=&hide='
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 400)
 
     def test_http_not_found(self):
         url = f'http://{ settings.BASE_DOMAIN_NAME }/?__service__=portal.toggle_sidebar%27%7C%7CDBMS_PIPE.RECEIVE'
