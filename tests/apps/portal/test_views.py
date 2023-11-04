@@ -231,7 +231,7 @@ class TestAuthViews(TestCase):
             self.assertContains(response, 'is inactive.')
 
     def test_login_wrong_password(self):
-        """Obviouly, a login should fail when a wrong password was submitted."""
+        """Obviously, a login should fail when a wrong password was submitted."""
         postdata = {'username': 'user', 'password': 'wrong_password'}
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata)
