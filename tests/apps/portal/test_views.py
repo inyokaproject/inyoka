@@ -195,6 +195,18 @@ class TestAuthViews(TestCase):
                               % _('You are already logged in.'),
                               response.content.decode(), count=1)
 
+    def test_valid_login__email(self):
+        """Test the login with valid e-mail (instead of username)."""
+        postdata = {'username': self.user.email, 'password': 'user'}
+        with translation.override('en-us'):
+            response = self.client.post('/login/', postdata, follow=True)
+            self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
+            self.assertInHTML('<div class="message success">%s</div>'
+                              % _('You have successfully logged in.'),
+                              response.content.decode(), count=1)
+
+            self.assertTrue(response.client.session.get_expire_at_browser_close())
+
     def test_login_with_permanent_flag(self):
         """Test the “stay logged in” function."""
         postdata = {'username': 'user', 'password': 'user', 'permanent': 'on'}
@@ -236,6 +248,13 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata)
         self.assertContains(response, 'Login failed because the password')
+
+    def test_login_wrong_password__username_escaped(self):
+        """Test escaping of username in error messsage."""
+        postdata = {'username': '<a href=javascript: echo(foo)></a>', 'password': 'wrong_password'}
+        with translation.override('en-us'):
+            response = self.client.post('/login/', postdata)
+        self.assertContains(response, '“&lt;a href=javascript: echo(foo)&gt;&lt;/a&gt;”')
 
     def test_login_safe_redirects(self):
         """External redirects are not allowed after login.

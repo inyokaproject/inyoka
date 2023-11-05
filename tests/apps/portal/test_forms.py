@@ -193,3 +193,10 @@ class TestLoginForm(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn('Null characters are not allowed.', form.errors['password'])
+
+    def test_username_nul_byte(self):
+        data = {'username': 'wUmrLVWz\x00', 'password': 'foo'}
+        form = self.form(data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('Null characters are not allowed.', form.errors['username'])

@@ -360,40 +360,26 @@ def login(request):
         messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
-    failed = inactive = banned = False
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            try:
-                user = auth.authenticate(username=data['username'],
-                                         password=data['password'])
-            except UserBanned:
-                banned = True
-                user = None
+            user = data['user_obj']
 
-            if user is not None:
-                if user.is_active:
-                    if data['permanent']:
-                        make_permanent(request)
-                    # username matches password and user is active
-                    messages.success(request, _('You have successfully logged in.'))
-                    auth.login(request, user)
-                    return HttpResponseRedirect(redirect)
-                inactive = True
+            if data['permanent']:
+                make_permanent(request)
 
-            failed = True
+            # username matches password and user is active
+            messages.success(request, _('You have successfully logged in.'))
+            auth.login(request, user)
+            return HttpResponseRedirect(redirect)
     else:
         form = LoginForm()
 
     d = {
         'form': form,
-        'failed': failed,
-        'inactive': inactive,
-        'banned': banned,
     }
-    if failed:
-        d['username'] = data['username']
+
     return d
 
 

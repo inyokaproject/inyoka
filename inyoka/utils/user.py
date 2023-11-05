@@ -2,7 +2,7 @@
     inyoka.utils.user
     ~~~~~~~~~~~~~~~~~
 
-    Serveral utilities to work with users.
+    Several utilities to work with users.
 
     Some parts are ported from the django auth-module.
 
