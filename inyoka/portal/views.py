@@ -354,7 +354,8 @@ class InyokaPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmVi
 def login(request):
     """Login dialog that supports permanent logins"""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
-        else href('portal'))
+                else href('portal'))
+
     if request.user.is_authenticated:
         messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(redirect)
@@ -366,7 +367,7 @@ def login(request):
             data = form.cleaned_data
             try:
                 user = auth.authenticate(username=data['username'],
-                                  password=data['password'])
+                                         password=data['password'])
             except UserBanned:
                 banned = True
                 user = None
