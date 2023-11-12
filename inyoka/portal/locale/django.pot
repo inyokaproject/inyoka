@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Inyoka Project v0.30.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-12 18:28+0100\n"
+"POT-Creation-Date: 2023-11-13 00:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -297,14 +297,10 @@ msgstr ""
 msgid "Location of new wiki pages"
 msgstr ""
 
-#, python-format
-msgid "Login failed because the password for the user “%(name)s” was wrong or the user does not exist."
+msgid "Login failed because the user is currently banned. You were informed about that. If you don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
 msgstr ""
 
-msgid "Login failed because the user “{name}” is currently banned. You were informed about that. If you don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
-msgstr ""
-
-msgid "Login failed because the user “{name}” is inactive. You probably didn’t click on the link in the activation mail which was sent to you after your registration. If it is still not working, contact us: <a href=\"{mailto}\">{mail}</a>"
+msgid "Login failed because the user is inactive. You probably didn’t click on the link in the activation mail which was sent to you after your registration. If it is still not working, contact us: <a href=\"{mailto}\">{mail}</a>"
 msgstr ""
 
 msgid "Mail"

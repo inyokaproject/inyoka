@@ -182,21 +182,21 @@ class TestLoginForm(TestCase):
     def test_no_password(self):
         """Obviously, a login form should miss the password, if no password was submitted."""
         data = {'username': 'user'}
-        form = self.form(data)
+        form = self.form(None, data)
 
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required.', form.errors['password'])
 
     def test_password_nul_byte(self):
         data = {'username': 'wUmrLVWz', 'password': '\x00'}
-        form = self.form(data)
+        form = self.form(None, data)
 
         self.assertFalse(form.is_valid())
         self.assertIn('Null characters are not allowed.', form.errors['password'])
 
     def test_username_nul_byte(self):
         data = {'username': 'wUmrLVWz\x00', 'password': 'foo'}
-        form = self.form(data)
+        form = self.form(None, data)
 
         self.assertFalse(form.is_valid())
         self.assertIn('Null characters are not allowed.', form.errors['username'])

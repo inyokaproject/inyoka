@@ -16,10 +16,10 @@ import os
 from PIL import Image
 from django import forms
 from django.conf import settings
-from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
 from django.core import signing
 from django.core.cache import cache
@@ -90,55 +90,37 @@ NOTIFICATION_CHOICES = (
 LinkMapFormset = modelformset_factory(Linkmap, fields=('token', 'url', 'icon'), extra=3, can_delete=True)
 
 
-class LoginForm(forms.Form):
-    # TODO inherit from django builtin login form?
+class LoginForm(AuthenticationForm):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=gettext_lazy('Username or email address'), widget=forms.TextInput(attrs={}))
-    password = forms.CharField(label=gettext_lazy('Password'),
-                               widget=forms.PasswordInput(render_value=False, attrs={}))
     permanent = forms.BooleanField(label=gettext_lazy('Keep logged in'), required=False,
-                                   widget=forms.CheckboxInput(attrs={}),
                                    help_text=_("Don’t choose this option if you are using a public computer."
                                                " Otherwise, unauthorized persons may enter your account."))
 
     mail = settings.INYOKA_CONTACT_EMAIL
 
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        self.fields['username'].label = _('Username or email address')
+
+        self.error_messages['inactive'] = format_html(
+                _("Login failed because the user is inactive. You probably didn’t click on the link in the "
+                  "activation mail which was sent to you after your registration. If it is still not working, contact "
+                  "us: <a href=\"{mailto}\">{mail}</a>"),
+                mail=self.mail, mailto=f"mailto:{self.mail}",
+                )
+
     def clean(self):
-        super().clean()
-
-        username = self.cleaned_data.get("username")
-        password = self.cleaned_data.get("password")
-
         try:
-            user = auth.authenticate(username=username, password=password)
+            super().clean()
         except UserBanned:
             raise ValidationError(format_html(
-                _("Login failed because the user “{name}” is currently banned. You were informed about that. If you "
+                _("Login failed because the user is currently banned. You were informed about that. If you "
                   "don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
                   ),
-                name=username, mail=self.mail, mailto=f"mailto:{self.mail}",
+                mail=self.mail, mailto=f"mailto:{self.mail}",
                 ),
                 code="banned",
             )
-
-        if user is None:
-            raise ValidationError(
-                _("Login failed because the password for the user “%(name)s” was wrong or the user does not exist."),
-                code="invalid-credentials",
-                params={"name": username},
-            )
-
-        if not user.is_active:
-            raise ValidationError(format_html(
-                _("Login failed because the user “{name}” is inactive. You probably didn’t click on the link in the "
-                  "activation mail which was sent to you after your registration. If it is still not working, contact "
-                  "us: <a href=\"{mailto}\">{mail}</a>"),
-                name=user.username, mail=self.mail, mailto=f"mailto:{self.mail}",
-                ),
-                code="inactive",
-            )
-
-        self.cleaned_data['user_obj'] = user
 
         return self.cleaned_data
 

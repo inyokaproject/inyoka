@@ -247,14 +247,7 @@ class TestAuthViews(TestCase):
         postdata = {'username': 'user', 'password': 'wrong_password'}
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata)
-        self.assertContains(response, 'Login failed because the password')
-
-    def test_login_wrong_password__username_escaped(self):
-        """Test escaping of username in error messsage."""
-        postdata = {'username': '<a href=javascript: echo(foo)></a>', 'password': 'wrong_password'}
-        with translation.override('en-us'):
-            response = self.client.post('/login/', postdata)
-        self.assertContains(response, '“&lt;a href=javascript: echo(foo)&gt;&lt;/a&gt;”')
+        self.assertContains(response, 'Please enter a correct')
 
     def test_login_safe_redirects(self):
         """External redirects are not allowed after login.

@@ -298,15 +298,11 @@ msgstr "Link"
 msgid "Location of new wiki pages"
 msgstr "Ort neuer Wiki-Seiten"
 
-#, python-format
-msgid "Login failed because the password for the user “%(name)s” was wrong or the user does not exist."
-msgstr "Du konntest nicht angemeldet werden, da das Passwort für den Benutzer „%(name)s“ falsch war oder der Benutzer nicht existiert."
+msgid "Login failed because the user is currently banned. You were informed about that. If you don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
+msgstr "Du konntest nicht angemeldet werden, da der Benutzer derzeit gesperrt ist. Du wurdest darüber weitgehend informiert. Solltest du dem nicht zustimmen oder sollte ein Irrtum vorliegen, so schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>."
 
-msgid "Login failed because the user “{name}” is currently banned. You were informed about that. If you don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
-msgstr "Du konntest nicht angemeldet werden, da der Benutzer „{name}s“ derzeit gesperrt ist. Du wurdest darüber weitgehend informiert. Solltest du dem nicht zustimmen oder sollte ein Irrtum vorliegen, so schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>."
-
-msgid "Login failed because the user “{name}” is inactive. You probably didn’t click on the link in the activation mail which was sent to you after your registration. If it is still not working, contact us: <a href=\"{mailto}\">{mail}</a>"
-msgstr "Du konntest nicht angemeldet werden, da der Benutzer „{name}“ derzeit inaktiv ist. Das liegt wahrscheinlich daran, dass du den Aktivierungslink in der Bestätigungsmail, die dir nach der Registrierung zugeschickt wurde, nicht aufgerufen hast. Falls es weiterhin nicht funktioniert, schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>"
+msgid "Login failed because the user is inactive. You probably didn’t click on the link in the activation mail which was sent to you after your registration. If it is still not working, contact us: <a href=\"{mailto}\">{mail}</a>"
+msgstr "Du konntest nicht angemeldet werden, da der Benutzer derzeit inaktiv ist. Das liegt wahrscheinlich daran, dass du den Aktivierungslink in der Bestätigungsmail, die dir nach der Registrierung zugeschickt wurde, nicht aufgerufen hast. Falls es weiterhin nicht funktioniert, schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>"
 
 msgid "Mail"
 msgstr "Mail"
@@ -789,4 +785,3 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
-

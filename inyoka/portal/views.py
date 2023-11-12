@@ -81,7 +81,6 @@ from inyoka.portal.models import (
 )
 from inyoka.portal.user import (
     User,
-    UserBanned,
     deactivate_user,
     send_activation_mail,
 )
@@ -361,10 +360,10 @@ def login(request):
         return HttpResponseRedirect(redirect)
 
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(request, request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user = data['user_obj']
+            user = form.get_user()
 
             if data['permanent']:
                 make_permanent(request)
