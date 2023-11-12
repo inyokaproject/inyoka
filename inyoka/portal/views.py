@@ -384,9 +384,10 @@ def login(request):
 
 def logout(request):
     """Simple logout view that flashes if the process was done
-    successfull or not (e.g if the user wasn't logged in)."""
+    successful or not (e.g. if the user wasn't logged in)."""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
-        else href('portal'))
+                else href('portal'))
+
     if request.user.is_authenticated:
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
@@ -395,6 +396,7 @@ def logout(request):
         messages.success(request, _('You have successfully logged out.'))
     else:
         messages.error(request, _('You were not logged in.'))
+
     return HttpResponseRedirect(redirect)
 
 
