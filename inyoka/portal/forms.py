@@ -19,6 +19,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
 from django.core import signing
 from django.core.cache import cache
@@ -26,10 +27,11 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import validate_email
-from django.db.models import CharField, Count, Value
+from django.db.models import CharField, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
 from django.forms import HiddenInput, modelformset_factory
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
@@ -44,7 +46,7 @@ from inyoka.portal.user import (
     send_new_email_confirmation,
     set_new_email,
     reactivate_user,
-    reset_email
+    reset_email, UserBanned
 )
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
@@ -88,14 +90,39 @@ NOTIFICATION_CHOICES = (
 LinkMapFormset = modelformset_factory(Linkmap, fields=('token', 'url', 'icon'), extra=3, can_delete=True)
 
 
-class LoginForm(forms.Form):
+class LoginForm(AuthenticationForm):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=gettext_lazy('Username or email address'),
-        widget=forms.TextInput(attrs={'tabindex': '1'}))
-    password = forms.CharField(label=gettext_lazy('Password'),
-        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),)
-    permanent = forms.BooleanField(label=gettext_lazy('Keep logged in'),
-        required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
+    permanent = forms.BooleanField(label=gettext_lazy('Keep logged in'), required=False,
+                                   help_text=_("Don’t choose this option if you are using a public computer."
+                                               " Otherwise, unauthorized persons may enter your account."))
+
+    mail = settings.INYOKA_CONTACT_EMAIL
+
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        self.fields['username'].label = _('Username or email address')
+
+        self.error_messages['inactive'] = format_html(
+                _("Login failed because the user is inactive. You probably didn’t click on the link in the "
+                  "activation mail which was sent to you after your registration. If it is still not working, contact "
+                  "us: <a href=\"{mailto}\">{mail}</a>"),
+                mail=self.mail, mailto=f"mailto:{self.mail}",
+                )
+
+    def clean(self):
+        try:
+            super().clean()
+        except UserBanned:
+            raise ValidationError(format_html(
+                _("Login failed because the user is currently banned. You were informed about that. If you "
+                  "don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
+                  ),
+                mail=self.mail, mailto=f"mailto:{self.mail}",
+                ),
+                code="banned",
+            )
+
+        return self.cleaned_data
 
 
 class RegisterForm(forms.Form):
@@ -178,7 +205,7 @@ class RegisterForm(forms.Form):
     def clean_email(self):
         """
         Validates if the required field `email` contains
-        a non existing mail address.
+        a non-existing mail address.
         """
         exists = User.objects.filter(email__iexact=self.cleaned_data['email'])\
                              .exists()

@@ -81,7 +81,6 @@ from inyoka.portal.models import (
 )
 from inyoka.portal.user import (
     User,
-    UserBanned,
     deactivate_user,
     send_activation_mail,
 )
@@ -354,56 +353,41 @@ class InyokaPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmVi
 def login(request):
     """Login dialog that supports permanent logins"""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
-        else href('portal'))
+                else href('portal'))
+
     if request.user.is_authenticated:
         messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
-    failed = inactive = banned = False
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(request, request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            try:
-                user = auth.authenticate(username=data['username'],
-                                  password=data['password'])
-            except UserBanned:
-                banned = True
-                user = None
+            user = form.get_user()
 
-            if user is not None:
-                if user.is_active:
-                    if data['permanent']:
-                        make_permanent(request)
-                    # username matches password and user is active
-                    messages.success(request, _('You have successfully logged in.'))
-                    auth.login(request, user)
-                    return HttpResponseRedirect(redirect)
-                inactive = True
+            if data['permanent']:
+                make_permanent(request)
 
-            failed = True
+            # username matches password and user is active
+            messages.success(request, _('You have successfully logged in.'))
+            auth.login(request, user)
+            return HttpResponseRedirect(redirect)
     else:
-        if 'username' in request.GET:
-            form = LoginForm(initial={'username': request.GET['username']})
-        else:
-            form = LoginForm()
+        form = LoginForm()
 
     d = {
         'form': form,
-        'failed': failed,
-        'inactive': inactive,
-        'banned': banned,
     }
-    if failed:
-        d['username'] = data['username']
+
     return d
 
 
 def logout(request):
     """Simple logout view that flashes if the process was done
-    successfull or not (e.g if the user wasn't logged in)."""
+    successful or not (e.g. if the user wasn't logged in)."""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
-        else href('portal'))
+                else href('portal'))
+
     if request.user.is_authenticated:
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
@@ -412,6 +396,7 @@ def logout(request):
         messages.success(request, _('You have successfully logged out.'))
     else:
         messages.error(request, _('You were not logged in.'))
+
     return HttpResponseRedirect(redirect)
 
 
