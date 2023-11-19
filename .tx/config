@@ -1,43 +1,59 @@
 [main]
 host = https://www.transifex.com
 
-[inyoka.forum]
-source_file = inyoka/forum/locale/django.pot
-source_lang = en
-file_filter = inyoka/forum/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:forum]
+file_filter            = inyoka/forum/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/forum/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 
-[inyoka.global]
-source_file = inyoka/locale/django.pot
-source_lang = en
-file_filter = inyoka/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:global]
+file_filter            = inyoka/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 
-[inyoka.ikhaya]
-source_file = inyoka/ikhaya/locale/django.pot
-source_lang = en
-file_filter = inyoka/ikhaya/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:ikhaya]
+file_filter            = inyoka/ikhaya/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/ikhaya/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 
-[inyoka.markup]
-source_file = inyoka/markup/locale/django.pot
-source_lang = en
-file_filter = inyoka/markup/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:markup]
+file_filter            = inyoka/markup/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/markup/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 
-[inyoka.pastebin]
-source_file = inyoka/pastebin/locale/django.pot
-source_lang = en
-file_filter = inyoka/pastebin/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:pastebin]
+file_filter            = inyoka/pastebin/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/pastebin/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 
-[inyoka.planet]
-source_file = inyoka/planet/locale/django.pot
-source_lang = en
-file_filter = inyoka/planet/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:planet]
+file_filter            = inyoka/planet/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/planet/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 
-[inyoka.portal]
-source_file = inyoka/portal/locale/django.pot
-source_lang = en
-file_filter = inyoka/portal/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:portal]
+file_filter            = inyoka/portal/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/portal/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 
-[inyoka.wiki]
-source_file = inyoka/wiki/locale/django.pot
-source_lang = en
-file_filter = inyoka/wiki/locale/<lang>/LC_MESSAGES/django.po
+[o:inyokaproject:p:inyoka:r:wiki]
+file_filter            = inyoka/wiki/locale/<lang>/LC_MESSAGES/django.po
+source_file            = inyoka/wiki/locale/django.pot
+source_lang            = en
+replace_edited_strings = false
+keep_translations      = false
 

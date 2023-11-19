@@ -70,7 +70,6 @@ setup(
         'pyzmq',
         'sentry-sdk',
         'requests',
-        'transifex-client==0.12.5',
         'Werkzeug<1.0'  # 1.0 removed feed support, see https://github.com/inyokaproject/inyoka/issues/1071
     ],
 
