@@ -32,7 +32,7 @@ from guardian.mixins import GuardianUserMixin
 from guardian.shortcuts import get_perms
 
 from inyoka.utils.cache import QueryCounter
-from inyoka.utils.database import InyokaMarkupField, JSONField
+from inyoka.utils.database import InyokaMarkupField, JSONField, JabberField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
@@ -87,7 +87,7 @@ def reactivate_user(id, email, status):
 def deactivate_user(user):
     """
     This deactivates a user and removes all personal information.
-    To avoid abuse he is sent an email allowing him to reactivate the
+    To avoid abuse, an email is sent that allows reactivation of the account
     within the next month.
     """
 
@@ -255,7 +255,7 @@ def upload_to_avatar(instance, filename):
 
 
 class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
-    """User model that contains all informations about an user."""
+    """User model that contains all information about a user."""
     STATUS_INACTIVE = 0
     STATUS_ACTIVE = 1
     STATUS_BANNED = 2
@@ -288,7 +288,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     # profile attributes
     avatar = models.ImageField(gettext_lazy('Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
-    jabber = models.CharField(gettext_lazy('Jabber'), max_length=200, blank=True)
+    jabber = JabberField(gettext_lazy('Jabber'), max_length=200, blank=True)
     signature = InyokaMarkupField(verbose_name=gettext_lazy('Signature'), blank=True)
     location = models.CharField(gettext_lazy('Residence'), max_length=200, blank=True)
     gpgkey = models.CharField(gettext_lazy('GPG fingerprint'), max_length=255, blank=True)
@@ -482,12 +482,12 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         Returns `True` if user is not banned or could be unbanned, or `False` otherwise.
         """
         if self.is_banned:
-            # user banned ad infinitum
+            # user banned ad infinite
             if self.banned_until is None:
                 return False
             else:
                 # user banned for a specific period of time
-                if (self.banned_until >= datetime.utcnow()):
+                if self.banned_until >= datetime.utcnow():
                     return False
                 else:
                     # period of time gone, reset status

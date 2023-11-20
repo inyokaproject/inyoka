@@ -10,7 +10,6 @@ from celery.canvas import subtask
 from django.conf import settings
 
 from inyoka.portal.models import Subscription
-from inyoka.utils.jabber import send as send_jabber
 from inyoka.utils.logger import logger
 from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
@@ -29,9 +28,6 @@ def send_notification(user, template_name=None, subject=None, args=None):
 
     methods = user.settings.get('notify', ['mail'])
 
-    if 'jabber' in methods and user.jabber:
-        message = render_template('mails/%s.jabber.txt' % template_name, args)
-        send_jabber(user.jabber, message)
     if 'mail' in methods:
         message = render_template('mails/%s.txt' % template_name, args)
         send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message,

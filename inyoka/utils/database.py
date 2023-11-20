@@ -15,6 +15,7 @@ from django.db import models
 from django.db.models.signals import post_save as model_post_save_signal
 
 from inyoka.markup.base import RenderContext, parse
+from inyoka.utils.forms import JabberFormField
 from inyoka.utils.highlight import highlight_code
 
 MAX_SLUG_INCREMENT = 999
@@ -138,6 +139,15 @@ class SimpleDescriptor:
 
     def __set__(self, obj, value):
         obj.__dict__[self.field.name] = value
+
+
+class JabberField(models.CharField):
+    """ ModelField that is a CharField, but uses a different *form* field with custom validation"""
+
+    def formfield(self, **kwargs):
+        defaults = {"form_class": JabberFormField}
+        defaults.update(kwargs)
+        return super().formfield(**defaults)
 
 
 class JSONField(models.TextField):

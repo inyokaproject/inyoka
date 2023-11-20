@@ -77,7 +77,6 @@ GLOBAL_PRIVILEGE_MODELS = {
 
 NOTIFY_BY_CHOICES = (
     ('mail', gettext_lazy('Mail')),
-    ('jabber', gettext_lazy('Jabber')),
 )
 
 NOTIFICATION_CHOICES = (
@@ -291,23 +290,12 @@ class UserCPSettingsForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_simple_version_choices()
 
-    def clean_notify(self):
-        data = self.cleaned_data['notify']
-        if 'jabber' in data:
-            if not current_request.user.jabber:
-                raise forms.ValidationError(mark_safe(_('You need to '
-                    '<a href="%(link)s">enter a valid jabber address</a> to '
-                    'use our jabber service.')
-                    % {'link': href('portal', 'usercp', 'profile')}))
-        return data
-
 
 class UserCPProfileForm(forms.ModelForm):
     use_gravatar = forms.BooleanField(label=gettext_lazy('Use Gravatar'), required=False)
     email = EmailField(label=gettext_lazy('Email'), required=True)
 
     show_email = forms.BooleanField(required=False)
-    show_jabber = forms.BooleanField(required=False)
 
     coordinates = forms.CharField(label=gettext_lazy('Coordinates (latitude, longitude)'),
                                   required=False)
@@ -406,7 +394,7 @@ class UserCPProfileForm(forms.ModelForm):
                     _('You’ve been sent an email to confirm your new email '
                       'address.'))
 
-        for key in ('show_email', 'show_jabber', 'use_gravatar'):
+        for key in ('show_email', 'use_gravatar'):
             user.settings[key] = data[key]
 
         if data['userpage']:

@@ -9,7 +9,7 @@ from django.forms import forms
 
 from inyoka.forum.models import Topic, Forum
 from inyoka.portal.user import User
-from inyoka.utils.forms import TopicField
+from inyoka.utils.forms import TopicField, JabberFormField
 from inyoka.utils.test import TestCase
 
 
@@ -41,3 +41,14 @@ class TestTopicField(TestCase):
     def test_empty_value(self):
         topic = self.field.__class__(required=False).clean('')
         self.assertIsNone(topic)
+
+
+class TestJabberFormField(TestCase):
+    field = JabberFormField()
+
+    def test_valid_jabber_id(self):
+        self.field.clean('foo@inyoka.test')
+
+    def test_invalid_jabber_id(self):
+        with self.assertRaises(forms.ValidationError):
+            self.field.clean('foo')

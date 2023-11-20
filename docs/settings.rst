@@ -252,12 +252,6 @@ Notification
 
     .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
-.. py:data:: JABBER_BOT_SERVER
-
-    Defaults to: ``'tcp://127.0.0.1:6203'``
-
-    Settings for the jabber bot
-
 
 Paths and URLs
 ==============

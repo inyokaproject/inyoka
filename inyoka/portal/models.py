@@ -21,7 +21,7 @@ from django.db import models, transaction
 from django.utils.translation import gettext_lazy
 from werkzeug import cached_property
 
-from inyoka.portal.user import User
+from .user import User
 from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
