@@ -15,7 +15,7 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
 from guardian.shortcuts import assign_perm
 
-from inyoka.ikhaya.models import Article, Category, Comment, Report
+from inyoka.ikhaya.models import Article, Category, Comment, Report, Suggestion
 from inyoka.ikhaya.views import events
 from inyoka.portal.user import User
 from inyoka.utils.test import InyokaClient, TestCase
@@ -211,3 +211,43 @@ class TestEventView(TestCase):
     def test_queries_needed(self):
         with self.assertNumQueries(10):
             self.client.get('/events/')
+
+
+class TestServices(TestCase):
+
+    client_class = InyokaClient
+    url = "/?__service__=ikhaya.change_suggestion_assignment"
+
+    def test_post_misses_username(self):
+        response = self.client.post(self.url, data={"suggestion": 1})
+        self.assertEqual(response.status_code, 400)
+
+    def test_post_misses_suggestion_id(self):
+        response = self.client.post(self.url, data={"username": "foo"})
+        self.assertEqual(response.status_code, 400)
+
+    def test_set_owner(self):
+        user = User.objects.register_user('test', 'test@example.local', password='test', send_mail=False)
+        suggestion = Suggestion.objects.create(author=user, title='title', text='text', intro='intro', notes='notes')
+        self.assertIsNone(suggestion.owner)
+
+        self.client.post(self.url, data={"username": user.username, "suggestion": suggestion.id})
+        suggestion.refresh_from_db()
+        self.assertEqual(suggestion.owner_id, user.id)
+
+        self.client.post(self.url, data={"username": "-", "suggestion": suggestion.id})
+        suggestion.refresh_from_db()
+        self.assertIsNone(suggestion.owner)
+
+    def test_invalid_owner(self):
+        suggestion = Suggestion.objects.create(
+            author=User.objects.get_anonymous_user(), title='title', text='text', intro='intro', notes='notes')
+
+        response = self.client.post(self.url, data={"username": "foo", "suggestion": suggestion.id})
+        self.assertEqual(response.status_code, 404)
+
+    def test_invalid_suggestion(self):
+        user = User.objects.register_user('test', 'test@example.local', password='test', send_mail=False)
+
+        response = self.client.post(self.url, data={"username": user.username, "suggestion": 4242})
+        self.assertEqual(response.status_code, 404)
