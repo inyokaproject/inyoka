@@ -14,7 +14,6 @@ from random import randint
 import responses
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files import File
 from django.contrib.auth.models import Group
 from django.http import Http404
 from django.test import RequestFactory
@@ -23,7 +22,6 @@ from django.utils import translation
 from django.utils.translation import gettext as _
 from unittest.mock import patch
 from guardian.shortcuts import assign_perm
-from unittest import skip
 
 from inyoka.forum import constants, views
 from inyoka.forum.models import (

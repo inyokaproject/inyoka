@@ -49,7 +49,6 @@ setup(
         'Babel',
         'beautifulsoup4',
         'celery[redis]',
-        'certifi',
         'defusedxml',
         'django-filter',
         'django-guardian',
@@ -67,7 +66,6 @@ setup(
         'python-magic',
         'python-dateutil',
         'pytz',
-        'pyzmq',
         'sentry-sdk',
         'requests',
         'Werkzeug<1.0'  # 1.0 removed feed support, see https://github.com/inyokaproject/inyoka/issues/1071
@@ -79,6 +77,7 @@ setup(
                 'coverage',
                 'django-codemod',
                 'django-debug-toolbar',
+                'django-test-migrations',
                 'django-upgrade',
                 'flake8==3.5.0',
                 'freezegun',
@@ -87,8 +86,7 @@ setup(
                 'selenium',
                 'Sphinx',
                 'sphinx-rtd-theme',
-               ],
-        'xmpp': ['slixmpp'],
+                ],
     },
 
     project_urls={

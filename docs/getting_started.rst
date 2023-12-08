@@ -36,9 +36,6 @@ Among other things you will see the notification mails for the admin user.
 
    After changing a @task function, you need to restart the celery server.
 
-.. todo::
-
-   How to test jabber notifications?
 
 Run tests
 *********
