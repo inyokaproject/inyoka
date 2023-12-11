@@ -8,9 +8,11 @@
     :license: BSD, see LICENSE for more details.
 """
 import shutil
+import datetime
 from os import makedirs, path
 from random import randint
 
+import feedparser
 import responses
 from django.conf import settings
 from django.core.cache import cache
@@ -21,7 +23,9 @@ from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import gettext as _
 from unittest.mock import patch
-from guardian.shortcuts import assign_perm
+
+from freezegun import freeze_time
+from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum import constants, views
 from inyoka.forum.models import (
@@ -1560,3 +1564,264 @@ class TestMarkRead(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertEqual(response.status_code, 404)
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestPostFeed(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.today = self.now.date()
+        self.time_now = self.now.time()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.forum = Forum.objects.create(name='forum')
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=self.now)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_no_allowed_forum(self):
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        remove_perm('forum.view_forum', anonymous_group, self.forum)
+
+        response = self.client.get('/feeds/short/10/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_modes(self):
+        response = self.client.get('/feeds/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/feeds/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/feeds/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_multiple_topics(self):
+        topic = Topic.objects.create(forum=self.forum, author=self.user, title='another topic')
+        Post.objects.create(author=self.user, topic=topic, text='another text', pub_date=self.now)
+
+        response = self.client.get('/feeds/full/10/')
+        self.assertIn(self.topic.title, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_content_exact(self):
+        response = self.client.get('/feeds/full/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">ubuntuusers.local:8080 forum</title>
+  <id>http://forum.ubuntuusers.local:8080/feeds/full/10/</id>
+  <updated>2023-12-09T23:55:04Z</updated>
+  <link href="http://forum.ubuntuusers.local:8080/" />
+  <link href="http://forum.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
+  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <generator>Werkzeug</generator>
+  <entry xml:base="http://forum.ubuntuusers.local:8080/feeds/full/10/">
+    <title type="text">test topic</title>
+    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+    <updated>2023-12-09T23:55:04Z</updated>
+    <published>2023-12-09T23:55:04Z</published>
+    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" />
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>some text</p></div></content>
+  </entry>
+</feed>
+''')
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestPostForumFeed(TestCase):
+    # TODO test ordering by date?
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.today = self.now.date()
+        self.time_now = self.now.time()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.forum = Forum.objects.create(name='hardware')
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=self.now)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_not_allowed_forum(self):
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        remove_perm('forum.view_forum', anonymous_group, self.forum)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/short/10/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_modes(self):
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_child_forum(self):
+        child_forum = Forum.objects.create(name='sub hardware', parent=self.forum)
+        self.assertEqual(len(self.forum.children), 1)
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, child_forum)
+        topic = Topic.objects.create(forum=child_forum, author=self.user, title='test topic')
+        post = Post.objects.create(author=self.user, topic=topic, text='foo text', pub_date=self.now)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(post.text, response.content.decode())
+
+    def test_multiple_topics(self):
+        topic = Topic.objects.create(forum=self.forum, author=self.user, title='another topic')
+        Post.objects.create(author=self.user, topic=topic, text='another text', pub_date=self.now)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/10/')
+        self.assertIn(self.topic.title, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_content_exact(self):
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">ubuntuusers.local:8080 forum – “hardware”</title>
+  <id>http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/</id>
+  <updated>2023-12-09T23:55:04Z</updated>
+  <link href="http://forum.ubuntuusers.local:8080/category/hardware/" />
+  <link href="http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/" rel="self" />
+  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <generator>Werkzeug</generator>
+  <entry xml:base="http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/">
+    <title type="text">test topic</title>
+    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+    <updated>2023-12-09T23:55:04Z</updated>
+    <published>2023-12-09T23:55:04Z</published>
+    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" />
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>some text</p></div></content>
+  </entry>
+</feed>
+''')
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestTopicFeed(TestCase):
+    # TODO test ordering by date?
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.today = self.now.date()
+        self.time_now = self.now.time()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.forum = Forum.objects.create(name='hardware')
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=self.now, id=1)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_modes(self):
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_multiple_posts(self):
+        Post.objects.create(author=self.user, topic=self.topic, text='another text', pub_date=self.now)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertIn(self.topic.title, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_topic_hidden(self):
+        topic = Topic.objects.create(forum=self.forum, author=self.user, title='hidden topic', hidden=True)
+
+        response = self.client.get(f'/feeds/topic/{topic.slug}/short/10/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_forum_no_permission(self):
+        forum = Forum.objects.create(name='forum no perm')
+        topic = Topic.objects.create(forum=forum, author=self.user, title='no perm topic')
+
+        response = self.client.get(f'/feeds/topic/{topic.slug}/short/10/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_content_exact(self):
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">ubuntuusers.local:8080 topic – “test topic”</title>
+  <id>http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/</id>
+  <updated>2023-12-09T23:55:04Z</updated>
+  <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" />
+  <link href="http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/" rel="self" />
+  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <generator>Werkzeug</generator>
+  <entry xml:base="http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/">
+    <title type="text">user (Dec. 10, 2023, 12:55 a.m.)</title>
+    <id>http://forum.ubuntuusers.local:8080/post/1/</id>
+    <updated>2023-12-09T23:55:04Z</updated>
+    <published>2023-12-09T23:55:04Z</published>
+    <link href="http://forum.ubuntuusers.local:8080/post/1/" />
+    <author>
+      <name>user</name>
+    </author>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>some text</p></div></content>
+  </entry>
+</feed>
+''')
+        # TODO add user homepage url

@@ -8,16 +8,20 @@
     :license: BSD, see LICENSE for more details.
 """
 import datetime
+from time import mktime
 
+import feedparser
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
+from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
 from inyoka.ikhaya.models import Article, Category, Comment, Report, Suggestion
 from inyoka.ikhaya.views import events
 from inyoka.portal.user import User
+from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 
@@ -251,3 +255,388 @@ class TestServices(TestCase):
 
         response = self.client.post(self.url, data={"username": user.username, "suggestion": 4242})
         self.assertEqual(response.status_code, 404)
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestArticleFeeds(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = datetime.datetime.now().replace(microsecond=0)
+        now = self.now
+        today = now.date()
+        time_now = now.time()
+
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.cat = Category.objects.create(name="Category")
+        self.article = Article.objects.create(author=self.admin, subject="Subject",
+                            text="Text", pub_date=today,
+                            pub_time=time_now, category=self.cat, public=True)
+        self.comment = Comment.objects.create(article=self.article, text="Text",
+                            author=self.user, pub_date=now)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_modes(self):
+        response = self.client.get('/feeds/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/feeds/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/feeds/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_multiple_articles(self):
+        now = datetime.datetime.now().replace(microsecond=0)
+        today = now.date()
+        time_now = now.time()
+
+        self.article = Article.objects.create(author=self.admin, subject="Subject 2",
+                            text="Text 2", pub_date=today,
+                            pub_time=time_now, category=self.cat, public=True)
+
+        response = self.client.get('/feeds/full/10/')
+        self.assertIn(self.article.subject, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_content_exact(self):
+        storage['ikhaya_description_rendered'] = 'Just to describe ikhaya'
+
+        response = self.client.get('/feeds/full/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">ubuntuusers.local:8080 Ikhaya</title>
+  <id>http://ikhaya.ubuntuusers.local:8080/</id>
+  <updated>2023-12-09T23:55:04Z</updated>
+  <link href="http://ikhaya.ubuntuusers.local:8080/" />
+  <link href="http://ikhaya.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
+  <subtitle type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">Just to describe ikhaya</div></subtitle>
+  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <generator>Werkzeug</generator>
+  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/full/10/">
+    <title type="text">Subject</title>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
+    <updated>2023-12-09T23:55:04Z</updated>
+    <published>2023-12-09T23:55:04Z</published>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" />
+    <author>
+      <name>admin</name>
+      <uri>http://ubuntuusers.local:8080/user/admin/</uri>
+    </author>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">
+<p>Text</p></div></content>
+  </entry>
+</feed>
+''')
+
+    def test_content_displayed(self):
+        storage['ikhaya_description_rendered'] = 'Just to describe ikhaya'
+
+        response = self.client.get('/feeds/full/10/')
+
+        feed = feedparser.parse(response.content)
+
+        # feed properties
+        self.assertEqual(feed.feed.title, 'ubuntuusers.local:8080 Ikhaya')
+        self.assertEqual(feed.feed.subtitle, 'Just to describe ikhaya')
+        self.assertEqual(feed.feed.title_detail.type, 'text/plain')
+        self.assertEqual(feed.feed.title_detail.language, None)
+        self.assertEqual(feed.feed.id, 'http://ikhaya.ubuntuusers.local:8080/')
+        self.assertEqual(feed.feed.link, 'http://ikhaya.ubuntuusers.local:8080/')
+
+        feed_updated = datetime.datetime.fromtimestamp(mktime(feed.feed.updated_parsed))
+        self.assertEqual(feed_updated, self.now - datetime.timedelta(hours=1))
+
+        self.assertEqual(feed.feed.rights, href('portal', 'lizenz'))
+        self.assertNotIn('author', feed.feed)
+        self.assertNotIn('author_detail', feed.feed)
+
+        # entry properties
+        self.assertEqual(len(feed.entries), 1)
+        entry = feed.entries[0]
+
+        url = f'http://ikhaya.ubuntuusers.local:8080/{self.now.year}/{self.now.month:02d}/{self.now.day:02d}/subject/'
+        self.assertEqual(entry.id, url)
+        self.assertEqual(entry.link, url)
+
+        self.assertEqual(entry.title_detail.value, 'Subject')
+        self.assertEqual(entry.title_detail.type, 'text/plain')
+        self.assertEqual(len(entry.content), 1)
+        self.assertEqual(entry.content[0].value, '<p>Text</p>')
+        self.assertEqual(entry.content[0].type, 'application/xhtml+xml')
+        self.assertNotIn('summary_detail', entry)
+        self.assertNotIn('text', entry)
+        self.assertNotIn('created_parsed', entry)
+
+        entry_published = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
+        self.assertEqual(entry_published, self.now - datetime.timedelta(hours=1))
+
+        entry_date = datetime.datetime.fromtimestamp(mktime(entry.date_parsed))
+        self.assertEqual(entry_date, self.now - datetime.timedelta(hours=1))
+
+        entry_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
+        self.assertEqual(entry_updated, self.now - datetime.timedelta(hours=1))
+
+        self.assertEqual(entry.author, self.admin.username)
+        self.assertEqual(entry.author_detail.name, self.admin.username)
+        self.assertEqual(entry.author_detail.href, 'http://ubuntuusers.local:8080/user/admin/')
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestArticleCategoryFeeds(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.today = self.now.date()
+        self.time_now = self.now.time()
+
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.cat = Category.objects.create(name="Test Category")
+        self.article = Article.objects.create(author=self.admin, subject="Subject",
+                            text="Text", pub_date=self.today,
+                            pub_time=self.time_now, category=self.cat, public=True)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+
+        storage['ikhaya_description_rendered'] = 'Just to describe ikhaya'
+
+    def test_modes(self):
+        response = self.client.get(f'/feeds/{self.cat.slug}/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/{self.cat.slug}/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/{self.cat.slug}/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_multiple_articles(self):
+        self.article = Article.objects.create(author=self.admin, subject="Subject 2",
+                            text="Text 2", pub_date=self.today,
+                            pub_time=self.time_now, category=self.cat, public=True)
+
+        response = self.client.get(f'/feeds/{self.cat.slug}/full/10/')
+        self.assertIn(self.article.subject, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_content_exact(self):
+        response = self.client.get(f'/feeds/{self.cat.slug}/full/10/')
+
+        Article.objects.create(author=self.admin, subject="Another article in another category",
+                               text="Text 2", pub_date=self.today,
+                               pub_time=self.time_now, category=Category.objects.create(name="Another"), public=True)
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">ubuntuusers.local:8080 Ikhaya – test-category</title>
+  <id>http://ikhaya.ubuntuusers.local:8080/category/test-category/</id>
+  <updated>2023-12-09T23:55:04Z</updated>
+  <link href="http://ikhaya.ubuntuusers.local:8080/category/test-category/" />
+  <link href="http://ikhaya.ubuntuusers.local:8080/feeds/test-category/full/10/" rel="self" />
+  <subtitle type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">Just to describe ikhaya</div></subtitle>
+  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <generator>Werkzeug</generator>
+  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/test-category/full/10/">
+    <title type="text">Subject</title>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
+    <updated>2023-12-09T23:55:04Z</updated>
+    <published>2023-12-09T23:55:04Z</published>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" />
+    <author>
+      <name>admin</name>
+      <uri>http://ubuntuusers.local:8080/user/admin/</uri>
+    </author>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">
+<p>Text</p></div></content>
+  </entry>
+</feed>
+''')
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestCommentsFeed(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.today = self.now.date()
+        self.time_now = self.now.time()
+
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.cat = Category.objects.create(name="Test Category")
+        self.article = Article.objects.create(author=self.admin, subject="Article Subject",
+                            text="Text", pub_date=self.today,
+                            pub_time=self.time_now, category=self.cat, public=True)
+
+        self.comment = Comment.objects.create(article=self.article, text="Text",
+                            author=self.user, pub_date=self.now)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+
+        storage['ikhaya_description_rendered'] = 'Just to describe ikhaya'
+
+    def test_modes(self):
+        response = self.client.get(f'/feeds/comments/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/comments/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/comments/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_multiple_comments(self):
+        self.comment = Comment.objects.create(article=self.article, text="Some other Text",
+                            author=self.user, pub_date=self.now)
+
+        response = self.client.get(f'/feeds/comments/full/10/')
+        self.assertIn(self.article.subject, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_content_exact(self):
+        response = self.client.get(f'/feeds/comments/full/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">ubuntuusers.local:8080 Ikhaya comments</title>
+  <id>http://ikhaya.ubuntuusers.local:8080/</id>
+  <updated>2023-12-09T23:55:04Z</updated>
+  <link href="http://ikhaya.ubuntuusers.local:8080/" />
+  <link href="http://ikhaya.ubuntuusers.local:8080/feeds/comments/full/10/" rel="self" />
+  <subtitle type="text">Just to describe ikhaya</subtitle>
+  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <generator>Werkzeug</generator>
+  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/comments/full/10/">
+    <title type="text">Re: Article Subject</title>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1</id>
+    <updated>2023-12-09T23:55:04Z</updated>
+    <published>2023-12-09T23:55:04Z</published>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" />
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Text</p></div></content>
+  </entry>
+</feed>
+''')
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestCommentsPerArticleFeed(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.today = self.now.date()
+        self.time_now = self.now.time()
+
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.cat = Category.objects.create(name="Test Category")
+        self.article = Article.objects.create(author=self.admin, subject="Article Subject",
+                            text="Text", pub_date=self.today,
+                            pub_time=self.time_now, category=self.cat, public=True, id=1)
+
+        self.comment = Comment.objects.create(article=self.article, text="Text",
+                            author=self.user, pub_date=self.now)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+
+        storage['ikhaya_description_rendered'] = 'Just to describe ikhaya'
+
+    def test_modes(self):
+        response = self.client.get(f'/feeds/comments/{self.article.id}/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/comments/{self.article.id}/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/comments/{self.article.id}/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_multiple_comments(self):
+        self.comment = Comment.objects.create(article=self.article, text="Some other Text",
+                            author=self.user, pub_date=self.now)
+
+        response = self.client.get(f'/feeds/comments/{self.article.id}/full/10/')
+        self.assertIn(self.article.subject, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_content_exact(self):
+        response = self.client.get(f'/feeds/comments/{self.article.id}/full/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">ubuntuusers.local:8080 Ikhaya comments – Article Subject</title>
+  <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/</id>
+  <updated>2023-12-09T23:55:04Z</updated>
+  <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/" />
+  <link href="http://ikhaya.ubuntuusers.local:8080/feeds/comments/1/full/10/" rel="self" />
+  <subtitle type="text">Just to describe ikhaya</subtitle>
+  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <generator>Werkzeug</generator>
+  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/comments/1/full/10/">
+    <title type="text">Re: Article Subject</title>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1</id>
+    <updated>2023-12-09T23:55:04Z</updated>
+    <published>2023-12-09T23:55:04Z</published>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" />
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Text</p></div></content>
+  </entry>
+</feed>
+''')
