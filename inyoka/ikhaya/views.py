@@ -895,6 +895,9 @@ class IkhayaAtomFeed(InyokaAtomFeed):
     def item_title(self, article):
         return article.subject
 
+    def item_comments(self, article):
+        return article.get_absolute_url(action='comments')
+
     def item_description(self, article):
         if self.mode == 'full':
             return '%s\n%s' % (article.intro_rendered, article.text_rendered)
