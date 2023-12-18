@@ -8,6 +8,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
+from datetime import timedelta
 
 import feedparser
 from django.conf import settings
@@ -420,6 +421,19 @@ class TestArticleRevisionFeed(TestCase):
         response = self.client.get(self.page.get_absolute_url('feed'))
         self.assertIn('anonymous user edited', response.content.decode())
         self.assertIn('anonymous user deleted', response.content.decode())
+
+    def test_tags(self):
+        self.page.edit(text='foob text\n\n#tag: view, install, intro',
+                       user=self.user,
+                       change_date=datetime.utcnow() + timedelta(minutes=11))
+        self.page.update_meta()
+
+        response = self.client.get(self.page.get_absolute_url('feed'))
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+        feed_tags = {t.term for t in feed.entries[1]['tags']}
+        self.assertEqual(feed_tags, {'view', 'intro', 'install'})
 
     def test_content_exact(self):
         response = self.client.get(self.page.get_absolute_url('feed'))

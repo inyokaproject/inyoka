@@ -28,6 +28,7 @@ from freezegun import freeze_time
 from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum import constants, views
+from inyoka.forum.constants import get_version_choices, get_distro_choices
 from inyoka.forum.models import (
     Attachment,
     Forum,
@@ -37,6 +38,8 @@ from inyoka.forum.models import (
     Topic,
 )
 from inyoka.portal.user import User
+from inyoka.portal.utils import UbuntuVersion
+from inyoka.utils.storage import storage
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
 from inyoka.utils.urls import href, url_for
 
@@ -1582,8 +1585,8 @@ class TestPostFeed(TestCase):
 
         self.forum = Forum.objects.create(name='forum')
 
-        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
-        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', self.anonymous_group, self.forum)
         self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
         Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=self.now)
 
@@ -1616,6 +1619,26 @@ class TestPostFeed(TestCase):
         feed = feedparser.parse(response.content)
         self.assertEqual(len(feed.entries), 2)
 
+    def test_categories(self):
+        child_forum = Forum.objects.create(parent=self.forum, name='child')
+        self.topic.forum = child_forum
+
+        version = UbuntuVersion('22.04', 'Jammy Jellyfish', lts=True, active=True, current=True)
+        storage['distri_versions'] = f'[{version.as_json()}]'
+
+        self.topic.ubuntu_version = get_version_choices()[1][0]
+        self.topic.ubuntu_distro = get_distro_choices()[2][0]
+        self.topic.save()
+
+        assign_perm('forum.view_forum', self.anonymous_group, child_forum)
+
+        response = self.client.get('/feeds/full/10/')
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 1)
+
+        terms = [t['term'] for t in feed.entries[0]['tags']]
+        self.assertSequenceEqual(terms, ['child', 'forum', '22.04 (Jammy Jellyfish)', 'Edubuntu 22.04 (Jammy Jellyfish)'])
+
     def test_content_exact(self):
         response = self.client.get('/feeds/full/10/')
 
@@ -1640,6 +1663,8 @@ class TestPostFeed(TestCase):
     </author>
     <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
     <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
+    <category term="forum"/>
+    <category term="Not specified"/>
   </entry>
 </feed>
 ''')
@@ -1732,6 +1757,8 @@ class TestPostForumFeed(TestCase):
     </author>
     <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
     <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
+    <category term="hardware"/>
+    <category term="Not specified"/>
   </entry>
 </feed>
 ''')

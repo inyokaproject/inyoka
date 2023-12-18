@@ -175,6 +175,9 @@ class WikiAtomFeed(InyokaAtomFeed):
     def item_comments(self, rev):
         return rev.page.get_absolute_url(action='discussion')
 
+    def item_categories(self, rev):
+        return rev.page.metadata['tag']
+
     def item_description(self, rev):
         if rev.deleted:
             text = _('%(user)s deleted the article “%(article)s” on '

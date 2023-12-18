@@ -148,7 +148,7 @@ class UbuntuVersion:
             'number': self.number,
             'name': self.name,
             'lts': self.lts,
-            'acitve': self.active,
+            'active': self.active,
             'current': self.current,
             'dev': self.dev}
         return json.dumps(data)

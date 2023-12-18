@@ -337,6 +337,7 @@ class TestArticleFeeds(TestCase):
     <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
     <summary type="html">
 &lt;p&gt;Text&lt;/p&gt;</summary>
+    <category term="Category"/>
   </entry>
 </feed>
 ''')
@@ -469,6 +470,7 @@ class TestArticleCategoryFeeds(TestCase):
     <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
     <summary type="html">
 &lt;p&gt;Text&lt;/p&gt;</summary>
+    <category term="Test Category"/>
   </entry>
 </feed>
 ''')

@@ -1511,6 +1511,21 @@ class ForumAtomFeed(InyokaAtomFeed):
     def item_title(self, topic):
         return topic.title
 
+    def item_categories(self, topic):
+        _forum = topic.forum
+        categories = [_forum.name]
+        categories += [p.name for p in _forum.parents]
+
+        ubuntu_version = topic.get_ubuntu_version()
+        if ubuntu_version:
+            categories.append(ubuntu_version)
+
+        version_info = topic.get_version_info()
+        if version_info:
+            categories.append(version_info)
+
+        return categories
+
     def item_description(self, topic):
         post = topic.first_post
         text = post.get_text()
