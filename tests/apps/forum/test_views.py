@@ -9,6 +9,7 @@
 """
 import shutil
 import datetime
+import zoneinfo
 from os import makedirs, path
 from random import randint
 
@@ -20,7 +21,8 @@ from django.contrib.auth.models import Group
 from django.http import Http404
 from django.test import RequestFactory
 from django.test.utils import override_settings
-from django.utils import translation
+from django.utils import translation, timezone
+from django.utils.dateparse import parse_datetime
 from django.utils.translation import gettext as _
 from unittest.mock import patch
 
@@ -1764,6 +1766,42 @@ class TestPostForumFeed(TestCase):
 ''')
 
 
+class TestTopicFeedPostRevision(TestCase):
+    """
+    Test feed with a post that has two revisions.
+
+    Only freeze setUp to a date in history, as the PostRevisions hardcodes utcnow.
+    """
+
+    client_class = InyokaClient
+
+    @freeze_time("2023-12-09T23:55:04Z")
+    def setUp(self):
+        super().setUp()
+
+        now = datetime.datetime.now().replace(microsecond=0)
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.forum = Forum.objects.create(name='hardware')
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        self.post = Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=now)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_post_multiple_revision_update_date(self):
+        self.post.edit(text='foo')
+        now_utc = datetime.datetime.utcnow().replace(tzinfo=zoneinfo.ZoneInfo("Europe/London"), microsecond=0)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/short/10/', follow=True)
+        feed = feedparser.parse(response.content)
+
+        feed_updated = parse_datetime(feed.entries[0].updated).replace(microsecond=0)
+        self.assertEqual(feed_updated, now_utc)
+
+
 @freeze_time("2023-12-09T23:55:04Z")
 class TestTopicFeed(TestCase):
     # TODO test ordering by date?
@@ -1846,4 +1884,3 @@ class TestTopicFeed(TestCase):
   </entry>
 </feed>
 ''')
-        # TODO add user homepage url

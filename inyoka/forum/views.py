@@ -1487,7 +1487,9 @@ class ForumTopicAtomFeed(InyokaAtomFeed):
         return post.pub_date
 
     def item_updateddate(self, post):
-        # TODO check how to get the date of the last post, like it's rendered in the forum
+        if post.has_revision:
+            return post.revisions.latest('store_date').store_date
+
         return post.pub_date
 
 
