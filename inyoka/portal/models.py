@@ -19,7 +19,7 @@ from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy
-from werkzeug import cached_property
+from werkzeug.utils import cached_property
 
 from .user import User
 from inyoka.utils.database import InyokaMarkupField

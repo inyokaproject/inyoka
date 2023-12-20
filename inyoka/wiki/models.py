@@ -92,7 +92,7 @@ from django.utils.translation import gettext as _, to_locale, get_language
 from django.utils.translation import gettext_lazy
 from functools import partial
 from hashlib import sha1
-from werkzeug import cached_property
+from werkzeug.utils import cached_property
 from werkzeug.utils import secure_filename
 
 import locale
