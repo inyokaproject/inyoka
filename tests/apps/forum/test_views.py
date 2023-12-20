@@ -1611,6 +1611,10 @@ class TestPostFeed(TestCase):
         response = self.client.get('/feeds/full/50/')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries(self):
+        with self.assertNumQueries(10):
+            self.client.get('/feeds/full/50/')
+
     def test_multiple_topics(self):
         topic = Topic.objects.create(forum=self.forum, author=self.user, title='another topic')
         Post.objects.create(author=self.user, topic=topic, text='another text', pub_date=self.now)
@@ -1711,6 +1715,10 @@ class TestPostForumFeed(TestCase):
 
         response = self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
         self.assertEqual(response.status_code, 200)
+
+    def test_queries(self):
+        with self.assertNumQueries(11):
+            self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
 
     def test_child_forum(self):
         child_forum = Forum.objects.create(name='sub hardware', parent=self.forum)
@@ -1834,6 +1842,10 @@ class TestTopicFeed(TestCase):
 
         response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
         self.assertEqual(response.status_code, 200)
+
+    def test_queries(self):
+        with self.assertNumQueries(9):
+            self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
 
     def test_multiple_posts(self):
         Post.objects.create(author=self.user, topic=self.topic, text='another text', pub_date=self.now)

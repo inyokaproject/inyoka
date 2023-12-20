@@ -353,6 +353,10 @@ class TestRevisionFeed(TestCase):
         feed = feedparser.parse(response.content)
         self.assertEqual(len(feed.entries), 2)
 
+    def test_queries(self):
+        with self.assertNumQueries(4):
+            self.client.get('/_feed/10/')
+
     def test_content_exact(self):
         response = self.client.get(f'/_feed/10/')
 
@@ -421,6 +425,10 @@ class TestArticleRevisionFeed(TestCase):
         response = self.client.get(self.page.get_absolute_url('feed'))
         self.assertIn('anonymous user edited', response.content.decode())
         self.assertIn('anonymous user deleted', response.content.decode())
+
+    def test_queries(self):
+        with self.assertNumQueries(6):
+            self.client.get(self.page.get_absolute_url('feed'))
 
     def test_tags(self):
         self.page.edit(text='foob text\n\n#tag: view, install, intro',

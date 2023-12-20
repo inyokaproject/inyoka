@@ -294,6 +294,10 @@ class TestArticleFeeds(TestCase):
         response = self.client.get('/feeds/full/50/')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries(self):
+        with self.assertNumQueries(4):
+            self.client.get('/feeds/full/50/')
+
     def test_multiple_articles(self):
         now = datetime.datetime.now().replace(microsecond=0)
         today = now.date()
@@ -429,6 +433,10 @@ class TestArticleCategoryFeeds(TestCase):
         response = self.client.get(f'/feeds/{self.cat.slug}/full/50/')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries(self):
+        with self.assertNumQueries(3):
+            self.client.get(f'/feeds/{self.cat.slug}/full/50/')
+
     def test_multiple_articles(self):
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
                             text="Text 2", pub_date=self.today,
@@ -515,6 +523,10 @@ class TestCommentsFeed(TestCase):
         response = self.client.get(f'/feeds/comments/full/50/')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries(self):
+        with self.assertNumQueries(3):
+            self.client.get(f'/feeds/comments/full/50/')
+
     def test_multiple_comments(self):
         self.comment = Comment.objects.create(article=self.article, text="Some other Text",
                             author=self.user, pub_date=self.now)
@@ -593,6 +605,10 @@ class TestCommentsPerArticleFeed(TestCase):
 
         response = self.client.get(f'/feeds/comments/{self.article.id}/full/50/')
         self.assertEqual(response.status_code, 200)
+
+    def test_queries(self):
+        with self.assertNumQueries(4):
+            self.client.get(f'/feeds/comments/{self.article.id}/full/50/')
 
     def test_multiple_comments(self):
         self.comment = Comment.objects.create(article=self.article, text="Some other Text",

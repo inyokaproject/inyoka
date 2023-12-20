@@ -68,7 +68,8 @@ class TestViews(TestCase):
                              pub_date=now, updated=now,
                              author='AnonymousAuthor', author_homepage='https://example.com')
 
-        response = self.client.get('/feeds/full/10/')
+        with self.assertNumQueries(3):
+            response = self.client.get('/feeds/full/10/')
 
         feed = feedparser.parse(response.content)
 
