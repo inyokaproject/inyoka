@@ -19,7 +19,7 @@ from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy
-from werkzeug.utils import cached_property
+from django.utils.functional import cached_property
 
 from .user import User
 from inyoka.utils.database import InyokaMarkupField
@@ -317,7 +317,7 @@ class Subscription(models.Model):
             # inyoka article subscription
             return True
 
-    def can_read(self, forum_id = None):
+    def can_read(self, forum_id=None):
         if self.content_type is None and not forum_id is None:
             # Check for ubuntu version subscriptions
             from inyoka.forum.models import Forum
