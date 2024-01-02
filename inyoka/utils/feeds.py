@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.http import Http404
 from django.utils.feedgenerator import Atom1Feed
+from django.utils.html import strip_tags
 from django.utils.text import Truncator
 
 from inyoka.utils.urls import href
@@ -53,3 +54,16 @@ class InyokaAtomFeed(Feed):
 
     def _shorten_html(self, html):
         return Truncator(html).words(100, html=True)
+
+    def subtitle(self):
+        """Removes HTML tags in subtitle (otherwise they will be escaped). For customization use `_subtitle`."""
+        content = self._subtitle()
+        if not content:
+            # default value of `_get_dynamic_attr` in Django's Feed class
+            return None
+
+        return strip_tags(content)
+
+    def _subtitle(self):
+        """Small helper which returns the subtitle content. Modify it in the subclass."""
+        return None

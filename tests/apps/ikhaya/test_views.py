@@ -511,7 +511,7 @@ class TestCommentsFeed(TestCase):
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
 
-        storage['ikhaya_description_rendered'] = 'Just to describe ikhaya'
+        storage['ikhaya_description_rendered'] = '<em>Just</em> to describe ikhaya'
 
     def test_modes(self):
         response = self.client.get(f'/feeds/comments/short/10/')
