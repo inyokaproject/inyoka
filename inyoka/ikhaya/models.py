@@ -404,7 +404,13 @@ class Comment(models.Model):
         if action in ['hide', 'restore', 'edit']:
             return href('ikhaya', 'comment', self.id, action)
         return href('ikhaya', self.article.stamp, self.article.slug,
-                    _anchor='comment_%s' % self.article.comment_count)
+                    _anchor=f'comment_{ self.position }')
+
+    @property
+    def position(self):
+        """Returns the position/index of this comment below an article"""
+        position = self.article.comment_set.filter(id__lt=self.id).count()
+        return position + 1
 
     def save(self, *args, **kwargs):
         if self.pk is None:

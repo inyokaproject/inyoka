@@ -524,7 +524,7 @@ class TestCommentsFeed(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(f'/feeds/comments/full/50/')
 
     def test_multiple_comments(self):
@@ -607,7 +607,7 @@ class TestCommentsPerArticleFeed(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             self.client.get(f'/feeds/comments/{self.article.id}/full/50/')
 
     def test_multiple_comments(self):
