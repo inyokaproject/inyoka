@@ -8,13 +8,14 @@
     :license: BSD, see LICENSE for more details.
 """
 import datetime
-from time import mktime
+import zoneinfo
 
 import feedparser
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
+from django.utils.dateparse import parse_datetime
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
@@ -299,9 +300,8 @@ class TestArticleFeeds(TestCase):
             self.client.get('/feeds/full/50/')
 
     def test_multiple_articles(self):
-        now = datetime.datetime.now().replace(microsecond=0)
-        today = now.date()
-        time_now = now.time()
+        today = self.now.date()
+        time_now = self.now.time()
 
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
                             text="Text 2", pub_date=today,
@@ -326,14 +326,14 @@ class TestArticleFeeds(TestCase):
   <link href="http://ikhaya.ubuntuusers.local:8080/" rel="alternate"/>
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
   <id>http://ikhaya.ubuntuusers.local:8080/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>Subject</title>
     <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" rel="alternate"/>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>admin</name>
       <uri>http://ubuntuusers.local:8080/user/admin/</uri>
@@ -361,8 +361,11 @@ class TestArticleFeeds(TestCase):
         self.assertEqual(feed.feed.id, 'http://ikhaya.ubuntuusers.local:8080/')
         self.assertEqual(feed.feed.link, 'http://ikhaya.ubuntuusers.local:8080/')
 
-        feed_updated = datetime.datetime.fromtimestamp(mktime(feed.feed.updated_parsed))
-        self.assertEqual(feed_updated, self.now - datetime.timedelta(hours=2))
+        now_utc = self.now
+        now_utc = now_utc.replace(tzinfo=zoneinfo.ZoneInfo("Europe/London"))
+
+        feed_updated = parse_datetime(feed.feed.updated)
+        self.assertEqual(feed_updated, now_utc)
 
         self.assertEqual(feed.feed.rights, href('portal', 'lizenz'))
         self.assertNotIn('author', feed.feed)
@@ -383,14 +386,14 @@ class TestArticleFeeds(TestCase):
         self.assertNotIn('text', entry)
         self.assertNotIn('created_parsed', entry)
 
-        entry_published = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
-        self.assertEqual(entry_published, self.now - datetime.timedelta(hours=2))
+        entry_published = parse_datetime(entry.published)
+        self.assertEqual(entry_published, now_utc)
 
-        entry_date = datetime.datetime.fromtimestamp(mktime(entry.date_parsed))
-        self.assertEqual(entry_date, self.now - datetime.timedelta(hours=2))
+        entry_date = parse_datetime(entry.date)
+        self.assertEqual(entry_date, now_utc)
 
-        entry_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
-        self.assertEqual(entry_updated, self.now - datetime.timedelta(hours=2))
+        entry_updated = parse_datetime(entry.updated)
+        self.assertEqual(entry_updated, now_utc)
 
         self.assertEqual(entry.author, self.admin.username)
         self.assertEqual(entry.author_detail.name, self.admin.username)
@@ -463,14 +466,14 @@ class TestArticleCategoryFeeds(TestCase):
   <link href="http://ikhaya.ubuntuusers.local:8080/category/test-category/" rel="alternate" />
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/test-category/full/10/" rel="self" />
   <id>http://ikhaya.ubuntuusers.local:8080/category/test-category/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>Subject</title>
     <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" rel="alternate"/>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>admin</name>
       <uri>http://ubuntuusers.local:8080/user/admin/</uri>
@@ -548,14 +551,14 @@ class TestCommentsFeed(TestCase):
   <link href="http://ikhaya.ubuntuusers.local:8080/" rel="alternate" />
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/comments/full/10/" rel="self" />
   <id>http://ikhaya.ubuntuusers.local:8080/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>Re: Article Subject</title>
     <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" rel="alternate"/>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
@@ -631,14 +634,14 @@ class TestCommentsPerArticleFeed(TestCase):
   <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/" rel="alternate"/>
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/comments/1/full/10/" rel="self" />
   <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>Re: Article Subject</title>
     <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" rel="alternate"/>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>

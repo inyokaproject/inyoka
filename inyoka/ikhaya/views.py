@@ -52,6 +52,7 @@ from inyoka.portal.models import (
     Subscription,
 )
 from inyoka.utils import ctype, generic
+from inyoka.utils.dates import _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.http import (
@@ -917,10 +918,10 @@ class IkhayaAtomFeed(InyokaAtomFeed):
         return url_for(article.author)
 
     def item_pubdate(self, article):
-        return article.pub_datetime
+        return _localtime(article.pub_datetime)
 
     def item_updateddate(self, article):
-        return article.updated
+        return _localtime(article.updated)
 
 
 class IkhayaCategoryAtomFeed(IkhayaAtomFeed):
@@ -977,10 +978,10 @@ class IkhayaCommentAtomFeed(InyokaAtomFeed):
         return url_for(comment.author)
 
     def item_pubdate(self, comment):
-        return comment.pub_date
+        return _localtime(comment.pub_date)
 
     def item_updateddate(self, comment):
-        return comment.pub_date
+        return _localtime(comment.pub_date)
 
 
 class IkhayaArticleCommentAtomFeed(IkhayaCommentAtomFeed):

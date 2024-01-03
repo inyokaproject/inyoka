@@ -1579,9 +1579,7 @@ class TestPostFeed(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
-        self.today = self.now.date()
-        self.time_now = self.now.time()
+        self.now = timezone.now()
 
         self.user = User.objects.register_user('user', 'user', 'user', False)
 
@@ -1656,14 +1654,14 @@ class TestPostFeed(TestCase):
   <link href="http://forum.ubuntuusers.local:8080/" rel="alternate" />
   <link href="http://forum.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
   <id>http://forum.ubuntuusers.local:8080/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Feed contains new topics of the whole forum</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>test topic</title>
     <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
@@ -1679,15 +1677,13 @@ class TestPostFeed(TestCase):
 
 @freeze_time("2023-12-09T23:55:04Z")
 class TestPostForumFeed(TestCase):
-    # TODO test ordering by date?
+
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
-        self.today = self.now.date()
-        self.time_now = self.now.time()
+        self.now = timezone.now()
 
         self.user = User.objects.register_user('user', 'user', 'user', False)
 
@@ -1755,14 +1751,14 @@ class TestPostForumFeed(TestCase):
   <link href="http://forum.ubuntuusers.local:8080/category/hardware/" rel="alternate" />
   <link href="http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/" rel="self" />
   <id>http://forum.ubuntuusers.local:8080/category/hardware/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Feed contains new topics of the forum “hardware”.</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>test topic</title>
     <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
@@ -1814,15 +1810,13 @@ class TestTopicFeedPostRevision(TestCase):
 
 @freeze_time("2023-12-09T23:55:04Z")
 class TestTopicFeed(TestCase):
-    # TODO test ordering by date?
+
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
-        self.today = self.now.date()
-        self.time_now = self.now.time()
+        self.now = timezone.now()
 
         self.user = User.objects.register_user('user', 'user', 'user', False)
 
@@ -1882,14 +1876,14 @@ class TestTopicFeed(TestCase):
   <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
   <link href="http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/" rel="self" />
   <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Feed contains posts of the topic “test topic”.</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>user (Dec. 10, 2023, 12:55 a.m.)</title>
     <link href="http://forum.ubuntuusers.local:8080/post/1/" rel="alternate"/>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>

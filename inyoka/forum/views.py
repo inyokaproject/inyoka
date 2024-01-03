@@ -61,7 +61,7 @@ from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.dates import format_datetime
+from inyoka.utils.dates import format_datetime, _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
@@ -1487,13 +1487,15 @@ class ForumTopicAtomFeed(InyokaAtomFeed):
         return url_for(post.author)
 
     def item_pubdate(self, post):
-        return post.pub_date
+        return _localtime(post.pub_date)
 
     def item_updateddate(self, post):
         if post.has_revision:
-            return post.revisions.latest('store_date').store_date
+            update_date = post.revisions.latest('store_date').store_date
+        else:
+            update_date = post.pub_date
 
-        return post.pub_date
+        return _localtime(update_date)
 
 
 class ForumAtomFeed(InyokaAtomFeed):
@@ -1554,11 +1556,11 @@ class ForumAtomFeed(InyokaAtomFeed):
 
     def item_pubdate(self, topic):
         post = topic.first_post
-        return post.pub_date
+        return _localtime(post.pub_date)
 
     def item_updateddate(self, topic):
         post = topic.last_post
-        return post.pub_date
+        return _localtime(post.pub_date)
 
 
 class OneForumAtomFeed(ForumAtomFeed):

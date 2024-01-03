@@ -368,20 +368,20 @@ class TestRevisionFeed(TestCase):
   <link href="http://wiki.ubuntuusers.local:8080/wiki/recentchanges/" rel="alternate" />
   <link href="http://wiki.ubuntuusers.local:8080/_feed/10/" rel="self" />
   <id>http://wiki.ubuntuusers.local:8080/wiki/recentchanges/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Feed contains revisions of the whole wiki</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>user: Created</title>
     <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" rel="alternate" />
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
     <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
-    <summary type="html">user edited the article “test page” on 2023-12-09 23:55:04. Summary: Created</summary>
+    <summary type="html">user edited the article “test page” on 2023-12-10 00:55:04+01:00. Summary: Created</summary>
   </entry>
 </feed>
 ''')
@@ -455,20 +455,20 @@ class TestArticleRevisionFeed(TestCase):
   <link href="http://wiki.ubuntuusers.local:8080/test_page/" rel="alternate"></link>
   <link href="http://wiki.ubuntuusers.local:8080/test_page/a/feed/" rel="self"></link>
   <id>http://wiki.ubuntuusers.local:8080/test_page/</id>
-  <updated>2023-12-09T23:55:04+01:00</updated>
+  <updated>2023-12-10T00:55:04+01:00</updated>
   <subtitle>Feed contains revisions of the wiki page “test_page”.</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>user: Created</title>
     <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" rel="alternate"></link>
-    <published>2023-12-09T23:55:04+01:00</published>
-    <updated>2023-12-09T23:55:04+01:00</updated>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
     <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
-    <summary type="html">user edited the article “test page” on 2023-12-09 23:55:04. Summary: Created</summary>
+    <summary type="html">user edited the article “test page” on 2023-12-10 00:55:04+01:00. Summary: Created</summary>
   </entry>
 </feed>
 ''')

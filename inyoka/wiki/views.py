@@ -26,6 +26,7 @@ from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
+from inyoka.utils.dates import _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.http import AccessDeniedResponse, templated
 from inyoka.utils.imaging import get_thumbnail
@@ -192,7 +193,7 @@ class WikiAtomFeed(InyokaAtomFeed):
         return text % {
             'user': rev.user or _('An anonymous user'),
             'article': rev.page.title,
-            'date': rev.change_date,
+            'date': _localtime(rev.change_date),
             'summary': rev.note or _('-'),
         }
 
@@ -212,10 +213,10 @@ class WikiAtomFeed(InyokaAtomFeed):
         return None
 
     def item_pubdate(self, rev):
-        return rev.change_date
+        return _localtime(rev.change_date)
 
     def item_updateddate(self, rev):
-        return rev.change_date
+        return _localtime(rev.change_date)
 
 
 class WikiPageAtomFeed(WikiAtomFeed):
