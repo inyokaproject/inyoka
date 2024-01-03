@@ -129,23 +129,14 @@ class SuggestionManager(models.Manager):
 class CommentManager(models.Manager):
 
     def get_latest_comments(self, article=None, count=10):
-        key = 'ikhaya/latest_comments'
-        if article is not None:
-            key = 'ikhaya/latest_comments/%s' % article
+        filter_kwargs = {
+            'article__public': True,
+            'deleted': False,
+        }
+        if article:
+            filter_kwargs['article'] = article
 
-        maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_comment'])
-        comment_ids = cache.get(key)
-        if comment_ids is None:
-            comment_ids = Comment.objects.filter(article__public=True, deleted=False)
-            if article:
-                comment_ids = comment_ids.filter(article__id=article)
-
-            comment_ids = list(comment_ids.values_list('id', flat=True)[:maxcount])
-            cache.set(key, comment_ids, 300)
-
-        comments = list(Comment.objects.filter(id__in=comment_ids)
-                               .select_related('author', 'article')
-                               .order_by('-id')[:maxcount])
+        comments = Comment.objects.filter(**filter_kwargs).select_related('author', 'article').order_by('-id')
         return comments[:count]
 
 
