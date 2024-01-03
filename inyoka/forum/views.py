@@ -1456,6 +1456,9 @@ class ForumTopicAtomFeed(InyokaAtomFeed):
     def title(self):
         return _('%(site)s topic – “%(topic)s”') % {'topic': self.topic.title, 'site': settings.BASE_DOMAIN_NAME}
 
+    def _subtitle(self, obj):
+        return _('Feed contains posts of the topic “%(topic)s”.') % {'topic': self.topic.title}
+
     def link(self):
         return url_for(self.topic)
 
@@ -1500,6 +1503,9 @@ class ForumAtomFeed(InyokaAtomFeed):
     name = 'forum_forum_feed'
     title = _('%(site)s forum') % {'site': settings.BASE_DOMAIN_NAME}
     link = href('forum')
+
+    def _subtitle(self, obj):
+        return _('Feed contains new topics of the whole forum')
 
     def items(self):
         # We have only one feed, so it's always in the view of ANONYMOUS_USER
@@ -1575,6 +1581,9 @@ class OneForumAtomFeed(ForumAtomFeed):
 
     def link(self):
         return url_for(self.forum)
+
+    def _subtitle(self, obj):
+        return _('Feed contains new topics of the forum “%(forum)s”.') % {'forum': self.forum.name}
 
     def items(self):
         anonymous = User.objects.get_anonymous_user()

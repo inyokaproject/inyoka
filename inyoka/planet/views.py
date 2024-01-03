@@ -118,7 +118,7 @@ class PlanetAtomFeed(InyokaAtomFeed):
     def link(self):
         return href('planet')
 
-    def _subtitle(self):
+    def _subtitle(self, _):
         return storage['planet_description_rendered']
 
     def items(self):

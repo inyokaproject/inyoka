@@ -160,6 +160,9 @@ class WikiAtomFeed(InyokaAtomFeed):
 
     title = _('%(sitename)s wiki – last changes') % {'sitename': settings.BASE_DOMAIN_NAME}
 
+    def _subtitle(self, page):
+        return _('Feed contains revisions of the whole wiki')
+
     def link(self, *args):
         return href('wiki', 'wiki', 'recentchanges')
 
@@ -225,6 +228,9 @@ class WikiPageAtomFeed(WikiAtomFeed):
             'sitename': settings.BASE_DOMAIN_NAME,
             'pagename': page.name
         }
+
+    def _subtitle(self, page):
+        return _('Feed contains revisions of the wiki page “%(pagename)s”.') % {'pagename': page.name}
 
     def link(self, page):
         return page.get_absolute_url()

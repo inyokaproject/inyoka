@@ -1657,6 +1657,7 @@ class TestPostFeed(TestCase):
   <link href="http://forum.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
   <id>http://forum.ubuntuusers.local:8080/</id>
   <updated>2023-12-09T23:55:04+01:00</updated>
+  <subtitle>Feed contains new topics of the whole forum</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>test topic</title>
@@ -1755,6 +1756,7 @@ class TestPostForumFeed(TestCase):
   <link href="http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/" rel="self" />
   <id>http://forum.ubuntuusers.local:8080/category/hardware/</id>
   <updated>2023-12-09T23:55:04+01:00</updated>
+  <subtitle>Feed contains new topics of the forum “hardware”.</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>test topic</title>
@@ -1881,6 +1883,7 @@ class TestTopicFeed(TestCase):
   <link href="http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/" rel="self" />
   <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
   <updated>2023-12-09T23:55:04+01:00</updated>
+  <subtitle>Feed contains posts of the topic “test topic”.</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
   <entry>
     <title>user (Dec. 10, 2023, 12:55 a.m.)</title>

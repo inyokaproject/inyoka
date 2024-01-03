@@ -886,7 +886,7 @@ class IkhayaAtomFeed(InyokaAtomFeed):
     def link(self):
         return href('ikhaya')
 
-    def _subtitle(self):
+    def _subtitle(self, _):
         return storage['ikhaya_description_rendered']
 
     def items(self):
@@ -952,7 +952,7 @@ class IkhayaCommentAtomFeed(InyokaAtomFeed):
     def link(self):
         return href('ikhaya')
 
-    def _subtitle(self):
+    def _subtitle(self, _):
         return storage['ikhaya_description_rendered']
 
     def items(self):
