@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"Last-Translator: Christoph Volkert <>\n"
-"POT-Creation-Date: 2023-11-12 16:35+0100\n"
+"POT-Creation-Date: 2024-01-04 17:58+0100\n"
 "PO-Revision-Date: 2023-11-12 16:30+0100\n"
+"Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.13.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #, python-format
 msgid "%(sitename)s - Message from %(username)s"
@@ -701,10 +701,6 @@ msgstr "Du hast dich erfolgreich angemeldet."
 
 msgid "You have successfully logged out."
 msgstr "Du hast dich erfolgreich abgemeldet."
-
-#, python-format
-msgid "You need to <a href=\"%(link)s\">enter a valid jabber address</a> to use our jabber service."
-msgstr "Du musst eine gültige <a href=\"%(link)s\">Jabber-Adresse</a> angeben, um unseren Jabber-Service nutzen zu können."
 
 msgid "You need to be logged in before you can continue."
 msgstr "Du musst angemeldet sein um fortzufahren."

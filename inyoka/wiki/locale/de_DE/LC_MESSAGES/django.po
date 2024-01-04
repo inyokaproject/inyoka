@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-01 16:45+0200\n"
+"POT-Creation-Date: 2024-01-04 17:58+0100\n"
 "PO-Revision-Date: 2019-01-25 20:45+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -42,19 +42,17 @@ msgstr "%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. Zusamm
 msgid "%(user)s edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr "%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. Zusammenfassung: %(summary)s"
 
+msgid "-"
+msgstr "-"
+
 msgid "A page with this name already exists."
 msgstr "Eine andere Seite mit diesem Namen existiert bereits."
 
 msgid "A site name needs to be entered to create this page."
 msgstr "Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben wurde."
 
-#, python-format
-msgid "An anonymous user deleted the article “%(article)s” on %(date)s. Summary: %(summary)s"
-msgstr "Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht. Zusammenfassung: %(summary)s"
-
-#, python-format
-msgid "An anonymous user edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
-msgstr "Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s bearbeitet. Zusammenfassung: %(summary)s"
+msgid "An anonymous user"
+msgstr "Ein anonymer Benutzer"
 
 msgid "Another page or attachment with the same name exists"
 msgstr "Es existiert bereits eine Seite oder ein Anhang mit diesem Namen."
@@ -104,6 +102,13 @@ msgstr "Bearbeiten der Seite abgebrochen."
 
 msgid "Extensive (for beginners)"
 msgstr "Umfangreich (für Einsteiger)"
+
+msgid "Feed contains revisions of the whole wiki"
+msgstr "Feed enthält Revisionen des gesamten Wikis"
+
+#, python-format
+msgid "Feed contains revisions of the wiki page “%(pagename)s”."
+msgstr "Feed enthält Revisionen der Wiki-Seite „%(pagename)s“."
 
 msgid "Howto"
 msgstr "Howto"
@@ -267,4 +272,3 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachricht
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
-
