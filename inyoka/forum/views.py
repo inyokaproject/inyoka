@@ -1582,7 +1582,7 @@ class OneForumAtomFeed(ForumAtomFeed):
         return _('Feed contains new topics of the forum “%(forum)s”.') % {'forum': self.forum.name}
 
     def items(self):
-        return Topic.objects.get_latest(forum_slug=self.forum.slug, count=self.count)
+        return Topic.objects.get_latest(forum=self.forum, count=self.count)
 
 
 def markread(request, slug=None):

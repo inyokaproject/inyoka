@@ -226,34 +226,38 @@ class TopicManager(models.Manager):
         return self.get_queryset().filter(**filter_by) \
                    .select_related(*related).order_by(*order)
 
-    def get_latest(self, forum_slug: Optional[str] = None,
+    def get_latest(self, forum: Optional["Forum"] = None,
                    count: Optional[int] = 10,
                    user: Optional["User"] = None) -> "QuerySet":
         """
-        Returns a queryset of the latest topics in this forum (and potentially sub forums).
+        Returns a queryset of the last-updated topics in this forum (and potential sub forums).
 
-        The returned objects
-          - do not include hidden objects
-          - Sticky objects aren't at the top!
-          - are restricted to the user (if none is given, anonymous is assumed)
+        The returned topics
+          - do not include hidden topics
+          - respect the user's permissions (if none is given, anonymous is assumed)
+          - ignore stickiness (thus, sticky objects aren't at the top!)
 
-        :param forum_slug: Optionally restrict to a forum and its sub forums.
-                           If None, all forums (with permission) are used.
+        Raises PermissionDenied, if
+          - the user has no permission to view the passed forum or
+          - a user has no permission to view at least one forum
+
+        :param forum: Optionally, restrict to a forum and its sub forums.
+                      If None, all forums (with permissions) are used.
         :param count: Restricts the number of returned topics
-        :param user: User-object that is used to check permissions for (if none is given, anonymous is assumed)
+        :param user: User-object that is used to check permissions (if none is given, anonymous is assumed)
         """
 
         if user is None:
             user = User.objects.get_anonymous_user()
 
-        if forum_slug:
-            forum = Forum.objects.get_cached(forum_slug)
+        if forum:
             if not user.has_perm('forum.view_forum', forum):
                 raise PermissionDenied
             allowed_forums = [forum]
+
             allowed_forums += [child for child in forum.descendants if user.has_perm('forum.view_forum', child)]
         else:
-            # no slug given, use all forums the user has view-permission
+            # no specific forum passed, use all forums the user has view-permission
             allowed_forums = Forum.objects.get_forums_filtered(user)
 
         if not allowed_forums:
