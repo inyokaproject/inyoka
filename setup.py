@@ -68,7 +68,7 @@ setup(
         'pytz',
         'sentry-sdk',
         'requests',
-        'Werkzeug<1.0'  # 1.0 removed feed support, see https://github.com/inyokaproject/inyoka/issues/1071
+        'Werkzeug'
     ],
 
     extras_require={
