@@ -1463,7 +1463,7 @@ class ForumTopicAtomFeed(InyokaAtomFeed):
         return url_for(self.topic)
 
     def items(self):
-        return self.topic.posts.select_related('author').order_by('-position')[:self.count]
+        return self.topic.posts.filter(hidden=False).select_related('author').order_by('-position')[:self.count]
 
     def item_title(self, post):
         return '%s (%s)' % (

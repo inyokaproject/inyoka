@@ -1613,6 +1613,15 @@ class TestPostFeed(TestCase):
         with self.assertNumQueries(9):
             self.client.get('/feeds/full/50/')
 
+    def test_topic_hidden(self):
+        """Hide the only topic, so the feed should not contain any topics"""
+        self.topic.hidden = True
+        self.topic.save()
+
+        response = self.client.get('/feeds/full/10/')
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 0)
+
     def test_multiple_topics(self):
         topic = Topic.objects.create(forum=self.forum, author=self.user, title='another topic')
         Post.objects.create(author=self.user, topic=topic, text='another text', pub_date=self.now)
@@ -1729,6 +1738,19 @@ class TestPostForumFeed(TestCase):
         response = self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
         self.assertEqual(response.status_code, 200)
         self.assertIn(post.text, response.content.decode())
+
+    def test_topic_hidden(self):
+        """Hide the only topic, so the feed should not contain any topics"""
+        self.topic.hidden = True
+        self.topic.save()
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/10/')
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 0)
+
+    def test_invalid_forum_slug(self):
+        response = self.client.get(f'/feeds/forum/fooBarBAZ/short/10/', follow=True)
+        self.assertEqual(response.status_code, 404)
 
     def test_multiple_topics(self):
         topic = Topic.objects.create(forum=self.forum, author=self.user, title='another topic')
@@ -1857,6 +1879,17 @@ class TestTopicFeed(TestCase):
 
         response = self.client.get(f'/feeds/topic/{topic.slug}/short/10/')
         self.assertEqual(response.status_code, 404)
+
+    def test_post_hidden(self):
+        """Create a second *hidden* post, so the feed should still only contain one post"""
+        post = Post.objects.create(hidden=True, author=self.user, topic=self.topic, text='hidden text',
+                                   pub_date=self.now)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertNotIn(post.text, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 1)
 
     def test_forum_no_permission(self):
         forum = Forum.objects.create(name='forum no perm')
