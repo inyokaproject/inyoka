@@ -1449,21 +1449,21 @@ class ForumTopicAtomFeed(InyokaAtomFeed):
         if not anonymous.has_perm('forum.view_forum', topic.cached_forum()):
             raise PermissionDenied
 
-        self.topic = topic
-
         super().get_object(request, *args, **kwargs)
 
-    def title(self):
-        return _('%(site)s topic – “%(topic)s”') % {'topic': self.topic.title, 'site': settings.BASE_DOMAIN_NAME}
+        return topic
 
-    def _subtitle(self, obj):
-        return _('Feed contains posts of the topic “%(topic)s”.') % {'topic': self.topic.title}
+    def title(self, topic):
+        return _('%(site)s topic – “%(topic)s”') % {'topic': topic.title, 'site': settings.BASE_DOMAIN_NAME}
 
-    def link(self):
-        return url_for(self.topic)
+    def _subtitle(self, topic):
+        return _('Feed contains posts of the topic “%(topic)s”.') % {'topic': topic.title}
 
-    def items(self):
-        return self.topic.posts.filter(hidden=False).select_related('author').order_by('-position')[:self.count]
+    def link(self, topic):
+        return url_for(topic)
+
+    def items(self, topic):
+        return topic.posts.filter(hidden=False).select_related('author').order_by('-position')[:self.count]
 
     def item_title(self, post):
         return '%s (%s)' % (
@@ -1506,10 +1506,10 @@ class ForumAtomFeed(InyokaAtomFeed):
     title = _('%(site)s forum') % {'site': settings.BASE_DOMAIN_NAME}
     link = href('forum')
 
-    def _subtitle(self, obj):
+    def _subtitle(self, __):
         return _('Feed contains new topics of the whole forum')
 
-    def items(self):
+    def items(self, _):
         return Topic.objects.get_latest(count=self.count)
 
     def item_title(self, topic):
@@ -1563,26 +1563,23 @@ class OneForumAtomFeed(ForumAtomFeed):
     """
 
     def get_object(self, request, *args, **kwargs):
-        # We have only one feed, so it's always in the view of ANONYMOUS_USER
-        anonymous = User.objects.get_anonymous_user()
-
-        self.forum = Forum.objects.get_cached(slug=kwargs['slug'])
-        if not anonymous.has_perm('forum.view_forum', self.forum):
-            raise PermissionDenied
+        forum = Forum.objects.get_cached(slug=kwargs['slug'])
 
         super().get_object(request, *args, **kwargs)
 
-    def title(self):
-        return _('%(site)s forum – “%(forum)s”') % {'forum': self.forum.name, 'site': settings.BASE_DOMAIN_NAME}
+        return forum
 
-    def link(self):
-        return url_for(self.forum)
+    def title(self, forum):
+        return _('%(site)s forum – “%(forum)s”') % {'forum': forum.name, 'site': settings.BASE_DOMAIN_NAME}
 
-    def _subtitle(self, obj):
-        return _('Feed contains new topics of the forum “%(forum)s”.') % {'forum': self.forum.name}
+    def link(self, forum):
+        return url_for(forum)
 
-    def items(self):
-        return Topic.objects.get_latest(forum=self.forum, count=self.count)
+    def _subtitle(self, forum):
+        return _('Feed contains new topics of the forum “%(forum)s”.') % {'forum': forum.name}
+
+    def items(self, forum):
+        return Topic.objects.get_latest(forum=forum, count=self.count)
 
 
 def markread(request, slug=None):

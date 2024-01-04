@@ -884,13 +884,13 @@ class IkhayaAtomFeed(InyokaAtomFeed):
     name = 'ikhaya_feed_article'
     title = '%s Ikhaya' % settings.BASE_DOMAIN_NAME
 
-    def link(self):
+    def link(self, _):
         return href('ikhaya')
 
     def _subtitle(self, _):
         return storage['ikhaya_description_rendered']
 
-    def items(self):
+    def items(self, _):
         return Article.objects.get_latest_articles(count=self.count)
 
     def item_title(self, article):
@@ -929,18 +929,21 @@ class IkhayaCategoryAtomFeed(IkhayaAtomFeed):
     Atom feed with all articles of ikhaya *category*.
     """
 
-    def title(self):
-        return '%s Ikhaya – %s' % (settings.BASE_DOMAIN_NAME, self.slug)
+    def title(self, slug):
+        return '%s Ikhaya – %s' % (settings.BASE_DOMAIN_NAME, slug)
 
-    def link(self):
-        return href('ikhaya', 'category', self.slug)
+    def link(self, slug):
+        return href('ikhaya', 'category', slug)
 
-    def items(self):
-        return Article.objects.get_latest_articles(self.slug, self.count)
+    def items(self, slug):
+        return Article.objects.get_latest_articles(slug, self.count)
 
     def get_object(self, request, *args, **kwargs):
-        self.slug = kwargs['slug']
+        slug = kwargs['slug']
+
         super().get_object(request, *args, **kwargs)
+
+        return slug
 
 
 class IkhayaCommentAtomFeed(InyokaAtomFeed):
@@ -950,13 +953,13 @@ class IkhayaCommentAtomFeed(InyokaAtomFeed):
     name = 'ikhaya_feed_comment'
     title = _('%(domain)s Ikhaya comments') % {'domain': settings.BASE_DOMAIN_NAME}
 
-    def link(self):
+    def link(self, _):
         return href('ikhaya')
 
     def _subtitle(self, _):
         return storage['ikhaya_description_rendered']
 
-    def items(self):
+    def items(self, _):
         return Comment.objects.get_latest_comments(count=self.count)
 
     def item_title(self, comment):
@@ -989,18 +992,21 @@ class IkhayaArticleCommentAtomFeed(IkhayaCommentAtomFeed):
     Atom feed with all comments of an ikhaya *article*.
     """
 
-    def title(self):
+    def title(self, article):
         return _('%(domain)s Ikhaya comments – %(title)s') % {
             'domain': settings.BASE_DOMAIN_NAME,
-            'title': self.article.subject
+            'title': article.subject
         }
 
-    def link(self):
-        return url_for(self.article)
+    def link(self, article):
+        return url_for(article)
 
-    def items(self):
-        return Comment.objects.get_latest_comments(self.article.id, self.count)
+    def items(self, article):
+        return Comment.objects.get_latest_comments(article.id, self.count)
 
     def get_object(self, request, *args, **kwargs):
-        self.article = get_object_or_404(Article.published, id=kwargs['id'])
+        article = get_object_or_404(Article.published, id=kwargs['id'])
+
         super().get_object(request, *args, **kwargs)
+
+        return article
