@@ -9,6 +9,7 @@
 """
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 
 from . import views
 from ..utils.http import global_not_found, server_error
@@ -51,10 +52,13 @@ urlpatterns = [
     path('forum/<str:slug>/unsubscribe/', views.unsubscribe_forum),
     path('forum/<str:slug>/<int:page>/', views.forum),
     path('forum/<str:forum_slug>/newtopic/', views.edit),
-    # TODO add cache_page(60 * 5) to every feed url
-    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.ForumAtomFeed()),
-    re_path(r'^feeds/forum/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.OneForumAtomFeed()),
-    re_path(r'^feeds/topic/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.ForumTopicAtomFeed()),
+
+    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', cache_page(60 * 5)(views.ForumAtomFeed())),
+    re_path(r'^feeds/forum/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.OneForumAtomFeed())),
+    re_path(r'^feeds/topic/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.ForumTopicAtomFeed())),
+
     path('category/<str:category>/', views.index),
     path('new_discussion/<path:page_name>/', views.edit),
     path('markread/', views.markread),

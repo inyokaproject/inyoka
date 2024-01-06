@@ -9,6 +9,7 @@
 """
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 
 from . import actions, views
 from ..utils.http import global_not_found, server_error
@@ -18,9 +19,11 @@ urlpatterns = [
     path('_image/', views.get_image_resource),
     path('_newpage/', views.redirect_new_page),
     path('_attachment/', views.get_attachment),
-    path('_feed/<int:count>/', views.WikiAtomFeed()),
-    path('<path:page_name>/a/feed/', views.WikiPageAtomFeed(), {'count': 10}),
-    path('<path:page_name>/a/feed/<int:count>/', views.WikiPageAtomFeed()),
+
+    path('_feed/<int:count>/', cache_page(60 * 5)(views.WikiAtomFeed())),
+    path('<path:page_name>/a/feed/', cache_page(60 * 5)(views.WikiPageAtomFeed()), {'count': 10}),
+    path('<path:page_name>/a/feed/<int:count>/', cache_page(60 * 5)(views.WikiPageAtomFeed())),
+
     path('wiki/recentchanges/', views.recentchanges),
     path('wiki/missingpages/', views.missingpages),
     path('wiki/randompages/', views.randompages),
