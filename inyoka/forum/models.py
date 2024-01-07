@@ -24,8 +24,9 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
-from django.db.models import Count, F, Max, Sum
+from django.db.models import Count, F, Max, Sum, QuerySet
 from django.utils.encoding import DjangoUnicodeDecodeError, force_str
 from django.utils.html import escape, format_html
 from django.utils.translation import gettext as _
@@ -225,41 +226,53 @@ class TopicManager(models.Manager):
         return self.get_queryset().filter(**filter_by) \
                    .select_related(*related).order_by(*order)
 
-    def get_latest(self, forum_slug=None, allowed_forums=None, count=10):
+    def get_latest(self, forum: Optional["Forum"] = None,
+                   count: Optional[int] = 10,
+                   user: Optional["User"] = None) -> "QuerySet":
         """
-        Return a list of the latest topics in this forum. If no count is
-        given the default value from the settings will be used and the whole
-        output will be partly cached (highly recommended!).
+        Returns a queryset of the last-updated topics in this forum (and potential sub forums).
 
-        The returned objects do not include hidden objects and sticky objects
-        aren't at the top!
+        The returned topics
+          - do not include hidden topics
+          - respect the user's permissions (if none is given, anonymous is assumed)
+          - ignore stickiness (thus, sticky objects aren't at the top!)
+
+        Raises PermissionDenied, if
+          - the user has no permission to view the passed forum or
+          - a user has no permission to view at least one forum
+
+        :param forum: Optionally, restrict to a forum and its sub forums.
+                      If None, all forums (with permissions) are used.
+        :param count: Restricts the number of returned topics
+        :param user: User-object that is used to check permissions (if none is given, anonymous is assumed)
         """
-        key = 'forum/latest_topics'
-        forum = None
-        if forum_slug is not None:
-            key = 'forum/latest_topics/%s' % forum_slug
-            forum = Forum.objects.get_cached(forum_slug)
 
-        topic_ids = cache.get(key)
-        if topic_ids is None:
-            filter_by = { 'hidden':False,
-                          'first_post__isnull':False,
-                          'last_post__isnull':False
-                        }
-            query = Topic.objects.filter(**filter_by)
-            if forum_slug:
-                query = query.filter(forum__id=forum.id)
-            if allowed_forums:
-                query = query.filter(forum__id__in=(allowed_forums))
+        if user is None:
+            user = User.objects.get_anonymous_user()
 
-            maxcount = max(settings.AVAILABLE_FEED_COUNTS['forum_forum_feed'])
-            topic_ids = list(query.order_by('-id').values_list('id', flat=True)[:maxcount])
-            cache.set(key, topic_ids, 300)
+        if forum:
+            if not user.has_perm('forum.view_forum', forum):
+                raise PermissionDenied
+            allowed_forums = [forum]
 
+            allowed_forums += [child for child in forum.descendants if user.has_perm('forum.view_forum', child)]
+        else:
+            # no specific forum passed, use all forums the user has view-permission
+            allowed_forums = Forum.objects.get_forums_filtered(user)
+
+        if not allowed_forums:
+            raise PermissionDenied
+
+        topic_filter = {
+            'hidden': False,
+            'first_post__isnull': False,
+            'last_post__isnull': False,
+            'forum__in': allowed_forums,
+        }
         related = ('author', 'last_post', 'last_post__author', 'first_post')
-        topics = Topic.objects.filter(id__in=topic_ids) \
+        topics = Topic.objects.filter(**topic_filter) \
                               .order_by('-last_post__id') \
-                              .select_related(*related).all()
+                              .select_related(*related)
         return topics[:count]
 
 

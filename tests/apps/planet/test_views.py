@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from time import mktime
 
 import feedparser
@@ -32,11 +32,13 @@ class TestViews(TestCase):
         Entry.objects.create(blog=blog, url="http://example.com/article1",
                              guid="http://example.com/article1",
                              text="This is a test", title="",
-                             pub_date=datetime.now(), updated=datetime.now())
+                             pub_date=datetime.datetime.now(),
+                             updated=datetime.datetime.now())
         Entry.objects.create(blog=blog, url="http://example.com/article2",
                              guid="http://example.com/article2",
                              text="This is a test", title="I have a title",
-                             pub_date=datetime.now(), updated=datetime.now())
+                             pub_date=datetime.datetime.now(),
+                             updated=datetime.datetime.now())
 
         with translation.override('en-us'):
             response = self.client.post('/feeds/title/10/')
@@ -59,26 +61,27 @@ class TestViews(TestCase):
                     active=True)
         blog.save()
 
-        now = datetime.now().replace(microsecond=0)
+        now = datetime.datetime.now().replace(microsecond=0)
         Entry.objects.create(blog=blog, url="http://example.com/article1",
                              guid="http://example.com/article1",
                              text="This is a test", title="Test title",
                              pub_date=now, updated=now,
                              author='AnonymousAuthor', author_homepage='https://example.com')
 
-        response = self.client.get('/feeds/full/10/')
+        with self.assertNumQueries(3):
+            response = self.client.get('/feeds/full/10/')
 
         feed = feedparser.parse(response.content)
 
         # feed properties
         self.assertEqual(feed.feed.title, 'ubuntuusers.local:8080 planet')
         self.assertEqual(feed.feed.title_detail.type, 'text/plain')
-        self.assertEqual(feed.feed.title_detail.language, None)
+        self.assertEqual(feed.feed.title_detail.language, 'en-us')
         self.assertEqual(feed.feed.id, 'http://planet.ubuntuusers.local:8080/')
         self.assertEqual(feed.feed.link, 'http://planet.ubuntuusers.local:8080/')
 
-        feed_updated = datetime.fromtimestamp(mktime(feed.feed.updated_parsed))
-        self.assertEqual(feed_updated, now)
+        feed_updated = datetime.datetime.fromtimestamp(mktime(feed.feed.updated_parsed))
+        self.assertEqual(feed_updated, now - datetime.timedelta(hours=1))
 
         self.assertEqual(feed.feed.rights, href('portal', 'lizenz'))
         self.assertFalse('author' in feed.feed)
@@ -92,21 +95,19 @@ class TestViews(TestCase):
 
         self.assertEqual(entry.title_detail.value, 'Test title')
         self.assertEqual(entry.title_detail.type, 'text/plain')
-        self.assertEqual(len(entry.content), 1)
-        self.assertEqual(entry.content[0].value, 'This is a test')
-        self.assertEqual(entry.content[0].type, 'application/xhtml+xml')
-        self.assertFalse('summary_detail' in entry)
+        self.assertEqual(entry.summary, 'This is a test')
+        self.assertEqual(entry.summary_detail.type, 'text/html')
         self.assertFalse('text' in entry)
         self.assertFalse('created_parsed' in entry)
 
-        entry_published = datetime.fromtimestamp(mktime(entry.published_parsed))
-        self.assertEqual(entry_published, now)
+        entry_published = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
+        self.assertEqual(entry_published, now - datetime.timedelta(hours=1))
 
-        entry_date = datetime.fromtimestamp(mktime(entry.date_parsed))
-        self.assertEqual(entry_date, now)
+        entry_date = datetime.datetime.fromtimestamp(mktime(entry.date_parsed))
+        self.assertEqual(entry_date, now - datetime.timedelta(hours=1))
 
-        entry_updated = datetime.fromtimestamp(mktime(entry.updated_parsed))
-        self.assertEqual(entry_updated, now)
+        entry_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
+        self.assertEqual(entry_updated, now - datetime.timedelta(hours=1))
 
         self.assertEqual(entry.author, 'AnonymousAuthor')
         self.assertEqual(entry.author_detail.name, 'AnonymousAuthor')

@@ -8,13 +8,14 @@
     :license: BSD, see LICENSE for more details.
 """
 import datetime
-from time import mktime
+import zoneinfo
 
 import feedparser
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
+from django.utils.dateparse import parse_datetime
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
@@ -294,10 +295,13 @@ class TestArticleFeeds(TestCase):
         response = self.client.get('/feeds/full/50/')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries(self):
+        with self.assertNumQueries(4):
+            self.client.get('/feeds/full/50/')
+
     def test_multiple_articles(self):
-        now = datetime.datetime.now().replace(microsecond=0)
-        today = now.date()
-        time_now = now.time()
+        today = self.now.date()
+        time_now = self.now.time()
 
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
                             text="Text 2", pub_date=today,
@@ -317,28 +321,27 @@ class TestArticleFeeds(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 Ikhaya</title>
-  <id>http://ikhaya.ubuntuusers.local:8080/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://ikhaya.ubuntuusers.local:8080/" />
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 Ikhaya</title>
+  <link href="http://ikhaya.ubuntuusers.local:8080/" rel="alternate"/>
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
-  <subtitle type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">Just to describe ikhaya</div></subtitle>
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://ikhaya.ubuntuusers.local:8080/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/full/10/">
-    <title type="text">Subject</title>
-    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" />
+  <entry>
+    <title>Subject</title>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" rel="alternate"/>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>admin</name>
       <uri>http://ubuntuusers.local:8080/user/admin/</uri>
     </author>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">
-<p>Text</p></div></content>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
+    <summary type="html">
+&lt;p&gt;Text&lt;/p&gt;</summary>
+    <category term="Category"/>
   </entry>
 </feed>
 ''')
@@ -354,12 +357,15 @@ class TestArticleFeeds(TestCase):
         self.assertEqual(feed.feed.title, 'ubuntuusers.local:8080 Ikhaya')
         self.assertEqual(feed.feed.subtitle, 'Just to describe ikhaya')
         self.assertEqual(feed.feed.title_detail.type, 'text/plain')
-        self.assertEqual(feed.feed.title_detail.language, None)
+        self.assertEqual(feed.feed.title_detail.language, 'en-us')
         self.assertEqual(feed.feed.id, 'http://ikhaya.ubuntuusers.local:8080/')
         self.assertEqual(feed.feed.link, 'http://ikhaya.ubuntuusers.local:8080/')
 
-        feed_updated = datetime.datetime.fromtimestamp(mktime(feed.feed.updated_parsed))
-        self.assertEqual(feed_updated, self.now - datetime.timedelta(hours=1))
+        now_utc = self.now
+        now_utc = now_utc.replace(tzinfo=zoneinfo.ZoneInfo("Europe/London"))
+
+        feed_updated = parse_datetime(feed.feed.updated)
+        self.assertEqual(feed_updated, now_utc)
 
         self.assertEqual(feed.feed.rights, href('portal', 'lizenz'))
         self.assertNotIn('author', feed.feed)
@@ -375,21 +381,19 @@ class TestArticleFeeds(TestCase):
 
         self.assertEqual(entry.title_detail.value, 'Subject')
         self.assertEqual(entry.title_detail.type, 'text/plain')
-        self.assertEqual(len(entry.content), 1)
-        self.assertEqual(entry.content[0].value, '<p>Text</p>')
-        self.assertEqual(entry.content[0].type, 'application/xhtml+xml')
-        self.assertNotIn('summary_detail', entry)
+        self.assertEqual(entry.summary, '<p>Text</p>')
+        self.assertEqual(entry.summary_detail.type, 'text/html')
         self.assertNotIn('text', entry)
         self.assertNotIn('created_parsed', entry)
 
-        entry_published = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
-        self.assertEqual(entry_published, self.now - datetime.timedelta(hours=1))
+        entry_published = parse_datetime(entry.published)
+        self.assertEqual(entry_published, now_utc)
 
-        entry_date = datetime.datetime.fromtimestamp(mktime(entry.date_parsed))
-        self.assertEqual(entry_date, self.now - datetime.timedelta(hours=1))
+        entry_date = parse_datetime(entry.date)
+        self.assertEqual(entry_date, now_utc)
 
-        entry_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
-        self.assertEqual(entry_updated, self.now - datetime.timedelta(hours=1))
+        entry_updated = parse_datetime(entry.updated)
+        self.assertEqual(entry_updated, now_utc)
 
         self.assertEqual(entry.author, self.admin.username)
         self.assertEqual(entry.author_detail.name, self.admin.username)
@@ -432,6 +436,10 @@ class TestArticleCategoryFeeds(TestCase):
         response = self.client.get(f'/feeds/{self.cat.slug}/full/50/')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries(self):
+        with self.assertNumQueries(3):
+            self.client.get(f'/feeds/{self.cat.slug}/full/50/')
+
     def test_multiple_articles(self):
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
                             text="Text 2", pub_date=self.today,
@@ -453,28 +461,27 @@ class TestArticleCategoryFeeds(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 Ikhaya – test-category</title>
-  <id>http://ikhaya.ubuntuusers.local:8080/category/test-category/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://ikhaya.ubuntuusers.local:8080/category/test-category/" />
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 Ikhaya – test-category</title>
+  <link href="http://ikhaya.ubuntuusers.local:8080/category/test-category/" rel="alternate" />
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/test-category/full/10/" rel="self" />
-  <subtitle type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">Just to describe ikhaya</div></subtitle>
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://ikhaya.ubuntuusers.local:8080/category/test-category/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/test-category/full/10/">
-    <title type="text">Subject</title>
-    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" />
+  <entry>
+    <title>Subject</title>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/" rel="alternate"/>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>admin</name>
       <uri>http://ubuntuusers.local:8080/user/admin/</uri>
     </author>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">
-<p>Text</p></div></content>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/subject/</id>
+    <summary type="html">
+&lt;p&gt;Text&lt;/p&gt;</summary>
+    <category term="Test Category"/>
   </entry>
 </feed>
 ''')
@@ -507,7 +514,7 @@ class TestCommentsFeed(TestCase):
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
 
-        storage['ikhaya_description_rendered'] = 'Just to describe ikhaya'
+        storage['ikhaya_description_rendered'] = '<em>Just</em> to describe ikhaya'
 
     def test_modes(self):
         response = self.client.get(f'/feeds/comments/short/10/')
@@ -518,6 +525,10 @@ class TestCommentsFeed(TestCase):
 
         response = self.client.get(f'/feeds/comments/full/50/')
         self.assertEqual(response.status_code, 200)
+
+    def test_queries(self):
+        with self.assertNumQueries(3):
+            self.client.get(f'/feeds/comments/full/50/')
 
     def test_multiple_comments(self):
         self.comment = Comment.objects.create(article=self.article, text="Some other Text",
@@ -535,27 +546,25 @@ class TestCommentsFeed(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 Ikhaya comments</title>
-  <id>http://ikhaya.ubuntuusers.local:8080/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://ikhaya.ubuntuusers.local:8080/" />
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 Ikhaya comments</title>
+  <link href="http://ikhaya.ubuntuusers.local:8080/" rel="alternate" />
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/comments/full/10/" rel="self" />
-  <subtitle type="text">Just to describe ikhaya</subtitle>
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://ikhaya.ubuntuusers.local:8080/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/comments/full/10/">
-    <title type="text">Re: Article Subject</title>
-    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" />
+  <entry>
+    <title>Re: Article Subject</title>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" rel="alternate"/>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Text</p></div></content>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1</id>
+    <summary type="html">&lt;p&gt;Text&lt;/p&gt;</summary>
   </entry>
 </feed>
 ''')
@@ -600,6 +609,10 @@ class TestCommentsPerArticleFeed(TestCase):
         response = self.client.get(f'/feeds/comments/{self.article.id}/full/50/')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries(self):
+        with self.assertNumQueries(4):
+            self.client.get(f'/feeds/comments/{self.article.id}/full/50/')
+
     def test_multiple_comments(self):
         self.comment = Comment.objects.create(article=self.article, text="Some other Text",
                             author=self.user, pub_date=self.now)
@@ -616,27 +629,25 @@ class TestCommentsPerArticleFeed(TestCase):
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
 '''<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text">ubuntuusers.local:8080 Ikhaya comments – Article Subject</title>
-  <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/</id>
-  <updated>2023-12-09T23:55:04Z</updated>
-  <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/" />
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 Ikhaya comments – Article Subject</title>
+  <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/" rel="alternate"/>
   <link href="http://ikhaya.ubuntuusers.local:8080/feeds/comments/1/full/10/" rel="self" />
-  <subtitle type="text">Just to describe ikhaya</subtitle>
-  <icon>//static.ubuntuusers.local:8080/img/favicon.ico</icon>
+  <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Just to describe ikhaya</subtitle>
   <rights>http://ubuntuusers.local:8080/lizenz/</rights>
-  <generator>Werkzeug</generator>
-  <entry xml:base="http://ikhaya.ubuntuusers.local:8080/feeds/comments/1/full/10/">
-    <title type="text">Re: Article Subject</title>
-    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1</id>
-    <updated>2023-12-09T23:55:04Z</updated>
-    <published>2023-12-09T23:55:04Z</published>
-    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" />
+  <entry>
+    <title>Re: Article Subject</title>
+    <link href="http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1" rel="alternate"/>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
     <author>
       <name>user</name>
       <uri>http://ubuntuusers.local:8080/user/user/</uri>
     </author>
-    <content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Text</p></div></content>
+    <id>http://ikhaya.ubuntuusers.local:8080/2023/12/09/article-subject/#comment_1</id>
+    <summary type="html">&lt;p&gt;Text&lt;/p&gt;</summary>
   </entry>
 </feed>
 ''')

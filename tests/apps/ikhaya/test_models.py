@@ -9,9 +9,10 @@
 """
 from datetime import date, datetime, time, timedelta
 
+import freezegun
 from django.conf import settings
 
-from inyoka.ikhaya.models import Article, Category, Event, Suggestion
+from inyoka.ikhaya.models import Article, Category, Event, Suggestion, Comment
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import url_for
@@ -237,3 +238,35 @@ class TestEventModel(TestCase):
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()),
             [event3, event1, event2])
+
+
+class TestComments(TestCase):
+    def setUp(self):
+        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
+
+        self.category1 = Category.objects.create(name='Test Category')
+        self.category2 = Category.objects.create(name='Test Category')
+
+        self.article1 = Article.objects.create(pub_date=date(2008, 7, 18), text='Text 1',
+                                pub_time=time(1, 33, 7), author=self.user, subject='Article',
+                                category=self.category1, intro='Intro 1')
+
+        self.article2 = Article.objects.create(pub_date=date(2018, 7, 18), text="'''Text 2'''",
+                                pub_time=time(1, 0, 0), author=self.user, subject='Article',
+                                category=self.category2, intro='Intro 2')
+
+        with freezegun.freeze_time('2024-01-01 12:12'):
+            self.comment1 = Comment.objects.create(article=self.article1, text='Text', author=self.user,
+                                                   pub_date=datetime.utcnow())
+            self.comment2 = Comment.objects.create(article=self.article1, text='Text2', author=self.user,
+                                                   pub_date=datetime.utcnow())
+
+            self.comment3 = Comment.objects.create(article=self.article2, text='Text3', author=self.user,
+                                                   pub_date=datetime.utcnow())
+
+    def test_position(self):
+        self.assertEqual(self.comment1.position, 1)
+        self.assertEqual(self.comment2.position, 2)
+
+        # only comment on another article
+        self.assertEqual(self.comment3.position, 1)

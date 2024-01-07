@@ -7,6 +7,8 @@
     :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import html
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
@@ -21,7 +23,7 @@ from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
 from inyoka.planet.models import Blog, Entry
 from inyoka.utils import generic
 from inyoka.utils.dates import group_by_day
-from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.http import templated, does_not_exist_is_404
 from inyoka.utils.mail import send_mail
 from inyoka.utils.pagination import Pagination
@@ -109,42 +111,50 @@ def suggest(request):
     }
 
 
-@atom_feed(name='planet_feed')
-def feed(request, mode='short', count=10):
-    """show the feeds for the planet"""
+class PlanetAtomFeed(InyokaAtomFeed):
     title = _('%(sitename)s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
-    feed = AtomFeed(title, url=href('planet'),
-                    feed_url=request.build_absolute_uri(),
-                    id=href('planet'),
-                    subtitle=storage['planet_description_rendered'],
-                    subtitle_type='xhtml',
-                    rights=href('portal', 'lizenz'),
-                    icon=href('static', 'img', 'favicon.ico'))
+    name = 'planet_feed'
 
-    entries = Entry.objects.get_latest_entries(count)
+    def link(self):
+        return href('planet')
 
-    for entry in entries:
-        kwargs = {}
-        if mode == 'full':
-            kwargs['content'] = entry.text
-            kwargs['content_type'] = 'xhtml'
-        if mode == 'short':
-            summary = Truncator(entry.text).words(100, html=True)
-            kwargs['summary'] = summary
-            kwargs['summary_type'] = 'xhtml'
-        if entry.author_homepage:
-            kwargs['author'] = {'name': entry.author,
-                                'uri': entry.author_homepage}
-        else:
-            kwargs['author'] = entry.author
+    def _subtitle(self, _):
+        return storage['planet_description_rendered']
 
-        feed.add(title=entry.title or _('No title given'),
-                 url=entry.url,
-                 id=smart_urlquote(entry.guid),
-                 updated=entry.updated,
-                 published=entry.pub_date,
-                 **kwargs)
-    return feed
+    def items(self):
+        return Entry.objects.get_latest_entries(self.count)
+
+    def item_title(self, item):
+        if not item.title:
+            return _("No title given")
+
+        return html.unescape(item.title)
+
+    def item_description(self, item):
+        if self.mode == 'full':
+            return item.text
+
+        if self.mode == 'short':
+            return self._shorten_html(item.text)
+
+    def item_link(self, item):
+        return item.url
+
+    def item_guid(self, item):
+        return smart_urlquote(item.guid)
+
+    def item_author_name(self, item):
+        return item.author
+
+    def item_author_link(self, item):
+        if item.author_homepage:
+            return item.author_homepage
+
+    def item_pubdate(self, item):
+        return item.pub_date
+
+    def item_updateddate(self, item):
+        return item.updated
 
 
 @login_required
@@ -173,7 +183,7 @@ def hide_entry(request, id):
 
 
 def export(request, export_type):
-    """Export the blog ist as OPML or FOAF"""
+    """Export the blog list as OPML or FOAF"""
     blogs = Blog.objects.filter(active=True).all()
     assert export_type in ('foaf', 'opml')
     ext = {'foaf': 'rdf', 'opml': 'xml'}

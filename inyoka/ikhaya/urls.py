@@ -9,6 +9,7 @@
 """
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 
 from . import views
 from ..utils.http import global_not_found, server_error
@@ -71,10 +72,14 @@ urlpatterns = [
     path('suggestions/subscribe/', views.suggestions_subscribe),
     path('suggestions/unsubscribe/', views.suggestions_unsubscribe),
 
-    re_path(r'^feeds/comments/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_comment, {'id': None}),
-    re_path(r'^feeds/comments/(?P<id>\d+)/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_comment),
-    re_path(r'^feeds/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_article, {'slug': None}),
-    re_path(r'^feeds/(?P<slug>[^/]+)/(?P<mode>\w+)/(?P<count>\d+)/$', views.feed_article),
+    re_path(r'^feeds/comments/(?P<mode>\w+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.IkhayaCommentAtomFeed())),
+    re_path(r'^feeds/comments/(?P<id>\d+)/(?P<mode>\w+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.IkhayaArticleCommentAtomFeed())),
+    re_path(r'^feeds/(?P<mode>\w+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.IkhayaAtomFeed())),
+    re_path(r'^feeds/(?P<slug>[^/]+)/(?P<mode>\w+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.IkhayaCategoryAtomFeed())),
 
     path('events/', views.events),
     path('events/all/', views.events, {'show_all': True}),

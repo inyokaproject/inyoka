@@ -1,7 +1,10 @@
+from os import path
+
 from django.core.cache import cache, caches
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from inyoka.utils.test import TestCase
-from inyoka.wiki.models import Page
+from inyoka.wiki.models import Page, Attachment
 from inyoka.wiki.exceptions import CaseSensitiveException
 
 
@@ -47,7 +50,7 @@ class TestPageManager(TestCase):
         self.assertFalse(page.rev.text.is_value_in_cache()[0])
 
         Page.objects.render_all_pages()
- 
+
         self.assertTrue(page.rev.text.is_value_in_cache()[0])
 
     def test_render_all_pages__two_pages(self):
@@ -64,3 +67,15 @@ class TestPageManager(TestCase):
 
         self.assertTrue(page.rev.text.is_value_in_cache()[0])
         self.assertTrue(page2.rev.text.is_value_in_cache()[0])
+
+
+class TestAttachment(TestCase):
+
+    def test_attachment_mimetype(self):
+        path_file = path.join(path.dirname(__file__), 'evil.png')
+
+        with open(path_file, 'rb') as f:
+            upload_object = SimpleUploadedFile(f.name, f.read())
+            attachment = Attachment.objects.create(file=upload_object)
+
+        self.assertEqual(attachment.mimetype, 'image/png')

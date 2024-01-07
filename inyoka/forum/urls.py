@@ -9,6 +9,7 @@
 """
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 
 from . import views
 from ..utils.http import global_not_found, server_error
@@ -51,14 +52,19 @@ urlpatterns = [
     path('forum/<str:slug>/unsubscribe/', views.unsubscribe_forum),
     path('forum/<str:slug>/<int:page>/', views.forum),
     path('forum/<str:forum_slug>/newtopic/', views.edit),
-    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.forum_feed, {'slug': None}),
-    re_path(r'^feeds/forum/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.forum_feed),
-    re_path(r'^feeds/topic/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.topic_feed),
+
+    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', cache_page(60 * 5)(views.ForumAtomFeed())),
+    re_path(r'^feeds/forum/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.OneForumAtomFeed())),
+    re_path(r'^feeds/topic/(?P<slug>[^/]+)/(?P<mode>[a-z]+)/(?P<count>\d+)/$',
+            cache_page(60 * 5)(views.ForumTopicAtomFeed())),
+
     path('category/<str:category>/', views.index),
     path('new_discussion/<path:page_name>/', views.edit),
     path('markread/', views.markread),
     path('category/<str:slug>/markread/', views.markread),
     path('forum/<str:slug>/markread/', views.markread),
+
     # special searches
     path('newposts/', views.topiclist, {'action': 'newposts'}),
     path('newposts/<int:page>/', views.topiclist, {'action': 'newposts'}),

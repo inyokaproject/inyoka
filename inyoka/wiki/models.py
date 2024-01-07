@@ -92,7 +92,7 @@ from django.utils.translation import gettext as _, to_locale, get_language
 from django.utils.translation import gettext_lazy
 from functools import partial
 from hashlib import sha1
-from werkzeug import cached_property
+from django.utils.functional import cached_property
 from werkzeug.utils import secure_filename
 
 import locale
@@ -658,24 +658,11 @@ class RevisionManager(models.Manager):
     """Helper manager for revisions"""
 
     def get_latest_revisions(self, page_name=None, count=10):
-        cache_key = 'wiki/latest_revisions'
-        revision_ids = self.all()
+        revisions = self.select_related('user', 'page').defer('user__forum_read_status', 'text')
+
         if page_name is not None:
-            cache_key = 'wiki/latest_revisions/%s' % \
-                normalize_pagename(page_name)
-            revision_ids = revision_ids.filter(page__name__iexact=page_name)
-        max_size = max(settings.AVAILABLE_FEED_COUNTS['wiki_feed'])
-        # Force evaluation to not cause a subselect in the next select.
-        revision_ids = list(revision_ids.values_list('pk',
-                                                     flat=True)[:max_size])
-        # Force evaluation, otherwise we get two queries, one limit 100
-        # and one limit 21 (later seems to be caused by repr on the qs
-        # in CacheDebugProxy). No idea why that happens in the live sys.
-        # FIXME: properly debug that...
-        revisions = list(self.select_related('user', 'page')
-                             .defer('user__forum_read_status')
-                             .filter(pk__in=revision_ids))
-        cache.set(cache_key, revisions, 300)
+            revisions = revisions.filter(page__name__iexact=page_name)
+
         return revisions[:count]
 
 
@@ -1368,8 +1355,6 @@ class Revision(models.Model):
         models.Model.save(self, *args, **kwargs)
 
         cache.delete(f'wiki/page/{self.page.name.lower()}')
-        cache.delete('wiki/latest_revisions')
-        cache.delete(f'wiki/latest_revisions/{self.page.name}')
 
     def __str__(self):
         return _('Revision %(id)d (%(title)s)') % {
