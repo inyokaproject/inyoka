@@ -4,7 +4,7 @@
 
     Signals for the forum.
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.core.cache import cache

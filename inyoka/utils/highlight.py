@@ -11,7 +11,7 @@
     `Haystack-Xapian <https://github.com/notanumber/xapian-haystack>`
     but heavily modified to fix some bugs.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re

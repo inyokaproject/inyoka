@@ -77,6 +77,6 @@
         Rather simple view functions that dispatch to the appropriate `actions`.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
