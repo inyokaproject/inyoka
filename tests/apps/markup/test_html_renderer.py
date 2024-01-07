@@ -4,7 +4,7 @@
 
     Here we test the HTML rendering.
 
-    :copyright: (c) 2013-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2013-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -209,7 +209,7 @@ class TestTemplateHtmlRenderer(TestCase):
 <@ if $line as stripped contains '+++' @>
 ||<@ else @>
 <@ $line @> ||
-<@ endif @> 
+<@ endif @>
 <@ endfor @>"""
         Page.objects.create(name=path.join(settings.WIKI_TEMPLATE_BASE, 'Table'),
                             text=table_markup, user=user)

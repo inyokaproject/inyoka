@@ -2,7 +2,7 @@
     tests.utils.test_user
     ~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from hashlib import sha1
