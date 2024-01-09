@@ -832,8 +832,7 @@ def event_suggest(request):
         form = NewEventForm(request.POST)
         if form.is_valid():
             event = Event()
-            convert = (lambda v: get_current_timezone().localize(v)
-                .astimezone(pytz.utc).replace(tzinfo=None))
+            convert = lambda v: v.replace(tzinfo=get_current_timezone())
             data = form.cleaned_data
             event.name = data['name']
             if data['date'] and data['time']:
