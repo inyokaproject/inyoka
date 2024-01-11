@@ -65,7 +65,7 @@ Deployment notes
 🔒 Security
 -----------
 
-* Update requirements (at least the dependencies ``Django`` and ``Pillow`` include known security fixes)
+* Update requirements (at least the dependencies ``Django``, ``Pillow`` and ``jinja2`` include known security fixes)
 
 
 0.30.0 (2023-10-22)
