@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.terminal
     ~~~~~~~~~~~~~~~~~~~~~
 
     Provides tools for terminals.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import sys
@@ -36,7 +35,7 @@ def get_dimensions():
         return (80, 24)
 
 
-class FancyPrinter(object):
+class FancyPrinter:
     """
     Prints colorful text into a terminal stream.
     """
@@ -85,7 +84,7 @@ class FancyPrinter(object):
 
 
 # original from Jochen Kupperschmidt with some modifications
-class ProgressBar(object):
+class ProgressBar:
     """Visualize a status bar on the console."""
 
     def __init__(self, max_width):

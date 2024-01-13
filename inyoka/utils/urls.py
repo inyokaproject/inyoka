@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.urls
     ~~~~~~~~~~~~~~~~~
@@ -7,7 +6,7 @@
     to build urls for different subdomains using the `href` function.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -73,7 +72,7 @@ def is_safe_domain(url):
 
     services = (host.regex for host in get_host_patterns())
     # service > service.domain.tld:
-    safe_hostnames = ['{}.{}'.format(service, settings.BASE_DOMAIN_NAME).lstrip('.') for service in services]
+    safe_hostnames = [f'{service}.{settings.BASE_DOMAIN_NAME}'.lstrip('.') for service in services]
     # Only one successfully matching is_safe_url() must match:
     for hostname in safe_hostnames:
         if url_has_allowed_host_and_scheme(url, allowed_hosts=hostname):

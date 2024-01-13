@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.markup.test_parser
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     This unittests tests the parser.
 
     :copyright: Copyright 2007 by Armin Ronacher.
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
@@ -208,23 +207,23 @@ class TestParser(unittest.TestCase):
 
     def test_interwiki_links(self):
         """Test external interwiki links."""
-        Linkmap.objects.create(token=u'github', url=u'https://github.test/')
-        Linkmap.objects.create(token=u'page', url=u'https://PAGE.test/')
+        Linkmap.objects.create(token='github', url='https://github.test/')
+        Linkmap.objects.create(token='page', url='https://PAGE.test/')
 
-        iwl = InterWikiLink(u'github', u'inyokaproject')
+        iwl = InterWikiLink('github', 'inyokaproject')
         iwl.prepare_html()
         self.assertEqual(iwl.resolve_interwiki_link(),
-                         u'https://github.test/inyokaproject')
+                         'https://github.test/inyokaproject')
 
-        iwl = InterWikiLink(u'not_existing', u'foo')
+        iwl = InterWikiLink('not_existing', 'foo')
         self.assertIsNone(iwl.resolve_interwiki_link())
 
-        iwl = InterWikiLink(u'user', u'foo')
-        self.assertEqual(iwl.resolve_interwiki_link(), href('portal', 'user', u'foo'))
+        iwl = InterWikiLink('user', 'foo')
+        self.assertEqual(iwl.resolve_interwiki_link(), href('portal', 'user', 'foo'))
 
-        iwl = InterWikiLink(u'attachment', u'foo')
-        self.assertEqual(iwl.resolve_interwiki_link(), href('wiki', '_attachment', target=u'foo'))
+        iwl = InterWikiLink('attachment', 'foo')
+        self.assertEqual(iwl.resolve_interwiki_link(), href('wiki', '_attachment', target='foo'))
 
-        iwl = InterWikiLink(u'page', u'foo')
-        self.assertEqual(iwl.resolve_interwiki_link(), u'https://foo.test/')
+        iwl = InterWikiLink('page', 'foo')
+        self.assertEqual(iwl.resolve_interwiki_link(), 'https://foo.test/')
 

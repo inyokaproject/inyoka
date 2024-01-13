@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.imaging
     ~~~~~~~~~~~~~~~~~~~~
 
     This module implements some helper methods to generate thumbnails
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
@@ -112,7 +111,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
             real_filename = os.path.join(settings.MEDIA_ROOT, destination)
             os.makedirs(os.path.dirname(real_filename), exist_ok=True)
             img.save(real_filename, quality=100)
-    except IOError:
+    except OSError:
         # the image could not be identified
         return
 

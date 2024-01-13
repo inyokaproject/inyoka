@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.views
     ~~~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     All views for the portal including the user control panel, private messages,
     static pages and the login/register.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import csv
@@ -82,7 +81,6 @@ from inyoka.portal.models import (
 )
 from inyoka.portal.user import (
     User,
-    UserBanned,
     deactivate_user,
     send_activation_mail,
 )
@@ -355,56 +353,41 @@ class InyokaPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmVi
 def login(request):
     """Login dialog that supports permanent logins"""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
-        else href('portal'))
+                else href('portal'))
+
     if request.user.is_authenticated:
         messages.error(request, _('You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
-    failed = inactive = banned = False
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginForm(request, request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            try:
-                user = auth.authenticate(username=data['username'],
-                                  password=data['password'])
-            except UserBanned:
-                banned = True
-                user = None
+            user = form.get_user()
 
-            if user is not None:
-                if user.is_active:
-                    if data['permanent']:
-                        make_permanent(request)
-                    # username matches password and user is active
-                    messages.success(request, _('You have successfully logged in.'))
-                    auth.login(request, user)
-                    return HttpResponseRedirect(redirect)
-                inactive = True
+            if data['permanent']:
+                make_permanent(request)
 
-            failed = True
+            # username matches password and user is active
+            messages.success(request, _('You have successfully logged in.'))
+            auth.login(request, user)
+            return HttpResponseRedirect(redirect)
     else:
-        if 'username' in request.GET:
-            form = LoginForm(initial={'username': request.GET['username']})
-        else:
-            form = LoginForm()
+        form = LoginForm()
 
     d = {
         'form': form,
-        'failed': failed,
-        'inactive': inactive,
-        'banned': banned,
     }
-    if failed:
-        d['username'] = data['username']
+
     return d
 
 
 def logout(request):
     """Simple logout view that flashes if the process was done
-    successfull or not (e.g if the user wasn't logged in)."""
+    successful or not (e.g. if the user wasn't logged in)."""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
-        else href('portal'))
+                else href('portal'))
+
     if request.user.is_authenticated:
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
@@ -413,6 +396,7 @@ def logout(request):
         messages.success(request, _('You have successfully logged out.'))
     else:
         messages.error(request, _('You were not logged in.'))
+
     return HttpResponseRedirect(redirect)
 
 
@@ -952,7 +936,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})
             entries = [s for s in entries if str(s.id) not in d['delete']]
-            cache.delete('portal/pm_count/{}'.format(request.user.id))
+            cache.delete(f'portal/pm_count/{request.user.id}')
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
 
@@ -963,7 +947,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         if not entry.read:
             entry.read = True
             entry.save()
-            cache.delete('portal/pm_count/{}'.format(request.user.id))
+            cache.delete(f'portal/pm_count/{request.user.id}')
         action = request.GET.get('action')
         if action:
             if request.method == 'POST':
@@ -1053,10 +1037,10 @@ def privmsg_new(request, username=None):
                     auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
-            recipient_names = set(r.strip() for r in
-                                  d['recipient'].split(';') if r)
-            group_recipient_names = set(r.strip() for r in
-                                  d['group_recipient'].split(';') if r)
+            recipient_names = {r.strip() for r in
+                                  d['recipient'].split(';') if r}
+            group_recipient_names = {r.strip() for r in
+                                  d['group_recipient'].split(';') if r}
 
             recipients = set()
 

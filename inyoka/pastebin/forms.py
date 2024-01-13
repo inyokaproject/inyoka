@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.pastebin.forms
     ~~~~~~~~~~~~~~~~~~~~~
 
     "Add new paste" formular.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django import forms
@@ -64,7 +63,7 @@ class AddPasteForm(forms.ModelForm):
                              choices=LANGUAGES)
 
     def save(self, user, commit=True):
-        entry = super(AddPasteForm, self).save(commit=False)
+        entry = super().save(commit=False)
         entry.author = user
         entry.title = entry.title or gettext('Untitled')
         if commit:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.services
     ~~~~~~~~~~~~~~~~~~~~~
@@ -7,13 +6,13 @@
     can still write their own but for 99% of the time this should work.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.http import Http404
 
 
-class SimpleDispatcher(object):
+class SimpleDispatcher:
     """
     A very basic dispatcher.
     """
@@ -29,7 +28,7 @@ class SimpleDispatcher(object):
 
     def __call__(self, request, name):
         if name not in self.methods:
-            return Http404('Service not found.')
+            raise Http404('Service not found.')
         return self.methods[name](request)
 
 

@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.auth
     ~~~~~~~~~~~~~~~~~~~~
 
     Custom authorization functions for Inyoka.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -73,7 +72,7 @@ class InyokaAuthBackend(BaseBackend):
         else:
             perms = Permission.objects.filter(group__user=user_obj)
         perms = perms.values_list('content_type__app_label', 'codename')
-        return set("%s.%s" % (app, permission) for app, permission in perms)
+        return {"%s.%s" % (app, permission) for app, permission in perms}
 
     def get_all_permissions(self, user_obj, obj=None):
         """

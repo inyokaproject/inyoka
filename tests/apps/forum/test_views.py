@@ -1,32 +1,36 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test forum views.
 
-    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import shutil
+import datetime
+import zoneinfo
 from os import makedirs, path
 from random import randint
 
+import feedparser
 import responses
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files import File
 from django.contrib.auth.models import Group
 from django.http import Http404
 from django.test import RequestFactory
 from django.test.utils import override_settings
-from django.utils import translation
+from django.utils import translation, timezone
+from django.utils.dateparse import parse_datetime
 from django.utils.translation import gettext as _
 from unittest.mock import patch
-from guardian.shortcuts import assign_perm
-from unittest import skip
+
+from freezegun import freeze_time
+from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum import constants, views
+from inyoka.forum.constants import get_version_choices, get_distro_choices
 from inyoka.forum.models import (
     Attachment,
     Forum,
@@ -36,6 +40,8 @@ from inyoka.forum.models import (
     Topic,
 )
 from inyoka.portal.user import User
+from inyoka.portal.utils import UbuntuVersion
+from inyoka.utils.storage import storage
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
 from inyoka.utils.urls import href, url_for
 
@@ -434,7 +440,7 @@ class TestUserPostCounter(TestCase):
         post2 = Post.objects.create(author=self.user, topic=topic)
         cache.set(self.user.post_count.cache_key, 2)
 
-        self.client.post('/post/{}/hide/'.format(post2.id), {'confirm': 'yes'})
+        self.client.post(f'/post/{post2.id}/hide/', {'confirm': 'yes'})
 
         self.assertEqual(self.user.post_count.value(), 1)
 
@@ -447,7 +453,7 @@ class TestUserPostCounter(TestCase):
         post2 = Post.objects.create(author=self.user, topic=topic, hidden=True)
         cache.set(self.user.post_count.cache_key, 1)
 
-        self.client.post('/post/{}/restore/'.format(post2.id), {'confirm': 'yes'})
+        self.client.post(f'/post/{post2.id}/restore/', {'confirm': 'yes'})
 
         self.assertEqual(self.user.post_count.value(), 2)
 
@@ -460,7 +466,7 @@ class TestUserPostCounter(TestCase):
         post2 = Post.objects.create(author=self.user, topic=topic, hidden=True)
         cache.set(self.user.post_count.cache_key, 1)
 
-        self.client.post('/post/{}/delete/'.format(post2.id), {'confirm': 'yes'})
+        self.client.post(f'/post/{post2.id}/delete/', {'confirm': 'yes'})
 
         self.assertEqual(self.user.post_count.value(), 1)
 
@@ -1554,7 +1560,7 @@ class TestMarkRead(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertRedirects(response, url_for(self.public_forum))
-        self.assertContains(response, 'The forum “{}” was marked as read.'.format(self.public_forum.name))
+        self.assertContains(response, f'The forum “{self.public_forum.name}” was marked as read.')
 
     def test_no_existing_forum(self):
         self.client.force_login(user=self.user)
@@ -1563,3 +1569,360 @@ class TestMarkRead(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertEqual(response.status_code, 404)
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestPostFeed(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = timezone.now()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.forum = Forum.objects.create(name='forum')
+
+        self.anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', self.anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=self.now)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_no_allowed_forum(self):
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        remove_perm('forum.view_forum', anonymous_group, self.forum)
+
+        response = self.client.get('/feeds/short/10/', follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_modes(self):
+        response = self.client.get('/feeds/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/feeds/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/feeds/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_queries(self):
+        with self.assertNumQueries(9):
+            self.client.get('/feeds/full/50/')
+
+    def test_topic_hidden(self):
+        """Hide the only topic, so the feed should not contain any topics"""
+        self.topic.hidden = True
+        self.topic.save()
+
+        response = self.client.get('/feeds/full/10/')
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 0)
+
+    def test_multiple_topics(self):
+        topic = Topic.objects.create(forum=self.forum, author=self.user, title='another topic')
+        Post.objects.create(author=self.user, topic=topic, text='another text', pub_date=self.now)
+
+        response = self.client.get('/feeds/full/10/')
+        self.assertIn(self.topic.title, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_categories(self):
+        child_forum = Forum.objects.create(parent=self.forum, name='child')
+        self.topic.forum = child_forum
+
+        version = UbuntuVersion('22.04', 'Jammy Jellyfish', lts=True, active=True, current=True)
+        storage['distri_versions'] = f'[{version.as_json()}]'
+
+        self.topic.ubuntu_version = get_version_choices()[1][0]
+        self.topic.ubuntu_distro = get_distro_choices()[2][0]
+        self.topic.save()
+
+        assign_perm('forum.view_forum', self.anonymous_group, child_forum)
+
+        response = self.client.get('/feeds/full/10/')
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 1)
+
+        terms = [t['term'] for t in feed.entries[0]['tags']]
+        self.assertSequenceEqual(terms, ['child', 'forum', '22.04 (Jammy Jellyfish)', 'Edubuntu 22.04 (Jammy Jellyfish)'])
+
+    def test_content_exact(self):
+        response = self.client.get('/feeds/full/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 forum</title>
+  <link href="http://forum.ubuntuusers.local:8080/" rel="alternate" />
+  <link href="http://forum.ubuntuusers.local:8080/feeds/full/10/" rel="self" />
+  <id>http://forum.ubuntuusers.local:8080/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Feed contains new topics of the whole forum</subtitle>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <entry>
+    <title>test topic</title>
+    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+    <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
+    <category term="forum"/>
+    <category term="Not specified"/>
+  </entry>
+</feed>
+''')
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestPostForumFeed(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = timezone.now()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.forum = Forum.objects.create(name='hardware')
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=self.now)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_not_allowed_forum(self):
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        remove_perm('forum.view_forum', anonymous_group, self.forum)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/short/10/', follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_modes(self):
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_queries(self):
+        with self.assertNumQueries(9):
+            self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
+
+    def test_child_forum(self):
+        child_forum = Forum.objects.create(name='sub hardware', parent=self.forum)
+        self.assertEqual(len(self.forum.children), 1)
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, child_forum)
+        topic = Topic.objects.create(forum=child_forum, author=self.user, title='test topic')
+        post = Post.objects.create(author=self.user, topic=topic, text='foo text', pub_date=self.now)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(post.text, response.content.decode())
+
+    def test_topic_hidden(self):
+        """Hide the only topic, so the feed should not contain any topics"""
+        self.topic.hidden = True
+        self.topic.save()
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/10/')
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 0)
+
+    def test_invalid_forum_slug(self):
+        response = self.client.get(f'/feeds/forum/fooBarBAZ/short/10/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_multiple_topics(self):
+        topic = Topic.objects.create(forum=self.forum, author=self.user, title='another topic')
+        Post.objects.create(author=self.user, topic=topic, text='another text', pub_date=self.now)
+
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/10/')
+        self.assertIn(self.topic.title, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_content_exact(self):
+        response = self.client.get(f'/feeds/forum/{self.forum.name}/full/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 forum – “hardware”</title>
+  <link href="http://forum.ubuntuusers.local:8080/category/hardware/" rel="alternate" />
+  <link href="http://forum.ubuntuusers.local:8080/feeds/forum/hardware/full/10/" rel="self" />
+  <id>http://forum.ubuntuusers.local:8080/category/hardware/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Feed contains new topics of the forum “hardware”.</subtitle>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <entry>
+    <title>test topic</title>
+    <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+    <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
+    <category term="hardware"/>
+    <category term="Not specified"/>
+  </entry>
+</feed>
+''')
+
+
+class TestTopicFeedPostRevision(TestCase):
+    """
+    Test feed with a post that has two revisions.
+
+    Only freeze setUp to a date in history, as the PostRevisions hardcodes utcnow.
+    """
+
+    client_class = InyokaClient
+
+    @freeze_time("2023-12-09T23:55:04Z")
+    def setUp(self):
+        super().setUp()
+
+        now = datetime.datetime.now().replace(microsecond=0)
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.forum = Forum.objects.create(name='hardware')
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        self.post = Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=now)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_post_multiple_revision_update_date(self):
+        self.post.edit(text='foo')
+        now_utc = datetime.datetime.utcnow().replace(tzinfo=zoneinfo.ZoneInfo("Europe/London"), microsecond=0)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/short/10/', follow=True)
+        feed = feedparser.parse(response.content)
+
+        feed_updated = parse_datetime(feed.entries[0].updated).replace(microsecond=0)
+        self.assertEqual(feed_updated, now_utc)
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestTopicFeed(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.now = timezone.now()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.forum = Forum.objects.create(name='hardware')
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.forum)
+        self.topic = Topic.objects.create(forum=self.forum, author=self.user, title='test topic')
+        Post.objects.create(author=self.user, topic=self.topic, text='some text', pub_date=self.now, id=1)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_modes(self):
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/short/10/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/title/20/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_queries(self):
+        with self.assertNumQueries(9):
+            self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+
+    def test_multiple_posts(self):
+        Post.objects.create(author=self.user, topic=self.topic, text='another text', pub_date=self.now)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertIn(self.topic.title, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_topic_hidden(self):
+        topic = Topic.objects.create(forum=self.forum, author=self.user, title='hidden topic', hidden=True)
+
+        response = self.client.get(f'/feeds/topic/{topic.slug}/short/10/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_hidden(self):
+        """Create a second *hidden* post, so the feed should still only contain one post"""
+        post = Post.objects.create(hidden=True, author=self.user, topic=self.topic, text='hidden text',
+                                   pub_date=self.now)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertNotIn(post.text, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 1)
+
+    def test_forum_no_permission(self):
+        forum = Forum.objects.create(name='forum no perm')
+        topic = Topic.objects.create(forum=forum, author=self.user, title='no perm topic')
+
+        response = self.client.get(f'/feeds/topic/{topic.slug}/short/10/', follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_content_exact(self):
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us">
+  <title>ubuntuusers.local:8080 topic – “test topic”</title>
+  <link href="http://forum.ubuntuusers.local:8080/topic/test-topic/" rel="alternate"/>
+  <link href="http://forum.ubuntuusers.local:8080/feeds/topic/test-topic/full/50/" rel="self" />
+  <id>http://forum.ubuntuusers.local:8080/topic/test-topic/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Feed contains posts of the topic “test topic”.</subtitle>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <entry>
+    <title>user (Dec. 10, 2023, 12:55 a.m.)</title>
+    <link href="http://forum.ubuntuusers.local:8080/post/1/" rel="alternate"/>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <id>http://forum.ubuntuusers.local:8080/post/1/</id>
+    <summary type="html">&lt;p&gt;some text&lt;/p&gt;</summary>
+  </entry>
+</feed>
+''')

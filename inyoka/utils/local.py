@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.local
     ~~~~~~~~~~~~~~~~~~
@@ -14,10 +13,10 @@
     The purpose of this module is to allow functions to access request data
     in the context of a request without explicitly passing the request object.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from werkzeug import Local, LocalManager
+from werkzeug.local import Local, LocalManager
 
 
 local = Local()

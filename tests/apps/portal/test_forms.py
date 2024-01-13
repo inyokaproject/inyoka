@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.portal.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test portal views.
 
-    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -17,7 +16,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from inyoka.portal.models import StaticPage, StaticFile
 from inyoka.utils.test import TestCase
 
-from inyoka.portal.forms import EditFileForm, EditStaticPageForm
+from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm
 
 
 class TestEditStaticPageForm(TestCase):
@@ -175,3 +174,29 @@ class TestEditFileForm(TestCase):
             form = EditFileForm(files={'file': upload_object})
             self.assertFalse(form.is_valid())
             self.assertIn('Another file with this name already exists. Please edit this file.', form.errors['file'])
+
+
+class TestLoginForm(TestCase):
+    form = LoginForm
+
+    def test_no_password(self):
+        """Obviously, a login form should miss the password, if no password was submitted."""
+        data = {'username': 'user'}
+        form = self.form(None, data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required.', form.errors['password'])
+
+    def test_password_nul_byte(self):
+        data = {'username': 'wUmrLVWz', 'password': '\x00'}
+        form = self.form(None, data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('Null characters are not allowed.', form.errors['password'])
+
+    def test_username_nul_byte(self):
+        data = {'username': 'wUmrLVWz\x00', 'password': 'foo'}
+        form = self.form(None, data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('Null characters are not allowed.', form.errors['username'])

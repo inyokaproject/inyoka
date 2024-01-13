@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.default_settings
     ~~~~~~~~~~~~~~~~~~~~~~~
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
@@ -149,16 +148,6 @@ USER_REACTIVATION_LIMIT = 31
 USER_SET_NEW_EMAIL_LIMIT = 7
 USER_RESET_EMAIL_LIMIT = 31
 
-# settings for the jabber bot (client)
-JABBER_BOT_SERVER = 'tcp://127.0.0.1:6203'
-
-# settings for the jabber bot (server)
-# where to listen for client connections:
-JABBER_BIND = 'tcp://127.0.0.1:6203'
-# Jabber-ID without ressource
-JABBER_ID = None
-JABBER_PASSWORD = None
-
 # hours for a user to activate the account
 ACTIVATION_HOURS = 48
 
@@ -266,6 +255,7 @@ INSTALLED_APPS = (
 # Celery broker.
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 CELERY_SEND_TASK_ERROR_EMAILS = False
 CELERY_TASK_EAGER_PROPAGATES = False

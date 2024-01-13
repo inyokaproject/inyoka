@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.forum.views
     ~~~~~~~~~~~~~~~~~~
 
     The views for the forum.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -18,7 +17,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -62,8 +61,8 @@ from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.dates import format_datetime
-from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.dates import format_datetime, _localtime
+from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.generic import PermissionRequiredMixin
@@ -1015,7 +1014,7 @@ def reportlist(request):
 
 def reported_topics_subscription(request, mode):
     subscribers = storage['reported_topics_subscribers'] or ''
-    users = set(int(i) for i in subscribers.split(',') if i)
+    users = {int(i) for i in subscribers.split(',') if i}
 
     if mode == 'subscribe':
         if not request.user.has_perm('forum.manage_reported_topic'):
@@ -1436,112 +1435,151 @@ def delete_topic(request, topic_slug, action='hide'):
     return HttpResponseRedirect(url_for(topic))
 
 
-@atom_feed(name='forum_topic_feed')
-@does_not_exist_is_404
-def topic_feed(request, slug=None, mode='short', count=10):
-    # We have one feed, so we use ANONYMOUS_USER to cache the correct feed.
-    anonymous = User.objects.get_anonymous_user()
+class ForumTopicAtomFeed(InyokaAtomFeed):
+    """
+    Atom feed with posts of a topic.
+    """
+    name = 'forum_topic_feed'
 
-    topic = Topic.objects.get(slug=slug)
-    if topic.hidden:
-        raise Http404()
+    def get_object(self, request, *args, **kwargs):
+        topic = get_object_or_404(Topic, slug=kwargs['slug'], hidden=False)
 
-    if not anonymous.has_perm('forum.view_forum', topic.cached_forum()):
-        return abort_access_denied(request)
+        # We have only one feed, so it's always in the view of ANONYMOUS_USER
+        anonymous = User.objects.get_anonymous_user()
+        if not anonymous.has_perm('forum.view_forum', topic.cached_forum()):
+            raise PermissionDenied
 
-    maxposts = max(settings.AVAILABLE_FEED_COUNTS['forum_topic_feed'])
-    posts = topic.posts.select_related('author').order_by('-position')[:maxposts]
+        super().get_object(request, *args, **kwargs)
 
-    feed = AtomFeed(_('%(site)s topic – “%(topic)s”')
-                    % {'topic': topic.title, 'site': settings.BASE_DOMAIN_NAME},
-                    url=url_for(topic),
-                    feed_url=request.build_absolute_uri(),
-                    rights=href('portal', 'lizenz'),
-                    icon=href('static', 'img', 'favicon.ico'))
+        return topic
 
-    for post in posts:
-        kwargs = {}
-        if mode == 'full':
-            kwargs['content'] = post.get_text()
-            kwargs['content_type'] = 'xhtml'
-        if mode == 'short':
-            kwargs['summary'] = Truncator(post.get_text).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+    def title(self, topic):
+        return _('%(site)s topic – “%(topic)s”') % {'topic': topic.title, 'site': settings.BASE_DOMAIN_NAME}
 
-        feed.add(
-            title='%s (%s)' % (
-                post.author.username,
-                format_datetime(post.pub_date)
-            ),
-            url=url_for(post),
-            author=post.author,
-            published=post.pub_date,
-            updated=post.pub_date,
-            **kwargs
+    def _subtitle(self, topic):
+        return _('Feed contains posts of the topic “%(topic)s”.') % {'topic': topic.title}
+
+    def link(self, topic):
+        return url_for(topic)
+
+    def items(self, topic):
+        return topic.posts.filter(hidden=False).select_related('author').order_by('-position')[:self.count]
+
+    def item_title(self, post):
+        return '%s (%s)' % (
+            post.author.username,
+            format_datetime(post.pub_date)
         )
-    return feed
 
+    def item_description(self, post):
+        if self.mode == 'full':
+            return post.get_text()
+        if self.mode == 'short':
+            return self._shorten_html(post.get_text)
 
-@atom_feed(name='forum_forum_feed')
-@does_not_exist_is_404
-def forum_feed(request, slug=None, mode='short', count=10):
-    # We have one feed, so we use ANONYMOUS_USER to cache the correct feed.
-    anonymous = User.objects.get_anonymous_user()
+    def item_link(self, post):
+        return url_for(post)
 
-    if slug:
-        forum = Forum.objects.get_cached(slug=slug)
-        if not anonymous.has_perm('forum.view_forum', forum):
-            return abort_access_denied(request)
+    def item_author_name(self, post):
+        return post.author.username
 
-        if forum.children:
-            joined_forum = [child.id for child in forum.children if anonymous.has_perm('forum.view_forum', child)]
-            joined_forum.append(forum.id)
+    def item_author_link(self, post):
+        return url_for(post.author)
 
-            topics = Topic.objects.get_latest(allowed_forums=joined_forum, count=count)
+    def item_pubdate(self, post):
+        return _localtime(post.pub_date)
+
+    def item_updateddate(self, post):
+        if post.has_revision:
+            update_date = post.revisions.latest('store_date').store_date
         else:
-            topics = Topic.objects.get_latest(forum.slug, count=count)
+            update_date = post.pub_date
 
-        title = _('%(site)s forum – “%(forum)s”') % {'forum': forum.name,
-                'site': settings.BASE_DOMAIN_NAME}
-        url = url_for(forum)
-    else:
-        allowed_forums = [forum.id for forum in Forum.objects.get_cached() if anonymous.has_perm('forum.view_forum', forum)]
-        if not allowed_forums:
-            return abort_access_denied(request)
-        topics = Topic.objects.get_latest(allowed_forums=allowed_forums, count=count)
-        title = _('%(site)s forum') % {'site': settings.BASE_DOMAIN_NAME}
-        url = href('forum')
+        return _localtime(update_date)
 
-    feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    url=url, rights=href('portal', 'lizenz'),
-                    icon=href('static', 'img', 'favicon.ico'))
 
-    for topic in topics:
-        kwargs = {}
+class ForumAtomFeed(InyokaAtomFeed):
+    """
+    Atom feed with new topics of the whole forum.
+    """
+    name = 'forum_forum_feed'
+    title = _('%(site)s forum') % {'site': settings.BASE_DOMAIN_NAME}
+    link = href('forum')
+
+    def _subtitle(self, __):
+        return _('Feed contains new topics of the whole forum')
+
+    def items(self, _):
+        return Topic.objects.get_latest(count=self.count)
+
+    def item_title(self, topic):
+        return topic.title
+
+    def item_categories(self, topic):
+        _forum = topic.forum
+        categories = [_forum.name]
+        categories += [p.name for p in _forum.parents]
+
+        ubuntu_version = topic.get_ubuntu_version()
+        if ubuntu_version:
+            categories.append(ubuntu_version)
+
+        version_info = topic.get_version_info()
+        if version_info:
+            categories.append(version_info)
+
+        return categories
+
+    def item_description(self, topic):
         post = topic.first_post
-
         text = post.get_text()
 
-        if mode == 'full':
-            kwargs['content'] = text
-            kwargs['content_type'] = 'xhtml'
-        if mode == 'short':
-            kwargs['summary'] = Truncator(text).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+        if self.mode == 'full':
+            return text
+        if self.mode == 'short':
+            return self._shorten_html(text)
 
-        feed.add(
-            title=topic.title,
-            url=url_for(topic),
-            author={
-                'name': topic.author.username,
-                'uri': url_for(topic.author),
-            },
-            published=post.pub_date,
-            updated=post.pub_date,
-            **kwargs
-        )
+    def item_link(self, topic):
+        return url_for(topic)
 
-    return feed
+    def item_author_name(self, topic):
+        return topic.author.username
+
+    def item_author_link(self, topic):
+        return url_for(topic.author)
+
+    def item_pubdate(self, topic):
+        post = topic.first_post
+        return _localtime(post.pub_date)
+
+    def item_updateddate(self, topic):
+        post = topic.last_post
+        return _localtime(post.pub_date)
+
+
+class OneForumAtomFeed(ForumAtomFeed):
+    """
+    Atom feed with new topics of one forum.
+    """
+
+    def get_object(self, request, *args, **kwargs):
+        forum = Forum.objects.get_cached(slug=kwargs['slug'])
+
+        super().get_object(request, *args, **kwargs)
+
+        return forum
+
+    def title(self, forum):
+        return _('%(site)s forum – “%(forum)s”') % {'forum': forum.name, 'site': settings.BASE_DOMAIN_NAME}
+
+    def link(self, forum):
+        return url_for(forum)
+
+    def _subtitle(self, forum):
+        return _('Feed contains new topics of the forum “%(forum)s”.') % {'forum': forum.name}
+
+    def items(self, forum):
+        return Topic.objects.get_latest(forum=forum, count=self.count)
 
 
 def markread(request, slug=None):
@@ -1761,7 +1799,7 @@ class WelcomeMessageView(GuardianPermissionRequiredMixin, DetailView):
         self.object = self.get_object()
         if not self.object.welcome_title:
             raise Http404()
-        return super(WelcomeMessageView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         """
@@ -1813,7 +1851,7 @@ class ForumEditMixin(PermissionRequiredMixin):
     def form_valid(self, form):
         if self.object and ('welcome_title' in form.changed_data or 'welcome_text' in form.changed_data):
             self.object.clear_welcome()
-        return super(ForumEditMixin, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class ForumCreateView(ForumEditMixin, CreateView):

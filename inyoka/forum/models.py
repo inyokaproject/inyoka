@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.forum.models
     ~~~~~~~~~~~~~~~~~~~
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from typing import List, Optional
@@ -25,8 +24,9 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
-from django.db.models import Count, F, Max, Sum
+from django.db.models import Count, F, Max, Sum, QuerySet
 from django.utils.encoding import DjangoUnicodeDecodeError, force_str
 from django.utils.html import escape, format_html
 from django.utils.translation import gettext as _
@@ -140,12 +140,12 @@ class ForumManager(models.Manager):
         if slug:
             # we only select one forum and query only one if it's
             # not cached yet.
-            forum = cache.get('forum/forums/{}'.format(slug))
+            forum = cache.get(f'forum/forums/{slug}')
             if forum is None:
-                forum = super(ForumManager, self).get(slug=slug)
+                forum = super().get(slug=slug)
                 if forum:
                     forum.__dict__.pop('last_post', None)
-                    cache.set('forum/forums/{}'.format(slug), forum, 300)
+                    cache.set(f'forum/forums/{slug}', forum, 300)
             return forum
         # return all forums instead
         return list(self.get_all_forums_cached().values())
@@ -226,41 +226,53 @@ class TopicManager(models.Manager):
         return self.get_queryset().filter(**filter_by) \
                    .select_related(*related).order_by(*order)
 
-    def get_latest(self, forum_slug=None, allowed_forums=None, count=10):
+    def get_latest(self, forum: Optional["Forum"] = None,
+                   count: Optional[int] = 10,
+                   user: Optional["User"] = None) -> "QuerySet":
         """
-        Return a list of the latest topics in this forum. If no count is
-        given the default value from the settings will be used and the whole
-        output will be partly cached (highly recommended!).
+        Returns a queryset of the last-updated topics in this forum (and potential sub forums).
 
-        The returned objects do not include hidden objects and sticky objects
-        aren't at the top!
+        The returned topics
+          - do not include hidden topics
+          - respect the user's permissions (if none is given, anonymous is assumed)
+          - ignore stickiness (thus, sticky objects aren't at the top!)
+
+        Raises PermissionDenied, if
+          - the user has no permission to view the passed forum or
+          - a user has no permission to view at least one forum
+
+        :param forum: Optionally, restrict to a forum and its sub forums.
+                      If None, all forums (with permissions) are used.
+        :param count: Restricts the number of returned topics
+        :param user: User-object that is used to check permissions (if none is given, anonymous is assumed)
         """
-        key = 'forum/latest_topics'
-        forum = None
-        if forum_slug is not None:
-            key = 'forum/latest_topics/%s' % forum_slug
-            forum = Forum.objects.get_cached(forum_slug)
 
-        topic_ids = cache.get(key)
-        if topic_ids is None:
-            filter_by = { 'hidden':False,
-                          'first_post__isnull':False,
-                          'last_post__isnull':False
-                        }
-            query = Topic.objects.filter(**filter_by)
-            if forum_slug:
-                query = query.filter(forum__id=forum.id)
-            if allowed_forums:
-                query = query.filter(forum__id__in=(allowed_forums))
+        if user is None:
+            user = User.objects.get_anonymous_user()
 
-            maxcount = max(settings.AVAILABLE_FEED_COUNTS['forum_forum_feed'])
-            topic_ids = list(query.order_by('-id').values_list('id', flat=True)[:maxcount])
-            cache.set(key, topic_ids, 300)
+        if forum:
+            if not user.has_perm('forum.view_forum', forum):
+                raise PermissionDenied
+            allowed_forums = [forum]
 
+            allowed_forums += [child for child in forum.descendants if user.has_perm('forum.view_forum', child)]
+        else:
+            # no specific forum passed, use all forums the user has view-permission
+            allowed_forums = Forum.objects.get_forums_filtered(user)
+
+        if not allowed_forums:
+            raise PermissionDenied
+
+        topic_filter = {
+            'hidden': False,
+            'first_post__isnull': False,
+            'last_post__isnull': False,
+            'forum__in': allowed_forums,
+        }
         related = ('author', 'last_post', 'last_post__author', 'first_post')
-        topics = Topic.objects.filter(id__in=topic_ids) \
+        topics = Topic.objects.filter(**topic_filter) \
                               .order_by('-last_post__id') \
-                              .select_related(*related).all()
+                              .select_related(*related)
         return topics[:count]
 
 
@@ -471,7 +483,7 @@ class Forum(models.Model):
 
     def invalidate_topic_cache(self):
         cache.delete_many(
-            'forum/topics/{}/{}'.format(self.id, page + 1)
+            f'forum/topics/{self.id}/{page + 1}'
             for page in range(CACHE_PAGES_COUNT))
 
     @staticmethod
@@ -490,8 +502,7 @@ class Forum(models.Model):
         matched_forums = [f for f in forums if f.parent_id == parent]
         for f in matched_forums:
             yield offset, f
-            for l in Forum.get_children_recursive(forums, f, offset + 1):
-                yield l
+            yield from Forum.get_children_recursive(forums, f, offset + 1)
 
     def get_supporters(self):
         if self.support_group is None:
@@ -521,7 +532,7 @@ class Forum(models.Model):
             pass
         forums = self.descendants + [self]
         self._post_count_query_counter = QueryCounter(
-            cache_key="forum_post_count:{}".format(self.id),
+            cache_key=f"forum_post_count:{self.id}",
             query=Post.objects.filter(topic__forum__in=forums),
             use_task=False)
         return self._post_count_query_counter
@@ -541,7 +552,7 @@ class Forum(models.Model):
             pass
 
         self._topic_count_query_counter = QueryCounter(
-            cache_key="forum_topic_count:{}".format(self.id),
+            cache_key=f"forum_topic_count:{self.id}",
             query=self.topics.all(),
             use_task=False)
         return self._topic_count_query_counter
@@ -665,7 +676,7 @@ class Topic(models.Model):
         # remove wiki page discussions and clear caches
         WikiPage.objects.clear_topic(self)
 
-        return super(Topic, self).delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
     def get_absolute_url(self, action='show', **query):
         if action in ('show',):
@@ -744,7 +755,7 @@ class Topic(models.Model):
     @property
     def post_count(self):
         return QueryCounter(
-            cache_key="topic_post_count:{}".format(self.id),
+            cache_key=f"topic_post_count:{self.id}",
             query=self.posts.all(),
             use_task=False)
 
@@ -792,7 +803,7 @@ class PostManager(models.Manager):
             last_posts = query.filter(id__in=ids) \
                 .select_related('author') \
                 .only('id', 'pub_date', 'author__username').all()
-            last_post_map = dict([(post.id, post) for post in last_posts])
+            last_post_map = {post.id: post for post in last_posts}
         return last_post_map
 
 
@@ -888,7 +899,7 @@ class Post(models.Model, LockableObject):
                 attachment.delete()
 
         if not self.topic:
-            return super(Post, self).delete()
+            return super().delete()
 
         # degrade user post count
         if self.topic.forum.user_count_posts and not self.hidden:
@@ -921,9 +932,9 @@ class Post(models.Model, LockableObject):
             # django_redis has a bug, that delete_many does not work with
             # empty generators. See:
             # https://github.com/niwinz/django-redis/pull/162
-            cache.delete_many('forum/forums/{}'.format(f.slug) for f in parent_forums)
+            cache.delete_many(f'forum/forums/{f.slug}' for f in parent_forums)
 
-        return super(Post, self).delete()
+        return super().delete()
 
     def hide(self, change_post_counter=True):
         if change_post_counter:
@@ -1218,7 +1229,7 @@ class Attachment(models.Model):
         if thumb_path and path.exists(thumb_path):
             os.remove(thumb_path)
         self.file.delete(save=False)
-        super(Attachment, self).delete()
+        super().delete()
 
     @staticmethod
     def update_post_ids(att_ids, post):
@@ -1402,7 +1413,7 @@ class Poll(models.Model):
         return not self.ended and not self.participated
 
 
-class ReadStatus(object):
+class ReadStatus:
     """
     Manages the read status of forums and topics for a specific user.
     """

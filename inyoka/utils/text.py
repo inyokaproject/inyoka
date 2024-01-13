@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.text
     ~~~~~~~~~~~~~~~~~
 
     Various text realated tools.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import posixpath
@@ -48,7 +47,7 @@ def increment_string(s):
         next = str(int(m.group(1)) + 1)
         start, end = m.span(1)
         if start or end:
-            return '{0}-{1}{2}'.format(
+            return '{}-{}{}'.format(
                 s[:max(end - len(next), start)],
                 next,
                 s[end:])

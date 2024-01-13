@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.html
     ~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     This module implements various HTML/XHTML utility functions.  Some parts
     of this module require the lxml and html5lib libraries.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -25,7 +24,7 @@ from lxml.html.defs import empty_tags
 from inyoka.utils.text import increment_string
 
 _entity_re = re.compile(r'&([^;]+);')
-_strip_re = re.compile(r'<!--.*?-->|<[^>]*>(?s)')
+_strip_re = re.compile(r'(?s)<!--.*?-->|<[^>]*>')
 
 
 #: a dict of html entities to codepoints. This includes the problematic
@@ -142,7 +141,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     return force_str(b''.join(rv))
 
 
-class CleanupFilter(object):
+class CleanupFilter:
     """
     A simple filter that replaces XHTML deprecated elements with others.
     """
@@ -177,8 +176,7 @@ class CleanupFilter(object):
                         if key == 'href':
                             link['data'][idx] = [key, '#' + id_map[target_id]]
                             break
-        for item in result:
-            yield item
+        yield from result
 
     def walk(self, id_map, deferred_links):
         tracked_ids = set()

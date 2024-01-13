@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.testing
     ~~~~~~~~~~~~~~
 
     Various utilities and helpers that improve our unittest experience.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import gc
+import xml
 from importlib import import_module
 
 import responses
@@ -75,7 +75,7 @@ class InyokaClient(Client):
         default. To change the user, call :meth:`InyokaClient.login(user)`.
 
         """
-        super(InyokaClient, self).__init__(enforce_csrf_checks, **defaults)
+        super().__init__(enforce_csrf_checks, **defaults)
         if isinstance(host, str):
             self.defaults['HTTP_HOST'] = host
         else:
@@ -132,7 +132,7 @@ class InyokaClient(Client):
             return False
 
 
-class AntiSpamTestCaseMixin(object):
+class AntiSpamTestCaseMixin:
 
     def make_valid_key(self):
         responses.add(
@@ -167,8 +167,15 @@ class TestCase(_TestCase):
     """
 
     def _post_teardown(self):
-        super(TestCase, self)._post_teardown()
+        super()._post_teardown()
         content_cache = caches['content']
         content_cache.delete_pattern("*")
         default_cache = caches['default']
         default_cache.delete_pattern("*")
+
+    def assertXMLEqual(self, xml1, xml2, msg=None):
+        """Prettify comparison of two XML strings"""
+        xml1 = xml.dom.minidom.parseString(xml1).toprettyxml(indent='  ')
+        xml2 = xml.dom.minidom.parseString(xml2).toprettyxml(indent='  ')
+
+        super().assertXMLEqual(xml1, xml2, msg)

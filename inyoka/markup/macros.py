@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.macros
     ~~~~~~~~~~~~~~~~~~~
@@ -22,7 +21,7 @@
     which implements all the builtin macros.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -59,7 +58,7 @@ def register(cls):
         ALL_MACROS[name] = cls
 
 
-class Macro(object, metaclass=ArgumentCollector):
+class Macro(metaclass=ArgumentCollector):
     """
     Baseclass for macros.  All macros should extend from that or implement
     the same attributes.  The preferred way however is subclassing.

@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_models
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test forum models.
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -264,7 +263,7 @@ class TestPostMove(ForumTestCaseWithSecondItems):
 class PostDeletionTest(ForumTestCase):
 
     def setUp(self):
-        super(PostDeletionTest, self).setUp()
+        super().setUp()
 
         self.first_post = self.topic_posts[0]
         self.second_last_post = self.topic_posts[-2]

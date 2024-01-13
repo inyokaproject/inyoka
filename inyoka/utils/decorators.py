@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.decorators
     ~~~~~~~~~~~~~~~~~~~~~~~
 
     Decorators and decorator helpers.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -18,7 +17,7 @@ def patch_wrapper(decorator, base):
     return decorator
 
 
-class deferred(object):
+class deferred:
     """
     Deferred properties.  Calculated once and then it replaces the
     property object.

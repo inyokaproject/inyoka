@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.ikhaya.forms
     ~~~~~~~~~~~~~~~~~~~
 
     Forms for the Ikhaya.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime, time as dt_time
@@ -27,7 +26,7 @@ from inyoka.utils.text import slugify
 class SuggestArticleForm(forms.ModelForm):
 
     def save(self, user, commit=True):
-        suggestion = super(SuggestArticleForm, self).save(commit=False)
+        suggestion = super().save(commit=False)
         suggestion.author = user
         if commit:
             suggestion.save()
@@ -57,7 +56,7 @@ class EditArticleForm(forms.ModelForm):
             if instance.pub_datetime != instance.updated:
                 initial['updated'] = instance.updated
             initial['author'] = instance.author.username
-        super(EditArticleForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Following stuff is in __init__ to keep helptext etc intact.
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
         if readonly:
@@ -71,7 +70,7 @@ class EditArticleForm(forms.ModelForm):
                 localize=True, required=False)
 
     def save(self):
-        instance = super(EditArticleForm, self).save(commit=False)
+        instance = super().save(commit=False)
         if 'pub_date' in self.cleaned_data and (not instance.pk or
                 not instance.public or self.cleaned_data.get('public', None)):
             instance.pub_date = self.cleaned_data['pub_date']
@@ -112,7 +111,7 @@ class EditArticleForm(forms.ModelForm):
 
 class EditPublicArticleForm(EditArticleForm):
     def __init__(self, *args, **kwargs):
-        super(EditPublicArticleForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         del self.fields['pub_date']
         del self.fields['pub_time']
 
@@ -122,7 +121,7 @@ class EditPublicArticleForm(EditArticleForm):
 
 class EditCategoryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(EditCategoryForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Following stuff is in __init__ to keep helptext etc intact.
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
 
@@ -147,10 +146,10 @@ class NewEventForm(forms.ModelForm):
                 event.enddate = dt_end.date()
                 event.endtime = dt_end.time()
 
-        super(NewEventForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def save(self, user):
-        event = super(NewEventForm, self).save(commit=False)
+        event = super().save(commit=False)
         convert = (lambda v: get_current_timezone().localize(v) \
                             .astimezone(pytz.utc).replace(tzinfo=None))
         # Convert local timezone to unicode

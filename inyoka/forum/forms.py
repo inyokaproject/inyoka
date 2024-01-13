@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.forum.forms
     ~~~~~~~~~~~~~~~~~~
 
     Forms for the forum.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django import forms
@@ -30,7 +29,7 @@ class ForumField(forms.ChoiceField):
     """
     def __init__(self, user, *args, **kwargs):
         self.user = user
-        super(ForumField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.set_forum_choices()
 
     def set_forum_choices(self, privilege='forum.view_forum'):
@@ -85,7 +84,7 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
     def __init__(self, is_first_post, needs_spam_check, request, *args, **kwargs):
         self.needs_spam_check = needs_spam_check
         self.request = request
-        super(EditPostForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices()
         if not is_first_post:
@@ -131,7 +130,7 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
         self.force_version = force_version
         self.needs_spam_check = needs_spam_check
         self.request = request
-        super(NewTopicForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices(True)
 
@@ -164,7 +163,7 @@ class MoveTopicForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         self.current_forum = kwargs.pop('current_forum')
-        super(MoveTopicForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['forum'] = ForumField(user=user)
 
     def clean_forum(self):

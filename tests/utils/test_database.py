@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_database
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import datetime
@@ -13,14 +12,14 @@ from inyoka.utils.test import TestCase
 from .models import JSONEntry
 
 
-class A(object):
+class A:
     def f(self, x):
         return x * x
 
 
 class JSONTest(TestCase):
     def setUp(self):
-        super(JSONTest, self).setUp()
+        super().setUp()
         self.model = JSONEntry
         self.manager = self.model.objects
 

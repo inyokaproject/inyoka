@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.tasks
     ~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     Module that implements wiki related tasks that must be executed by
     our distributed queue implementation.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
@@ -71,9 +70,9 @@ def update_related_pages(page, update_meta=True):
     linked = MetaData.objects.values_list(*values) \
                      .filter(key__in=('X-Link', 'X-Attach'), value=page.name)
     for value, text_id in linked.all():
-        cache.delete('wiki/page/{}'.format(value.lower()))
+        cache.delete(f'wiki/page/{value.lower()}')
         related_pages.add(text_id)
-    cache.delete('wiki/page/{}'.format(page.name.lower()))
+    cache.delete(f'wiki/page/{page.name.lower()}')
 
     if update_meta:
         page.update_meta()

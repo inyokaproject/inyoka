@@ -32,7 +32,7 @@ def step_impl(context):
 
 @then('it should fail')
 def step_impl(context):
-    assert context.browser.find_element(by=By.CSS_SELECTOR, value='.errors')
+    assert context.browser.find_element(by=By.CSS_SELECTOR, value='.errorlist')
 
 
 @then('I should see "{inactive_type}" error')
@@ -42,7 +42,7 @@ def step_impl(context, inactive_type):
         'inactive': 'inaktiv',
         'deleted': 'inaktiv'
     }
-    error = context.browser.find_element(by=By.CSS_SELECTOR, value='.errors')
+    error = context.browser.find_element(by=By.CSS_SELECTOR, value='.errorlist')
     assert messages[inactive_type] in error.text
 
 

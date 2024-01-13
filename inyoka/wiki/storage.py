@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.storage
     ~~~~~~~~~~~~~~~~~~~
@@ -28,7 +27,7 @@
     problems.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -40,10 +39,10 @@ from inyoka.utils.local import local as local_cache
 from inyoka.utils.text import normalize_pagename
 from inyoka.wiki.models import MetaData
 
-_block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
+_block_re = re.compile(r'(?sm)\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}')
 
 
-class StorageManager(object):
+class StorageManager:
     """
     Manager multiple storages.
     """
@@ -59,7 +58,7 @@ class StorageManager(object):
     def clear_cache(self):
         """Clear all active caches."""
         for obj in self.storages.values():
-            cache.delete('wiki/storage/{}'.format(obj.behavior_key))
+            cache.delete(f'wiki/storage/{obj.behavior_key}')
             try:
                 key = obj.behavior_key.lower().replace('-', '_')
                 delattr(local_cache, key)
@@ -67,7 +66,7 @@ class StorageManager(object):
                 pass
 
 
-class BaseStorage(object):
+class BaseStorage:
     """
     Abstract base class for all the storage objects that contains the shared
     logic like flushing the cache and storing back to it.
@@ -78,7 +77,7 @@ class BaseStorage(object):
     behavior_key = None
 
     def __init__(self):
-        key = 'wiki/storage/{}'.format(self.behavior_key)
+        key = f'wiki/storage/{self.behavior_key}'
         local_key = self.behavior_key.lower().replace('-', '_')
 
         if not hasattr(local_cache, local_key):

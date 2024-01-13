@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations, models
 
 def postgresql_drop_indexes(apps, schema_editor):

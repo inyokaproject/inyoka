@@ -25,6 +25,49 @@ Inyoka Changelog
    -----------
 
 
+0.31.0 (2024-01-XX)
+===================
+
+Deployment notes
+----------------
+
+#. Update requirements
+#. Execute database migration
+
+🏗 Changes
+----------
+
+* pyupgrade to modernize the code base a bit
+* Refactor feeds to use Django's builtin syndication framework instead of the out-of-support Werkzeug module
+
+🔥 Removals
+-----------
+
+* Remove XMPP: XMPP was not used anymore, since it was made an optional dependency.
+  The associated database migration will
+
+  - remove not needed user settings
+  - remove hidden jabber-ids for privacy, as there is no reason
+    to save them anymore (previously, they could be used for
+    notifications)
+
+🐛 Fixes
+--------
+
+* Fix wiki revision rendering
+* Reject NUL byte in URLs
+* Fix TypeError in Service Middleware
+* Return more HTTP status codes in ikhaya service instead of raising an unhandeled error
+* Fix UnboundLocalError in Service Middleware, if there are not exactly two parts given via GET
+* LoginForm: Always require a password
+
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``Django``, ``Pillow`` and ``jinja2`` include known security fixes)
+
+
 0.30.0 (2023-10-22)
 ===================
 

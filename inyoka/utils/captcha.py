@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.captcha
     ~~~~~~~~~~~~~~~~~~~~
@@ -7,7 +6,7 @@
     PyCAPTCHA by Micah Dowty.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :copyright: (c) by Micah Dowty.
     :license: BSD, see LICENSE for more details.
 """
@@ -59,7 +58,7 @@ def random_color(saturation=0.5, lumination=None):
     )
 
 
-class Captcha(object):
+class Captcha:
     """
     Represents a captcha.
     """
@@ -92,7 +91,7 @@ class Captcha(object):
         return response
 
 
-class Layer(object):
+class Layer:
     """
     Baseclass for a captcha layer.
     """

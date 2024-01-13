@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markuptools
     ~~~~~~~~~~~~~~~~~~
 
     Useful classes for parsers.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import sys
@@ -15,7 +14,7 @@ from collections import namedtuple
 Token = namedtuple('Token', ('type', 'value'))
 
 
-class TokenStreamIterator(object):
+class TokenStreamIterator:
     """
     The iterator for tokenstreams.  Iterate over the stream
     until the eof token is reached.
@@ -35,7 +34,7 @@ class TokenStreamIterator(object):
         return token
 
 
-class TokenStream(object):
+class TokenStream:
     """
     A token stream wraps a generator and supports pushing tokens back.
     It also provides some functions to expect tokens and similar stuff.
@@ -192,7 +191,6 @@ def flatten_iterator(iter):
     """Flatten an iterator to one without any sub-elements"""
     for item in iter:
         if hasattr(item, '__iter__') and not isinstance(item, str):
-            for sub in flatten_iterator(item):
-                yield sub
+            yield from flatten_iterator(item)
         else:
             yield item

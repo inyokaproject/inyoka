@@ -5,7 +5,7 @@
     Contains custom exceptions used in our wiki.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -17,7 +17,7 @@ class CaseSensitiveException(Exception):
     """
     def __init__(self, page, *args, **kwargs):
         self.page = page
-        super(CaseSensitiveException, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class CircularRedirectException(Exception):

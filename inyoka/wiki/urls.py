@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.urls
     ~~~~~~~~~~~~~~~~
 
     URL list for the wiki.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 
 from . import actions, views
 from ..utils.http import global_not_found, server_error
@@ -19,9 +19,11 @@ urlpatterns = [
     path('_image/', views.get_image_resource),
     path('_newpage/', views.redirect_new_page),
     path('_attachment/', views.get_attachment),
-    path('_feed/<int:count>/', views.feed),
-    path('<path:page_name>/a/feed/', views.feed, {'count': 10}),
-    path('<path:page_name>/a/feed/<int:count>/', views.feed),
+
+    path('_feed/<int:count>/', cache_page(60 * 5)(views.WikiAtomFeed())),
+    path('<path:page_name>/a/feed/', cache_page(60 * 5)(views.WikiPageAtomFeed()), {'count': 10}),
+    path('<path:page_name>/a/feed/<int:count>/', cache_page(60 * 5)(views.WikiPageAtomFeed())),
+
     path('wiki/recentchanges/', views.recentchanges),
     path('wiki/missingpages/', views.missingpages),
     path('wiki/randompages/', views.randompages),

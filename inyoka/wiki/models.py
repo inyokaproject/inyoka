@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.models
     ~~~~~~~~~~~~~~~~~~
@@ -74,7 +73,7 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -93,7 +92,7 @@ from django.utils.translation import gettext as _, to_locale, get_language
 from django.utils.translation import gettext_lazy
 from functools import partial
 from hashlib import sha1
-from werkzeug import cached_property
+from django.utils.functional import cached_property
 from werkzeug.utils import secure_filename
 
 import locale
@@ -122,7 +121,7 @@ def is_privileged_wiki_page(name):
     return any(name.startswith(n) for n in settings.WIKI_PRIVILEGED_PAGES)
 
 
-to_page_by_slug_key = lambda name: 'wiki/page_by_slug/{}'.format(wiki_slugify(name))
+to_page_by_slug_key = lambda name: f'wiki/page_by_slug/{wiki_slugify(name)}'
 
 
 class PageManager(models.Manager):
@@ -271,7 +270,7 @@ class PageManager(models.Manager):
         Returns a cached slugified list of all wiki pages, useful to speed up
         our parser a lot. Avoids many cache or db hits on big pages/texts.
         """
-        make_sluglist = lambda: set([wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)])
+        make_sluglist = lambda: {wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)}
         key = 'wiki/objects_slugs'
         return cache.get_or_set(key, make_sluglist, settings.WIKI_CACHE_TIMEOUT)
 
@@ -348,7 +347,7 @@ class PageManager(models.Manager):
         of unicode strings, not the actual page object.  This ignores
         attachments!
         """
-        ignore = set([settings.WIKI_MAIN_PAGE])
+        ignore = {settings.WIKI_MAIN_PAGE}
         pages = set(self.get_page_list())
         linked_pages = set(MetaData.objects.values_list('value', flat=True)
                                            .filter(key='X-Link').all())
@@ -404,7 +403,7 @@ class PageManager(models.Manager):
         """
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
-        cache_key = 'wiki/page/{}'.format(name.lower())
+        cache_key = f'wiki/page/{name.lower()}'
         rev = cache.get(cache_key) if cached else None
         if rev is None:
             try:
@@ -622,7 +621,7 @@ class PageManager(models.Manager):
         """Unset the topic from all pages associated with it."""
         pages = Page.objects.filter(topic=topic)
         names = pages.values_list('name', flat=True)
-        keys = ['wiki/page/{}'.format(n).lower() for n in names]
+        keys = [f'wiki/page/{n}'.lower() for n in names]
         if pages.update(topic=None) > 0:
             cache.delete_many(keys)
 
@@ -631,7 +630,7 @@ class PageManager(models.Manager):
             if isinstance(names, str):
                 names = [names, ]
             lower_names = [name.lower() for name in names]
-            cache.delete_many(['wiki/page/{}'.format(name) for name in lower_names])
+            cache.delete_many([f'wiki/page/{name}' for name in lower_names])
             cache.delete_many([to_page_by_slug_key(name) for name in lower_names])
         cache.delete_pattern('wiki/objects_*')
         update_page_by_slug.delay()
@@ -659,28 +658,15 @@ class RevisionManager(models.Manager):
     """Helper manager for revisions"""
 
     def get_latest_revisions(self, page_name=None, count=10):
-        cache_key = 'wiki/latest_revisions'
-        revision_ids = self.all()
+        revisions = self.select_related('user', 'page').defer('user__forum_read_status', 'text')
+
         if page_name is not None:
-            cache_key = 'wiki/latest_revisions/%s' % \
-                normalize_pagename(page_name)
-            revision_ids = revision_ids.filter(page__name__iexact=page_name)
-        max_size = max(settings.AVAILABLE_FEED_COUNTS['wiki_feed'])
-        # Force evaluation to not cause a subselect in the next select.
-        revision_ids = list(revision_ids.values_list('pk',
-                                                     flat=True)[:max_size])
-        # Force evaluation, otherwise we get two queries, one limit 100
-        # and one limit 21 (later seems to be caused by repr on the qs
-        # in CacheDebugProxy). No idea why that happens in the live sys.
-        # FIXME: properly debug that...
-        revisions = list(self.select_related('user', 'page')
-                             .defer('user__forum_read_status')
-                             .filter(pk__in=revision_ids))
-        cache.set(cache_key, revisions, 300)
+            revisions = revisions.filter(page__name__iexact=page_name)
+
         return revisions[:count]
 
 
-class Diff(object):
+class Diff:
     """
     This class represents the results of a page comparison.  You can get
     useful instances of this class by using the ``compare`` function on
@@ -894,14 +880,14 @@ class Page(models.Model):
 
     @deferred
     def embedders(self):
-        """List of `Page` objects that embbed this page as attachment."""
+        """List of `Page` objects that embed this page as attachment."""
         return Page.objects.find_by_metadata('X-Attach', self.name)
 
     @deferred
     def links(self):
         """
         Internal wiki links on this page.  Because there could be links to
-        non existing pages the list returned contains just the link targets
+        non-existing pages the list returned contains just the link targets
         in normalized format, not the page objects as such.
         """
         return MetaData.objects.filter(page=self.id, key='X-Link')\
@@ -1023,11 +1009,11 @@ class Page(models.Model):
 
             user
                 If this parameter is `None` the inyoka system user will be the
-                author of the created revision.  Otherwise it can either be a
-                User or an AnoymousUser object from the auth contrib module.
+                author of the created revision.  Otherwise, it can either be a
+                User or an AnonymousUser object from the auth contrib module.
 
             change_date
-                If this is not provided the current date is used.  Otherwise
+                If this is not provided the current date is used.  Otherwise,
                 it should be an UTC timestamp in form of a `datetime.datetime`
                 object.
 
@@ -1047,7 +1033,7 @@ class Page(models.Model):
                 be a page or attachment depending on the last revision.
 
             deleted
-                If this is `True` the page is created as an deleted page.
+                If this is `True` the page is created as a deleted page.
                 This operation doesn't make sense and creates surprising
                 displays in the revision log if the `note` is not changed to
                 something reasonable.
@@ -1368,9 +1354,7 @@ class Revision(models.Model):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
 
-        cache.delete('wiki/page/{}'.format(self.page.name.lower()))
-        cache.delete('wiki/latest_revisions')
-        cache.delete('wiki/latest_revisions/{}'.format(self.page.name))
+        cache.delete(f'wiki/page/{self.page.name.lower()}')
 
     def __str__(self):
         return _('Revision %(id)d (%(title)s)') % {

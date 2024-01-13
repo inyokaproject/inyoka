@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.models
     ~~~~~~~~~~~~~~~~~~~~
 
     Models for the portal.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
@@ -20,9 +19,9 @@ from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy
-from werkzeug import cached_property
+from django.utils.functional import cached_property
 
-from inyoka.portal.user import User
+from .user import User
 from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
@@ -111,7 +110,7 @@ class PrivateMessage(models.Model):
         PrivateMessageEntry(message=self, user=self.author, read=True,
                             folder=PRIVMSG_FOLDERS['sent'][0]).save()
         for recipient in recipients:
-            cache.delete('portal/pm_count/{}'.format(recipient.id))
+            cache.delete(f'portal/pm_count/{recipient.id}')
             PrivateMessageEntry(message=self, user=recipient, read=False,
                                 folder=PRIVMSG_FOLDERS['inbox'][0]).save()
 
@@ -318,7 +317,7 @@ class Subscription(models.Model):
             # inyoka article subscription
             return True
 
-    def can_read(self, forum_id = None):
+    def can_read(self, forum_id=None):
         if self.content_type is None and not forum_id is None:
             # Check for ubuntu version subscriptions
             from inyoka.forum.models import Forum
@@ -436,12 +435,12 @@ class Linkmap(models.Model):
     CACHE_KEY_CSS = 'portal:linkmap:css-filname'
 
     token_validator = RegexValidator(regex=r'^[a-z\-_]+[1-9]*$',
-                                     message=gettext_lazy(u'Only lowercase letters, - and _ allowed. Numbers as postfix.'))
+                                     message=gettext_lazy('Only lowercase letters, - and _ allowed. Numbers as postfix.'))
 
-    token = models.CharField(gettext_lazy(u'Token'), max_length=128, unique=True,
+    token = models.CharField(gettext_lazy('Token'), max_length=128, unique=True,
                              validators=[token_validator])
-    url = models.URLField(gettext_lazy(u'Link'))
-    icon = models.ImageField(gettext_lazy(u'Icon'), upload_to='linkmap/icons', blank=True)
+    url = models.URLField(gettext_lazy('Link'))
+    icon = models.ImageField(gettext_lazy('Icon'), upload_to='linkmap/icons', blank=True)
 
     objects = LinkmapManager()
 

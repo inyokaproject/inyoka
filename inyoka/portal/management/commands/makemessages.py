@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.management.commands.makemessages
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -8,7 +7,7 @@
     output files are written to ``inyoka/APP/locale/lang_CODE/django.po`` and
     the regarding ``.pot`` file to ``inyoka/APP/django.pot``.
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from os import path

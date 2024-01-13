@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.ikhaya.models
     ~~~~~~~~~~~~~~~~~~~~
 
     Database models for Ikhaya.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -48,7 +47,7 @@ class ArticleManager(models.Manager):
         self._all = all
 
     def get_queryset(self):
-        q = super(ArticleManager, self).get_queryset()
+        q = super().get_queryset()
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
@@ -130,23 +129,14 @@ class SuggestionManager(models.Manager):
 class CommentManager(models.Manager):
 
     def get_latest_comments(self, article=None, count=10):
-        key = 'ikhaya/latest_comments'
-        if article is not None:
-            key = 'ikhaya/latest_comments/%s' % article
+        filter_kwargs = {
+            'article__public': True,
+            'deleted': False,
+        }
+        if article:
+            filter_kwargs['article'] = article
 
-        maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_comment'])
-        comment_ids = cache.get(key)
-        if comment_ids is None:
-            comment_ids = Comment.objects.filter(article__public=True, deleted=False)
-            if article:
-                comment_ids = comment_ids.filter(article__id=article)
-
-            comment_ids = list(comment_ids.values_list('id', flat=True)[:maxcount])
-            cache.set(key, comment_ids, 300)
-
-        comments = list(Comment.objects.filter(id__in=comment_ids)
-                               .select_related('author', 'article')
-                               .order_by('-id')[:maxcount])
+        comments = Comment.objects.filter(**filter_kwargs).select_related('author', 'article').order_by('-id')
         return comments[:count]
 
 
@@ -178,7 +168,7 @@ class Category(models.Model):
         # only set the slug on first save.
         if not self.pk:
             self.slug = find_next_increment(Category, 'slug', slugify(self.name))
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         cache.delete('ikhaya/categories')
 
     class Meta:
@@ -313,23 +303,23 @@ class Article(models.Model, LockableObject):
         else:
             self.slug = slugify(self.slug)
 
-        super(Article, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # now that we have the article id we can put it into the slug
         if suffix_id:
             self.slug = '%s-%s' % (self.slug, self.id)
             Article.objects.filter(id=self.id).update(slug=self.slug)
         cache.delete('ikhaya/archive')
-        cache.delete('ikhaya/article_text/{}'.format(self.id))
-        cache.delete('ikhaya/article_intro/{}'.format(self.id))
-        cache.delete('ikhaya/article/{}'.format(self.slug))
+        cache.delete(f'ikhaya/article_text/{self.id}')
+        cache.delete(f'ikhaya/article_intro/{self.id}')
+        cache.delete(f'ikhaya/article/{self.slug}')
 
     def delete(self):
         """
         Subscriptions are removed by a Django signal `pre_delete`
         """
         id = self.id
-        super(Article, self).delete()
+        super().delete()
         self.id = id
 
     class Meta:
@@ -405,16 +395,22 @@ class Comment(models.Model):
         if action in ['hide', 'restore', 'edit']:
             return href('ikhaya', 'comment', self.id, action)
         return href('ikhaya', self.article.stamp, self.article.slug,
-                    _anchor='comment_%s' % self.article.comment_count)
+                    _anchor=f'comment_{ self.position }')
+
+    @property
+    def position(self):
+        """Returns the position/index of this comment below an article"""
+        position = self.article.comment_set.filter(id__lt=self.id).count()
+        return position + 1
 
     def save(self, *args, **kwargs):
         if self.pk is None:
             self.article = Article.objects.get(id=self.article.id)
             self.article.comment_count = self.article.comment_count + 1
             self.article.save()
-        super(Comment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if self.id:
-            cache.delete('ikhaya/comment/{}'.format(self.id))
+            cache.delete(f'ikhaya/comment/{self.id}')
 
 
 class Event(models.Model):
@@ -457,7 +453,7 @@ class Event(models.Model):
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
-        cache.delete('ikhaya/event/{}'.format(self.id))
+        cache.delete(f'ikhaya/event/{self.id}')
         cache.delete('ikhaya/event_count')
 
     def friendly_title(self, with_html_link=False):

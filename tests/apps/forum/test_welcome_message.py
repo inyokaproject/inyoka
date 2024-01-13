@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from inyoka.forum.models import Forum
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase

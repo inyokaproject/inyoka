@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.database
     ~~~~~~~~~~~~~~~~~~~~~
 
     This module provides some helpers to work with the database.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import json
@@ -16,6 +15,7 @@ from django.db import models
 from django.db.models.signals import post_save as model_post_save_signal
 
 from inyoka.markup.base import RenderContext, parse
+from inyoka.utils.forms import JabberFormField
 from inyoka.utils.highlight import highlight_code
 
 MAX_SLUG_INCREMENT = 999
@@ -71,7 +71,7 @@ def find_next_increment(model, column, string, **query_opts):
             "No suitable slug increment for %s found. No unused increment "
             "or max_length not None." % slug
         )
-    return '{0}-{1}'.format(slug, num)
+    return f'{slug}-{num}'
 
 
 def get_simplified_queryset(queryset):
@@ -104,7 +104,7 @@ def model_or_none(pk, reference):
         return None
 
 
-class LockableObject(object):
+class LockableObject:
 
     #: Must be defined by an inherited model.
     lock_key_base = None
@@ -125,7 +125,7 @@ class LockableObject(object):
         cache.delete(self._get_lock_key())
 
 
-class SimpleDescriptor(object):
+class SimpleDescriptor:
     def __init__(self, field):
         self.field = field
 
@@ -139,6 +139,15 @@ class SimpleDescriptor(object):
 
     def __set__(self, obj, value):
         obj.__dict__[self.field.name] = value
+
+
+class JabberField(models.CharField):
+    """ ModelField that is a CharField, but uses a different *form* field with custom validation"""
+
+    def formfield(self, **kwargs):
+        defaults = {"form_class": JabberFormField}
+        defaults.update(kwargs)
+        return super().formfield(**defaults)
 
 
 class JSONField(models.TextField):
@@ -307,7 +316,7 @@ class InyokaMarkupField(BaseMarkupField):
             try:
                 render_context = getattr(
                     inst_self,
-                    'get_{}_render_context_kwargs'.format(field_name),
+                    f'get_{field_name}_render_context_kwargs',
                 )()
             except AttributeError:
                 render_context = {}

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.services
     ~~~~~~~~~~~~~~~~~~~~
@@ -12,7 +11,7 @@
     dispatches to ``inyoka.wiki.services.dispatcher('something')``.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.http import HttpResponse

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from unittest.mock import patch
 
 from inyoka.forum.models import Forum, Post, Topic

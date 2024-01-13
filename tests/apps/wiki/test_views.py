@@ -1,18 +1,21 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.wiki.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test wiki views.
 
-    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
+from datetime import timedelta
 
+import feedparser
 from django.conf import settings
 from django.test.utils import override_settings
 from unittest.mock import patch
+
+from freezegun import freeze_time
 
 from inyoka.portal.user import User
 from inyoka.utils.sessions import SurgeProtectionMixin
@@ -186,8 +189,14 @@ class TestDoShow(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
+    def test_no_existing_revision(self):
+        p = Page.objects.get_by_name(self.page_name)
+        url = p.get_absolute_url(revision=123456)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
     def test_redirect(self):
-        text = '# X-Redirect: {page}\nfoobar content'.format(page=self.page_name)
+        text = f'# X-Redirect: {self.page_name}\nfoobar content'
         redirect = Page.objects.create(user=self.user, name='redirect', remote_addr='', text=text)
 
         response = self.client.get(redirect.get_absolute_url('show'), follow=True)
@@ -200,11 +209,30 @@ class TestDoShow(TestCase):
 
     def test_redirect_loop(self):
         name = 'redirect'
-        text = '# X-Redirect: {page}\nfoobar content'.format(page=name)
+        text = f'# X-Redirect: {name}\nfoobar content'
         redirect = Page.objects.create(user=self.user, name=name, remote_addr='', text=text)
 
         response = self.client.get(redirect.get_absolute_url('show'), follow=True)
         self.assertRedirects(response, redirect.get_absolute_url('show_no_redirect'))
+
+    def test_view_old_revision(self):
+        p = Page.objects.get_by_name(self.page_name)
+        old_rev = p.last_rev_id
+        p.edit(text='foo', user=self.user)
+
+        url = p.get_absolute_url('revision', old_rev)
+        response = self.client.get(url, follow=True)
+        self.assertContains(
+            response,
+            'You are viewing an old revision of this wiki page.'
+        )
+
+    def test_deleted_page(self):
+        p = Page.objects.get_by_name(self.page_name)
+        p.edit(user=self.user, deleted=True, note='deleted')
+
+        response = self.client.get(p.get_absolute_url('show'), follow=True)
+        self.assertEqual(response.status_code, 404)
 
 
 class TestDoMetaExport(TestCase):
@@ -300,3 +328,147 @@ class TestDoDiff(TestCase):
         url = self.page.get_absolute_url('udiff', revision=1, new_revision='a')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestRevisionFeed(TestCase):
+
+    client_class = InyokaClient
+    fixtures = ['wiki_feed.jsonl']
+
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.get(username='user')
+        self.page = Page.objects.get(id=1)
+
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_multiple_revisions(self):
+        self.page.edit(text='another text', user=self.user)
+
+        response = self.client.get(f'/_feed/10/')
+        self.assertIn(self.page.name, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_queries(self):
+        with self.assertNumQueries(3):
+            self.client.get('/_feed/10/')
+
+    def test_content_exact(self):
+        response = self.client.get(f'/_feed/10/')
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom">
+  <title>ubuntuusers.local:8080 wiki – last changes</title>
+  <link href="http://wiki.ubuntuusers.local:8080/wiki/recentchanges/" rel="alternate" />
+  <link href="http://wiki.ubuntuusers.local:8080/_feed/10/" rel="self" />
+  <id>http://wiki.ubuntuusers.local:8080/wiki/recentchanges/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Feed contains revisions of the whole wiki</subtitle>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <entry>
+    <title>user: Created</title>
+    <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" rel="alternate" />
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
+    <summary type="html">user edited the article “test page” on 2023-12-10 00:55:04+01:00. Summary: Created</summary>
+  </entry>
+</feed>
+''')
+
+
+@freeze_time("2023-12-09T23:55:04Z")
+class TestArticleRevisionFeed(TestCase):
+
+    client_class = InyokaClient
+    fixtures = ['wiki_feed.jsonl']
+
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.get(username='user')
+        self.page = Page.objects.get(id=1)
+
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_multiple_revisions(self):
+        self.page.edit(text='another text', user=self.user)
+
+        response = self.client.get(self.page.get_absolute_url('feed'))
+        self.assertIn(self.page.name, response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_page_deleted(self):
+        self.page.edit(text='another text', user=self.user, deleted=True)
+        response = self.client.get(self.page.get_absolute_url('feed'))
+        self.assertIn('deleted the', response.content.decode())
+
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+    def test_edit_from_anonymous_user(self):
+        anonymous = User.objects.get_anonymous_user()
+        self.page.edit(text='another text', user=anonymous, remote_addr='127.0.0.1')
+        self.page.edit(text='another text', user=anonymous, remote_addr='127.0.0.1', deleted=True)
+
+        response = self.client.get(self.page.get_absolute_url('feed'))
+        self.assertIn('anonymous user edited', response.content.decode())
+        self.assertIn('anonymous user deleted', response.content.decode())
+
+    def test_queries(self):
+        with self.assertNumQueries(5):
+            self.client.get(self.page.get_absolute_url('feed'))
+
+    def test_tags(self):
+        self.page.edit(text='foob text\n\n#tag: view, install, intro',
+                       user=self.user,
+                       change_date=datetime.utcnow() + timedelta(minutes=11))
+        self.page.update_meta()
+
+        response = self.client.get(self.page.get_absolute_url('feed'))
+        feed = feedparser.parse(response.content)
+        self.assertEqual(len(feed.entries), 2)
+
+        feed_tags = {t.term for t in feed.entries[1]['tags']}
+        self.assertEqual(feed_tags, {'view', 'intro', 'install'})
+
+    def test_content_exact(self):
+        response = self.client.get(self.page.get_absolute_url('feed'))
+
+        self.maxDiff = None
+        self.assertXMLEqual(response.content.decode(),
+'''<?xml version="1.0" encoding="utf-8"?>
+<feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom">
+  <title>ubuntuusers.local:8080 wiki – test_page</title>
+  <link href="http://wiki.ubuntuusers.local:8080/test_page/" rel="alternate"></link>
+  <link href="http://wiki.ubuntuusers.local:8080/test_page/a/feed/" rel="self"></link>
+  <id>http://wiki.ubuntuusers.local:8080/test_page/</id>
+  <updated>2023-12-10T00:55:04+01:00</updated>
+  <subtitle>Feed contains revisions of the wiki page “test_page”.</subtitle>
+  <rights>http://ubuntuusers.local:8080/lizenz/</rights>
+  <entry>
+    <title>user: Created</title>
+    <link href="http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/" rel="alternate"></link>
+    <published>2023-12-10T00:55:04+01:00</published>
+    <updated>2023-12-10T00:55:04+01:00</updated>
+    <author>
+      <name>user</name>
+      <uri>http://ubuntuusers.local:8080/user/user/</uri>
+    </author>
+    <id>http://wiki.ubuntuusers.local:8080/test_page/a/revision/1/</id>
+    <summary type="html">user edited the article “test page” on 2023-12-10 00:55:04+01:00. Summary: Created</summary>
+  </entry>
+</feed>
+''')

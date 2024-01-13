@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.management.commands.generate_requirements
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     This module provides a command to the Django ``manage.py`` file to create
     requirement-files with the help of pip-tools.
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from typing import List
@@ -35,7 +34,7 @@ class Command(BaseCommand):
 
     def _get_requirements_path(self, stage: str) -> str:
         py_major, py_minor, _ = platform.python_version_tuple()
-        file = '{}-py{}.{}-{}.txt'.format(sys.platform, py_major, py_minor, stage)
+        file = f'{sys.platform}-py{py_major}.{py_minor}-{stage}.txt'
         full_path = os.path.join(self.requirements_path, file)
 
         return full_path
@@ -73,7 +72,7 @@ class Command(BaseCommand):
         print('Generating', full_path)
         try:
             subprocess.run([program_name] + arguments, check=True, env=custom_env,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           capture_output=True)
         except subprocess.CalledProcessError as e:
             print('stdout')
             print(e.stdout.decode())

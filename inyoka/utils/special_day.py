@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.special_day
     ~~~~~~~~~~~~~~~~~~~~~~~~
 
     Currently supports fixed-day-events, advent and easter.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, timedelta
@@ -84,7 +83,7 @@ def collect_styles(year: int) -> Dict[date, str]:
 
     for w in range(1, 5):
         for d in advent_week(w, year):
-            special_styles[d] = 'advent_{}.css'.format(w)
+            special_styles[d] = f'advent_{w}.css'
 
     return special_styles
 

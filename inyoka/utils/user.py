@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.user
     ~~~~~~~~~~~~~~~~~
 
-    Serveral utilities to work with users.
+    Several utilities to work with users.
 
     Some parts are ported from the django auth-module.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import hashlib

@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.forum.notifications
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Utilities for forum notifications.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from celery import shared_task
@@ -178,7 +177,7 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
     }
     notified_users = queue_notifications(filter=topic_subscribers, **notification_args)
 
-    logger.debug('Notified for template {}: {}'.format(template, notified_users))
+    logger.debug(f'Notified for template {template}: {notified_users}')
 
     if include_forums:
         forum_subscribers = {
@@ -186,7 +185,7 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
             'object_id__in': forum_ids
         }
         notified_users = queue_notifications(filter=forum_subscribers, exclude={'user_id__in': notified_users}, **notification_args)
-        logger.debug('Notified for include_forums with template {}: {}'.format(template, notified_users))
+        logger.debug(f'Notified for include_forums with template {template}: {notified_users}')
 
 
 def notify_reported_topic_subscribers(subject, args):

@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.storage
     ~~~~~~~~~~~~~~~~~~~~
 
     Dict like interface to the portal.storage model.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.core.cache import cache
@@ -13,7 +12,7 @@ from django.db import transaction
 from django.utils.functional import lazy
 
 
-class CachedStorage(object):
+class CachedStorage:
     """
     This is a dict like interface for the `Storage` model from the portal.
     It's used to store cached values also in the database.
@@ -22,7 +21,7 @@ class CachedStorage(object):
     def get(self, key, default=None, timeout=None):
         """get *key* from the cache or if not exist return *default*"""
         from inyoka.portal.models import Storage
-        value = cache.get('storage/{}'.format(key))
+        value = cache.get(f'storage/{key}')
         if value is not None:
             return value
 
@@ -92,8 +91,8 @@ class CachedStorage(object):
         self.set(key, value)
 
     def _update_cache(self, key, value, timeout=None):
-        cache.set('storage/{}'.format(key), value, timeout)
-        cache.delete('storage/{}_rendered'.format(key))
+        cache.set(f'storage/{key}', value, timeout)
+        cache.delete(f'storage/{key}_rendered')
 
 
 storage = CachedStorage()

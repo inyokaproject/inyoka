@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_utils
     ~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from unittest import TestCase
@@ -70,7 +69,7 @@ class TestJoinPageName(TestCase):
         self.assertEqual(join_pagename("Bar", None), "Bar")
 
     def test_join_pagename_with_objects(self):
-        class PageDummy(object):
+        class PageDummy:
             name = "Dummy"
 
         self.assertEqual(join_pagename(PageDummy(), PageDummy()), "Dummy/Dummy")

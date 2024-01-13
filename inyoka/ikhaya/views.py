@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.ikhaya.views
     ~~~~~~~~~~~~~~~~~~~
 
     Views for Ikhaya.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import time as dt_time
@@ -18,6 +17,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.utils.dates import MONTHS
 from django.utils.html import escape
 from django.utils.text import Truncator
@@ -52,11 +52,11 @@ from inyoka.portal.models import (
     Subscription,
 )
 from inyoka.utils import ctype, generic
-from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.dates import _localtime
+from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.http import (
     AccessDeniedResponse,
-    does_not_exist_is_404,
     templated,
 )
 from inyoka.utils.notification import send_notification
@@ -332,9 +332,9 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
                             title=escape(article.subject)))
 
                     cache_keys = [
-                        'ikhaya/article/{}/{}'.format(article.pub_date, article.slug),
+                        f'ikhaya/article/{article.pub_date}/{article.slug}',
                         'ikhaya/latest_articles',
-                        'ikhaya/latest_articles/{}'.format(article.category.slug)]
+                        f'ikhaya/latest_articles/{article.category.slug}']
                     cache.delete_many(cache_keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
@@ -877,99 +877,136 @@ def event_suggest(request):
     }
 
 
-@atom_feed(name='ikhaya_feed_article')
-def feed_article(request, slug=None, mode='short', count=10):
+class IkhayaAtomFeed(InyokaAtomFeed):
     """
-    Shows the ikhaya entries that match the given criteria in an atom feed.
+    Atom feed with all articles of ikhaya.
     """
-    if slug:
-        title = '%s Ikhaya – %s' % (settings.BASE_DOMAIN_NAME, slug)
-        url = href('ikhaya', 'category', slug)
-    else:
-        title = '%s Ikhaya' % settings.BASE_DOMAIN_NAME
-        url = href('ikhaya')
+    name = 'ikhaya_feed_article'
+    title = '%s Ikhaya' % settings.BASE_DOMAIN_NAME
 
-    articles = Article.objects.get_latest_articles(slug, count)
+    def link(self, _):
+        return href('ikhaya')
 
-    feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    url=url, rights=href('portal', 'lizenz'), id=url,
-                    icon=href('static', 'img', 'favicon.ico'),
-                    subtitle=storage['ikhaya_description_rendered'],
-                    subtitle_type='xhtml')
+    def _subtitle(self, _):
+        return storage['ikhaya_description_rendered']
 
-    for article in articles:
-        kwargs = {}
-        if mode == 'full':
-            kwargs['content'] = '%s\n%s' % (article.intro_rendered,
-                                             article.text_rendered)
-            kwargs['content_type'] = 'xhtml'
-        if mode == 'short':
-            kwargs['summary'] = article.intro_rendered
-            kwargs['summary_type'] = 'xhtml'
+    def items(self, _):
+        return Article.objects.get_latest_articles(count=self.count)
 
-        feed.add(
-            title=article.subject,
-            url=url_for(article),
-            updated=article.updated,
-            published=article.pub_datetime,
-            author={
-                'name': article.author.username,
-                'uri': url_for(article.author)
-            },
-            **kwargs
-        )
-    return feed
+    def item_title(self, article):
+        return article.subject
+
+    def item_comments(self, article):
+        return article.get_absolute_url(action='comments')
+
+    def item_categories(self, article):
+        return [article.category.name]
+
+    def item_description(self, article):
+        if self.mode == 'full':
+            return '%s\n%s' % (article.intro_rendered, article.text_rendered)
+        if self.mode == 'short':
+            return article.intro_rendered
+
+    def item_link(self, article):
+        return url_for(article)
+
+    def item_author_name(self, article):
+        return article.author.username
+
+    def item_author_link(self, article):
+        return url_for(article.author)
+
+    def item_pubdate(self, article):
+        return _localtime(article.pub_datetime)
+
+    def item_updateddate(self, article):
+        return _localtime(article.updated)
 
 
-@atom_feed(name='ikhaya_feed_comment')
-@does_not_exist_is_404
-def feed_comment(request, id=None, mode='short', count=10):
+class IkhayaCategoryAtomFeed(IkhayaAtomFeed):
     """
-    Shows the ikhaya comments that match the given criteria in an atom feed.
+    Atom feed with all articles of ikhaya *category*.
     """
-    article = None
-    if id:
-        article = Article.published.get(id=id)
-        title = _('%(domain)s Ikhaya comments – %(title)s') % {
+
+    def title(self, slug):
+        return '%s Ikhaya – %s' % (settings.BASE_DOMAIN_NAME, slug)
+
+    def link(self, slug):
+        return href('ikhaya', 'category', slug)
+
+    def items(self, slug):
+        return Article.objects.get_latest_articles(slug, self.count)
+
+    def get_object(self, request, *args, **kwargs):
+        slug = kwargs['slug']
+
+        super().get_object(request, *args, **kwargs)
+
+        return slug
+
+
+class IkhayaCommentAtomFeed(InyokaAtomFeed):
+    """
+    Atom feed with all comments of ikhaya.
+    """
+    name = 'ikhaya_feed_comment'
+    title = _('%(domain)s Ikhaya comments') % {'domain': settings.BASE_DOMAIN_NAME}
+
+    def link(self, _):
+        return href('ikhaya')
+
+    def _subtitle(self, _):
+        return storage['ikhaya_description_rendered']
+
+    def items(self, _):
+        return Comment.objects.get_latest_comments(count=self.count)
+
+    def item_title(self, comment):
+        return 'Re: %s' % comment.article.subject
+
+    def item_description(self, comment):
+        if self.mode == 'full':
+            return comment.text_rendered
+        if self.mode == 'short':
+            return self._shorten_html(comment.text_rendered)
+
+    def item_link(self, comment):
+        return url_for(comment)
+
+    def item_author_name(self, comment):
+        return comment.author.username
+
+    def item_author_link(self, comment):
+        return url_for(comment.author)
+
+    def item_pubdate(self, comment):
+        return _localtime(comment.pub_date)
+
+    def item_updateddate(self, comment):
+        return _localtime(comment.pub_date)
+
+
+class IkhayaArticleCommentAtomFeed(IkhayaCommentAtomFeed):
+    """
+    Atom feed with all comments of an ikhaya *article*.
+    """
+
+    def title(self, article):
+        return _('%(domain)s Ikhaya comments – %(title)s') % {
             'domain': settings.BASE_DOMAIN_NAME,
-            'title': article.subject}
-        url = url_for(article)
-    else:
-        title = _('%(domain)s Ikhaya comments') % {
-            'domain': settings.BASE_DOMAIN_NAME}
-        url = href('ikhaya')
+            'title': article.subject
+        }
 
-    comments = Comment.objects.get_latest_comments(id, count)
+    def link(self, article):
+        return url_for(article)
 
-    feed = AtomFeed(title,
-                    feed_url=request.build_absolute_uri(),
-                    subtitle=storage['ikhaya_description_rendered'],
-                    rights=href('portal', 'lizenz'),
-                    id=url,
-                    url=url,
-                    icon=href('static', 'img', 'favicon.ico'),)
+    def items(self, article):
+        return Comment.objects.get_latest_comments(article.id, self.count)
 
-    for comment in comments[:count]:
-        kwargs = {}
-        if mode == 'full':
-            kwargs['content'] = comment.text_rendered
-            kwargs['content_type'] = 'xhtml'
-        if mode == 'short':
-            kwargs['summary'] = Truncator(comment.text_rendered).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+    def get_object(self, request, *args, **kwargs):
+        article = get_object_or_404(Article.published, id=kwargs['id'])
 
-        if article is None:
-            article = comment.article
+        super().get_object(request, *args, **kwargs)
 
-        feed.add(
-            title='Re: %s' % article.subject,
-            url=url_for(comment),
-            updated=comment.pub_date,
-            published=comment.pub_date,
-            author={
-                'name': comment.author.username,
-                'uri': url_for(comment.author)
-            },
-            **kwargs
-        )
-    return feed
+        return article

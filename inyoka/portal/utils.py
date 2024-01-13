@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.utils
     ~~~~~~~~~~~~~~~~~~~
 
     Utilities for the portal.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import json
@@ -149,7 +148,7 @@ class UbuntuVersion:
             'number': self.number,
             'name': self.name,
             'lts': self.lts,
-            'acitve': self.active,
+            'active': self.active,
             'current': self.current,
             'dev': self.dev}
         return json.dumps(data)
@@ -158,7 +157,7 @@ class UbuntuVersion:
 def get_ubuntu_versions():
     #: we need that try-except block to avoid failing `./manage syncdb`
     sid = transaction.savepoint()
-    versions = set([])
+    versions = set()
     try:
         jsonobjs = json.loads(storage['distri_versions'])
         for obj in jsonobjs:

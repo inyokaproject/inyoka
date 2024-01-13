@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     tests.wiki.test_forms
     ~~~~~~~~~~~~~~~~~~~~~
 
     Test some gravatar url creation features.
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -24,7 +23,7 @@ from inyoka.wiki.models import Page
 class TestNewArticleForm(TestCase):
 
     def setUp(self):
-        super(TestNewArticleForm, self).setUp()
+        super().setUp()
 
         self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
@@ -64,7 +63,7 @@ class TestNewArticleForm(TestCase):
 class TestManageDiscussionForm(TestCase):
 
     def setUp(self):
-        super(TestManageDiscussionForm, self).setUp()
+        super().setUp()
 
         # globally the storage table would not exist
         from inyoka.wiki.forms import ManageDiscussionForm

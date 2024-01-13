@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.actions
     ~~~~~~~~~~~~~~~~~~~
@@ -15,7 +14,7 @@
     normalized.  The database models do not do this on their own!
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -112,9 +111,8 @@ def do_show(request, name, rev=None, allow_redirect=True):
             marked as deleted.
     """
     try:
-        if rev is None or not rev.isdigit():
+        if rev is None:
             page = Page.objects.get_by_name(name)
-            rev = None
         else:
             page = Page.objects.get_by_name_and_rev(name, rev)
     except Page.DoesNotExist:
@@ -286,11 +284,11 @@ def _rename(request, page, new_name, force=False, new_text=None):
 
     def get_attachment_set_from_pagename(pagename):
         attachment_pages = Page.objects.get_attachment_list(pagename, existing_only=False)
-        return set((
+        return {
             attachment_page.split('/')[-1]
             for attachment_page
             in attachment_pages
-        ))
+        }
 
     new_page_attachments = get_attachment_set_from_pagename(new_name)
     old_page_attachments = get_attachment_set_from_pagename(old_name)

@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.planet.urls
     ~~~~~~~~~~~~~~~~~~
 
     URL list for the planet.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 
 from . import views
 from ..utils.http import global_not_found, server_error
@@ -19,7 +19,7 @@ urlpatterns = [
     re_path(r'^(\d+)/$', views.index),
     path('hide/<int:id>/', views.hide_entry),
     path('suggest/', views.suggest),
-    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.feed),
+    re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', cache_page(60 * 5)(views.PlanetAtomFeed())),
     path('blogs/', views.blog_list),
     re_path(r'^blogs/(?P<page>\d)/$', views.blog_list),
     re_path(r'^blogs/export/(?P<export_type>[a-z]+)/$', views.export),

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.forms
     ~~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     This file contains extensions for the django forms like special form
     fields.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -25,11 +24,8 @@ from django.forms.widgets import Input, TextInput
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext as _
 
-from inyoka.forum.models import Topic
 from inyoka.markup.base import StackExhaused, parse
-from inyoka.portal.user import User
 from inyoka.utils.dates import datetime_to_timezone
-from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.sessions import SurgeProtectionMixin
@@ -102,7 +98,7 @@ class MultiField(forms.Field):
     widget = forms.SelectMultiple
 
     def __init__(self, fields=(), *args, **kwargs):
-        super(MultiField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields = fields
 
     def clean(self, value):
@@ -135,6 +131,8 @@ class UserField(forms.CharField):
         - an user object, then the username of this user is returned or
         - an user id, then the user is fetched from the database.
         """
+        from inyoka.portal.user import User  # prevent circular import
+
         if isinstance(data, str):
             return data
         elif data is None:
@@ -146,6 +144,8 @@ class UserField(forms.CharField):
             return User.objects.get(pk=data).username
 
     def to_python(self, value):
+        from inyoka.portal.user import User  # prevent circular import
+
         if value in validators.EMPTY_VALUES:
             return
         try:
@@ -183,11 +183,11 @@ class DateTimeField(forms.DateTimeField):
             return ''
         if isinstance(data, str):
             return data
-        datetime = super(DateTimeField, self).prepare_value(data)
+        datetime = super().prepare_value(data)
         return datetime_to_timezone(datetime).replace(tzinfo=None)
 
     def clean(self, value):
-        datetime = super(DateTimeField, self).clean(value)
+        datetime = super().clean(value)
         if not datetime:
             return
         datetime = (
@@ -207,8 +207,8 @@ class EmailField(forms.EmailField):
         value = value.strip()
         if is_blocked_host(value):
             raise forms.ValidationError(_('The entered e-mail address belongs to a '
-                'e-mail provider we had to block because of SPAM problems. Please '
-                'choose another e-mail address'))
+                                          'e-mail provider we had to block because of SPAM problems. Please '
+                                          'choose another e-mail address'))
         return value
 
 
@@ -220,16 +220,20 @@ class ForumMulitpleChoiceField(MultipleChoiceField):
         super().__init__(*args, **kwargs)
 
 
-class JabberField(forms.CharField):
+class JabberFormField(forms.CharField):
 
-    def clean(self, value):
-        if not value:
-            return
-        value = value.strip()
-        if not may_be_valid_jabber(value):
-            raise forms.ValidationError(_('The entered Jabber address is invalid. '
-                'Please check your input.'))
-        return value
+    # NOTE: according to rfc4622 a nodeid is optional. But we require one
+    #       'cause nobody should enter a service-jid in the jabber field.
+    #       That way we don't need to validate the domain and resid.
+    _jabber_re = re.compile(r'(?xi)(?:[a-z0-9!$\(\)*+,;=\[\\\]\^`{|}\-._~]+)@')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.validators.append(
+            validators.RegexValidator(regex=self._jabber_re, message=_('The entered Jabber address is invalid. '
+                                                                       'Please check your input.'))
+        )
 
 
 class SlugField(forms.CharField):
@@ -246,7 +250,7 @@ class HiddenCaptchaField(forms.Field):
 
     def __init__(self, *args, **kwargs):
         kwargs['required'] = False
-        super(HiddenCaptchaField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self, value):
         if not value:
@@ -274,7 +278,7 @@ class ImageCaptchaField(forms.Field):
         forms.Field.__init__(self, *args, **kwargs)
 
     def clean(self, value):
-        value = super(ImageCaptchaField, self).clean(value)
+        value = super().clean(value)
         solution = current_request.session.get('captcha_solution')
         if value:
             h = md5(settings.SECRET_KEY.encode())
@@ -289,7 +293,7 @@ class CaptchaWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         # The HiddenInput is a honey-pot
         widgets = ImageCaptchaWidget, forms.HiddenInput
-        super(CaptchaWidget, self).__init__(widgets, attrs)
+        super().__init__(widgets, attrs)
 
     def decompress(self, value):
         return [None, None]
@@ -302,7 +306,7 @@ class CaptchaField(forms.MultiValueField):
         kwargs['required'] = True
         self.only_anonymous = kwargs.pop('only_anonymous', False)
         fields = (ImageCaptchaField(), HiddenCaptchaField())
-        super(CaptchaField, self).__init__(fields, *args, **kwargs)
+        super().__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
         pass  # CaptchaField doesn't have a useful value to return.
@@ -310,15 +314,15 @@ class CaptchaField(forms.MultiValueField):
     def clean(self, value):
         if current_request.user.is_authenticated and self.only_anonymous:
             return [None, None]
-        value[1] = False  # Prevent being catched by validators.EMPTY_VALUES
-        return super(CaptchaField, self).clean(value)
+        value[1] = False  # Prevent being caught by validators.EMPTY_VALUES
+        return super().clean(value)
 
 
 class TopicField(forms.CharField):
     label = _('URL of the topic')
 
     def clean(self, value):
-        value = super(TopicField, self).clean(value)
+        value = super().clean(value)
 
         if not value:
             return None
@@ -329,6 +333,7 @@ class TopicField(forms.CharField):
         except IndexError:
             slug = urllib.parse.unquote(value)
 
+        from inyoka.forum.models import Topic  # prevent circular import
         try:
             topic = Topic.objects.get(slug=slug)
         except Topic.DoesNotExist:

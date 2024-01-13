@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.portal.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test portal views.
 
-    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -39,7 +38,7 @@ class TestViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestViews, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.admin.is_superuser = True
@@ -175,7 +174,7 @@ class TestAuthViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestAuthViews, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
 
     def test_valid_login(self):
@@ -195,6 +194,18 @@ class TestAuthViews(TestCase):
             self.assertInHTML('<div class="message error">%s</div>'
                               % _('You are already logged in.'),
                               response.content.decode(), count=1)
+
+    def test_valid_login__email(self):
+        """Test the login with valid e-mail (instead of username)."""
+        postdata = {'username': self.user.email, 'password': 'user'}
+        with translation.override('en-us'):
+            response = self.client.post('/login/', postdata, follow=True)
+            self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
+            self.assertInHTML('<div class="message success">%s</div>'
+                              % _('You have successfully logged in.'),
+                              response.content.decode(), count=1)
+
+            self.assertTrue(response.client.session.get_expire_at_browser_close())
 
     def test_login_with_permanent_flag(self):
         """Test the “stay logged in” function."""
@@ -232,11 +243,11 @@ class TestAuthViews(TestCase):
             self.assertContains(response, 'is inactive.')
 
     def test_login_wrong_password(self):
-        """Obviouly, a login should fail when a wrong password was submitted."""
+        """Obviously, a login should fail when a wrong password was submitted."""
         postdata = {'username': 'user', 'password': 'wrong_password'}
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata)
-        self.assertContains(response, 'Login failed because the password')
+        self.assertContains(response, 'Please enter a correct')
 
     def test_login_safe_redirects(self):
         """External redirects are not allowed after login.
@@ -434,7 +445,7 @@ class TestAuthViews(TestCase):
 
         subject = mail.outbox[0].subject
         self.assertIn('Deactivation of your account “user”', subject)
-        code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
+        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -464,7 +475,7 @@ class TestAuthViews(TestCase):
         # Perform invalid mail change
         subject = mail.outbox[0].subject
         self.assertIn('Confirm email address', subject)
-        code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
+        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -481,7 +492,7 @@ class TestAuthViews(TestCase):
         # Perform invalid mail reset
         subject = mail.outbox[1].subject
         self.assertIn('Email address changed', subject)
-        code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
+        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[1].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -501,7 +512,7 @@ class TestRegister(TestCase):
     username = 'Emma29'
 
     def setUp(self):
-        super(TestRegister, self).setUp()
+        super().setUp()
         self.url = '/register/'
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
@@ -552,7 +563,7 @@ class TestPrivMsgViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        super(TestPrivMsgViews, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
@@ -711,7 +722,7 @@ class TestStaticPageEdit(TestCase):
                                      'content': 'My great content',
                                      'key': self.page.key}, follow=True)
 
-        msg = 'The page “{}” was changed successfully.'.format(new_title)
+        msg = f'The page “{new_title}” was changed successfully.'
         self.assertContains(response, msg)
 
     def test_edit_page__redirect_url(self):

@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.utils.spam
     ~~~~~~~~~~~~~~~~~
 
     This module provides Akismet (https://akismet.com/) integration for Inyoka.
 
-    :copyright: (c) 2015-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2015-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import requests

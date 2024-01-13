@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.management.commands.generate_static_wiki
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -7,7 +6,7 @@
     Creates a snapshot of all wiki pages in HTML format. Requires
     BeautifulSoup4 to be installed.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -15,6 +14,7 @@
 import datetime
 from functools import partial
 from hashlib import sha1
+from urllib.parse import unquote as url_unquote
 
 from os import chmod, mkdir, path, unlink, walk
 from re import compile, escape, sub
@@ -26,7 +26,6 @@ from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
 from django.utils.encoding import force_str
 from django.utils.translation import activate
-from werkzeug.urls import url_unquote
 
 from inyoka.portal.user import User
 from inyoka.portal.models import StaticPage, Linkmap
@@ -169,7 +168,7 @@ class Command(BaseCommand):
             return ""
 
         rel_path = url_unquote(rel_path)
-        rel_path = sub('\?v=v[\d\.]*', '', rel_path)
+        rel_path = sub(r'\?v=v[\d\.]*', '', rel_path)
         if rel_path:
             abs_path = path.join(base, rel_path)
             hash_code = sha1(force_str(rel_path).encode('utf-8')).hexdigest()
@@ -212,7 +211,7 @@ class Command(BaseCommand):
                     abs_path = path.join(FOLDER, 'files', rel_path)
                     if path.isfile(abs_path):
                         content = ''
-                        with open(abs_path, 'r') as f:
+                        with open(abs_path) as f:
                             content = f.read()
 
                         _re = compile(r'\?[0-9a-f]{32}')
@@ -472,5 +471,5 @@ class Command(BaseCommand):
                 pb.update(percent)
 
         if verbosity >= 1:
-            print(("\nCreated Wikisnapshot with %s pages; excluded %s pages"
-                % (len(todo), num_excluded)))
+            print("\nCreated Wikisnapshot with %s pages; excluded %s pages"
+                % (len(todo), num_excluded))

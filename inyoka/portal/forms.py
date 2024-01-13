@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.forms
     ~~~~~~~~~~~~~~~~~~~
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import io
@@ -20,6 +19,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
 from django.core import signing
 from django.core.cache import cache
@@ -27,10 +27,11 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.validators import validate_email
-from django.db.models import CharField, Count, Value
+from django.db.models import CharField, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
 from django.forms import HiddenInput, modelformset_factory
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
@@ -45,7 +46,7 @@ from inyoka.portal.user import (
     send_new_email_confirmation,
     set_new_email,
     reactivate_user,
-    reset_email
+    reset_email, UserBanned
 )
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
@@ -76,7 +77,6 @@ GLOBAL_PRIVILEGE_MODELS = {
 
 NOTIFY_BY_CHOICES = (
     ('mail', gettext_lazy('Mail')),
-    ('jabber', gettext_lazy('Jabber')),
 )
 
 NOTIFICATION_CHOICES = (
@@ -89,24 +89,39 @@ NOTIFICATION_CHOICES = (
 LinkMapFormset = modelformset_factory(Linkmap, fields=('token', 'url', 'icon'), extra=3, can_delete=True)
 
 
-class LoginForm(forms.Form):
+class LoginForm(AuthenticationForm):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=gettext_lazy('Username or email address'),
-        widget=forms.TextInput(attrs={'tabindex': '1'}))
-    password = forms.CharField(label=gettext_lazy('Password'), required=False,
-        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),)
-    permanent = forms.BooleanField(label=gettext_lazy('Keep logged in'),
-        required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
+    permanent = forms.BooleanField(label=gettext_lazy('Keep logged in'), required=False,
+                                   help_text=_("Don’t choose this option if you are using a public computer."
+                                               " Otherwise, unauthorized persons may enter your account."))
+
+    mail = settings.INYOKA_CONTACT_EMAIL
+
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        self.fields['username'].label = _('Username or email address')
+
+        self.error_messages['inactive'] = format_html(
+                _("Login failed because the user is inactive. You probably didn’t click on the link in the "
+                  "activation mail which was sent to you after your registration. If it is still not working, contact "
+                  "us: <a href=\"{mailto}\">{mail}</a>"),
+                mail=self.mail, mailto=f"mailto:{self.mail}",
+                )
 
     def clean(self):
-        data = self.cleaned_data
-        if ('username' in data and
-                not (data['username'].startswith('http://') or
-                     data['username'].startswith('https://')) and
-                data['password'] == ''):
-            msg = _('This field is required')
-            self._errors['password'] = self.error_class([msg])
-        return data
+        try:
+            super().clean()
+        except UserBanned:
+            raise ValidationError(format_html(
+                _("Login failed because the user is currently banned. You were informed about that. If you "
+                  "don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
+                  ),
+                mail=self.mail, mailto=f"mailto:{self.mail}",
+                ),
+                code="banned",
+            )
+
+        return self.cleaned_data
 
 
 class RegisterForm(forms.Form):
@@ -189,7 +204,7 @@ class RegisterForm(forms.Form):
     def clean_email(self):
         """
         Validates if the required field `email` contains
-        a non existing mail address.
+        a non-existing mail address.
         """
         exists = User.objects.filter(email__iexact=self.cleaned_data['email'])\
                              .exists()
@@ -272,18 +287,8 @@ class UserCPSettingsForm(forms.Form):
                                         help_text=gettext_lazy('If enabled, less animations are used.'))
 
     def __init__(self, *args, **kwargs):
-        super(UserCPSettingsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_simple_version_choices()
-
-    def clean_notify(self):
-        data = self.cleaned_data['notify']
-        if 'jabber' in data:
-            if not current_request.user.jabber:
-                raise forms.ValidationError(mark_safe(_('You need to '
-                    '<a href="%(link)s">enter a valid jabber address</a> to '
-                    'use our jabber service.')
-                    % {'link': href('portal', 'usercp', 'profile')}))
-        return data
 
 
 class UserCPProfileForm(forms.ModelForm):
@@ -291,7 +296,6 @@ class UserCPProfileForm(forms.ModelForm):
     email = EmailField(label=gettext_lazy('Email'), required=True)
 
     show_email = forms.BooleanField(required=False)
-    show_jabber = forms.BooleanField(required=False)
 
     coordinates = forms.CharField(label=gettext_lazy('Coordinates (latitude, longitude)'),
                                   required=False)
@@ -312,10 +316,10 @@ class UserCPProfileForm(forms.ModelForm):
         # kwargs['initial'] can already exist from subclass EditUserProfileForm
         initial = kwargs['initial'] = kwargs.get('initial', {})
 
-        initial.update(dict(
-            ((k, v) for k, v in instance.settings.items()
-             if k.startswith('show_'))
-        ))
+        initial.update({
+            k: v for k, v in instance.settings.items()
+             if k.startswith('show_')
+        })
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
 
@@ -390,7 +394,7 @@ class UserCPProfileForm(forms.ModelForm):
                     _('You’ve been sent an email to confirm your new email '
                       'address.'))
 
-        for key in ('show_email', 'show_jabber', 'use_gravatar'):
+        for key in ('show_email', 'use_gravatar'):
             user.settings[key] = data[key]
 
         if data['userpage']:
@@ -481,7 +485,7 @@ class EditUserGroupsForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('instance', None)
-        super(EditUserGroupsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class CreateUserForm(forms.Form):
@@ -653,7 +657,7 @@ def make_permission_choices(application, filtered=None):
     return functools.partial(get_permissions_for_app, application, filtered)
 
 def permission_choices_to_permission_strings(application):
-    return set(perm[0] for perm in get_permissions_for_app(application))
+    return {perm[0] for perm in get_permissions_for_app(application)}
 
 
 def permission_to_string(permission):
@@ -774,11 +778,11 @@ class GroupGlobalPermissionForm(forms.Form):
         active_permissions = set()
         if self.cleaned_data['%s_permissions' % modulename]:
             active_permissions = set(self.cleaned_data['%s_permissions' % modulename])
-        current_permissions = set([
+        current_permissions = {
             perm
             for perm in self.instance_permissions
             if perm.startswith(modulename)
-        ])
+        }
         remove_permissions = current_permissions - active_permissions
         assign_permissions = active_permissions - current_permissions
         for perm in remove_permissions:
@@ -826,7 +830,7 @@ class GroupGlobalPermissionForm(forms.Form):
                     if perm.startswith(field)
                 ]
                 initial['%s_permissions' % field] = field_permissions
-        super(GroupGlobalPermissionForm, self).__init__(initial=initial, *args, **kwargs)
+        super().__init__(initial=initial, *args, **kwargs)
 
 
 class GroupForumPermissionForm(forms.Form):
@@ -1138,7 +1142,7 @@ class TokenForm(forms.Form):
     def __init__(self, *args, **kwargs):
         if 'action' in kwargs:
             self.action = kwargs.pop('action')
-        super(TokenForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_token(self):
         def get_action_and_limit():

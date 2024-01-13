@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.wiki.test_macros
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test wiki macros.
 
-    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from inyoka.markup import macros

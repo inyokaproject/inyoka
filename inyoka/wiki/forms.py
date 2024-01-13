@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.forms
     ~~~~~~~~~~~~~~~~~
 
     Contains all the forms we use in the wiki.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -45,7 +44,7 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
         self.user = user
         self.reserved_names = reserved_names
 
-        super(NewArticleForm, self).__init__(data)
+        super().__init__(data)
         self.fields['template'].choices = template_choices
 
         if self.user.is_team_member:
@@ -136,7 +135,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         `data`:
             A dict containing the initial values for the fields.
         """
-        super(PageEditForm, self).__init__(data=data)
+        super().__init__(data=data)
         self.user = user
         self.name = name
         revision = data['revision'] if data is not None else revision
@@ -149,7 +148,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
 
     def clean(self):
         """Test if we need to merge."""
-        super(PageEditForm, self).clean()
+        super().clean()
 
         data = self.data.copy()
         latest_change_time = self.latest_rev.change_date

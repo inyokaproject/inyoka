@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.wiki.macros
     ~~~~~~~~~~~~~~~~~~
 
     Macros for the wiki.
 
-    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import itertools
@@ -296,11 +295,11 @@ class FilterByMetaData(macros.Macro):
             includes = [x for x in values if not x.startswith('NOT ')]
             kwargs = {'key': key, 'value__in': includes}
             q = MetaData.objects.select_related('page').filter(**kwargs)
-            res = set(
+            res = {
                 x.page
                 for x in q
                 if not is_privileged_wiki_page(x.page.name)
-            )
+            }
             pages = pages.union(res)
 
         # filter the pages with `AND`

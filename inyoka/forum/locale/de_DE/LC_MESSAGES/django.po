@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-01 16:45+0200\n"
+"POT-Creation-Date: 2024-01-04 17:58+0100\n"
 "PO-Revision-Date: 2020-11-07 18:23+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -92,6 +92,17 @@ msgstr "Danach ersten Beitrag bearbeiten"
 
 msgid "Edubuntu"
 msgstr "Edubuntu"
+
+#, python-format
+msgid "Feed contains new topics of the forum “%(forum)s”."
+msgstr "Feed enthält neue Themen aus dem Forum „%(forum)s“."
+
+msgid "Feed contains new topics of the whole forum"
+msgstr "Feed enthält neue Themen aus dem kompletten Forum."
+
+#, python-format
+msgid "Feed contains posts of the topic “%(topic)s”."
+msgstr "Feed enthält Beiträge aus dem Thema „%(topic)s“."
 
 msgid "Force version"
 msgstr "Erzwinge Version"

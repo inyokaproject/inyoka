@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.middlewares.common
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -12,11 +11,12 @@
     For development purposes we also set up virtual url dispatching modules for
     static and media.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponse
 from django.middleware.common import CommonMiddleware
 from django_hosts.middleware import HostsRequestMiddleware
 
@@ -36,7 +36,13 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
         request.watch = StopWatch()
         request.watch.start()
 
-        # IMPORTANT: Since we run some setupcode (mainly locals), this middleware
+        # reject URLs with NUL byte.
+        # If those are passed to the ORM with postgres, an exception is raised
+        # It's also mentioned in https://datatracker.ietf.org/doc/html/rfc3986#section-7.3
+        if '\x00' in request.path:
+            return HttpResponse(content='The URL contained NUL characters', status=400, content_type='text/plain')
+
+        # IMPORTANT: Since we run some setup-code (mainly locals), this middleware
         # needs to be the first one, hence we manually dispatch to HostsMiddleware
         response = HostsRequestMiddleware.process_request(self, request)
         if response is not None:

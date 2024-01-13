@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_split_new_topic
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test split function for topics that create a new thread out of the posts.
 
-    :copyright: (c) 2012-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.core.cache import cache
@@ -19,7 +18,7 @@ class TestPostSplitNewTopic(TestCase):
     """Test for splitting posts and creating a new topic"""
 
     def setUp(self):
-        super(TestPostSplitNewTopic, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum(name='category')

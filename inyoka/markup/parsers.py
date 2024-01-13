@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.markup.parsers
     ~~~~~~~~~~~~~~~~~~~~~
@@ -15,7 +14,7 @@
     passed the wrapper `data` which they can process.
 
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -36,7 +35,7 @@ def get_parser(name, args, kwargs, data):
     return cls(data, args, kwargs)
 
 
-class Parser(object, metaclass=ArgumentCollector):
+class Parser(metaclass=ArgumentCollector):
     """
     baseclass for parsers.  Concrete parsers should either subclass this or
     implement the same attributes and methods.

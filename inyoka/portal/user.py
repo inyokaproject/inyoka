@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     inyoka.portal.user
     ~~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -33,7 +32,7 @@ from guardian.mixins import GuardianUserMixin
 from guardian.shortcuts import get_perms
 
 from inyoka.utils.cache import QueryCounter
-from inyoka.utils.database import InyokaMarkupField, JSONField
+from inyoka.utils.database import InyokaMarkupField, JSONField, JabberField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
@@ -88,7 +87,7 @@ def reactivate_user(id, email, status):
 def deactivate_user(user):
     """
     This deactivates a user and removes all personal information.
-    To avoid abuse he is sent an email allowing him to reactivate the
+    To avoid abuse, an email is sent that allows reactivation of the account
     within the next month.
     """
 
@@ -256,7 +255,7 @@ def upload_to_avatar(instance, filename):
 
 
 class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
-    """User model that contains all informations about an user."""
+    """User model that contains all information about a user."""
     STATUS_INACTIVE = 0
     STATUS_ACTIVE = 1
     STATUS_BANNED = 2
@@ -289,7 +288,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     # profile attributes
     avatar = models.ImageField(gettext_lazy('Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
-    jabber = models.CharField(gettext_lazy('Jabber'), max_length=200, blank=True)
+    jabber = JabberField(gettext_lazy('Jabber'), max_length=200, blank=True)
     signature = InyokaMarkupField(verbose_name=gettext_lazy('Signature'), blank=True)
     location = models.CharField(gettext_lazy('Residence'), max_length=200, blank=True)
     gpgkey = models.CharField(gettext_lazy('GPG fingerprint'), max_length=255, blank=True)
@@ -307,14 +306,14 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     # member icon
     icon = models.FilePathField(gettext_lazy('Group icon'),
                                 path=os.path.join(inyoka_settings.MEDIA_ROOT, 'portal/team_icons'),
-                                match='.*\.png', blank=True, null=True, recursive=True)
+                                match=r'.*\.png', blank=True, null=True, recursive=True)
 
     def save(self, *args, **kwargs):
         """
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         cache.delete_many(['portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
 
@@ -469,7 +468,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     @property
     def post_count(self):
         return QueryCounter(
-            cache_key="user_post_count:{}".format(self.id),
+            cache_key=f"user_post_count:{self.id}",
             query=self.post_set
                       .filter(hidden=False)
                       .filter(topic__forum__user_count_posts=True),
@@ -483,12 +482,12 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         Returns `True` if user is not banned or could be unbanned, or `False` otherwise.
         """
         if self.is_banned:
-            # user banned ad infinitum
+            # user banned ad infinite
             if self.banned_until is None:
                 return False
             else:
                 # user banned for a specific period of time
-                if (self.banned_until >= datetime.utcnow()):
+                if self.banned_until >= datetime.utcnow():
                     return False
                 else:
                     # period of time gone, reset status

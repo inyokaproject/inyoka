@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_storage
     ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -6,7 +5,7 @@
     This module tests the the storage object that uses a combination of cache
     and database storing.
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import time
@@ -22,7 +21,7 @@ from inyoka.utils.test import TestCase
 class TestStorage(TestCase):
 
     def setUp(self):
-        super(TestStorage, self).setUp()
+        super().setUp()
         local.cache = {}
         self.cache = caches['default']
 

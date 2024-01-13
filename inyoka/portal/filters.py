@@ -1,11 +1,10 @@
-#-*- coding: utf-8 -*-
 """
     inyoka.filters
     ~~~~~~~~~~~~~~
 
     `QuerySet` filter based on `django-filters <https://github.com/alex/django-filter>`_
 
-    :copyright: (c) 2011-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from itertools import chain
@@ -31,7 +30,7 @@ SUPPORTED_SUBSCRIPTION_TYPES = {
 class LinkWidget(BaseLinkWidget):
 
     def render_options(self, choices, selected_choices, name):
-        selected_choices = set(force_str(v) for v in selected_choices)
+        selected_choices = {force_str(v) for v in selected_choices}
         output = []
         for option_value, option_label in chain(self.choices, choices):
             if option_label:

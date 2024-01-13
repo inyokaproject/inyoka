@@ -36,9 +36,6 @@ Among other things you will see the notification mails for the admin user.
 
    After changing a @task function, you need to restart the celery server.
 
-.. todo::
-
-   How to test jabber notifications?
 
 Run tests
 *********
@@ -145,8 +142,9 @@ Add a new translation
 *********************
 
 Inyoka is translated on `transifex <https://www.transifex.com/inyokaproject/inyoka/dashboard/>`_. To upload
-new keys to transfix `configure first the client <https://docs.transifex.com/client/client-configuration>`_
-than use:
+new translations to transfix `configure first the client <https://github.com/transifex/cli>`_
+(We recommended to download the binary manually or use docker).
+Afterwards, run:
 
 .. code-block:: console
 
@@ -155,7 +153,7 @@ than use:
 You have two ways to do the translations.
 
 1. Locally
-    Do the translation using the ``*.po`` files (e.g. ``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``)
+    Do the translation using the ``*.po`` files (for example ``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``)
     and upload them afterwards with:
 
     .. code-block:: console
@@ -178,10 +176,11 @@ translation files)
 
     (inyoka)$ python manage.py compilemessages
 
-and restart the server to test.
+and restart the server for testing.
 
-To prevent merge conflicts it is recommended to NOT add the ``*.mo`` files to your commit, because they cannot
-be merged by git.
+It is recommended to add the ``*.mo`` files in a seperate commit, because they cannot
+be merged by git. In case of a merge conflict, the commit can be dropped, the ``*.po`` files merged
+and the ``*.mo`` files compiled again.
 
 Add a new language
 ******************
@@ -194,7 +193,7 @@ download it with:
     (inyoka) $ tx pull -a
 
 If you prefer to do it manually, you need to create the sub directory
-``ll_CC/LC_MESSAGES`` inside the ``locale`` folder of a component (e.g.
+``ll_CC/LC_MESSAGES`` inside the ``locale`` folder of a component (for example
 ``inyoka/wiki/locale/de_DE/LC_MESSAGES``). Copy the ``django.pot`` file to this
 directory and rename it to ``django.po``.
 

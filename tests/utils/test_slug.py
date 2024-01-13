@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """
     tests.utils.test_slug
     ~~~~~~~~~~~~~~~~~~~~~
 
     Test for slug uniqueness and slug numberation
 
-    :copyright: (c) 2007-2023 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib.auth.models import Group
@@ -18,7 +17,7 @@ from inyoka.utils.test import TestCase
 
 class TestUtilsSlug(TestCase):
     def setUp(self):
-        super(TestUtilsSlug, self).setUp()
+        super().setUp()
         self.user = User.objects.register_user('slugadmin', 'slugadmin', 'slugadmin', False)
 
         # creating forums
