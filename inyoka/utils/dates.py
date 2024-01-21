@@ -122,8 +122,3 @@ def parse_iso8601(value):
         else:
             rv -= delta
     return rv
-
-
-def format_iso8601(obj):
-    """Format a datetime object for iso8601"""
-    return datetime_safe.new_datetime(obj).strftime('%Y-%d-%mT%H:%M:%SZ')
