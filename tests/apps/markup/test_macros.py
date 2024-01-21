@@ -7,6 +7,10 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import unittest
+
+import freezegun
+
 from inyoka.markup.base import RenderContext, parse
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
@@ -349,4 +353,37 @@ text""").render(RenderContext(), format='html')
 </a><ol class="arabic"><li><a href="#Stufe-4-1" class="crosslink">Stufe 4 (1)
 </a></li></ol></li><li><a href="#Stufe-3-2" class="crosslink">Stufe 3 (2)
 </a></li></ol></li></ol></li></ol>"""
+        self.assertInHTML(html_assert, html)
+
+    def test_date_no_parameter(self):
+        with freezegun.freeze_time('2020-01-10 13:47+1'):
+            html = parse("""[[Date()]]""").render(RenderContext(application='wiki'), format='html')
+        html_assert = """<p>Jan. 10, 2020, 1:47 p.m.</p>"""
+        self.assertInHTML(html_assert, html)
+
+    def test_date_unix_time(self):
+        html = parse("""[[Date(1)]]""").render(RenderContext(application='wiki'), format='html')
+        html_assert = """<p>Jan. 1, 1970, 1 a.m.</p>"""
+        self.assertInHTML(html_assert, html)
+
+    def test_date_string(self):
+        html = parse("""[[Date(2024-01-11)]]""").render(RenderContext(application='wiki'), format='html')
+        html_assert = """<p>Jan. 11, 2024, 1 a.m.</p>"""
+        self.assertInHTML(html_assert, html)
+
+    def test_date_and_time_string(self):
+        html = parse("""[[Date(2024-01-11T12:12)]]""").render(RenderContext(application='wiki'), format='html')
+        html_assert = """<p>Jan. 11, 2024, 1:12 p.m.</p>"""
+        self.assertInHTML(html_assert, html)
+
+    @unittest.skip("wrong behaviour")
+    def test_date_and_time_string_with_timezone(self):
+        html = parse("""[[Date(2024-01-11T12:12+01:00)]]""").render(RenderContext(application='wiki'), format='html')
+        print(html)
+        html_assert = """<p>Jan. 11, 2024, 12:12 p.m.</p>"""
+        self.assertInHTML(html_assert, html)
+
+    def test_invalid_date(self):
+        html = parse("""[[Date(20XY4-01-1Z)]]""").render(RenderContext(application='wiki'), format='html')
+        html_assert = """<p>Invalid date</p>"""
         self.assertInHTML(html_assert, html)
