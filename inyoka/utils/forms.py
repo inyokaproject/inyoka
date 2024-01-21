@@ -15,7 +15,6 @@ from random import randrange
 import urllib.request, urllib.parse, urllib.error
 import urllib.parse
 
-import pytz
 from django import forms
 from django.conf import settings
 from django.core import validators
@@ -190,9 +189,9 @@ class DateTimeField(forms.DateTimeField):
         datetime = super().clean(value)
         if not datetime:
             return
-        datetime = (
-            get_current_timezone().localize(datetime).astimezone(pytz.utc)
-            .replace(tzinfo=None))
+
+        datetime = datetime.replace(tzinfo=get_current_timezone())
+
         return datetime
 
 

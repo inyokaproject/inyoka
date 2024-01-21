@@ -10,7 +10,6 @@
 from datetime import time as dt_time
 from datetime import date, datetime
 
-import pytz
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType

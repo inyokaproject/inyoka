@@ -65,8 +65,8 @@ setup(
         'Pygments',
         'python-magic',
         'python-dateutil',
-        'pytz',
         'sentry-sdk',
+        'tzdata',
         'requests',
         'Werkzeug'
     ],

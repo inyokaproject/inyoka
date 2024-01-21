@@ -8,16 +8,25 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+import zoneinfo
 from datetime import date, datetime, timedelta
+from functools import lru_cache
 from operator import attrgetter
 
-import pytz
 from django.contrib.humanize.templatetags.humanize import \
     naturalday as djnaturalday
 from django.template import defaultfilters
 from django.utils import datetime_safe, timezone
+from django.utils.timezone import is_naive
 
-TIMEZONES = pytz.common_timezones
+
+@lru_cache(maxsize=None)
+def get_timezone_list():
+    # TODO https://adamj.eu/tech/2021/05/06/how-to-list-all-timezones-in-python/#deprecated-names
+    return zoneinfo.available_timezones()
+
+
+TIMEZONES = get_timezone_list()
 
 
 _iso8601_re = re.compile(
@@ -29,8 +38,8 @@ _iso8601_re = re.compile(
 
 
 def _localtime(val):
-    if val.tzinfo is None:
-        val = timezone.make_aware(val, pytz.UTC)
+    if is_naive(val):
+        val = timezone.make_aware(val, timezone.utc)
     return timezone.localtime(val)
 
 
@@ -44,7 +53,7 @@ format_timetz = lambda value, arg='TIME_FORMAT': defaultfilters.time(_localtime(
 def group_by_day(entries, date_func=attrgetter('pub_date'),
                  enforce_utc=False):
     """
-    Group a list of entries by the date but in the users's timezone
+    Group a list of entries by the date but in the users' timezone
     (or UTC if enforce_utc is set to `True`).  Per default the pub_date
     Attribute is used.  If this is not desired a different `date_func`
     can be provided.  It's important that the list is already sorted
@@ -52,20 +61,23 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
     """
     days = []
     days_found = set()
+
     if enforce_utc:
-        tzinfo = pytz.UTC
+        tzinfo = timezone.utc
     else:
         tzinfo = timezone.get_current_timezone()
+
     for entry in entries:
         d = date_func(entry)
-        if d.tzinfo is None:
-            d = d.replace(tzinfo=pytz.UTC)
+        if is_naive(d):
+            d = d.replace(tzinfo=timezone.utc)
         d = d.astimezone(tzinfo)
         key = (d.year, d.month, d.day)
         if key not in days_found:
             days.append((key, []))
             days_found.add(key)
         days[-1][1].append(entry)
+
     return [{
         'date': date(*k),
         'articles': items,
@@ -80,12 +92,15 @@ def datetime_to_timezone(dt, enforce_utc=False):
     """
     if dt is None:
         return None
+
     if enforce_utc:
-        tz = pytz.UTC
+        tz = timezone.utc
     else:
         tz = timezone.get_current_timezone()
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=pytz.UTC)
+
+    if is_naive(dt):
+        dt = dt.replace(tzinfo=timezone.utc)
+
     return datetime_safe.new_datetime(dt.astimezone(tz))
 
 
