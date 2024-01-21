@@ -26,13 +26,6 @@ from inyoka.wiki.exceptions import CaseSensitiveException
 from inyoka.wiki.views import fetch_real_target
 
 
-def make_int(s, default):
-    try:
-        return int(s)
-    except (ValueError, TypeError):
-        return int(default)
-
-
 class PageCount(macros.Macro):
     """
     Return the number of existing pages.
