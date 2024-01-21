@@ -216,45 +216,6 @@ class TagList(macros.Macro):
         return container
 
 
-class Include(macros.Macro):
-    """
-    Include a page.  This macro works dynamically thus the included headlines
-    do not appear in the TOC.
-    """
-    names = ('Include', 'Einbinden')
-    is_block_tag = True
-    arguments = (
-        ('page', str, ''),
-        ('silent', bool, False)
-    )
-    allowed_context = ['wiki']
-
-    def __init__(self, page, silent):
-        self.page = normalize_pagename(page)
-        self.silent = silent
-        self.context = []
-        if self.page:
-            self.metadata = [nodes.MetaData('X-Attach', ('/' + self.page,))]
-
-    def build_node(self, context, format):
-        try:
-            page = Page.objects.get_by_name(self.page, exclude_privileged=True)
-        except Page.DoesNotExist:
-            if self.silent:
-                return nodes.Text('')
-            msg = _('The page “%(name)s” was not found') % {
-                'name': self.page}
-            return nodes.error_box(_('Page not found'), msg)
-        except CaseSensitiveException as e:
-            page = e.page
-        context.kwargs.setdefault('included_pages', set())
-        if page.name in context.kwargs['included_pages']:
-            msg = _('Detected a circular include macro call')
-            return nodes.error_box(_('Circular import'), msg)
-        context.kwargs['included_pages'].add(page.name)
-        return page.rev.text.render(context=context, format=format)
-
-
 class FilterByMetaData(macros.Macro):
     """
     Filter pages by their metadata
@@ -475,7 +436,6 @@ macros.register(OrphanedPages)
 macros.register(RedirectPages)
 macros.register(SimilarPages)
 macros.register(TagList)
-macros.register(Include)
 macros.register(FilterByMetaData)
 macros.register(PageName)
 macros.register(Template)

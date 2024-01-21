@@ -24,6 +24,29 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+Unreleased 0.32.0 (2024-02-DD)
+=====================
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+* in the Wiki the ``Include`` macro was removed
+
+🐛 Fixes
+--------
+
+🔒 Security
+-----------
+
 
 0.31.0 (2024-01-13)
 ===================
