@@ -376,10 +376,8 @@ text""").render(RenderContext(), format='html')
         html_assert = """<p>Jan. 11, 2024, 1:12 p.m.</p>"""
         self.assertInHTML(html_assert, html)
 
-    @unittest.skip("wrong behaviour")
     def test_date_and_time_string_with_timezone(self):
         html = parse("""[[Date(2024-01-11T12:12+01:00)]]""").render(RenderContext(application='wiki'), format='html')
-        print(html)
         html_assert = """<p>Jan. 11, 2024, 12:12 p.m.</p>"""
         self.assertInHTML(html_assert, html)
 

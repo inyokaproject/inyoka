@@ -29,14 +29,6 @@ def get_timezone_list():
 TIMEZONES = get_timezone_list()
 
 
-_iso8601_re = re.compile(
-    # date
-    r'(\d{4})(?:-?(\d{2})(?:-?(\d{2}))?)?'
-    # time
-    r'(?:T(\d{2}):(\d{2})(?::(\d{2}(?:\.\d+)?))?(Z?|[+-]\d{2}:\d{2})?)?$'
-)
-
-
 def _localtime(val):
     if is_naive(val):
         val = timezone.make_aware(val, timezone.utc)
@@ -102,38 +94,3 @@ def datetime_to_timezone(dt, enforce_utc=False):
         dt = dt.replace(tzinfo=timezone.utc)
 
     return datetime_safe.new_datetime(dt.astimezone(tz))
-
-
-def parse_iso8601(value):
-    """
-    Parse an iso8601 date into a datetime object.
-    The timezone is normalized to UTC, we always use UTC objects
-    internally.
-    """
-    m = _iso8601_re.match(value)
-    if m is None:
-        raise ValueError('not a valid iso8601 date value')
-
-    groups = m.groups()
-    args = []
-    for group in groups[:-2]:
-        if group is not None:
-            group = int(group)
-        args.append(group)
-    seconds = groups[-2]
-    if seconds is not None:
-        if '.' in seconds:
-            args.extend(list(map(int, seconds.split('.'))))
-        else:
-            args.append(int(seconds))
-
-    rv = datetime(*[_f for _f in args if _f])
-    tz = groups[-1]
-    if tz and tz != 'Z':
-        args = list(map(int, tz[1:].split(':')))
-        delta = timedelta(hours=args[0], minutes=args[1])
-        if tz[0] == '+':
-            rv += delta
-        else:
-            rv -= delta
-    return rv
