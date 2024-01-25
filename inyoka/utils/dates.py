@@ -7,9 +7,9 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import re
 import zoneinfo
-from datetime import date, datetime, timedelta
+from datetime import date
+from datetime import timezone as py_timezone
 from functools import lru_cache
 from operator import attrgetter
 
@@ -31,7 +31,7 @@ TIMEZONES = get_timezone_list()
 
 def _localtime(val):
     if is_naive(val):
-        val = timezone.make_aware(val, timezone.utc)
+        val = timezone.make_aware(val, py_timezone.utc)
     return timezone.localtime(val)
 
 
@@ -55,14 +55,14 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
     days_found = set()
 
     if enforce_utc:
-        tzinfo = timezone.utc
+        tzinfo = py_timezone.utc
     else:
         tzinfo = timezone.get_current_timezone()
 
     for entry in entries:
         d = date_func(entry)
         if is_naive(d):
-            d = d.replace(tzinfo=timezone.utc)
+            d = d.replace(tzinfo=py_timezone.utc)
         d = d.astimezone(tzinfo)
         key = (d.year, d.month, d.day)
         if key not in days_found:
@@ -86,11 +86,11 @@ def datetime_to_timezone(dt, enforce_utc=False):
         return None
 
     if enforce_utc:
-        tz = timezone.utc
+        tz = py_timezone.utc
     else:
         tz = timezone.get_current_timezone()
 
     if is_naive(dt):
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=py_timezone.utc)
 
     return datetime_safe.new_datetime(dt.astimezone(tz))
