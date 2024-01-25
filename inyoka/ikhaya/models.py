@@ -16,7 +16,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
-from django.utils import datetime_safe
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy
 
@@ -251,7 +250,7 @@ class Article(models.Model, LockableObject):
     @property
     def stamp(self):
         """Return the year/month/day part of an article url"""
-        return datetime_safe.new_date(self.pub_date).strftime('%Y/%m/%d')
+        return self.pub_date.strftime('%Y/%m/%d')
 
     def get_absolute_url(self, action='show', **query):
         if action == 'comments':
@@ -451,8 +450,7 @@ class Event(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            name = datetime_safe.new_date(self.date) \
-                                .strftime('%Y/%m/%d/') + slugify(self.name)
+            name = self.date.strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
         cache.delete(f'ikhaya/event/{self.id}')

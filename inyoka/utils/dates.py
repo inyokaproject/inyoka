@@ -16,7 +16,7 @@ from operator import attrgetter
 from django.contrib.humanize.templatetags.humanize import \
     naturalday as djnaturalday
 from django.template import defaultfilters
-from django.utils import datetime_safe, timezone
+from django.utils import timezone
 from django.utils.timezone import is_naive
 
 
@@ -93,4 +93,4 @@ def datetime_to_timezone(dt, enforce_utc=False):
     if is_naive(dt):
         dt = dt.replace(tzinfo=py_timezone.utc)
 
-    return datetime_safe.new_datetime(dt.astimezone(tz))
+    return dt.astimezone(tz)
