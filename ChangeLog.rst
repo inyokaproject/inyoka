@@ -49,6 +49,8 @@ Deployment notes
 🐛 Fixes
 --------
 
+* Display message instead of server-error, if username was not taken during form-validation at registration, but at DB-insertion
+
 🔒 Security
 -----------
 * Update requirements (at least the dependencies ``Django`` include known security fixes)
