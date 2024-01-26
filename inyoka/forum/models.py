@@ -10,7 +10,7 @@
 import os
 import pickle
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import reduce
 from hashlib import md5
 from itertools import groupby
@@ -1095,7 +1095,8 @@ class Post(models.Model, LockableObject):
             return False
         if t == -1:
             return True
-        delta = datetime.utcnow() - self.pub_date.replace(tzinfo=None)
+
+        delta = datetime.now(timezone.utc) - self.pub_date
         return delta.total_seconds() < t
 
     def mark_ham(self):
