@@ -228,11 +228,11 @@ class Article(models.Model, LockableObject):
 
     @property
     def local_pub_datetime(self):
-        return datetime_to_timezone(self.pub_datetime).replace(tzinfo=None)
+        return datetime_to_timezone(self.pub_datetime)
 
     @property
     def local_updated(self):
-        return datetime_to_timezone(self.updated).replace(tzinfo=None)
+        return datetime_to_timezone(self.updated)
 
     @property
     def hidden(self):
