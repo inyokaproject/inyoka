@@ -8,6 +8,8 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import secrets
+import string
 from datetime import datetime
 from json import loads, dumps
 
@@ -74,7 +76,7 @@ def reactivate_user(id, email, status):
         user.banned_until = None
 
     # Set a dummy password
-    user.set_password(User.objects.make_random_password(length=32))
+    user.set_random_password()
     user.save()
 
     # Enforce registered group if active.
@@ -541,6 +543,12 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
             if not self.has_perm(perm, obj):
                 return False
         return True
+
+    def set_random_password(self, length: int=32) -> None:
+        alphabet = string.ascii_letters + string.digits
+        password = ''.join(secrets.choice(alphabet) for i in range(length))
+
+        self.set_password(password)
 
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 
