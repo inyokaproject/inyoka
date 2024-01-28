@@ -179,7 +179,7 @@ def detail(request, year, month, day, slug):
     except (IndexError, ValueError):
         raise Http404()
     preview = None
-    if article.hidden or article.pub_datetime > datetime.utcnow():
+    if article.hidden or article.pub_datetime > dj_timezone.now():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
             raise PermissionDenied
         messages.info(request, _('This article is not visible for regular '
@@ -367,7 +367,7 @@ def article_subscribe(request, year, month, day, slug):
             int(day)), slug)])[0]
     except (IndexError, ValueError):
         raise Http404()
-    if article.hidden or article.pub_datetime > datetime.utcnow():
+    if article.hidden or article.pub_datetime > dj_timezone.now():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
             raise PermissionDenied
     try:
@@ -425,7 +425,7 @@ def report_new(request, year, month, day, slug):
                 report = Report(text=data['text'])
                 report.article = article
                 report.author = request.user
-                report.pub_date = datetime.utcnow()
+                report.pub_date = dj_timezone.now()
                 report.save()
                 cache.delete('ikhaya/reported_article_count')
                 messages.success(request, _('Thanks for your report.'))
@@ -617,7 +617,7 @@ def suggest_delete(request, suggestion):
                         'username': request.user.username,
                         'note': request.POST['note']}
                 msg.text = render_to_string('mails/suggestion_rejected.txt', args)
-                msg.pub_date = datetime.utcnow()
+                msg.pub_date = dj_timezone.now()
                 recipients = [s.author]
                 msg.send(recipients)
                 # send notification

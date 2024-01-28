@@ -7,9 +7,8 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
-
 from django.db import models
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext_lazy
 
 from inyoka.portal.user import User
@@ -22,7 +21,7 @@ class Entry(models.Model):
     lang = models.CharField(gettext_lazy('Language'), max_length=20)
     code = PygmentsField(application='pastebin')
     pub_date = models.DateTimeField(gettext_lazy('Date'), db_index=True,
-                                    default=datetime.utcnow)
+                                    default=dj_timezone.now)
     author = models.ForeignKey(User, verbose_name=gettext_lazy('Author'), on_delete=models.CASCADE)
 
     class Meta:
