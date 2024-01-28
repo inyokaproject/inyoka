@@ -15,6 +15,7 @@ from os import path, remove
 from celery import shared_task
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models.functions import Now
 
 from inyoka.utils.logger import logger
 
@@ -85,7 +86,7 @@ def update_recentchanges():
     """
     from inyoka.wiki.models import Revision
 
-    from_time = datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)
+    from_time = Now() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)
 
     revisions = (Revision.objects
         .filter(change_date__gt=from_time)

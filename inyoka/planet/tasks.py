@@ -25,6 +25,7 @@ from time import time
 import feedparser
 from celery import shared_task
 from dateutil.parser import parse as dateutil_parse
+from django.utils import timezone as dj_timezone
 from django.utils.encoding import force_str
 from django.utils.html import escape
 
@@ -168,5 +169,5 @@ def sync():
                 logger.debug(' synced entry %r' % guid)
             except Exception as exc:
                 logger.debug(' Error on entry %r: %r' % (guid, exc))
-        blog.last_sync = datetime.utcnow()
+        blog.last_sync = dj_timezone.now()
         blog.save()

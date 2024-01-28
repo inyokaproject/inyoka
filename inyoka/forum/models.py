@@ -27,6 +27,7 @@ from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.db.models import Count, F, Max, Sum, QuerySet
+from django.utils import timezone as dj_timezone
 from django.utils.encoding import DjangoUnicodeDecodeError, force_str
 from django.utils.html import escape, format_html
 from django.utils.translation import gettext as _
@@ -778,7 +779,7 @@ class PostRevision(models.Model):
     """
 
     text = InyokaMarkupField(application='forum')
-    store_date = models.DateTimeField(default=datetime.utcnow)
+    store_date = models.DateTimeField(default=dj_timezone.now)
     post = models.ForeignKey('forum.Post', related_name='revisions', on_delete=models.CASCADE)
 
     def get_absolute_url(self, action='restore'):
@@ -814,7 +815,7 @@ class Post(models.Model, LockableObject):
     lock_key_base = 'forum/post_lock'
 
     position = models.IntegerField(default=None, db_index=True)
-    pub_date = models.DateTimeField(default=datetime.utcnow, db_index=True)
+    pub_date = models.DateTimeField(default=dj_timezone.now, db_index=True)
     hidden = models.BooleanField(default=False)
     text = InyokaMarkupField(application='forum')
     has_revision = models.BooleanField(default=False)
@@ -1245,8 +1246,7 @@ class Attachment(models.Model):
             return False
 
         attachments = Attachment.objects.filter(id__in=att_ids, post=None).all()
-
-        base_path = datetime.utcnow().strftime('forum/attachments/%S/%W')
+        base_path = dj_timezone.now().strftime('forum/attachments/%S/%W')
 
         for attachment in attachments:
             new_name = secure_filename('%d-%s' % (post.pk, attachment.name))
@@ -1386,7 +1386,7 @@ class PollVote(models.Model):
 
 class Poll(models.Model):
     question = models.CharField(max_length=250)
-    start_time = models.DateTimeField(default=datetime.utcnow)
+    start_time = models.DateTimeField(default=dj_timezone.now)
     end_time = models.DateTimeField(null=True)
     multiple_votes = models.BooleanField(default=False)
 
@@ -1405,7 +1405,7 @@ class Poll(models.Model):
     @property
     def ended(self):
         """Returns a boolean whether the poll ended already"""
-        return self.end_time and datetime.utcnow() > self.end_time
+        return self.end_time and dj_timezone.now() > self.end_time
 
     @deferred
     def can_vote(self):

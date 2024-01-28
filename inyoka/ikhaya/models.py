@@ -16,6 +16,8 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
+from django.db.models.functions import Now
+from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy
 
@@ -52,13 +54,11 @@ class ArticleManager(models.Manager):
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
-                q = q.filter(Q(pub_date__lt=datetime.utcnow().date()) |
-                             Q(pub_date=datetime.utcnow().date(),
-                               pub_time__lte=datetime.utcnow().time()))
+                q = q.filter(Q(pub_date__lt=Now()) |
+                             Q(pub_date=Now(), pub_time__lte=Now()))
             else:
-                q = q.filter(Q(pub_date__gt=datetime.utcnow().date()) |
-                             Q(pub_date=datetime.utcnow().date(),
-                               pub_time__gte=datetime.utcnow().time()))
+                q = q.filter(Q(pub_date__gt=Now()) |
+                             Q(pub_date=Now(), pub_time__gte=Now()))
         return q
 
     def get_cached(self, keys):
@@ -145,8 +145,8 @@ class EventManager(models.Manager):
 
     def get_upcoming(self, count=10):
         return self.get_queryset().order_by('date').filter(Q(visible=True) & (
-            (Q(enddate__gte=datetime.utcnow()) & Q(date__lte=datetime.utcnow())) |
-            (Q(date__gte=datetime.utcnow()))))[:count]
+            (Q(enddate__gte=Now()) & Q(date__lte=Now())) |
+            (Q(date__gte=Now()))))[:count]
 
 
 class Category(models.Model):
@@ -242,7 +242,7 @@ class Article(models.Model, LockableObject):
         Article that are not published or whose pub_date is in the future
         aren't shown for a normal user.
         """
-        return not self.public or self.pub_datetime > datetime.utcnow()
+        return not self.public or self.pub_datetime > dj_timezone.now()
 
     @property
     def comments(self):
@@ -358,7 +358,7 @@ class Suggestion(models.Model):
     objects = SuggestionManager()
 
     author = models.ForeignKey(User, related_name='suggestion_set', on_delete=models.CASCADE)
-    pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
+    pub_date = models.DateTimeField('Datum', default=dj_timezone.now)
     title = models.CharField(gettext_lazy('Title'), max_length=100)
     text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='ikhaya')
     intro = InyokaMarkupField(verbose_name=gettext_lazy('Introduction'), application='ikhaya')
@@ -505,7 +505,7 @@ class Event(models.Model):
 
     def _construct_datetimes(self, day, time):
         if not day:
-            day = datetime.utcnow().date()
+            day = dj_timezone.localdate() ## TODO check
         return datetime_to_timezone(datetime.combine(day, time))
 
     @property

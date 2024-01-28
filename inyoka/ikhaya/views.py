@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils import timezone as dj_timezone
 from django.utils.dates import MONTHS
 from django.utils.html import escape
 from django.utils.text import Truncator
@@ -177,7 +178,7 @@ def detail(request, year, month, day, slug):
     except (IndexError, ValueError):
         raise Http404()
     preview = None
-    if article.hidden or article.pub_datetime > datetime.utcnow():
+    if article.hidden or article.pub_datetime > dj_timezone.now():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
             return AccessDeniedResponse()
         messages.info(request, _('This article is not visible for regular '
@@ -209,7 +210,7 @@ def detail(request, year, month, day, slug):
                 c = Comment(text=data['text'])
                 c.article = article
                 c.author = request.user
-                c.pub_date = datetime.utcnow()
+                c.pub_date = dj_timezone.now()
                 messages.success(request, _('Your comment was created.'))
             c.save()
             if send_subscribe:
@@ -376,7 +377,7 @@ def article_subscribe(request, year, month, day, slug):
             int(day)), slug)])[0]
     except (IndexError, ValueError):
         raise Http404()
-    if article.hidden or article.pub_datetime > datetime.utcnow():
+    if article.hidden or article.pub_datetime > dj_timezone.now():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
             return AccessDeniedResponse()
     try:
@@ -434,7 +435,7 @@ def report_new(request, year, month, day, slug):
                 report = Report(text=data['text'])
                 report.article = article
                 report.author = request.user
-                report.pub_date = datetime.utcnow()
+                report.pub_date = dj_timezone.now()
                 report.save()
                 cache.delete('ikhaya/reported_article_count')
                 messages.success(request, _('Thanks for your report.'))
@@ -628,7 +629,7 @@ def suggest_delete(request, suggestion):
                 msg.author = request.user
                 msg.subject = _('Article suggestion deleted')
                 msg.text = render_template('mails/suggestion_rejected.txt', args)
-                msg.pub_date = datetime.utcnow()
+                msg.pub_date = dj_timezone.now()
                 recipients = [s.author]
                 msg.send(recipients)
                 # send notification

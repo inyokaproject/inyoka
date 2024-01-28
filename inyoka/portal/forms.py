@@ -31,6 +31,7 @@ from django.db.models import CharField, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
 from django.forms import HiddenInput, modelformset_factory
+from django.utils import timezone as dj_timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
@@ -558,12 +559,15 @@ class EditUserStatusForm(forms.ModelForm):
         """Keep the user from setting banned_until if status is not banned.
         """
         data = self.cleaned_data
+
         if not data.get('banned_until'):
             return data
+
         if int(data['status']) != User.STATUS_BANNED:
             raise forms.ValidationError(_('The user is not banned'))
-        if data['banned_until'] < datetime.datetime.utcnow():
+        if data['banned_until'] < dj_timezone.now():
             raise forms.ValidationError(_('The point of time is in the past.'))
+
         return data
 
 

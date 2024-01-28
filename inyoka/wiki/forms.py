@@ -10,6 +10,7 @@
 from datetime import datetime
 
 from django import forms
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
@@ -159,7 +160,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
             data['text'] = merge(old=self.old_rev.text.value,
                                  other=self.latest_rev.text.value,
                                  new=data['text'])
-            data['edit_time'] = datetime.utcnow()
+            data['edit_time'] = dj_timezone.now()
             self.data = data
             self.add_error('text', _('Somebody else edited the page while you '
                                      'were making your changes. We tried to '

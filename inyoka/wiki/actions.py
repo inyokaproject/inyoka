@@ -24,6 +24,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import models, transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
@@ -512,7 +513,7 @@ def do_edit(request, name, rev=None):
             page.edit(user=request.user,
                       text=form.cleaned_data['text'],
                       note=form.cleaned_data['note'],
-                      change_date=datetime.utcnow(),
+                      change_date=dj_timezone.now(),
                       deleted=None)
             current_rev = page.rev
             send_edit_notifications(user=request.user,
@@ -524,7 +525,7 @@ def do_edit(request, name, rev=None):
         form = PageEditForm(user=request.user,
                             name=name)
         form.initial = {'text': page.rev.text.value,
-                        'edit_time': datetime.utcnow(),
+                        'edit_time': dj_timezone.now(),
                         'revision': page.rev.id}
 
     return {

@@ -29,7 +29,7 @@ from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.middleware.csrf import REASON_NO_REFERER, REASON_NO_CSRF_COOKIE
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+from django.utils import timezone as dj_timezone
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.html import escape
 from django.utils.translation import gettext as _
@@ -567,7 +567,7 @@ def usercp_settings(request):
             for key, value in data.items():
                 request.user.settings[key] = data[key]
                 if key == 'timezone':
-                    timezone.activate(data[key])
+                    dj_timezone.activate(data[key])
                     request.session['django_timezone'] = data[key]
             request.user.save(update_fields=['settings'])
             messages.success(request, _('Your settings were successfully changed.'))
@@ -582,7 +582,7 @@ def usercp_settings(request):
             'notifications': settings.get('notifications', [c[0] for c in
                                                     NOTIFICATION_CHOICES]),
             'ubuntu_version': ubuntu_version,
-            'timezone': timezone.get_current_timezone(),
+            'timezone': dj_timezone.get_current_timezone(),
             'hide_avatars': settings.get('hide_avatars', False),
             'hide_signatures': settings.get('hide_signatures', False),
             'hide_profile': settings.get('hide_profile', False),
@@ -771,7 +771,7 @@ def user_edit_settings(request, username):
         'notifications': user.settings.get('notifications',
             [c[0] for c in NOTIFICATION_CHOICES]),
         'ubuntu_version': ubuntu_version,
-        'timezone': timezone.get_current_timezone(),
+        'timezone': dj_timezone.get_current_timezone(),
         'hide_avatars': user.settings.get('hide_avatars', False),
         'hide_signatures': user.settings.get('hide_signatures', False),
         'hide_profile': user.settings.get('hide_profile', False),
@@ -1017,7 +1017,7 @@ def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
     # he can only send one pm every 5 minutes
     form_class = PrivateMessageForm
-    if (not request.user.post_count and request.user.date_joined > (datetime.utcnow() - timedelta(days=7))):
+    if (not request.user.post_count and request.user.date_joined > (dj_timezone.now() - timedelta(days=7))):
         form_class = PrivateMessageFormProtected
     preview = None
     form = form_class()
@@ -1095,7 +1095,7 @@ def privmsg_new(request, username=None):
                 msg.author = request.user
                 msg.subject = d['subject']
                 msg.text = d['text']
-                msg.pub_date = datetime.utcnow()
+                msg.pub_date = dj_timezone.now()
                 msg.send(list(recipients))
                 # send notification
                 for recipient in recipients:
@@ -1410,7 +1410,7 @@ def calendar_month(request, year, month):
         'days': days,
         'year': year,
         'month': month,
-        'today': datetime.utcnow().date(),
+        'today': dj_timezone.localdate(),
         'MONTHS': MONTHS,
         'WEEKDAYS': WEEKDAYS,
     }
@@ -1422,8 +1422,8 @@ def calendar_overview(request):
 
     return {
         'events': events,
-        'year': datetime.utcnow().year,
-        'month': datetime.utcnow().month,
+        'year': dj_timezone.now().year,
+        'month': dj_timezone.now().month,
         'MONTHS': MONTHS,
         'WEEKDAYS': WEEKDAYS,
     }
@@ -1472,7 +1472,7 @@ def calendar_ical(request, slug):
     ievent = iEvent()
     ievent.add('summary', event.name)
     ievent.add('uid', slug)
-    ievent.add('dtstamp', datetime.utcnow())
+    ievent.add('dtstamp', dj_timezone.now())
     ievent.add('dtstart', start)
     ievent.add('dtend', end)
     if event.description:

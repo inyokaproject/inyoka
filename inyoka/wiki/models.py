@@ -94,11 +94,11 @@ from django.utils.translation import gettext as _, to_locale, get_language
 from django.utils.translation import gettext_lazy
 from functools import partial
 from hashlib import sha1
+from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
 from werkzeug.utils import secure_filename
 
 import locale
-from inyoka import default_settings
 from inyoka.markup import nodes, templates, base as markup
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
@@ -605,7 +605,7 @@ class PageManager(models.Manager):
             raise TypeError('either user or remote addr required')
         page = Page(name=name)
         if change_date is None:
-            change_date = datetime.utcnow()
+            change_date = dj_timezone.now()
         if isinstance(text, str):
             text, created = Text.objects.get_or_create(value=text)
         if note is None:
@@ -1099,7 +1099,7 @@ class Page(models.Model):
             attachment = att
 
         if change_date is None:
-            change_date = datetime.utcnow()
+            change_date = dj_timezone.now()
 
         self.rev = Revision(page=self, text=text, user=user,
                             change_date=change_date, note=note,
@@ -1355,7 +1355,7 @@ class Revision(models.Model):
              'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated else None),
-                           change_date=datetime.utcnow(),
+                           change_date=dj_timezone.now(),
                            note=note, deleted=False,
                            remote_addr=remote_addr or '127.0.0.1',
                            attachment=self.attachment)

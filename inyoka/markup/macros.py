@@ -26,6 +26,7 @@
 """
 from datetime import datetime
 
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
@@ -297,7 +298,7 @@ class Date(Macro):
 
     def build_node(self, context, format):
         if self.now:
-            date = datetime.utcnow()
+            date = dj_timezone.now()
         else:
             date = self.date
 
