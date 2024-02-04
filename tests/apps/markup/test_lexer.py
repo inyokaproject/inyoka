@@ -306,3 +306,7 @@ class TestLexer(unittest.TestCase):
         expect('text', 'text`text')
         expect('escaped_code_end')
         expect('eof')
+
+    def test_control_characters_stripped(self):
+        expect = lexer.tokenize('\x00\x07\x08\x0f').expect
+        expect('eof')
