@@ -182,6 +182,11 @@ def send_activation_mail(user):
 
 
 class UserManager(BaseUserManager):
+
+    CACHE_KEY_ANONYMOUS_USER = 'portal:user:anonymous'
+    CACHE_KEY_SYSTEM_USER = 'portal:user:system'
+    CACHE_USER_TIMEOUT = 5 * 60  # seconds
+
     def get_by_username_or_email(self, name):
         """Get a user by its username or email address"""
         try:
@@ -239,7 +244,10 @@ class UserManager(BaseUserManager):
         return user
 
     def get_anonymous_user(self):
-        return User.objects.get(username__iexact=settings.ANONYMOUS_USER_NAME)
+        def from_db():
+            return User.objects.get(username__iexact=settings.ANONYMOUS_USER_NAME)
+
+        return cache.get_or_set(self.CACHE_KEY_ANONYMOUS_USER, from_db, timeout=self.CACHE_USER_TIMEOUT)
 
     def get_system_user(self):
         """
@@ -247,7 +255,10 @@ class UserManager(BaseUserManager):
         is the sender for welcome notices, it updates the antispam list and
         is the owner for log entries in the wiki triggered by inyoka itself.
         """
-        return User.objects.get(username__iexact=settings.INYOKA_SYSTEM_USER)
+        def from_db():
+            return User.objects.get(username__iexact=settings.INYOKA_SYSTEM_USER)
+
+        return cache.get_or_set(self.CACHE_KEY_SYSTEM_USER, from_db, timeout=self.CACHE_USER_TIMEOUT)
 
 
 def upload_to_avatar(instance, filename):

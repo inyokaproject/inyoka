@@ -34,10 +34,12 @@ def step_impl(context, username, status_string):
 @given('I have the permission "{permission}"')
 def step_impl(context, permission):
     from guardian.shortcuts import assign_perm
+    from inyoka.portal.user import UserManager
 
     group = context.user.groups.get_queryset()[0]
     assign_perm(permission, group)
     cache.delete_pattern('/acl/*')
+    cache.delete_many([UserManager.CACHE_KEY_ANONYMOUS_USER, UserManager.CACHE_KEY_SYSTEM_USER])
 
 
 @step('a "{item}" with caption "{caption}" exists')

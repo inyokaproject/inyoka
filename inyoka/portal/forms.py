@@ -46,7 +46,7 @@ from inyoka.portal.user import (
     send_new_email_confirmation,
     set_new_email,
     reactivate_user,
-    reset_email, UserBanned
+    reset_email, UserBanned, UserManager
 )
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
@@ -813,6 +813,7 @@ class GroupGlobalPermissionForm(forms.Form):
             for app in self.MANAGED_APPS:
                 self._sync_permissions(app)
             cache.delete_pattern('/acl/*')
+            cache.delete_many([UserManager.CACHE_KEY_ANONYMOUS_USER, UserManager.CACHE_KEY_SYSTEM_USER])
 
     def __init__(self, *args, **kwargs):
         initial = {}
@@ -903,6 +904,7 @@ class GroupForumPermissionForm(forms.Form):
             for perm in delete_permissions:
                 remove_perm(perm, self.instance, forum)
         cache.delete_pattern('/acl/*')
+        cache.delete_many([UserManager.CACHE_KEY_ANONYMOUS_USER, UserManager.CACHE_KEY_SYSTEM_USER])
 
 
 class PrivateMessageForm(forms.Form):

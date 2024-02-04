@@ -1610,7 +1610,7 @@ class TestPostFeed(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(7):
             self.client.get('/feeds/full/50/')
 
     def test_topic_hidden(self):
@@ -1723,7 +1723,7 @@ class TestPostForumFeed(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(7):
             self.client.get(f'/feeds/forum/{self.forum.name}/full/50/')
 
     def test_child_forum(self):
@@ -1862,7 +1862,7 @@ class TestTopicFeed(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(7):
             self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
 
     def test_multiple_posts(self):
