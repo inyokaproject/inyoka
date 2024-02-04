@@ -97,6 +97,7 @@ _url_pattern = (
 
 rules = {
     'everything': ruleset(
+        rule(r'[\x00-\x08\x0B-\x0C\x0E-\x1F]', None),  # ignore control character
         include('block'),
         include('inline'),
         include('links')

@@ -1874,6 +1874,13 @@ class TestTopicFeed(TestCase):
         feed = feedparser.parse(response.content)
         self.assertEqual(len(feed.entries), 2)
 
+    def test_post_with_control_characters(self):
+        Post.objects.create(author=self.user, topic=self.topic, text='control characters \x08 \x0f in text',
+                            pub_date=self.now)
+
+        response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertIn(self.topic.title, response.content.decode())
+
     def test_topic_hidden(self):
         topic = Topic.objects.create(forum=self.forum, author=self.user, title='hidden topic', hidden=True)
 
