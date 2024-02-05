@@ -77,6 +77,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
+from typing import Optional
 
 import magic
 import random
@@ -87,6 +88,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
+from django.db.models.functions import Upper
 from django.utils.html import escape
 from django.utils.translation import gettext as _, to_locale, get_language
 from django.utils.translation import gettext_lazy
@@ -403,21 +405,23 @@ class PageManager(models.Manager):
         """
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
+
         cache_key = f'wiki/page/{name.lower()}'
         rev = cache.get(cache_key) if cached else None
         if rev is None:
             try:
-                rev = Revision.objects.select_related('page', 'text', 'user') \
-                                      .defer('user__forum_read_status') \
-                                      .filter(page__name__iexact=name) \
-                                      .latest()
-            except Revision.DoesNotExist:
+                page = (Page.objects.select_related('last_rev__text', 'last_rev__user', 'last_rev__attachment',
+                                                    'last_rev__page__last_rev__attachment')
+                        .defer('last_rev__user__forum_read_status').get(name__iexact=name))
+            except Page.DoesNotExist:
+                # check for accents like ö, é, à
                 existing = self.get_by_slug(name)
                 if existing:
-                    if Page.objects.filter(name=existing).exists():
-                        page = Page.objects.get_by_name(existing, cached, raise_on_deleted, exclude_privileged)
-                        raise CaseSensitiveException(page)
+                    page = Page.objects.get_by_name(existing, cached, raise_on_deleted, exclude_privileged)
+                    raise CaseSensitiveException(page)
                 raise Page.DoesNotExist()
+
+            rev = page.last_rev
             if cached:
                 try:
                     cachetime = int(rev.page.metadata['X-Cache-Time'][0]) or None
@@ -428,7 +432,7 @@ class PageManager(models.Manager):
         page = rev.page
         page.rev = rev
 
-        # If the page exists but it has another case, raise an exception
+        # If the page exists, but it has another case, raise an exception
         # with the right case.
         if rev.page.name != name:
             raise CaseSensitiveException(rev.page)
@@ -479,17 +483,24 @@ class PageManager(models.Manager):
                                 .values_list('page__name', flat=True)
         return pages
 
-    def attachment_for_page(self, page_name):
+    def attachment_for_page(self, page_name: str) -> Optional[str]:
         """
         Get the internal filename of the attachment attached to the page
         provided.  If the page does not exist or it doesn't have an attachment
         defined the return value will be `None`.
         """
-        attachments = Revision.objects.filter(page__name__iexact=page_name, deleted=False) \
-                              .values_list('attachment__file')\
-                              .annotate(Max('id')).order_by('-id')[:1]
-        if attachments:
-            return attachments[0][0]
+        try:
+            page = Page.objects.get_by_name(page_name)
+        except Page.DoesNotExist:
+            return None
+        except CaseSensitiveException as e:
+            page = e.page
+
+        attachment = page.last_rev.attachment
+        if not attachment:
+            return None
+
+        return attachment.file.name
 
     def render_all_pages(self):
         """
@@ -1156,6 +1167,9 @@ class Page(models.Model):
         ordering = ['name']
         verbose_name = gettext_lazy('Wiki page')
         verbose_name_plural = gettext_lazy('Wiki pages')
+        indexes = [
+            models.Index(Upper('name'), name='upper_page_name_idx'),
+        ]
 
 
 class Attachment(models.Model):

@@ -67,6 +67,26 @@ class TestPageManager(TestCase):
         with self.assertRaises(Page.DoesNotExist):
             Page.objects.get_by_name('Döwnloads')
 
+    def test_get_by_name__queries_used(self):
+        Page.objects.create('Test', 'test content')
+
+        with self.assertNumQueries(2):
+            Page.objects.get_by_name('Test')
+
+    def test_get_by_name__case_queries_used(self):
+        Page.objects.create('Test', 'test content')
+
+        with self.assertNumQueries(2):
+            with self.assertRaises(CaseSensitiveException):
+                Page.objects.get_by_name('test')
+
+    def test_get_by_name__accent_queries_used(self):
+        Page.objects.create('Downloads', 'test content')
+
+        with self.assertNumQueries(4):
+            with self.assertRaises(CaseSensitiveException):
+                Page.objects.get_by_name('Döwnloads')
+
     def test_get_missing(self):
         """
         Tests, that get_missing returns a dict with the correct content.
@@ -190,3 +210,21 @@ class TestAttachment(TestCase):
 
         attachment = Page.objects.attachment_for_page('Döwnloads/evil.png')
         self.assertIsNone(attachment)
+
+    def test_attachment_for_page__different_case__queries(self):
+        with open(path.join(BASE_PATH, self.FILE_EVIL), 'rb') as f:
+            upload_object = SimpleUploadedFile(f.name, f.read())
+            page = Page.objects.create('test/evil.png', attachment_filename='evil.png', attachment=upload_object,
+                                       text='foo', note='create')
+
+        with self.assertNumQueries(2):
+            Page.objects.attachment_for_page(page.name.upper())
+
+    def test_attachment_for_page__accent__queries(self):
+        with open(path.join(BASE_PATH, self.FILE_EVIL), 'rb') as f:
+            upload_object = SimpleUploadedFile(f.name, f.read())
+            Page.objects.create('Downloads/evil.png', attachment_filename='evil.png', attachment=upload_object,
+                                text='foo', note='create')
+
+        with self.assertNumQueries(2):
+            Page.objects.attachment_for_page('Döwnloads/evil.png')
