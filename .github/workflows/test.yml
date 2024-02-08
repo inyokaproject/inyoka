@@ -22,7 +22,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         persist-credentials: false
 
@@ -34,7 +34,7 @@ jobs:
       id: checkout-branch
       continue-on-error: true
       if: ${{ !github.event.pull_request }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: inyokaproject/theme-ubuntuusers
         ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }} # ssh key of inyokatestci, read only, see https://docs.github.com/en/actions/reference/encrypted-secrets
@@ -45,7 +45,7 @@ jobs:
       id: checkout-pr
       continue-on-error: true
       if: ${{ github.event.pull_request }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ github.event.pull_request.head.repo.owner.login }}/theme-ubuntuusers
         ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
@@ -54,7 +54,7 @@ jobs:
         persist-credentials: false
     - name: "Checkout fallback theme: repo theme-ubuntuusers, staging branch"
       if: steps.checkout-branch.outcome == 'failure' || steps.checkout-pr.outcome == 'failure'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: inyokaproject/theme-ubuntuusers
         ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
@@ -63,13 +63,13 @@ jobs:
         persist-credentials: false
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Cache venv
       id: cache-venv
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/venv/
         key: ${{ runner.os }}-venv-py${{ matrix.python-version }}-${{ hashFiles(env.REQUIREMENTS_FILE) }}
@@ -140,7 +140,7 @@ jobs:
     - name: Compress coverage report
       run: zip htmlcov.zip -r htmlcov
     - name: Save coverage report for tests
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-py${{ matrix.python-version }}-${{ matrix.database }}
         path: htmlcov.zip
@@ -165,7 +165,7 @@ jobs:
       run: zip bdd_coverage.zip -r bdd_coverage
     - name: Save BDD results
       if: ${{ matrix.database == 'postgresql' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: BDD-coverage-py${{ matrix.python-version }}-${{ matrix.database }}
         path: bdd_coverage.zip
@@ -181,7 +181,7 @@ jobs:
       run: zip doc.zip -r docs/build/html
     - name: Save documentation
       if: ${{ matrix.build_docs }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: 'Inyoka_Documentation'
         path: doc.zip
@@ -192,7 +192,7 @@ jobs:
       run: zip static-collected.zip -r inyoka/static-collected
     - name: Save statics
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_docs }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: 'Static_files'
         path: static-collected.zip
