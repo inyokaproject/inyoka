@@ -27,6 +27,11 @@ Inyoka Changelog
 Unreleased 0.32.0 (2024-02-DD)
 =====================
 
+Deployment notes
+----------------
+
+#. Update requirements
+
 ✨ New features
 ---------------
 
@@ -46,7 +51,7 @@ Unreleased 0.32.0 (2024-02-DD)
 
 🔒 Security
 -----------
-
+* Update requirements (at least the dependencies ``Django`` include known security fixes)
 
 0.31.0 (2024-01-13)
 ===================
