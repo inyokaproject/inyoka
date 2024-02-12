@@ -43,6 +43,9 @@ Deployment notes
 * Migrate from ``setup.py`` to ``pyproject.toml``
 * Introduce ruff for code formatting
 * Render ``<mark>`` for highlighted text
+* Control characters are stripped from all HTTP-POST parameters
+* Documentation: Now possible to use Markdown
+* Documentation is now published at https://doc.inyokaproject.org/
 
 🗑 Deprecations
 --------------
