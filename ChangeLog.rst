@@ -31,12 +31,14 @@ Deployment notes
 ----------------
 
 #. Update requirements
+#. Execute database migration
 
 ✨ New features
 ---------------
 
 🏗 Changes
 ----------
+* Add index for username in uppercase. This should speed-up the case-insensitive queries (at least on postgreSQL).
 
 🗑 Deprecations
 --------------
@@ -50,6 +52,7 @@ Deployment notes
 --------
 
 * Display message instead of server-error, if username was not taken during form-validation at registration, but at DB-insertion
+* Strip control characters in Inyoka's markup lexer. This will fix server errors for feeds.
 
 🔒 Security
 -----------
