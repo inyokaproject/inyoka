@@ -13,6 +13,7 @@ from functools import partial
 
 from datetime import date, datetime, timedelta
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db import IntegrityError
 from icalendar import Calendar as iCal, Event as iEvent
 from time import time
 
@@ -245,17 +246,23 @@ def register(request):
         form.captcha_solution = request.session.get('captcha_solution')
         if form.is_valid():
             data = form.cleaned_data
-            user = User.objects.register_user(
-                username=data['username'],
-                email=data['email'],
-                password=data['password'])
 
-            messages.success(request,
-                _('The username “%(username)s” was successfully registered. '
-                  'An email with the activation key was sent to '
-                  '“%(email)s”.') % {
-                      'username': escape(user.username),
-                      'email': escape(user.email)})
+            try:
+                user = User.objects.register_user(
+                    username=data['username'],
+                    email=data['email'],
+                    password=data['password'])
+            except IntegrityError:
+                messages.info(request,
+                              _('Please check whether you received an email with the activation key. If not, try '
+                                'to register with another user name or email-address.'))
+            else:
+                messages.success(request,
+                    _('The username “%(username)s” was successfully registered. '
+                      'An email with the activation key was sent to '
+                      '“%(email)s”.') % {
+                          'username': escape(user.username),
+                          'email': escape(user.email)})
 
             # clean up request.session
             request.session.pop('captcha_solution', None)

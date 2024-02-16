@@ -24,6 +24,39 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+Unreleased 0.32.0 (2024-02-DD)
+=====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+#. Execute database migration
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+* Add index for username in uppercase. This should speed-up the case-insensitive queries (at least on postgreSQL).
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+* in the Wiki the ``Include`` macro was removed
+
+🐛 Fixes
+--------
+
+* Display message instead of server-error, if username was not taken during form-validation at registration, but at DB-insertion
+* Strip control characters in Inyoka's markup lexer. This will fix server errors for feeds.
+
+🔒 Security
+-----------
+* Update requirements (at least the dependencies ``Django`` include known security fixes)
 
 0.31.0 (2024-01-13)
 ===================

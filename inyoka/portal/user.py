@@ -24,6 +24,7 @@ from django.core import signing
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
+from django.db.models.functions import Upper
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import gettext as _
@@ -547,6 +548,9 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         permissions = (
             ('subscribe_user', 'Can subscribe Users'),
         )
+        indexes = [
+            models.Index(Upper('username'), name='upper_username_idx'),
+        ]
 
 
 class UserPage(models.Model):

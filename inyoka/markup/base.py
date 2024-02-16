@@ -199,18 +199,18 @@ class Parser:
     via the public `parse()` function of this module.  The behavior of this
     class in multithreaded environments is undefined (might change from
     revision to revision) and the `parse()` function knows how to handle that.
-    Either be reusing parsers if safe, locking or reinstanciating.
+    Either be reusing parsers if safe, locking or reinstantiating.
 
-    This parser should be considered a private class.  All of the attributes
+    This parser should be considered a private class.  All the attributes
     and methods exists for the internal parsing process.  As long as you don't
     extend the parser you should only use the `parse()` function (except of
-    parser unittests which can savely user the `Parser` class itself).
+    parser unittests which can safely use the `Parser` class itself).
     """
 
     def __init__(self, string, transformers=None, wiki_force_existing=False):
         """
-        In theory you never have to instanciate this parser yourself because
-        the high level `parse()` function encapsulates this.  However for the
+        In theory, you never have to instantiate this parser yourself because
+        the high level `parse()` function encapsulates this.  However, for the
         unittests it's important to be able to disable and enable the
         `transformers` by hand.  If you don't provide any transformers the
         default transformers are used.
