@@ -227,6 +227,7 @@ MIDDLEWARE = (
     'inyoka.middlewares.tz.TimezoneMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django_hosts.middleware.HostsResponseMiddleware',
 )
 
