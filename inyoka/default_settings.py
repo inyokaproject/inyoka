@@ -243,6 +243,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.humanize',
     'django.contrib.auth',
+    'django.forms',
     'inyoka.forum.apps.ForumAppConfig',
     'inyoka.portal.apps.PortalAppConfig',
     'inyoka.wiki.apps.WikiAppConfig',
@@ -408,6 +409,8 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.SHA1PasswordHasher',
     'inyoka.utils.user.UnsaltedMD5PasswordHasher',
 )
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 TEMPLATES = [
     {
