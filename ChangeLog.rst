@@ -28,12 +28,15 @@ Unreleased 0.33.0 (2024-MM-DD)
 =====================
 
 #. Update requirements
+#. Execute database migration
 
 ✨ New features
 ---------------
 
 🏗 Changes
 ----------
+
+* Wiki: Refactor queries for wiki page to be more efficient
 
 🗑 Deprecations
 --------------
