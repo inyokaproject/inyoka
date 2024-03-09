@@ -24,8 +24,8 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-Unreleased 0.33.0 (2024-MM-DD)
-=====================
+0.33.0 (2024-03-09)
+===================
 
 #. Update requirements
 #. Execute database migration
