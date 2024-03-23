@@ -167,6 +167,7 @@ class TestCase(_TestCase):
     """
 
     def _post_teardown(self):
+        """Flush cache"""
         super()._post_teardown()
         content_cache = caches['content']
         content_cache.delete_pattern("*")
