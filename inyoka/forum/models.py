@@ -192,6 +192,7 @@ class ForumManager(models.Manager):
                         posts of the topic from being a potential new last post.
         `exclude_post` should be used when a post is deleted to exclude the post
                        from being a potential last post.
+
         Both parameters are needed, as a topic/post can not be deleted, if they are
         still referenced by a forum.
         """
