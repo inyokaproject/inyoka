@@ -239,6 +239,24 @@ class TestEventModel(TestCase):
         self.assertEqual(list(Event.objects.get_upcoming()),
             [event3, event1, event2])
 
+    def test__coordinates_url__no_coordinates(self):
+        event = Event.objects.create(name='Event1',
+                                     date=datetime.utcnow().date(),
+                                     author=self.user, visible=True,
+                                     )
+
+        self.assertIsNone(event.coordinates_url)
+
+    def test__coordinates_url(self):
+        event = Event.objects.create(name='Event1',
+                                     date=datetime.utcnow().date(),
+                                     author=self.user, visible=True,
+                                     location_long=13.37871,
+                                     location_lat=52.5139
+                                     )
+
+        self.assertEqual('https://www.openstreetmap.org/?mlat=52.5139&mlon=13.37871', event.coordinates_url)
+
 
 class TestComments(TestCase):
     def setUp(self):

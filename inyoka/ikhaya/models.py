@@ -9,6 +9,8 @@
 """
 from datetime import datetime
 from operator import attrgetter, itemgetter
+from typing import Optional
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.core.cache import cache
@@ -487,15 +489,18 @@ class Event(models.Model):
         return '%s;%s' % (self.location_lat, self.location_long)
 
     @property
-    def coordinates_url(self):
-        latitude = (self.location_lat > 0 and
-               '%g_N' % self.location_lat or
-               '%g_S' % -self.location_lat)
-        longitude = (self.location_long > 0 and
-                '%g_E' % self.location_long or
-                '%g_W' % -self.location_long)
-        return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
-               '=de&params=%s_%s' % (latitude, longitude)
+    def coordinates_url(self) -> Optional[str]:
+        """Create a link to openstreetmap that shows details to a provided location"""
+        if not self.location_long or not self.location_lat:
+            return None
+
+        query_parameter = {
+            'mlat': self.location_lat,
+            'mlon': self.location_long,
+        }
+        query_parameter = urlencode(query_parameter)
+
+        return f'https://www.openstreetmap.org/?{query_parameter}'
 
     def _construct_datetimes(self, day, time):
         if not day:
