@@ -298,6 +298,8 @@ class Article(models.Model, LockableObject):
         pubdt = datetime.combine(self.pub_date, self.pub_time)
         if not self.updated or self.updated < pubdt:
             self.updated = pubdt
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = {"updated"}.union(kwargs["update_fields"])
 
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
