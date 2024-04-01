@@ -441,7 +441,7 @@ ALLOWED_HOSTS = ['.ubuntuusers.de']
 FORMAT_MODULE_PATH = 'inyoka.locale'
 
 # Used for user.post_count, forum.topic_count etc.
-COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
+COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two days
 
 # disable anonymous user creating in django-guardian
 ANONYMOUS_USER_NAME = 'anonymous'
