@@ -169,7 +169,9 @@ class Category(models.Model):
         # only set the slug on first save.
         if not self.pk:
             self.slug = find_next_increment(Category, 'slug', slugify(self.name))
+
         super().save(*args, **kwargs)
+
         cache.delete('ikhaya/categories')
 
     class Meta:

@@ -13,6 +13,7 @@ import freezegun
 from django.conf import settings
 
 from inyoka.ikhaya.models import Article, Category, Event, Suggestion, Comment
+from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import url_for
@@ -87,6 +88,43 @@ class TestCategoryModel(TestCase):
             list(Category.objects.values_list('name', flat=True).all()),
             sorted(names)
         )
+
+    def test_save(self):
+        category = Category(name='name')
+        category.save()
+
+        self.assertEqual(Category.objects.count(), 1)
+
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'name')
+        self.assertEqual(category.slug, 'name')
+
+        category.name = 'b'
+        category.save()
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'b')
+        self.assertEqual(category.slug, 'name')
+
+    def test_save__update_fields(self):
+        category = Category(name='name')
+        category.save()
+
+        self.assertEqual(Category.objects.count(), 1)
+
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'name')
+        self.assertEqual(category.slug, 'name')
+        self.assertIsNone(category.icon)
+
+        category.name = 'b'
+        category.icon = StaticFile.objects.create(identifier='test_attachment.png')
+        category.save(update_fields=['name'])
+
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'b')
+        self.assertEqual(category.slug, 'name')
+        # still None as not included in update_fields
+        self.assertIsNone(category.icon)
 
 
 class TestSuggestionModel(TestCase):
