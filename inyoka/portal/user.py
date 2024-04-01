@@ -313,8 +313,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     def save(self, *args, **kwargs):
         """
-        Save method that dumps `self.settings` before and cleanup
-        the cache after saving the model.
+        Save method that cleanups the cache after saving the model.
         """
         super().save(*args, **kwargs)
         cache.delete_many(['portal/user/%s' % self.id,
