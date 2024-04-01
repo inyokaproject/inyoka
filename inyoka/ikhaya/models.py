@@ -408,7 +408,9 @@ class Comment(models.Model):
             self.article = Article.objects.get(id=self.article.id)
             self.article.comment_count = self.article.comment_count + 1
             self.article.save()
+
         super().save(*args, **kwargs)
+
         if self.id:
             cache.delete(f'ikhaya/comment/{self.id}')
 
@@ -451,7 +453,9 @@ class Event(models.Model):
         if not self.slug:
             name = self.date.strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
-        super(self.__class__, self).save(*args, **kwargs)
+
+        super().save(*args, **kwargs)
+
         cache.delete(f'ikhaya/event/{self.id}')
         cache.delete('ikhaya/event_count')
 
