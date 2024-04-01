@@ -36,8 +36,8 @@ def clear_surge_protection(request, form):
     """Clean errors in parent form so that submitting inherited forms
     don't raise any errors.
 
-    This function also cleanup the surge surge protection timer so
-    that we get no nasty hickups by just submitting an inherited form
+    This function also cleanup the surge protection timer so
+    that we get no nasty hiccups by just submitting an inherited form
     and sending the whole form afterwards.
     """
     # Cleanup errors in parent form if the main form was not send.
