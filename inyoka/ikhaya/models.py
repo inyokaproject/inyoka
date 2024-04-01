@@ -291,7 +291,6 @@ class Article(models.Model, LockableObject):
             # might happen, because cached objects are setting text and
             # intro to None to save some space
             raise ValueError('text and intro must not be null')
-        suffix_id = False
 
         # We need a local pubdt variable due to caching of self.pub_datetime
         pubdt = datetime.combine(self.pub_date, self.pub_time)
@@ -306,10 +305,6 @@ class Article(models.Model, LockableObject):
 
         super().save(*args, **kwargs)
 
-        # now that we have the article id we can put it into the slug
-        if suffix_id:
-            self.slug = '%s-%s' % (self.slug, self.id)
-            Article.objects.filter(id=self.id).update(slug=self.slug)
         cache.delete('ikhaya/archive')
         cache.delete(f'ikhaya/article_text/{self.id}')
         cache.delete(f'ikhaya/article_intro/{self.id}')
