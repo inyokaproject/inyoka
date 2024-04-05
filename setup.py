@@ -59,7 +59,7 @@ setup(
         'html5lib',
         'icalendar',
         'Jinja2',
-        'lxml',
+        'lxml[html_clean]',
         'Pillow',
         'psycopg2',
         'Pygments',
