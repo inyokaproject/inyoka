@@ -24,28 +24,38 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+Unreleased 0.34.0 (2024-04-06)
+=====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+🏗 Changes
+----------
+
+* Add documentation for release procedure
+* Update requirements (at least the dependency ``Pillow`` includes known security fixes)
+
+🐛 Fixes
+--------
+
+* Events: Link to openstreetmap, as geohack seems to be not reachable
+
 0.33.0 (2024-03-09)
 ===================
 
+Deployment notes
+----------------
+
 #. Update requirements
 #. Execute database migration
-
-✨ New features
----------------
 
 🏗 Changes
 ----------
 
 * Wiki: Refactor queries for wiki page to be more efficient
-
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
-
-🐛 Fixes
---------
 
 🔒 Security
 -----------
@@ -61,15 +71,9 @@ Deployment notes
 #. Update requirements
 #. Execute database migration
 
-✨ New features
----------------
-
 🏗 Changes
 ----------
 * Add index for username in uppercase. This should speed-up the case-insensitive queries (at least on postgreSQL).
-
-🗑 Deprecations
---------------
 
 🔥 Removals
 -----------
