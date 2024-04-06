@@ -24,7 +24,7 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-Unreleased 0.34.0 (2024-03-23)
+Unreleased 0.34.0 (2024-04-06)
 =====================
 
 Deployment notes
@@ -36,7 +36,12 @@ Deployment notes
 ----------
 
 * Add documentation for release procedure
-* Update requirements (no known security fixes)
+* Update requirements (at least the dependency ``Pillow`` includes known security fixes)
+
+🐛 Fixes
+--------
+
+* Events: Link to openstreetmap, as geohack seems to be not reachable
 
 0.33.0 (2024-03-09)
 ===================
