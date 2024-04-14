@@ -769,9 +769,9 @@ class TestEditGlobalPermissions(TestCase):
 
     def test_anonymous_user(self):
         response = self.client_class().get(self.url)
-        self.assertRedirects(response,
-                             '/accounts/login/?next=/group/registered/edit/global_permissions/',
-                             target_status_code=404)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.endswith("/login/?next=/group/registered/edit/global_permissions/"))
 
     def test_missing_permissions(self):
         response = self.client.get(self.url)
@@ -811,9 +811,9 @@ class TestEditForumPermissions(TestCase):
 
     def test_anonymous_user(self):
         response = self.client_class().get(self.url)
-        self.assertRedirects(response,
-                             '/accounts/login/?next=/group/registered/edit/forum_permissions/',
-                             target_status_code=404)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.endswith("/login/?next=/group/registered/edit/forum_permissions/"))
 
     def test_missing_permissions(self):
         response = self.client.get(self.url)

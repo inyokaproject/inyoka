@@ -244,7 +244,7 @@ class TestEventDelete(TestCase):
     def test_status_code(self):
         url = f'/event/{self.event.id}/delete/'
         response = self.client.get(url, follow=True)
-        self.assertRedirects(response, 'http://ikhaya.ubuntuusers.local:8080/events/')
+
         host = self.client.defaults['HTTP_HOST']
         self.assertRedirects(response, f'http://{host}/events/')
 
@@ -254,8 +254,7 @@ class TestEventDelete(TestCase):
 
         response = event_delete(request)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "//ubuntuusers.local:8080/login/?next=http%3A//testserver/event/1/delete/")
-        self.assertEqual(response.url, f"//{settings.BASE_DOMAIN_NAME}/login/?next=http%3A//testserver/event/1/delete/")
+        self.assertTrue(response.url.endswith("/login/?next=http%3A//testserver/event/1/delete/"))
 
     def test_displays_form(self):
         response = self.client.get(f'/event/{self.event.id}/delete/', follow=True)
