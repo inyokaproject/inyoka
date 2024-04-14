@@ -8,7 +8,6 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.auth.mixins import PermissionRequiredMixin as _PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,7 +22,6 @@ from inyoka.utils.http import TemplateResponse
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
-from inyoka.utils.urls import href
 
 
 def trigger_fix_errors_message(request):
@@ -155,7 +153,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     message = gettext_lazy('{verbose_name} “{object_name}” was deleted successfully!')
 
     def get_success_url(self):
-        self.sucess_url = self.redirect_url
+        self.success_url = self.redirect_url
         return super().get_success_url()
 
     def get(self, request, *args, **kwargs):
@@ -164,21 +162,22 @@ class BaseDeleteView(edit.BaseDeleteView):
             render_template(self.template_name, {'object': self.object}))
         return HttpResponseRedirect(self.redirect_url)
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.delete()
-
     def post(self, request, *args, **kwargs):
         if 'cancel' in request.POST:
             messages.info(request, _('Canceled.'))
         else:
             super().post(request, *args, **kwargs)
-            format_args = {
-                'verbose_name': self.model._meta.verbose_name,
-                'object_name': escape(str(self.object)),
-            }
-            messages.success(request, self.message.format(**format_args))
+
         return HttpResponseRedirect(self.redirect_url)
+
+    def form_valid(self, form):
+        format_args = {
+            'verbose_name': self.model._meta.verbose_name,
+            'object_name': escape(str(self.object)),
+        }
+        messages.success(self.request, self.message.format(**format_args))
+
+        return super().form_valid(form)
 
 
 class DeleteView(PermissionRequiredMixin, BaseDeleteView):
