@@ -254,7 +254,7 @@ class TestEventDelete(TestCase):
 
         response = event_delete(request)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.endswith("/login/?next=http%3A//testserver/event/1/delete/"))
+        self.assertTrue(response.url.endswith(f"/login/?next=http%3A//testserver/event/{self.event.id}/delete/"))
 
     def test_displays_form(self):
         response = self.client.get(f'/event/{self.event.id}/delete/', follow=True)
