@@ -19,8 +19,8 @@ from django.utils.dateparse import parse_datetime
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
-from inyoka.ikhaya.models import Article, Category, Comment, Report, Suggestion
-from inyoka.ikhaya.views import events
+from inyoka.ikhaya.models import Article, Category, Comment, Report, Suggestion, Event
+from inyoka.ikhaya.views import events, event_delete
 from inyoka.portal.user import User
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient, TestCase
@@ -216,6 +216,67 @@ class TestEventView(TestCase):
     def test_queries_needed(self):
         with self.assertNumQueries(10):
             self.client.get('/events/')
+
+
+class TestEventDelete(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = User.objects.register_user('test', 'test@example.test', password='test', send_mail=False)
+        group = Group.objects.create(name='test_event_group')
+        assign_perm('portal.delete_event', group)
+        assign_perm('portal.change_event', group)
+        group.user_set.add(self.user)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='test', password='test')
+
+        self.event = Event.objects.create(
+            name='Event',
+            date=datetime.datetime.utcnow().date() + datetime.timedelta(days=0),
+            enddate=datetime.datetime.utcnow().date() + datetime.timedelta(days=1),
+            author=self.user,
+            visible=False
+        )
+
+    def test_status_code(self):
+        url = f'/event/{self.event.id}/delete/'
+        response = self.client.get(url, follow=True)
+
+        host = self.client.defaults['HTTP_HOST']
+        self.assertRedirects(response, f'http://{host}/events/')
+
+    def test_anonymous_no_permission(self):
+        request = self.factory.get(f'/event/{self.event.id}/delete/')
+        request.user = User.objects.get_anonymous_user()
+
+        response = event_delete(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.endswith(f"/login/?next=http%3A//testserver/event/{self.event.id}/delete/"))
+
+    def test_displays_form(self):
+        response = self.client.get(f'/event/{self.event.id}/delete/', follow=True)
+        self.assertContains(response, 'Do you really want to delete the event')
+
+    def test_event_delete(self):
+        self.assertEqual(Event.objects.count(), 1)
+
+        response = self.client.post(f'/event/{self.event.id}/delete/', data={'submit': 'Delete'})
+        self.assertEqual(Event.objects.count(), 0)
+        self.assertEqual(response.status_code, 302)
+
+        host = self.client.defaults['HTTP_HOST']
+        self.assertEqual(response.url, f'http://{host}/events/')
+
+    def test_event_delete__message(self):
+        response = self.client.post(f'/event/{self.event.id}/delete/', data={'submit': 'Delete'}, follow=True)
+        self.assertContains(response, 'event “Event” was deleted successfully!')
+
+    def test_event_delete__cancel(self):
+        response = self.client.post(f'/event/{self.event.id}/delete/', data={'cancel': 'cancel'}, follow=True)
+        self.assertContains(response, 'Canceled.')
 
 
 class TestServices(TestCase):

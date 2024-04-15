@@ -13,6 +13,7 @@ import freezegun
 from django.conf import settings
 
 from inyoka.ikhaya.models import Article, Category, Event, Suggestion, Comment
+from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import url_for
@@ -70,6 +71,43 @@ class TestArticleModel(TestCase):
             '<a>Text 3</a>',
         )
 
+    def test_save__change_slug(self):
+        self.article1.slug = 'test-article'
+        self.article1.save()
+
+        self.article1.refresh_from_db()
+        self.assertEqual('test-article', self.article1.slug)
+
+    def test_save__slug_stable(self):
+        """Even if the subject is changed, the slug is still the same"""
+        self.article1.subject = 'b'
+        self.article1.save()
+
+        self.article1.refresh_from_db()
+        self.assertEqual('b', self.article1.subject)
+        self.assertEqual('article', self.article1.slug)
+
+    def test_updated(self):
+        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7), self.article1.updated)
+
+        self.article1.pub_date = date(2009, 7, 18)
+        self.article1.save()
+
+        self.article1.refresh_from_db()
+        # updated should be now also in 2009, even if not explicitly changed
+        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7), self.article1.updated)
+
+    def test_save_update__update_fields(self):
+        """Almost the same as test_updated -- except that `save()` uses update_fields"""
+        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7), self.article1.updated)
+
+        self.article1.pub_date = date(2009, 7, 18)
+        self.article1.save(update_fields=["pub_date"])
+
+        self.article1.refresh_from_db()
+        # updated should be now also in 2009, even if not explicitly changed
+        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7), self.article1.updated)
+
 
 class TestCategoryModel(TestCase):
 
@@ -87,6 +125,43 @@ class TestCategoryModel(TestCase):
             list(Category.objects.values_list('name', flat=True).all()),
             sorted(names)
         )
+
+    def test_save(self):
+        category = Category(name='name')
+        category.save()
+
+        self.assertEqual(Category.objects.count(), 1)
+
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'name')
+        self.assertEqual(category.slug, 'name')
+
+        category.name = 'b'
+        category.save()
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'b')
+        self.assertEqual(category.slug, 'name')
+
+    def test_save__update_fields(self):
+        category = Category(name='name')
+        category.save()
+
+        self.assertEqual(Category.objects.count(), 1)
+
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'name')
+        self.assertEqual(category.slug, 'name')
+        self.assertIsNone(category.icon)
+
+        category.name = 'b'
+        category.icon = StaticFile.objects.create(identifier='test_attachment.png')
+        category.save(update_fields=['name'])
+
+        category = Category.objects.get()
+        self.assertEqual(category.name, 'b')
+        self.assertEqual(category.slug, 'name')
+        # still None as not included in update_fields
+        self.assertIsNone(category.icon)
 
 
 class TestSuggestionModel(TestCase):

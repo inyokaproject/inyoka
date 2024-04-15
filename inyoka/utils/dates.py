@@ -7,30 +7,56 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import pathlib
 import re
-from datetime import date, datetime, timedelta
+import zoneinfo
+from datetime import date
+from datetime import timezone as py_timezone
+from functools import lru_cache
 from operator import attrgetter
 
-import pytz
 from django.contrib.humanize.templatetags.humanize import \
     naturalday as djnaturalday
 from django.template import defaultfilters
-from django.utils import datetime_safe, timezone
+from django.utils import timezone
+from django.utils.timezone import is_naive
 
-TIMEZONES = pytz.common_timezones
+
+@lru_cache(maxsize=None)
+def get_timezone_list():
+    """
+    Returns a set of available timezones.
+     - the set is only created once on the first call and cached afterwards
+     - it excludes deprecated names (taken from the IANA's Time Zone Database)
+
+    The used code is from Adam Johnson's blog post
+    https://adamj.eu/tech/2021/05/06/how-to-list-all-timezones-in-python/
+    © 2021 All rights reserved. Code samples are public domain unless otherwise noted.
+    """
+
+    def deprecated_aliases():
+        aliases = set()
+
+        current_folder = pathlib.Path(__file__).parent.resolve()
+        with open(current_folder / "tzdb" / "backward", "r") as file:
+            for line_full in file:
+                line = line_full.strip()
+                if not line.startswith("Link\t"):
+                    continue
+                source = re.split("\t+", line)[2]
+                aliases.add(source)
+
+        return aliases
+
+    return zoneinfo.available_timezones() - deprecated_aliases()
 
 
-_iso8601_re = re.compile(
-    # date
-    r'(\d{4})(?:-?(\d{2})(?:-?(\d{2}))?)?'
-    # time
-    r'(?:T(\d{2}):(\d{2})(?::(\d{2}(?:\.\d+)?))?(Z?|[+-]\d{2}:\d{2})?)?$'
-)
+TIMEZONES = get_timezone_list()
 
 
 def _localtime(val):
-    if val.tzinfo is None:
-        val = timezone.make_aware(val, pytz.UTC)
+    if is_naive(val):
+        val = timezone.make_aware(val, py_timezone.utc)
     return timezone.localtime(val)
 
 
@@ -44,7 +70,7 @@ format_timetz = lambda value, arg='TIME_FORMAT': defaultfilters.time(_localtime(
 def group_by_day(entries, date_func=attrgetter('pub_date'),
                  enforce_utc=False):
     """
-    Group a list of entries by the date but in the users's timezone
+    Group a list of entries by the date but in the users' timezone
     (or UTC if enforce_utc is set to `True`).  Per default the pub_date
     Attribute is used.  If this is not desired a different `date_func`
     can be provided.  It's important that the list is already sorted
@@ -52,20 +78,23 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
     """
     days = []
     days_found = set()
+
     if enforce_utc:
-        tzinfo = pytz.UTC
+        tzinfo = py_timezone.utc
     else:
         tzinfo = timezone.get_current_timezone()
+
     for entry in entries:
         d = date_func(entry)
-        if d.tzinfo is None:
-            d = d.replace(tzinfo=pytz.UTC)
+        if is_naive(d):
+            d = d.replace(tzinfo=py_timezone.utc)
         d = d.astimezone(tzinfo)
         key = (d.year, d.month, d.day)
         if key not in days_found:
             days.append((key, []))
             days_found.add(key)
         days[-1][1].append(entry)
+
     return [{
         'date': date(*k),
         'articles': items,
@@ -80,50 +109,13 @@ def datetime_to_timezone(dt, enforce_utc=False):
     """
     if dt is None:
         return None
+
     if enforce_utc:
-        tz = pytz.UTC
+        tz = py_timezone.utc
     else:
         tz = timezone.get_current_timezone()
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=pytz.UTC)
-    return datetime_safe.new_datetime(dt.astimezone(tz))
 
+    if is_naive(dt):
+        dt = dt.replace(tzinfo=py_timezone.utc)
 
-def parse_iso8601(value):
-    """
-    Parse an iso8601 date into a datetime object.
-    The timezone is normalized to UTC, we always use UTC objects
-    internally.
-    """
-    m = _iso8601_re.match(value)
-    if m is None:
-        raise ValueError('not a valid iso8601 date value')
-
-    groups = m.groups()
-    args = []
-    for group in groups[:-2]:
-        if group is not None:
-            group = int(group)
-        args.append(group)
-    seconds = groups[-2]
-    if seconds is not None:
-        if '.' in seconds:
-            args.extend(list(map(int, seconds.split('.'))))
-        else:
-            args.append(int(seconds))
-
-    rv = datetime(*[_f for _f in args if _f])
-    tz = groups[-1]
-    if tz and tz != 'Z':
-        args = list(map(int, tz[1:].split(':')))
-        delta = timedelta(hours=args[0], minutes=args[1])
-        if tz[0] == '+':
-            rv += delta
-        else:
-            rv -= delta
-    return rv
-
-
-def format_iso8601(obj):
-    """Format a datetime object for iso8601"""
-    return datetime_safe.new_datetime(obj).strftime('%Y-%d-%mT%H:%M:%SZ')
+    return dt.astimezone(tz)

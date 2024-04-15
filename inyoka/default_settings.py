@@ -42,6 +42,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # the setting here has nothing to do with the timezone the user is
 TIME_ZONE = 'Europe/Berlin'
 
+# https://docs.djangoproject.com/en/3.2/topics/i18n/timezones/
+USE_TZ = False
+
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 # LANGUAGE_CODE = 'en-US'
@@ -68,7 +71,6 @@ DEFAULT_HOST = 'portal'
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
-USE_L10N = True
 
 # Absolute path to the directory that holds media and the URL
 MEDIA_ROOT = join(BASE_PATH, 'media')
@@ -217,6 +219,7 @@ AVAILABLE_FEED_COUNTS = {
 
 MIDDLEWARE = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'inyoka.middlewares.session.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -241,6 +244,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.humanize',
     'django.contrib.auth',
+    'django.forms',
     'inyoka.forum.apps.ForumAppConfig',
     'inyoka.portal.apps.PortalAppConfig',
     'inyoka.wiki.apps.WikiAppConfig',
@@ -401,10 +405,13 @@ AUTHENTICATION_BACKENDS = (
 )
 
 PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.SHA1PasswordHasher',
     'inyoka.utils.user.UnsaltedMD5PasswordHasher',
 )
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 TEMPLATES = [
     {
@@ -434,7 +441,7 @@ ALLOWED_HOSTS = ['.ubuntuusers.de']
 FORMAT_MODULE_PATH = 'inyoka.locale'
 
 # Used for user.post_count, forum.topic_count etc.
-COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
+COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two days
 
 # disable anonymous user creating in django-guardian
 ANONYMOUS_USER_NAME = 'anonymous'

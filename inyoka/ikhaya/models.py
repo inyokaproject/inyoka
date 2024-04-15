@@ -16,7 +16,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
-from django.utils import datetime_safe
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy
 
@@ -170,7 +169,9 @@ class Category(models.Model):
         # only set the slug on first save.
         if not self.pk:
             self.slug = find_next_increment(Category, 'slug', slugify(self.name))
+
         super().save(*args, **kwargs)
+
         cache.delete('ikhaya/categories')
 
     class Meta:
@@ -251,7 +252,7 @@ class Article(models.Model, LockableObject):
     @property
     def stamp(self):
         """Return the year/month/day part of an article url"""
-        return datetime_safe.new_date(self.pub_date).strftime('%Y/%m/%d')
+        return self.pub_date.strftime('%Y/%m/%d')
 
     def get_absolute_url(self, action='show', **query):
         if action == 'comments':
@@ -292,12 +293,13 @@ class Article(models.Model, LockableObject):
             # might happen, because cached objects are setting text and
             # intro to None to save some space
             raise ValueError('text and intro must not be null')
-        suffix_id = False
 
         # We need a local pubdt variable due to caching of self.pub_datetime
         pubdt = datetime.combine(self.pub_date, self.pub_time)
         if not self.updated or self.updated < pubdt:
             self.updated = pubdt
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = {"updated"}.union(kwargs["update_fields"])
 
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
@@ -307,10 +309,6 @@ class Article(models.Model, LockableObject):
 
         super().save(*args, **kwargs)
 
-        # now that we have the article id we can put it into the slug
-        if suffix_id:
-            self.slug = '%s-%s' % (self.slug, self.id)
-            Article.objects.filter(id=self.id).update(slug=self.slug)
         cache.delete('ikhaya/archive')
         cache.delete(f'ikhaya/article_text/{self.id}')
         cache.delete(f'ikhaya/article_intro/{self.id}')
@@ -410,7 +408,9 @@ class Comment(models.Model):
             self.article = Article.objects.get(id=self.article.id)
             self.article.comment_count = self.article.comment_count + 1
             self.article.save()
+
         super().save(*args, **kwargs)
+
         if self.id:
             cache.delete(f'ikhaya/comment/{self.id}')
 
@@ -451,10 +451,11 @@ class Event(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            name = datetime_safe.new_date(self.date) \
-                                .strftime('%Y/%m/%d/') + slugify(self.name)
+            name = self.date.strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
-        super(self.__class__, self).save(*args, **kwargs)
+
+        super().save(*args, **kwargs)
+
         cache.delete(f'ikhaya/event/{self.id}')
         cache.delete('ikhaya/event_count')
 

@@ -91,7 +91,7 @@ class QueryCounter:
                     from inyoka.portal.tasks import query_counter_task
                     # Build a queryset like query.count()
                     count_query = self.query.query.clone()
-                    count_query.add_annotation(Count('*'), alias='count', is_summary=True)
+                    count_query.add_annotation(Count('*'), alias='count')
                     count_query.default_cols = False
 
                     query_counter_task.delay(self.cache_key, str(count_query))

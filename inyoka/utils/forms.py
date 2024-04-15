@@ -15,7 +15,6 @@ from random import randrange
 import urllib.request, urllib.parse, urllib.error
 import urllib.parse
 
-import pytz
 from django import forms
 from django.conf import settings
 from django.core import validators
@@ -37,8 +36,8 @@ def clear_surge_protection(request, form):
     """Clean errors in parent form so that submitting inherited forms
     don't raise any errors.
 
-    This function also cleanup the surge surge protection timer so
-    that we get no nasty hickups by just submitting an inherited form
+    This function also cleanup the surge protection timer so
+    that we get no nasty hiccups by just submitting an inherited form
     and sending the whole form afterwards.
     """
     # Cleanup errors in parent form if the main form was not send.
@@ -190,9 +189,9 @@ class DateTimeField(forms.DateTimeField):
         datetime = super().clean(value)
         if not datetime:
             return
-        datetime = (
-            get_current_timezone().localize(datetime).astimezone(pytz.utc)
-            .replace(tzinfo=None))
+
+        datetime = datetime.replace(tzinfo=get_current_timezone())
+
         return datetime
 
 
