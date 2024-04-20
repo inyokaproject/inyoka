@@ -57,6 +57,18 @@ Deployment notes
 -----------
 
 
+0.34.1 (2024-04-20)
+===================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+🔒 Security
+-----------
+* Update ``gunicorn`` to fix a known security issue
+
 0.34.0 (2024-04-06)
 ===================
 
