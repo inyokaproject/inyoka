@@ -156,6 +156,6 @@ field_error_messages = {
 @then('I should see a "{error_type}" field error')
 def step_impl(context, error_type):
     expected_error_text = field_error_messages[error_type]
-    error_text = context.browser.find_element_by_css_selector(".errorlist > li").text
+    error_text = context.browser.find_element(by=By.CSS_SELECTOR, value='.errorlist > li').text
 
     assert expected_error_text == error_text
