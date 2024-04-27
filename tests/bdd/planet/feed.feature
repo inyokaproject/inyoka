@@ -1,6 +1,6 @@
 @planet
 Feature: Planet - Feed
-  The inyoka planet is a feed aggregator. Where blogger can add there feeds and users have a single source.
+  The inyoka planet is a feed aggregator. Where blogger can add their feeds and users have a single source of all blogs.
 
 
   Scenario Outline: Display the empty planet if no entries exist
@@ -109,7 +109,7 @@ Feature: Planet - Feed
      Then I should see a "not-found" message
 
 
-  Scenario: Blogpost to hide is not available
+  Scenario: Blogpost to hide no permission
     Given I am "BDD-User"
       And a "blogpost" with caption "BDD-Test" exists
      When I open the "planet" in hide view
