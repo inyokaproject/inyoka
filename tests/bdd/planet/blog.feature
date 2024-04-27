@@ -64,7 +64,7 @@ Feature: Planet - Blog
 
     Examples:
       | blog_url        | feed_url        |
-      | abc             | http://some.url |
-      | a.b.c.d         | http://some.url |
-      | http://some.url | a.b.c.d         |
-      | http://some.url | abc             |
+      | http://abc      | http://some.url |
+      | http://a.b.c.d  | http://some.url |
+      | http://some.url | http://a.b.c.d  |
+      | http://some.url | http://abc      |
