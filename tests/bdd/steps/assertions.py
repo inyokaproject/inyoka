@@ -15,7 +15,7 @@ def step_impl(context):
     for row in context.table:
         element = context.browser.find_element(by=By.ID, value=row['element'])
         value = row['value']
-        element_text = get_plain_text(element.text)
+        element_text = get_plain_text(element.text or element.get_property('value'))
         assert element_text == value, "'%s' doesn't match expected '%s'" % (element_text, value)
 
 
@@ -116,3 +116,46 @@ def step_impl(context, value):
             return
 
     assert False
+
+
+@then("the {item_type} should be {visible_type} by {username}")
+def check_item_visibility(context, item_type, visible_type, username):
+    expected_hidden_value = None
+    if visible_type == "visible":
+        expected_hidden_value = False
+    elif visible_type == "hidden":
+        expected_hidden_value = True
+
+    if item_type == 'blogpost':
+        from inyoka.planet.models import Entry
+
+        blogpost = Entry.objects.get(id=context.test_item.id)
+        assert blogpost.hidden == expected_hidden_value, f"The blogpost should be { visible_type }"
+        if expected_hidden_value:
+            assert blogpost.hidden_by.username == username
+        else:
+            assert blogpost.hidden_by is None
+        return
+
+    raise ValueError("The item type isn't supported")
+
+
+@then("the {item_type} should be {visible_type}")
+def step_impl(context, item_type, visible_type):
+    username = context.user.username
+    check_item_visibility(context, item_type, visible_type, username)
+
+
+field_error_messages = {
+    "user not found": "Diesen Benutzer gibt es nicht",
+    "invalid url": "Bitte eine gültige Adresse eingeben.",
+    "field is required": "Dieses Feld ist zwingend erforderlich"
+}
+
+
+@then('I should see a "{error_type}" field error')
+def step_impl(context, error_type):
+    expected_error_text = field_error_messages[error_type]
+    error_text = context.browser.find_element(by=By.CSS_SELECTOR, value='.errorlist > li').text
+
+    assert expected_error_text == error_text

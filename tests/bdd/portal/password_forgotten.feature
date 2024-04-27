@@ -1,5 +1,5 @@
-@password_forgotten
-Feature: Password forgotten
+@portal
+Feature: Portal - Password forgotten
   A user should be able to help himself if he has forgotten his password.
 
 
