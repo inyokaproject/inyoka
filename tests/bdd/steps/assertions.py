@@ -147,9 +147,9 @@ def step_impl(context, item_type, visible_type):
 
 
 field_error_messages = {
-    "user not found": u"Diesen Benutzer gibt es nicht",
-    "invalid url": u"Bitte eine gültige Adresse eingeben.",
-    "field is required": u"Dieses Feld ist zwingend erforderlich"
+    "user not found": "Diesen Benutzer gibt es nicht",
+    "invalid url": "Bitte eine gültige Adresse eingeben.",
+    "field is required": "Dieses Feld ist zwingend erforderlich"
 }
 
 
