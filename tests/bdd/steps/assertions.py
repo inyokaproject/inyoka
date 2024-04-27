@@ -130,7 +130,7 @@ def check_item_visibility(context, item_type, visible_type, username):
         from inyoka.planet.models import Entry
 
         blogpost = Entry.objects.get(id=context.test_item.id)
-        assert blogpost.hidden == expected_hidden_value, "The blogpost should be %s" % visible_type
+        assert blogpost.hidden == expected_hidden_value, f"The blogpost should be { visible_type }"
         if expected_hidden_value:
             assert blogpost.hidden_by.username == username
         else:
