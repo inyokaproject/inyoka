@@ -1,5 +1,4 @@
 import re
-from pprint import pprint
 
 from behave import then
 from selenium.webdriver.common.by import By
