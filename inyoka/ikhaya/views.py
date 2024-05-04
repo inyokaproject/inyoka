@@ -10,7 +10,6 @@
 from datetime import time as dt_time
 from datetime import date, datetime
 
-import pytz
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
@@ -832,8 +831,7 @@ def event_suggest(request):
         form = NewEventForm(request.POST)
         if form.is_valid():
             event = Event()
-            convert = (lambda v: get_current_timezone().localize(v)
-                .astimezone(pytz.utc).replace(tzinfo=None))
+            convert = lambda v: v.replace(tzinfo=get_current_timezone())
             data = form.cleaned_data
             event.name = data['name']
             if data['date'] and data['time']:

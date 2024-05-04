@@ -13,8 +13,6 @@ from django import forms
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy
 
-import pytz
-
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.portal.models import StaticFile
 from inyoka.utils.forms import (UserField, TimeWidget, DateWidget,
@@ -150,8 +148,7 @@ class NewEventForm(forms.ModelForm):
 
     def save(self, user):
         event = super().save(commit=False)
-        convert = (lambda v: get_current_timezone().localize(v) \
-                            .astimezone(pytz.utc).replace(tzinfo=None))
+        convert = lambda v: v.replace(tzinfo=get_current_timezone())
         # Convert local timezone to unicode
         if event.date and event.time is not None:
             d = convert(datetime.combine(

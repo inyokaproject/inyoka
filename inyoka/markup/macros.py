@@ -30,7 +30,7 @@ from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
 from inyoka.markup.utils import debug_repr, filter_style, ArgumentCollector
-from inyoka.utils.dates import parse_iso8601, format_datetime
+from inyoka.utils.dates import format_datetime
 
 ALL_MACROS = {}
 
@@ -288,7 +288,7 @@ class Date(Macro):
         else:
             self.now = False
             try:
-                self.date = parse_iso8601(date)
+                self.date = datetime.fromisoformat(date)
             except ValueError:
                 try:
                     self.date = datetime.utcfromtimestamp(int(date))
@@ -300,8 +300,10 @@ class Date(Macro):
             date = datetime.utcnow()
         else:
             date = self.date
+
         if date is None:
             return nodes.Text(_('Invalid date'))
+
         return nodes.Text(format_datetime(date))
 
 
