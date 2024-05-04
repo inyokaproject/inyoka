@@ -24,8 +24,8 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-Unreleased 0.35.0 (2024-04-DD)
-=====================
+0.35.0 (2024-05-04)
+===================
 
 Deployment notes
 ----------------
@@ -35,26 +35,17 @@ Deployment notes
 ✨ New features
 ---------------
 
- * Use argon2 as default password hasher
- * Use Django gzip middleware, so HTML gets compressed (mitigation for the BREACH attack is included in Django)
+* Use argon2 as default password hasher
+* Use Django gzip middleware, so HTML gets compressed (mitigation for the BREACH attack is included in Django)
 
 🏗 Changes
 ----------
 
- * Update to Django 4.2
-    * Replace pytz with zoneinfo
+* Update to Django 4.2
 
-🗑 Deprecations
---------------
+  - Replace pytz with zoneinfo
 
-🔥 Removals
------------
-
-🐛 Fixes
---------
-
-🔒 Security
------------
+* Basic BDD tests for the planet
 
 
 0.34.1 (2024-04-20)
