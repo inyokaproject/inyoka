@@ -326,9 +326,9 @@ defusedxml==0.7.1 \
     --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
     --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
     # via Inyoka (setup.py)
-django==4.2.12 \
-    --hash=sha256:6a6b4aff8a2db2dc7dcc5650cb2c7a7a0d1eb38e2aa2335fdf001e41801e9797 \
-    --hash=sha256:7640e86835d44ae118c2916a803d8081f40e214ee18a5a92a0202994ca60a4b4
+django==4.2.13 \
+    --hash=sha256:837e3cf1f6c31347a1396a3f6b65688f2b4bb4a11c580dcb628b5afe527b68a5 \
+    --hash=sha256:a17fcba2aad3fc7d46fdb23215095dbbd64e6174bf4589171e732b18b07e426a
     # via
     #   Inyoka (setup.py)
     #   django
@@ -336,9 +336,9 @@ django==4.2.12 \
     #   django-filter
     #   django-guardian
     #   django-redis
-django-codemod==2.1.10 \
-    --hash=sha256:1445b2727f6c60f984924f0d14b8bb59edea2a3f22dfef5cb8883c0c3c92cecf \
-    --hash=sha256:c041457079e1bee38ea92b31c6cebab905a33bf19b5e53ef0984682cdbbee000
+django-codemod==2.1.11 \
+    --hash=sha256:1e65cf08898156e74c7c82339e9b93b426566da7cdfdb15e29e34a2e35023233 \
+    --hash=sha256:569ccffe6bedbd6d4e342d5d3091a3f3f2f54a67be9ab085ffa9e18db2782edf
     # via Inyoka (setup.py)
 django-debug-toolbar==4.3.0 \
     --hash=sha256:0b0dddee5ea29b9cb678593bc0d7a6d76b21d7799cb68e091a2148341a80f3c4 \
@@ -960,9 +960,9 @@ rich==13.7.1 \
     # via
     #   django-codemod
     #   rich-click
-rich-click==1.8.0 \
-    --hash=sha256:846f504eb83a948d864888b2d73c71e52c310490c2babceac57e388aead086e2 \
-    --hash=sha256:f8cad0d67d286d6cd6fc9f69f2d6f25c6c4c2d99fb9d6cb3b8987b593dbe6fa8
+rich-click==1.8.1 \
+    --hash=sha256:0cf0bf84404e78379bd2722db88cb07ffd0535440e20a05943d5b02249d90f8a \
+    --hash=sha256:73c2ec88a66d7bf6b8c32783539d1c9c92c7c75847f14186092d27f83b206e8a
     # via django-codemod
 selenium==4.20.0 \
     --hash=sha256:0bd564ee166980d419a8aaf4ac00289bc152afcf2eadca5efe8c8e36711853fd \
