@@ -242,6 +242,24 @@ class TestAuthViews(TestCase):
             response = self.client.post('/login/', postdata)
             self.assertContains(response, 'is inactive.')
 
+    def test_login_invalid_password_hash(self):
+        """Some users have a static string instead of a hash (as they still had unsafe password hashes). They should
+         not be able to login. Instead, they should request a reset link via mail."""
+        self.user.password = "was_sha1_until_2024"
+        self.user.save()
+
+        postdata = {'username': 'user', 'password': 'user'}
+        with translation.override('en-us'):
+            response = self.client.post('/login/', postdata)
+            self.assertContains(response, 'Please enter a correct Username and password.')
+
+        # try if mail is send out for reset link
+        postdata = {'email': self.user.email}
+        with translation.override('en-us'):
+            self.client.post('/lost_password/', postdata)
+        subject = mail.outbox[0].subject
+        self.assertIn('New password for “user”', subject)
+
     def test_login_wrong_password(self):
         """Obviously, a login should fail when a wrong password was submitted."""
         postdata = {'username': 'user', 'password': 'wrong_password'}
