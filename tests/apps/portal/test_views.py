@@ -245,7 +245,7 @@ class TestAuthViews(TestCase):
     def test_login_invalid_password_hash(self):
         """Some users have a static string instead of a hash (as they still had unsafe password hashes). They should
          not be able to login. Instead, they should request a reset link via mail."""
-        self.user.password = "was_sha1_until_2024"
+        self.user.password = "pbkdf2_sha256$600000$not_valid"
         self.user.save()
 
         postdata = {'username': 'user', 'password': 'user'}

@@ -406,7 +406,8 @@ AUTHENTICATION_BACKENDS = (
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.Argon2PasswordHasher',
-    'django.contrib.auth.hashers.PBKDF2PasswordHasher'
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'inyoka.utils.user.Argon2WrappedSHA1PasswordHasher'
 )
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
