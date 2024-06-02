@@ -10,9 +10,9 @@
 import io
 
 from django.conf import settings
-from django.contrib.auth.hashers import SHA1PasswordHasher
 from django.core import mail, management
 from django.utils import translation
+from django.utils.translation import gettext as _
 
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase, InyokaClient
@@ -36,29 +36,33 @@ class TestAdminCommandUpgradePassword(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
+        # user with sha1 hashed password
         User.objects.create(
             username="foo", email="foo@local.localhost",
             # plaintext password: 'test'
-            password="sha1$ZmJGfGJI50k1pEFjgSClAd$e79d4abf01376803ef33579c1ba215f71dace012"
+            password="sha1$ZmJGfGJI50k1pEFjgSClAd$e79d4abf01376803ef33579c1ba215f71dace012",
+            status=User.STATUS_ACTIVE
         )
 
     def test_upgrade_passwords_offline(self):
         management.call_command('upgrade_passwords_offline', verbosity=0)
 
-        self.assertEqual(User.objects.filter(password__startswith="sha1").count(), 0)
-        self.assertEqual(User.objects.filter(password__startswith="argon2_wrapped_sha1").count(), 1)
+        self.assertEqual(User.objects.filter(password__startswith="sha1$").count(), 0)
+        self.assertEqual(User.objects.filter(password__startswith="pbkdf2_wrapped_sha1$").count(), 1)
 
     def test_password(self):
         management.call_command('upgrade_passwords_offline', verbosity=0)
 
         u = User.objects.get(username='foo')
-        print(u.password)
 
+        # user should be able to log in after the migration
         self.assertTrue(u.has_usable_password())
         self.assertTrue(u.check_password('test'))
 
+        # after a login, the password should be no longer wrapped
+        # instead the latest hashing algorithm defined in default_settings.py should be used
         u.refresh_from_db()
-        self.assertTrue(u.password.starswith('argon2$'))
+        self.assertTrue(u.password.startswith('argon2$'))
 
     def test_login_after_upgrade(self):
         management.call_command('upgrade_passwords_offline', verbosity=0)
@@ -66,12 +70,39 @@ class TestAdminCommandUpgradePassword(TestCase):
         postdata = {'username': 'foo', 'password': 'test'}
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata, follow=True)
-
-            print(response.content.decode())
-
             self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
             self.assertInHTML('<div class="message success">%s</div>' % _('You have successfully logged in.'),
                               response.content.decode(), count=1)
 
-        self.assertEqual(User.objects.filter(password__startswith="argon2_wrapped_sha1").count(), 0)
+        self.assertEqual(User.objects.filter(password__startswith="pbkdf2_wrapped_sha1$").count(), 0)
         self.assertEqual(User.objects.filter(password__startswith="argon2$").count(), 1)
+
+    def test_invalid_sha1_password(self):
+        u = User.objects.create(
+            username="foo2", email="foo2@local.localhost",
+            password="sha1$not_valid"
+        )
+
+        management.call_command('upgrade_passwords_offline', verbosity=0)
+
+        u.refresh_from_db()
+        self.assertEqual(u.password, "sha1$not_valid")
+
+        self.assertTrue(User.objects.get(username='foo').password.startswith('pbkdf2_wrapped_sha1$'))
+
+    def test_other_passwords_untouched(self):
+        User.objects.create(
+            username="test", email="test@local.localhost", password="argon2$argon2id$v=19$m=102400,t=2,p=invalid"
+        )
+        User.objects.create(
+            username="test2", email="test2@local.localhost", password="pbkdf2_sha256$600000$not_valid"
+        )
+
+        management.call_command('upgrade_passwords_offline', verbosity=0)
+
+        u = User.objects.get(username="test")
+        self.assertEqual(u.password, "argon2$argon2id$v=19$m=102400,t=2,p=invalid")
+
+        u = User.objects.get(username="test2")
+        self.assertEqual(u.password, "pbkdf2_sha256$600000$not_valid")
+

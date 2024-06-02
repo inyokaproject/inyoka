@@ -10,12 +10,12 @@
     :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-
+import traceback
 
 from django.core.management.base import BaseCommand
 
 from inyoka.portal.user import User
-from inyoka.utils.user import Argon2WrappedSHA1PasswordHasher
+from inyoka.utils.user import PBKDF2WrappedSHA1PasswordHasher
 
 
 class Command(BaseCommand):
@@ -27,10 +27,16 @@ class Command(BaseCommand):
         if len(users) == 0:
             print('No users with sha1 password-hashes found')
 
-        hasher = Argon2WrappedSHA1PasswordHasher()
+        hasher = PBKDF2WrappedSHA1PasswordHasher()
         for user in users:
-            _algorithm, salt, sha1_hash = user.password.split("$", 2)
-            user.password = hasher.encode_sha1_hash(sha1_hash, salt)
+            try:
+                _algorithm, salt, sha1_hash = user.password.split("$", 2)
+                user.password = hasher.encode_sha1_hash(sha1_hash, salt)
+            except Exception as e:
+                print(f'Skipping user {user}, as an error occurred. Traceback was:')
+                print(traceback.format_exc())
+                continue
+
             user.save(update_fields=["password"])
 
     def handle(self, *args, **options):
