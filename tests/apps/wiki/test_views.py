@@ -7,7 +7,7 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from unittest.mock import patch
 
 import feedparser
@@ -146,7 +146,7 @@ class TestDoEdit(TestCase):
         self.url = self.page.get_absolute_url('edit')
 
     def _edit_page(self, new_content):
-        data = {'text': new_content, 'note': new_content, 'edit_time': datetime.utcnow(),
+        data = {'text': new_content, 'note': new_content, 'edit_time': datetime.now(UTC),
                 'revision': self.page.last_rev_id}
         return self.client.post(self.url, data=data, follow=True)
 
@@ -431,7 +431,7 @@ class TestArticleRevisionFeed(TestCase):
     def test_tags(self):
         self.page.edit(text='foob text\n\n#tag: view, install, intro',
                        user=self.user,
-                       change_date=datetime.utcnow() + timedelta(minutes=11))
+                       change_date=datetime.now(UTC) + timedelta(minutes=11))
         self.page.update_meta()
 
         response = self.client.get(self.page.get_absolute_url('feed'))

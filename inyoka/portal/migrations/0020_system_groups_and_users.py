@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
@@ -23,7 +23,7 @@ def create_system_groups(apps, schema_editor):
 
 def create_system_users(apps, schema_editor):
     User, Group = get_models(apps)
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
 
     def get_or_create(username):
         try:

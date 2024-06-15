@@ -8,7 +8,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -55,7 +55,7 @@ class TestUserModel(TestCase):
                                                  'ban@example.com',
                                                  'pwd',
                                                  False)
-        banned_user.banned_until = datetime.utcnow() - timedelta(days=5)
+        banned_user.banned_until = datetime.now(UTC) - timedelta(days=5)
         deactivate_user(banned_user)
         banned_user.refresh_from_db()
 

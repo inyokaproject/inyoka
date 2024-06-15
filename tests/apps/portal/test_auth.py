@@ -7,7 +7,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -47,7 +47,7 @@ class TestInyokaAuthBackend(TestCase):
         self.banned_user.groups.add(registered_group)
         self.tbanned_user = User.objects.create(username='tbanned', email='tbanned', status=User.STATUS_BANNED)
         self.tbanned_user.set_password('inyoka')
-        self.tbanned_user.banned_until = datetime.utcnow()-timedelta(hours=1)
+        self.tbanned_user.banned_until = datetime.now(UTC)-timedelta(hours=1)
         self.tbanned_user.save()
 
     def test_login(self):
