@@ -15,7 +15,6 @@ from os.path import dirname, join
 
 from celery.schedules import crontab
 
-import inyoka
 
 #: Base path of this application
 BASE_PATH = dirname(__file__)
