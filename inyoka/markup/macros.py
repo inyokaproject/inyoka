@@ -289,7 +289,7 @@ class Date(Macro):
                 self.date = datetime.fromisoformat(date)
             except ValueError:
                 try:
-                    self.date = datetime.utcfromtimestamp(int(date))
+                    self.date = datetime.fromtimestamp(int(date), datetime.UTC)
                 except ValueError:
                     self.date = None
 
