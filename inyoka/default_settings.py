@@ -40,7 +40,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 TIME_ZONE = 'Europe/Berlin'
 
 # https://docs.djangoproject.com/en/3.2/topics/i18n/timezones/
-USE_TZ = False
+USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
