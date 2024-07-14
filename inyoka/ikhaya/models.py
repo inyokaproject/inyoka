@@ -7,7 +7,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
+from datetime import datetime, UTC
 from operator import attrgetter, itemgetter
 from typing import Optional
 from urllib.parse import urlencode
@@ -16,7 +16,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
-from django.db.models.functions import Now
 from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy
@@ -54,11 +53,11 @@ class ArticleManager(models.Manager):
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
-                q = q.filter(Q(pub_date__lt=Now()) |
-                             Q(pub_date=Now(), pub_time__lte=Now()))
+                q = q.filter(Q(pub_date__lt=dj_timezone.now()) |
+                             Q(pub_date=dj_timezone.now(), pub_time__lte=dj_timezone.now()))
             else:
-                q = q.filter(Q(pub_date__gt=Now()) |
-                             Q(pub_date=Now(), pub_time__gte=Now()))
+                q = q.filter(Q(pub_date__gt=dj_timezone.now()) |
+                             Q(pub_date=dj_timezone.now(), pub_time__gte=dj_timezone.now()))
         return q
 
     def get_cached(self, keys):
@@ -145,8 +144,8 @@ class EventManager(models.Manager):
 
     def get_upcoming(self, count=10):
         return self.get_queryset().order_by('date').filter(Q(visible=True) & (
-            (Q(enddate__gte=Now()) & Q(date__lte=Now())) |
-            (Q(date__gte=Now()))))[:count]
+            (Q(enddate__gte=dj_timezone.now()) & Q(date__lte=dj_timezone.now())) |
+            (Q(date__gte=dj_timezone.now()))))[:count]
 
 
 class Category(models.Model):
@@ -224,7 +223,7 @@ class Article(models.Model, LockableObject):
 
     @deferred
     def pub_datetime(self):
-        return datetime.combine(self.pub_date, self.pub_time)
+        return datetime.combine(self.pub_date, self.pub_time, UTC)
 
     @property
     def local_pub_datetime(self):
@@ -295,7 +294,7 @@ class Article(models.Model, LockableObject):
             raise ValueError('text and intro must not be null')
 
         # We need a local pubdt variable due to caching of self.pub_datetime
-        pubdt = datetime.combine(self.pub_date, self.pub_time)
+        pubdt = datetime.combine(self.pub_date, self.pub_time, UTC)
         if not self.updated or self.updated < pubdt:
             self.updated = pubdt
             if kwargs.get("update_fields") is not None:

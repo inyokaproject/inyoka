@@ -88,25 +88,25 @@ class TestArticleModel(TestCase):
         self.assertEqual('article', self.article1.slug)
 
     def test_updated(self):
-        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7), self.article1.updated)
+        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
 
         self.article1.pub_date = date(2009, 7, 18)
         self.article1.save()
 
         self.article1.refresh_from_db()
         # updated should be now also in 2009, even if not explicitly changed
-        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7), self.article1.updated)
+        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
 
     def test_save_update__update_fields(self):
         """Almost the same as test_updated -- except that `save()` uses update_fields"""
-        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7), self.article1.updated)
+        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
 
         self.article1.pub_date = date(2009, 7, 18)
         self.article1.save(update_fields=["pub_date"])
 
         self.article1.refresh_from_db()
         # updated should be now also in 2009, even if not explicitly changed
-        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7), self.article1.updated)
+        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
 
 
 class TestCategoryModel(TestCase):
