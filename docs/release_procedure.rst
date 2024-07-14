@@ -111,11 +111,7 @@ on the Inyoka branches
 Deploy to target
 ================
 
-Start VPN, if needed
-
-.. code-block:: console
-
-    systemctl start openvpn-client@ubuntuusers.service
+Start VPN, if needed.
 
 Connect to target where Inyoka is running via SSH
 
@@ -123,7 +119,7 @@ Connect to target where Inyoka is running via SSH
 
     eval $(ssh-agent)
     ssh-add ~/.ssh/ubuntuusers_ed25519
-    ssh uu-vmh02-inyoka
+    ssh uu-brain
 
 Use ansible to deploy Inyoka
 
@@ -131,4 +127,6 @@ Use ansible to deploy Inyoka
 
     cd ~/Dev/uu-ansible
     source activate.sh
-    ansible-playbook site.yml --check --diff -t inyoka -l vmh02.lan-cgn
+    ansible-playbook site.yml --check --diff -t inyoka -l brain.ubuntu-eu.org
+
+(Remove ``--check``, if everything looks good, to make changes)

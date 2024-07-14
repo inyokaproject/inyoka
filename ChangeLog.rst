@@ -24,6 +24,55 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+0.36.0 (2024-07-14)
+===================
+
+Deployment notes
+----------------
+
+#. Update requirements
+#. Run migrations
+#. Fix CVE-2024-4317 in existing postgresql instances
+   (see https://www.postgresql.org/about/news/postgresql-163-157-1412-1315-and-1219-released-2858/)
+
+.. code-block:: console
+
+    $ docker exec -it inyoka_postgres.<Tab> bash
+
+    root@a789607c1d5c:/# psql -U inyoka
+
+    \i /usr/share/postgresql/14/fix-CVE-2024-4317.sql
+
+    \c template1
+    \i /usr/share/postgresql/14/fix-CVE-2024-4317.sql
+
+    ALTER DATABASE template0 WITH ALLOW_CONNECTIONS true;
+    \c template0
+    \i /usr/share/postgresql/14/fix-CVE-2024-4317.sql
+    \c template1
+    ALTER DATABASE template0 WITH ALLOW_CONNECTIONS false;
+    exit;
+
+✨ New features
+---------------
+
+* new management commands
+
+  - Portal: Add management command that outputs some statistics
+  - Wiki: Add management command to regenerate MetaData
+
+🏗 Changes
+----------
+
+* Generate requirements for Python 3.12 as default
+* The Docker container now use Python 3.12 which replaces Python 3.9
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``certifi``, ``Django``, ``Jinja2``, ``requests``, ``urllib3`` include known security fixes)
+* Remove deprecated Django password hashers
+
 0.35.0 (2024-05-04)
 ===================
 

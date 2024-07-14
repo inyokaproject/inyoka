@@ -21,7 +21,7 @@ from inyoka.portal.user import User
 
 
 class Command(BaseCommand):
-    help = "Create a user with all priviliges"
+    help = "Create a user with all privileges"
 
     def add_arguments(self, parser):
         parser.add_argument('-u', '--username', action='store', default=None, dest='username')

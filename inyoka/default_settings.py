@@ -38,7 +38,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be avilable on all operating systems.
+# although not all choices may be available on all operating systems.
 # the setting here has nothing to do with the timezone the user is
 TIME_ZONE = 'Europe/Berlin'
 
@@ -406,9 +406,7 @@ AUTHENTICATION_BACKENDS = (
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.Argon2PasswordHasher',
-    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
-    'django.contrib.auth.hashers.SHA1PasswordHasher',
-    'inyoka.utils.user.UnsaltedMD5PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher'
 )
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
