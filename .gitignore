@@ -8,7 +8,6 @@ build/
 *.py[co]
 inyoka.xapdb/
 inyoka/media/
-inyoka/static/
 inyoka/static-collected/
 *.db
 tests/settings/custom.py
@@ -20,3 +19,18 @@ allure-results
 bdd_screenshots
 .idea
 *.log
+
+*.css
+*.gz
+*.min.js
+*.py[cod]
+
+dist
+node_modules
+
+jinja2/static/img/*-sprite.png
+jinja2/static/style/*-sprite.less
+
+!jinja2/static/js/jquery.min.js
+!jinja2/static/js/jquery.ba-hashchange.min.js
+!jinja2/static/js/jquery.cookie.min.js

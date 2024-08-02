@@ -1,0 +1,36 @@
+{#
+    portal/new_user.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Create a new user.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+{% from 'macros.html' import render_form %}
+
+{% set BREADCRUMBS = [(_('Members'), href('portal', 'users')),
+                      (_('Create user'), href('portal', 'user', 'new'))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <form action="" method="post" id="user_edit_form">
+    {{ csrf_token() }}
+    <h3>{% trans %}Create user{% endtrans %}</h3>
+    <dl>
+      {{ render_form(form, ['username', 'password', 'confirm_password', 'email'], inline=true) }}
+      <dt>{% trans %}Authentication:{% endtrans %}</dt>
+      <dd>
+        {{ form.authenticate }}
+        <span class="note">{{ form.authenticate.help_text }}</span>
+      </dd>
+    </dl>
+    <br>
+    <p class="note">{% trans -%}
+      Note: More settings will be available after creating the user.
+    {%- endtrans %}</p>
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    </p>
+  </form>
+{% endblock %}

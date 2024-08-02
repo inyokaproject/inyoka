@@ -1,0 +1,48 @@
+{#
+    portal/grouplist.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all existing groups.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% set BREADCRUMBS = [(_('Groups'), href('portal', 'groups'))] + BREADCRUMBS|d([]) %}
+{% block content %}
+  <h3>{% trans %}Groups{% endtrans %}</h3>
+  <p>
+    {% trans count=group_count, usercount=user_groups.count() -%}
+      In total there is {{ count }} group, you are in {{ usercount }} group.
+    {%- pluralize -%}
+      In total there are {{ count }} groups, you are in {{ usercount }} of them (printed bold).
+    {%- endtrans %}
+  </p>
+  {%- if USER.has_perm('auth.add_group') -%}
+    <p>
+      <a href="{{ href('portal', 'group', 'new') }}">{% trans %}Create new group{% endtrans %}</a>.
+    </p>
+  {%- endif -%}
+  <table class="admin_link_hover">
+    <tr>
+      <th>{{ table.get_html('name', _('Name')) }}</th>
+    </tr>
+    {%- for group in groups %}
+    <tr>
+      <td>
+        {%- if group in user_groups %}<strong>{% endif -%}
+        <a href="{{ href('portal', 'group', group) }}">{{ group.name|e }}</a>
+        {%- if group in user_groups %}</strong>{% endif -%}
+        {%- if USER.has_perm('auth.change_group') -%}
+          <a href="{{ href('portal', 'group', group.name|e, 'edit') }}" class="admin_link"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
+        {%- endif -%}
+      </td>
+    </tr>
+    {%- endfor %}
+  </table>
+  <div class="pagination">{{rendered_pagination}}</div>
+{% endblock %}

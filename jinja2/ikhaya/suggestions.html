@@ -1,0 +1,75 @@
+{#
+    ikhaya/suggestionlist.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    The moderators can see all suggestions for ikhaya articles on this page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+
+#}
+
+{%- extends 'ikhaya/page.html' %}
+{% set BREADCRUMBS = [(_('Article suggestions'), href('ikhaya', 'suggestions'))] + BREADCRUMBS|d([]) %}
+
+{% block ikhaya_content %}
+  <h3>{% trans %}Article suggestions{% endtrans %}</h3>
+  <p>
+    {%- trans count=suggestion_count -%}
+      Here is one article suggestion which was not yet reviewed.
+    {%- pluralize -%}
+      Here are {{ count }} article suggestions which were not yet reviewed.
+    {%- endtrans %}
+    {%- if is_subscribed %}
+      <a href="{{ href('ikhaya', 'suggestions', 'unsubscribe') }}" class="action action_subscribe">{% trans %}Do not notify me anymore about new article suggestions{% endtrans %}</a>
+    {%- else -%}
+      <a href="{{ href('ikhaya', 'suggestions', 'subscribe') }}" class="action action_subscribe">{% trans %}Notify me about new article suggestions{% endtrans %}</a>
+    {%- endif -%}
+  </p>
+  <form action="" method="post">
+    {{ csrf_token() }}
+    <div class="suggestionlist">
+        {%- for suggestion in suggestions %}
+          <div class="article" id="{{ suggestion.id }}">
+            <span class="articleinfo">
+              {%- trans link=suggestion.author|url, author=suggestion.author.username|e -%}
+                Suggested by <a href="{{ link }}">{{ author }}</a>
+              {%- endtrans %}
+              <span class="linklist"> | </span>
+              <span class="suggestion-{{ suggestion.pk }}">
+                {% trans %}Assigned to:{% endtrans %}
+                {% if suggestion.owner_id == none %}
+                  {% trans %}Nobody{% endtrans %}
+                {% else %}
+                  <a href="{{ suggestion.owner|url }}">{{ suggestion.owner.username|e }}</a>
+                {% endif %}
+              </span>
+              (<a href="{{ href('ikhaya', 'suggest', suggestion.id, 'assign', USER.username) }}" class="assign admin_link" id="{{ suggestion.id }}">{% trans %}Assign to me{% endtrans %}</a>)<span>
+              <span class="linklist"> | </span>
+              <a href="{{ href('ikhaya', 'suggest', suggestion.id, 'assign', '-') }}" class="unassign admin_link" id="{{ suggestion.id }}">{% trans %}Delete assignment{% endtrans %}</a>
+              <span class="linklist"> | </span>
+              {%- if USER.has_perm('ikhaya.delete_suggestion') %}
+              <a href="{{ href('ikhaya', 'suggest', suggestion.id, 'delete') }}" class="admin_link">{% trans %}Delete{% endtrans %}</a>
+              <span class="linklist"> | </span>
+              {%- endif %}
+              <a href="{{ href('ikhaya', 'article', 'new', suggestion.id) }}" class="admin_link">{% trans %}New article{% endtrans %}</a>
+              <span class="linklist"> | </span>
+              {# Disabled for security reasons #}
+              {#<a href="{{ href('portal', 'privmsg', 'new', reply_to='suggestion:%d' % suggestion.id) }}">{% trans author=suggestion.author.username|e %}Write message to {{ author }}{% endtrans %}</a>#}
+              <span class="linklist"> | </span>
+              <a href="#{{ suggestion.id }}">#</a>
+            </span>
+            <h3 class="title">{{ suggestion.title|e }}</h3>
+            <div class="intro">{{ suggestion.intro_rendered }}</div>
+            <div class="text">{{ suggestion.text_rendered }}</div>
+            {% if suggestion.notes_rendered %}
+              <hr>
+              <div>{{ suggestion.notes_rendered }}</div>
+            {%- endif %}
+          </div>
+        {%- else %}
+          <p>{% trans %}There are currently no article suggestions.{% endtrans %}</p>
+        {%- endfor %}
+    </div>
+  </form>
+{% endblock %}

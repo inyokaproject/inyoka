@@ -1,0 +1,62 @@
+{#
+    portal/memberlist.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all registered users.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% set BREADCRUMBS = [(_('Members'), href('portal', 'users'))] + BREADCRUMBS|d([]) %}
+{% set scripts = ['DateTime'] %}
+{% set styles = ['datetimefield'] %}
+{% block content %}
+  <h3>{% trans %}Members{% endtrans %}</h3>
+  {% if USER.has_perm('portal.change_user') %}
+    <p>{% trans %}Choose the user you want to edit:{% endtrans %}</p>
+    <form action="" method="post">
+      {{ csrf_token() }}
+      <p>
+        <input type="text" id="user_query" name="user">
+        <input type="submit" value="{% trans %}Select{% endtrans %}">
+        <span class="help_text">{% trans -%}
+          You can also enter an e-mail address instead of a user name.
+        {%- endtrans %}</span>
+      </p>
+    </form>
+  {% endif %}
+  {% if USER.has_perm('portal.add_user') %}
+      <p>
+        <a href="{{ href('portal', 'user', 'new') }}">
+          {%- trans %}Create a new user{% endtrans -%}
+        </a>
+      </p>
+  {% endif %}
+  <table>
+    <tr>
+      <th>{{ table.get_html('id', '#') }}</th>
+      <th>{{ table.get_html('username', _('Username')) }}</th>
+      <th>{{ table.get_html('location', _('Residence')) }}</th>
+      <th>{{ table.get_html('date_joined', _('Member since')) }}</th>
+    </tr>
+    {%- for user in users %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>
+          <a href="{{ user|url }}">{{ user.username|e }}</a></td>
+        <td>{{ user.location }}</td>
+        <td>{{ user.date_joined|naturalday }}</td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="5">{% trans %}No users were found.{% endtrans %}</td>
+      </tr>
+    {%- endfor %}
+  </table>
+  <div class="pagination">{{rendered_pagination}}</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{#
+    ikhaya/reportlist.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    Shows a list of all unsolved article reports.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+
+{% set BREADCRUMBS = [(_('Reports'), href('ikhaya', 'reports'))] + BREADCRUMBS|d([]) %}
+
+{% block ikhaya_content %}
+  {%- for report in reports %}
+    <div class="report" id="report_{{ report.id }}">
+      <div class="report_header">
+        <a href="#report_{{ report.id }}">#{{ report.id }}</a>
+      </div>
+      <div class="text">
+        {{ report.text_rendered }}
+      </div>
+      <p class="meta admin_link_hover">
+        {% trans link=report.author|url, author=report.author.username|e -%}
+          Reported by <a href="{{ link }}">{{ author }}</a>
+        {%- endtrans %}
+        <span class="linklist"> | </span>
+        {{ report.pub_date|datetime }}
+        <span class="linklist"> | </span>
+        {% trans link=report.article|url, article=report.article.subject|e -%}
+          Concerns article “<a href="{{ link }}">{{ article }}</a>”
+        {%- endtrans %}
+        <span class="linklist"> | </span>
+        <span class="admin_link">
+          <a href="{{ report|url('hide')|e }}" class="action action_hide">{% trans %}Hide{% endtrans %}</a>
+        <span class="linklist"> | </span>
+          <a href="{{ report|url('solve')|e }}" class="action action_solve">{% trans %}Solved{% endtrans %}</a>
+        <span class="linklist"> | </span>
+          <a href="{{ report.article|url('edit')|e }}" class="action action_edit">{% trans %}Edit article{% endtrans %}</a>
+        </span>
+      </p>
+    </div>
+  {%- endfor %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{#
+    ikhaya/comment_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% from 'macros.html' import render_form %}
+
+{% set article = comment.article %}
+{% set BREADCRUMBS = [(article.subject, article|url),
+                      (_('Edit comment'), comment|url('edit'))] + BREADCRUMBS|d([]) %}
+
+{% block ikhaya_content %}
+  <div class="content_sidebar_bk">
+    <h2>{% trans %}Edit comment{% endtrans %}</h2>
+    <form action="" method="post">
+      {{ csrf_token() }}
+      {{ render_form(form, ['text']) }}
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    </form>
+  </div>
+{% endblock %}

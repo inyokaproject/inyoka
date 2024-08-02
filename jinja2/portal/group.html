@@ -1,0 +1,48 @@
+{#
+    portal/group.html
+    ~~~~~~~~~~~~~~~~~
+
+    This page shows details about a group.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% set BREADCRUMBS = [(_('Groups'), href('portal', 'groups')), (group.name, group|url)] + BREADCRUMBS|d([]) %}
+{% block content %}
+  <h3>{{ group.name|e }}
+  {%- if USER.has_perm('auth.change_group') %}
+    <a href="{{ href('portal', 'group', group.name, 'edit') }}" class="admin_link"><img
+      src="{{ href('static', 'img/icons/edit.svg') }}" alt="{% trans %}Edit group{% endtrans %}" title="{% trans %}Edit group{% endtrans %}" height="16px" width="16px"></a>
+  {%- endif %}
+  </h3>
+  <p>
+    {%- trans count=user_count, name=group.name|e -%}
+      The group “{{ name }}” has {{ count }} member:
+    {%- pluralize -%}
+      The group “{{ name }}” has {{ count }} members:
+    {%- endtrans -%}
+  </p>
+  <table>
+    <tr>
+      <th>{{ table.get_html('id', '#') }}</th>
+      <th>{{ table.get_html('username', _('Username')) }}</th>
+      <th>{{ table.get_html('location', _('Residence')) }}</th>
+      <th>{{ table.get_html('date_joined', _('Member since')) }}</th>
+    </tr>
+    {%- for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>
+        <a href="{{ user|url }}">{{ user.username|e }}</a></td>
+      <td>{{ user.location }}</td>
+      <td>{{ user.date_joined|datetime }}</td>
+    </tr>
+    {%- endfor %}
+  </table>
+  <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+{% endblock %}

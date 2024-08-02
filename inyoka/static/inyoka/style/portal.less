@@ -1,0 +1,432 @@
+/**
+ * style.portal
+ * ~~~~~~~~~~~~
+ *
+ * The styles for the portal.
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'layout.less';
+
+h3 {
+  color: @brown_light;
+}
+h4 {
+  font-size: 1.3em;
+  color: #444;
+}
+form.usercp_form {
+  ul {
+    list-style: none;
+  }
+  > * {
+    margin-top: 1em;
+  }
+}
+img.cat {
+  float: right;
+  margin: 0.5em 0 0.5em 1em;
+}
+
+.container.get_ubuntu {
+  background-color: @orange_d_light;
+  padding-bottom: 0.25em;
+}
+.get_ubuntu h3 {
+  padding: 0.5em 1em 0.5em 45px;
+  background-image: url(../img/download.svg);
+}
+
+#counter {
+  text-align: center;
+}
+
+.container.calendar {
+  .gradient(@grey_dark, darken(@grey_dark, 10%), @grey_dark);
+  h3 {
+    padding: 0;
+  }
+}
+.calendar:hover {
+  color: #666;
+}
+.calendar div.calendar.link {
+  display: block;
+  padding: 0.5em 1em 0.5em 45px;
+  background-image: url(../img/calendar.svg);
+  background-repeat: no-repeat;
+  background-position: center left;
+}
+.calendar div.calendar.overview p,.calendar div.calendar.overview ul {
+  margin-top: 5px;
+}
+
+.article {
+  .meta {
+    font-weight: bold;
+    .comments {
+      color: @brown_light;
+    }
+  }
+
+  @media (min-width: @medium-width) {
+    > .meta {
+      grid-area: meta;
+      align-self: end;
+      text-align: right;
+    }
+    > h4 {
+      grid-area: heading;
+      margin-bottom: 0;
+    }
+    > p {
+      grid-area: intro;
+    }
+
+    display: grid;
+    grid: "heading meta"
+          "intro   intro"
+          / 1fr    auto;
+  }
+}
+hr.divider {
+  margin: 0.75em 0;
+  background-color: #E0C99D;
+}
+
+.ubuntu_version {
+  color: #444;
+  font-size: .9em;
+  font-weight: normal;
+}
+div.usermap {
+  width: 100%;
+  height: 400px;
+  border: 1px solid #ccc;
+}
+table.userinfo {
+  border-collapse: collapse;
+  width: 100%;
+  th {
+    text-align: left;
+    font-weight: bold;
+    color: #666;
+  }
+  td.hidden {
+    background-color: #f1e8dd;
+  }
+}
+table.userinfo th,table.userinfo td {
+  width: 33%;
+  padding: 0.2em;
+  border: 1px solid #ccc;
+}
+div.usercp_control {
+  ul {
+    list-style: none;
+    text-align: center;
+    border: none;
+    li {
+      display: inline-block;
+      span {
+        text-align: center;
+        display: table-cell;
+        border: 1px solid @grey_dark;
+        padding: 0;
+        a {
+          width: 250px;
+          height: 150px;
+          padding: 5px 10px 0 10px;
+          display: block;
+          text-decoration: none;
+          color: #888;
+        }
+      }
+      a:hover {
+        color: #444;
+        img {
+          opacity: 1;
+        }
+      }
+      a {
+        img {
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+}
+img.usercp_avatar {
+  float: right;
+  padding-bottom: 20px;
+}
+table.usercp_subscriptions {
+  th {
+    text-align: left;
+    padding-left: 10px;
+  }
+  td.items.unreadable {
+    color: #aaa;
+    a {
+      color: #aaa;
+    }
+  }
+  td.read, td.status {
+    text-align: center;
+  }
+  img {
+    position: relative;
+    top: 2px;
+    margin-top: -2px;
+  }
+}
+table.usercp_subscriptions td.checkboxes,table.usercp_subscriptions th.checkboxes {
+  text-align: left;
+  width: 1em;
+  padding-left: .75em;
+}
+div.prvmsg {
+  border: 1px solid #ccc;
+  padding: .5em;
+  background-color: #f2f2f2;
+  margin-top: 1em;
+  img.avatar {
+    float: right;
+  }
+  dl.prvmsg_header {
+    dt {
+      float: left;
+      width: 6em;
+      color: #666;
+    }
+    dd {
+      margin-bottom: .2em;
+    }
+  }
+  div.prvmsg_body {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: .2em;
+    clear: right;
+  }
+}
+table {
+  tr {
+    td.pn_delete {
+      input {
+        margin-left: 30px;
+      }
+    }
+  }
+  th.delete {
+    cursor: pointer;
+  }
+  th.delete:before {
+    content: "↓";
+    margin-right: 5px;
+  }
+}
+.active_pn {
+  background-color: #F8F6F1;
+}
+.pn_actions {
+  margin-top: .2em;
+}
+a.pn_restore, a.pn_archive, a.pn_reply, a.pn_reply_all, a.pn_forward {
+  padding-left: 20px;
+  background: no-repeat left center;
+  background-size: 16px 16px;
+}
+a.pn_restore {
+  background-image: url(../img/icons/msg-restore.svg);
+}
+a.pn_archive {
+  background-image: url(../img/icons/archive.svg);
+}
+a.pn_reply {
+  background-image: url(../img/icons/msg-reply.svg);
+}
+a.pn_reply_all {
+  background-image: url(../img/icons/msg-reply-all.svg);
+}
+a.pn_forward {
+  background-image: url(../img/icons/msg-forward.svg);
+}
+table.calendar {
+  td {
+    border: 0px solid #CCC;
+  }
+  td.day {
+    font-weight: bold;
+    border-width: 1px 1px 0 0;
+    background-color: #EEE;
+  }
+  td.noday {
+    border-width: 0 1px 0 0;
+    background-color: #EEE;
+  }
+  td.time {
+    background-color: #f1dfc8;
+    border-width: 0 1px 0 0;
+  }
+}
+table.pms {
+  margin-top: 20px;
+  td.actions {
+    min-width: 80px;
+  }
+}
+div.pnfooter {
+  float: right;
+  text-align: right;
+  .onepage {
+    font-size: x-small;
+  }
+}
+a.user_inactive {
+  color: #444;
+  text-decoration: line-through;
+}
+table.static_pages .pagekey, table.static_pages .title {
+  width: 25%;
+}
+table.static_pages, table.static_files {
+  tbody {
+    tr {
+      td {
+        text-align: center;
+      }
+    }
+  }
+}
+img.admin_teamicon {
+  float: left;
+  margin: 20px;
+}
+.item_add,.item_remove {
+  cursor: pointer;
+}
+select[name="user_groups_joined"],select[name="user_groups_not_joined"] {
+  border: none;
+  padding: 5px;
+  width: 100%;
+}
+select.permissions, select.forums {
+  vertical-align: top;
+  margin: 0 1.5em 0 0;
+}
+select.permissions option, select.forums option {
+  padding: 0.2em 0.8em;
+}
+div.group_titles {
+  border: 1px solid #ccc;
+  margin: 5px 0px 5px 20px;
+  padding: 5px;
+  width: 350px;
+  font-size: 0.8em;
+  line-height: 1.1em;
+  color: #333;
+  input {
+    display: inline;
+    margin: 0 0 0 10px;
+  }
+}
+ul.permissions {
+  list-style: none;
+}
+#forum_rights {
+  display: table-row;
+  ul.forums {
+    list-style: none;
+    padding: 0;
+    display: table-cell;
+    vertical-align: top;
+    li {
+      background-color: #f2f2f2;
+      border-width: 1px 0 1px 1px;
+      border-style: solid;
+      border-color: #ccc;
+      margin-bottom: 0.4em;
+      padding: 3px;
+      color: @orange_s_medium;
+      cursor: pointer;
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+    li.active {
+      background-color: #fff;
+      font-weight: bold;
+    }
+  }
+  div.privileges {
+    display: table-cell;
+    border: 1px solid #ccc;
+    padding: 0.5em;
+    margin-bottom: 0.4em;
+    width: 100%;
+    label {
+      margin: 0 1em 0 0.5em;
+    }
+  }
+}
+table.jstableform {
+  width: 100%;
+  td.jstableform-_jswarning {
+    background-color: #D40000;
+    color: #FFFFFF;
+  }
+  td.jstableform-status-yes {
+    background-image: url('../img/forum/solve.png');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  td.jstableform-status-no {
+    background-image: url('../img/forum/unsolve.png');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  thead {
+    font-weight: bold;
+    .jstableform-type-boolean {
+      width: 40px;
+    }
+  }
+  .invalid {
+    background-color: #FF8080;
+  }
+  .pointer {
+      cursor: pointer;
+  }
+}
+
+.subscribe_user {
+  border:none;
+
+  &_form {
+    display: inline;
+  }
+}
+
+.edit-forum-permissions {
+  .permissions-description th {
+    padding: .3em .6em;
+    vertical-align: bottom;
+
+    @media(max-width: 1500px) {
+      writing-mode: vertical-rl;
+    }
+  }
+
+  table input {
+    width: 100%;
+  }
+
+  .hover {
+    background-color: #eee;
+  }
+  tr:hover {
+    .hover();
+  }
+}

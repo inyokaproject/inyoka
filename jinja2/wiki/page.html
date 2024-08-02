@@ -1,0 +1,100 @@
+{#
+    wiki/page.html
+    ~~~~~~~~~~~~~~
+
+    This is the base layout for all wiki detail pages except of partial
+    templates (prefixed with an underscore)
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{% extends 'overall.html' %}
+
+{% set tmp_crumb = [(_('Wiki'), href('wiki'))] %}
+{% if page %}
+  {% for part in page.trace %}
+    {% set description = part.split('/')[-1] %}
+    {% do tmp_crumb.append((description, href('wiki', part))) %}
+  {% endfor %}
+
+  {% if page.rev.attachment %}
+    {% do tmp_crumb.insert(-1, (_('Attachment'), href('wiki', page.trace[-2], 'a', 'attachments'))) %}
+  {% endif %}
+{% endif %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% set styles = styles|default([]) + ['wiki', 'highlight'] %}
+{% set active_app = 'wiki' %}
+
+{% set navi_type  = 'both' %}
+
+{% block sidebar %}
+  <div class="container">
+    {% if can and can.manage %}
+      {% include 'wiki/sidebar/config.html' %}
+    {% endif %}
+
+    <h3 class="navi_wiki">{% trans %}Wiki{% endtrans %}</h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'Wiki', 'Index') }}">{% trans %}Index{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'wiki', 'recentchanges') }}">{% trans %}Recent changes{% endtrans %}</a></li>
+      {% if not USER.is_anonymous %}
+        <li><a href="{{ href('wiki', 'wiki', 'missingpages') }}">{% trans %}Missing Pages{% endtrans %}</a></li>
+      {% endif %}
+      <li><a href="{{ href('wiki', 'Wiki', 'Neue_Artikel') }}">{% trans %}List of new articles{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki') }}">{% trans %}Overview{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'FAQ_-_häufig_gestellte_Fragen') }}">{% trans %}FAQ{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'Benutzung') }}">{% trans %}Usage{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Kategorien') }}">{% trans %}Category{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'wiki', 'tagcloud') }}">{% trans %}Tag Cloud{% endtrans %}</a></li>
+    </ul>
+
+    <h3 class="navi_join">{% trans %}Participation{% endtrans %}</h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'Wikiartikel_anlegen') }}">{% trans %}Create a wiki article{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'HowTo') }}">{% trans %}Create a Howto{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'Referenz') }}">{% trans %}Wiki Reference{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'Syntax') }}">{% trans %}Wiki Syntax{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Baustelle') }}">{% trans %}Sites under construction{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'Artikelideen') }}">{% trans %}Article Ideas{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'ungetestet') }}">{% trans %}Untested Articles{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'Vorlagen', 'Ausbaufähig', 'a', 'backlinks') }}">{% trans %}Expandable Articles{% endtrans %}</a></li>
+      <li><a href="{{ href('wiki', 'Wiki', 'Vorlagen', 'Fehlerhaft', 'a', 'backlinks') }}">{% trans %}Incorrect Articles{% endtrans %}</a></li>
+      <li><a href="{{ href('forum', 'forum', 'wiki') }}">{% trans %}Around the Wiki{% endtrans %}</a></li>
+    </ul>
+
+    {% if not can or not can.manage %}
+      {% include 'wiki/sidebar/config.html' %}
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block tabbar %}
+  {% if can and can.read %}
+    <ul>
+      {% for action_, title in (
+        ('show', _('Article')),
+        ('edit', _('Edit')),
+        ('log', _('Log')),
+      ) %}
+        {% if action_ != 'edit' or (action_ == 'edit' and (can.edit or USER.is_anonymous)) %}
+        <li><a href="{{ page|url(action_) }}"{% if action == action_ %} class="active"{% endif %}>{{ title }}</a></li>
+        {% endif %}
+      {% endfor %}
+      <li{% if not page.topic %} class="disabled"{% endif %}>
+        <a href="{{ page.topic and page.topic|url('last_post') or href('forum', 'new_discussion', page.title) }}">{% trans %}Discussion{% endtrans %}</a>
+      </li>
+      {% if is_subscribed %}
+        <li><a href="{{ page|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
+      {% else %}
+        <li><a href="{{ page|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% block wiki_content %}
+
+  {% endblock %}
+{% endblock %}

@@ -1,0 +1,33 @@
+{#
+    forum/movetopic.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    This page gives the user the ability to move a topic into a new forum.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'forum/page.html' %}
+
+{% set tmp_crumb = [] %}
+{% for parent in topic.forum.parents|reverse %}
+  {% do tmp_crumb.append((parent.name, parent|url)) %}
+{% endfor %}
+{% do tmp_crumb.extend([(topic.forum.name, topic.forum|url), (topic.title, topic|url),
+                        (_('Move'), topic|url('move'))])%}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block forum_content %}
+  <form action="" method="post" class="new_topic">
+    {{ csrf_token() }}
+    <h2>{% trans topic=topic.title|e %}Move “{{ topic }}”{% endtrans %}</h2>
+    <p>{% trans %}Here you can move a topic into another forum.{% endtrans %}</p>
+    <dl>
+      <dt>{% trans %}New forum of the topic:{% endtrans %}</dt>
+      <dd>{{ form.forum }}{{ form.errors.forum }}</dd>
+      <dt>{{ form.edit_post.label_tag() }}</dt>
+      <dd>{{ form.edit_post }}</dd>
+      <dd><input type="submit" value="{% trans %}Move{% endtrans %}"></dd>
+    </dl>
+  </form>
+{% endblock %}

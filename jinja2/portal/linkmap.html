@@ -1,0 +1,67 @@
+{#
+    portal/linkmap.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    This page administrates the link map for interwiki link shortcuts.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{% extends 'portal/overall.html' %}
+
+{% set BREADCRUMBS = [(_('Link Map'), href('portal', 'linkmap'))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <h3>{% trans %}Link Map{% endtrans %}</h3>
+  <p>
+    {% trans %}This Page lets you edit, delete and add external link shortcuts. The icons should be of the size 14px x 14px.{% endtrans %}
+  </p>
+  <p>
+    {% trans %}The keyword <code>PAGE</code> in a link will be replaced by the user defined value. Otherwise the user value will be appended.{% endtrans %}
+  </p>
+  <p>
+    {% trans %}The tokens <code>attachment</code> and <code>user</code> are hardcoded into Inyoka.{% endtrans %}
+  </p>
+
+  <form enctype="multipart/form-data" method="post" action="">
+    {{ csrf_token() }}
+    {{ formset.management_form }}
+    {{ formset.non_form_errors() }}
+
+    <table>
+      <thead>
+      <tr>
+        {% for field in formset|first %}
+          {% if not field.is_hidden %}
+            <th>
+              {{ field.label }}
+            </th>
+          {% endif %}
+        {% endfor %}
+      </tr>
+      </thead>
+
+      <tbody>
+      {% for form in formset %}
+        {{ form.non_field_errors() }}
+        <tr>
+          {% for field in form %}
+            {% if not field.is_hidden %}
+              <td>
+              {{ field.errors }}
+            {% endif %}
+
+          {{ field }}
+
+          {% if not field.is_hidden %}
+            </td>
+          {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+  </form>
+{% endblock %}

@@ -1,0 +1,100 @@
+{#
+    forum/postlist.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Show a list of all posts for a given user.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{% extends 'forum/page.html' %}
+
+{% from 'forum/_forum.html' import topic_icon with context %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% set tmp_crumb = [(username, href('forum', 'author', username|e))] %}
+{% if forum %}
+    {% do tmp_crumb.append((forum.name, href('forum', 'author', username|e, 'forum', forum.slug))) %}
+{% endif %}
+{% if topic %}
+    {% do tmp_crumb.append((topic.title, href('forum', 'author', username|e, 'topic', topic.slug))) %}
+{% endif %}
+
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+
+{% block forum_content %}
+  <table class="forum">
+    <thead>
+      <tr><th colspan="4" class="category">{{ title }}</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th class="topic" colspan="2">{% trans %}Post{% endtrans %}</th>
+        <th class="forum">{% trans %}Topic{% endtrans %}</th>
+        <th class="forum">{% trans %}Forum{% endtrans %}</th>
+      </tr>
+
+      {% for post in posts if not (post.hidden and not post.topic.hidden and not can_moderate(post.topic))
+                             and not (hide_sticky and post.topic.sticky) %}
+        {% set classes = [] %}
+        {% if can_moderate(post.topic) and (post.topic.hidden or post.hidden) %}{% do classes.append('hidden') %}{% endif %}
+        {% if can_moderate(post.topic) and post.topic.reported %}{% do classes.append('reported') %}{% endif %}
+        {% if post.topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
+        <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
+          <td class="icon">
+            {{ topic_icon(post.topic) }}
+          </td>
+          <td class="topic">
+            <p class="topic_title">
+              {% if can_moderate(post.topic) and post.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
+              <a href="{{ post|url }}">{% trans %}Go to post{% endtrans %}</a>
+            </p>
+            <p class="description note">
+              {% trans date=post.pub_date|datetime %}Posted on {{ date }}</a>{% endtrans %}
+            </p>
+          <td class="topic">
+            <p class="topic_title">
+              {% if post.topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if post.topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+              {% if can_moderate(post.topic) and post.topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
+              {% if can_moderate(post.topic) and post.topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
+              <a href="{{ post.topic|url }}">{{ post.topic.title|e }}</a>
+            </p>
+            <p class="description note">
+              {% trans author=username|e,
+                    userlink=href('portal', 'user', username|e),
+                    link=href('forum', 'author', username|e, 'topic', post.topic.slug) %}<a href="{{ link }}">Posts</a> by <a href="{{ userlink }}">{{ author }}</a> in this topic{% endtrans %}
+              {% if post.topic.paginated %} |
+                {% trans %}Go to page{% endtrans %}
+                <span class="pagination">{{ render_small_pagination(post.topic.get_pagination()) }}</span>
+              {% endif %}
+            </p>
+          </td>
+          <td class="topic">
+            <p class="topic_title">
+              <a href="{{ post.topic.forum|url }}">{{ post.topic.forum.name|e }}</a>
+            </p>
+            <p class="description note">
+              {% trans author=username|e,
+                    userlink=href('portal', 'user', username|e),
+                    link=href('forum', 'author', username|e, 'forum', post.topic.forum.slug) %}<a href="{{ link }}">Posts</a> by <a href="{{ userlink }}">{{ author }}</a> in this forum{% endtrans %}
+            </p>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="4">
+            {% trans %}No topics were found.{% endtrans %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="forum_offset_pagination">
+    <div class="pagination pagination_right">
+      {{ rendered_pagination }}
+    </div>
+  </div>
+{% endblock %}

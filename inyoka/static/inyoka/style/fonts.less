@@ -1,0 +1,44 @@
+/**
+ * style.fonts
+ * ~~~~~~~~~~~
+ *
+ * Variables for fonts.
+ *
+ * :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@font-header: "Ubuntu", sans-serif;
+@font-content: "Liberation Sans", sans-serif;
+@font-monospace: "Liberation Mono", monospace;
+
+@font-size: 0.92em;
+@line-height: 1.45;
+
+@font-folder: '../font/'; /* notice the slash at the end! */
+
+.font(@weight: normal; @size; @font-family) {
+  font: @arguments;
+}
+
+/**
+See
+ https://en.wikipedia.org/wiki/Regional_Indicator_Symbol#Font_test
+ https://gist.github.com/mfornos/9991865#file-emoji-font-css
+ https://www.unicode.org/emoji/charts/full-emoji-list.html
+ */
+.emoji-font-face() {
+  src: local(EmojiOne),
+       local('Twemoji Mozilla'),
+       local('EmojiOne Mozilla'), /* can be removed after Firefox 60 ESR EoL*/
+       local('Apple Color Emoji'),
+       local('Noto Color Emoji'),
+       local('Android Emoji'),
+       local('Segoe UI'),
+       local('Twitter Color Emoji'),
+       local('DejaVu Sans');
+  /*                            ↓→ Emoji unicode blocks */
+  unicode-range: U+1F1E6-1F1FF, U+1F300-1F5FF, U+1F600-1F64F, U+1F680-1F6FF, U+2600-26FF;
+  /*             ↑ regional indicators („flags“) */
+  font-display: swap;
+}

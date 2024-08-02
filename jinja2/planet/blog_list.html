@@ -1,0 +1,39 @@
+{#
+    planet/blog_list.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This is the overview of the static pages configuration.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'planet/page.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% set BREADCRUMBS = [(_('Bloglist'), href('planet', 'blogs'))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <h3>{% trans %}Blogs{% endtrans %}</h3>
+  <table class="static_pages">
+    <thead>
+      <tr>
+        <th>{{ table.get_html('name', _('Name')) }}</th>
+        <th>{{ table.get_html('user', _('User')) }}</th>
+        <th>{{ table.get_html('latest_update', _('Latest update')) }}</th>
+        <th>{{ table.get_html('active', _('Active')) }}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {%- for blog in object_list %}
+      <tr{% if not blog.active %} class="not_published"{% endif %}>
+        <td><a href="{{ blog|url('edit') }}">{{ blog.name|e }}</a></td>
+        <td>{% if blog.user %}<a href="{{ href('portal', 'user', blog.user) }}">{{ blog.user }}</a>{%else%} - {% endif %}</td>
+        <td>{{ blog.latest_update|datetime if blog.latest_update else _('No entry') }}</td>
+        <td>{% if blog.active %}✓{% else %}❌{% endif %}</td>
+      </tr>
+    {%- endfor %}
+    </tbody>
+  </table>
+  <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+{% endblock %}

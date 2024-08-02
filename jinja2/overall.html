@@ -1,0 +1,265 @@
+{#
+    overall.html
+    ~~~~~~~~~~~~
+
+    This is the basic layout that is included by all templates.
+
+    It contains the design elements that are displayed on all pages.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+-#}
+{% import 'macros.html' as macros %}
+
+{% set BREADCRUMBS = BREADCRUMBS|default([]) %}
+
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}"
+      {% if USER.settings.get('reduce_motion', False) %}class="reduce-motion"{% endif %}>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+      {{ macros.create_title(BREADCRUMBS) }}
+    </title>
+    {% block html_head %}
+      {% if deny_robots %}
+        <meta name="robots" content="{% if deny_robots == true %}noindex, nofollow{% else %}{{ deny_robots }}{% endif %}">
+      {% endif %}
+      {#- This way the local stylesheets can override styles without problems. #}
+      {% set styles = ['main', 'markup'] + styles|default([]) %}
+      {% for style in styles %}
+        <link rel="stylesheet"  href="{{ href('static', 'style', '%s.css'|format(style), v=INYOKA_VERSION) }}">
+      {% endfor %}
+
+      <link rel="stylesheet"  href="{{ href('static', 'style', 'print.css', v=INYOKA_VERSION) }}" media="print">
+
+      {% if special_day_css %}
+        <link rel="stylesheet"  href="{{ href('static', 'style', 'special_day', special_day_css, v=INYOKA_VERSION) }}">
+      {% endif %}
+
+      <link rel="stylesheet"  href="{{ href('media', 'linkmap', linkmap_css) }}">
+
+      {% for title, url in feeds %}
+        <link rel="alternate" href="{{ url|e }}" title="{{ title|e }}" type="application/atom+xml">
+      {% endfor %}
+      <link rel="shortcut icon" href="{{ href('static', 'img', 'favicon.ico') }}">
+      <meta name="theme-color" content="#2b2929">
+
+      {% if pagination %}
+          {% if pagination.prev %}
+            <link rel="prev" href="{{ pagination.prev }}">
+          {% endif %}
+
+          {% if pagination.next %}
+            <link rel="next" href="{{ pagination.next }}">
+          {% endif %}
+      {% endif %}
+
+    {% endblock %}
+  </head>
+  <body>
+  <nav class="navi_global">
+    <a href="#main" class="skip-link">{% trans %}Skip to main content{% endtrans %}</a>
+    <a href="#sidebar" class="skip-link">{% trans %}Skip to sidebar{% endtrans %}</a>
+      <ul>
+        <li>
+          <noscript>
+            <strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong>
+          </noscript>
+        </li>
+        {% if USER.is_authenticated %}
+          <li>
+            <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
+              {% if USER.has_avatar %}
+                {{ macros.add_user_avatar(USER) }}
+              {% endif %}
+              {% trans user=USER.username|e %}Logout [{{ user }}]{% endtrans %}
+            </a>
+          </li>
+          <li>
+            <a href="{{ href('portal', 'usercp') }}">
+              {% trans %}Control panel{% endtrans %}
+            </a>
+          </li>
+          <li>
+            {% if pm_count %}
+              <strong>
+                <a href="{{ href('portal', 'privmsg')}}">
+                  {% trans count=pm_count %}Private messages ({{ count }}){% endtrans %}
+                </a>
+              </strong>
+            {% else %}
+              <a href="{{ href('portal', 'privmsg') }}">
+                {% trans %}Private messages{% endtrans %}
+              </a>
+            {% endif %}
+          </li>
+        {% else %}
+          <li>
+            <a href="{{ href('portal', 'login', next=CURRENT_URL) }}" id="login_link">
+              {% trans %}Login{% endtrans %}
+            </a>
+          </li>
+          <li>
+            <a href="{{ href('portal', 'register') }}">
+              {% trans %}Register{% endtrans %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+  </nav>{# .navi_global #}
+
+    <header class="header">
+      <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
+      <ul class="tabbar">
+        {% for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
+          <li class="{{ app }}" {% if app == active_app %}aria-current="page"{% endif %}>
+            <a href="{{ href(app) }}">{{ app|capitalize }}</a>
+          </li>
+        {% endfor %}
+      </ul>{# .tabbar #}
+    </header>{# .header #}
+
+        {% if USER.has_perm('forum.manage_reported_topic') or USER.has_perm('ikhaya.change_article') or USER.has_perm('portal.change_event') %}
+          <div id="admin_menu">
+            <div class="bar">
+              {% if USER.has_perm('forum.manage_reported_topic') %}
+                {{ macros.render_modnavi_li(_('Reported topics'), href('forum', 'reported_topics'), href('static', 'img/admin/report.png'), report_count) }}
+              {% endif %}
+              {% if USER.has_perm('ikhaya.change_article') %}
+                {% set label = _('Article suggestions') %}
+                {{ macros.render_modnavi_li(label, href('ikhaya', 'suggestions'), href('static', 'img/admin/article.png'), suggestion_count) }}
+                {% set label = _('Spelling mistakes') %}
+                {{ macros.render_modnavi_li(label, href('ikhaya', 'reports'), href('static', 'img/admin/spelling.png'), article_report_count) }}
+              {% endif %}
+              {% if USER.has_perm('portal.change_event') %}
+                {% set label = _('Event suggestions') %}
+                {{ macros.render_modnavi_li(label, href('ikhaya', 'events', 'invisible'), href('static', 'img/admin/event.png'), event_count) }}
+              {% endif %}
+            </div>
+            <div class="bar">
+              <a id="admin_layer_button">
+                <img src="{{ href('static', 'img/admin/switch.png') }}"
+                    alt="{% trans %}Admin{% endtrans %}"
+                    title="{% trans %}Turn admin links on/off{% endtrans %}">
+              </a>
+            </div>
+          </div>
+        {% endif %}
+
+        {# search via duckduckgo requires JS #}
+        <form method="GET" action="https://duckduckgo.com/" class="search" name="searchsys" data-active-app="{{ active_app }}">
+          <div>
+            <input type="text" size="40" name="keyword" class="search_query">
+            <input type="hidden" name="q">
+
+            {# customization to duckduckgo layout, see https://duckduckgo.com/params #}
+            <input type="hidden" name="kam" value="osm">
+            <input type="hidden" name="kj" value="F4AA90">
+            <input type="hidden" name="ka" value="Ubuntu">
+
+            <input type="submit" value="{% trans %}Search{% endtrans %}" class="search_submit">
+
+            <a href="{{ href('wiki', 'Suchfunktion') }}">via DuckDuckGo</a>
+          </div>
+        </form>
+
+        {% block pathbar_extensions %}
+        {% endblock %}
+
+      <nav aria-label="{% trans %}Breadcrumb top{% endtrans %}" class="breadcrumb -top">
+        {% block breadcrumb %}
+          <ol>
+            {% for breadcrumb in BREADCRUMBS %}
+              <li><a {% if loop.last %}aria-current="location"{% endif %}
+                     href="{{ breadcrumb[1] }}">{{ breadcrumb[0] }}</a></li>
+            {% endfor %}
+          </ol>
+        {% endblock %}
+      </nav>
+
+        {% set tabbar = navi_type in ['tabbar', 'both'] %}
+        {% set sidebar = navi_type in ['sidebar', 'both'] %}
+        {% if sidebar %}
+        <aside id="sidebar" class="navi_sidebar navigation">
+          {% block sidebar %}{% endblock %}
+        </aside>
+        {% endif %}
+
+        {% if tabbar %}
+        <nav class="navi_tabbar navigation">
+          {% block tabbar %}{% endblock %}
+        </nav>
+        {% endif %}
+
+        <main id="main"
+              class="content{{ tabbar and ' content_tabbar' or '' }}{{ sidebar and ' content_sidebar' or '' }}">
+          {% if GLOBAL_MESSAGE %}
+            <div class="message global">{{ GLOBAL_MESSAGE }}</div>
+          {% endif %}
+
+          {% if MESSAGES %}
+            {% for message in MESSAGES %}
+              <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          {% block content %}{% endblock %}
+        </main>
+
+    <nav aria-label="{% trans %}Breadcrumb bottom{% endtrans %}" class="breadcrumb -bottom">
+      {{ self.breadcrumb() }}
+    </nav>
+
+    <footer class="footer">
+      <ul>
+        <li class="poweredby">
+          {% trans link=href('portal', 'inyoka') %}Powered by <a href="{{ link }}">Inyoka</a>{% endtrans %}
+          {% if SETTINGS.DEBUG %}
+            {% trans seconds=REQUEST.watch.duration|round(2) -%}
+              (rendered in {{ seconds }} seconds)
+            {%- endtrans %}
+          {% endif %}
+          <br>
+          {% if INYOKA_VERSION %}
+          Inyoka {{ INYOKA_VERSION }}
+          {% endif %}
+          {% if SETTINGS.DEBUG %}
+            <br>
+            {{ sql_queries_count }} SQL queries in {{ sql_queries_time }}s
+          {% endif %}
+        </li>
+        <li class="license">
+          🄯   2004 – {{ current_year }} inyokaproject.org • Einige Rechte vorbehalten<br>
+          <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
+          <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •
+          <a href="{{ href('portal', 'datenschutz') }}">Datenschutz</a> •
+          <a href="{{ href('portal', 'impressum') }}">Impressum</a>
+        </li>
+      </ul>
+    </footer>{# .footer #}
+
+    <script>
+    /*<![CDATA[*/
+      var
+        $STATIC_URL = {{ href('static')|jsonencode }},
+        $MEDIA_URL = {{ href('media')|jsonencode }},
+        $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
+        $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated else 'null' }},
+        $IS_LOGGED_IN = {{ USER.is_authenticated and 'true' or 'false' }},
+        $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
+    /*]]>*/
+    </script>
+
+   <script src="{{ href('static', 'js/jquery.min.js', v=INYOKA_VERSION) }}"></script>
+   {% for script in ['classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
+       <script src="{{ href('static', 'js/%s.js'|format(script), v=INYOKA_VERSION) }}"></script>
+   {% endfor %}
+
+   {% block additional_scripts %}
+   {% endblock %}
+  </body>
+</html>

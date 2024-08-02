@@ -1,0 +1,28 @@
+{#
+    forum/post_delete.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to delete the selected post.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+<form action="{{ post|url(action)|e }}" method="post">
+  {{ csrf_token() }}
+  <p>
+    {%- if action=='delete' -%}
+      {% trans link=post|url('show')|e, author=post.author.username|e -%}
+        Do you want to delete the <a href="{{ link }}">post from {{ author }}</a>?
+      {%- endtrans %}
+    {%- else -%}
+      {% trans link=post|url('show')|e, author=post.author.username|e -%}
+        Do you want to hide the <a href="{{ link }}">post from {{ author }}</a>?
+      {%- endtrans %}
+    {%- endif -%}
+  <p>
+    <input type="submit" value="{% if action=='delete' %}{% trans %}Delete{% endtrans %}{% else %}{% trans %}Hide{% endtrans %}{% endif %}">
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}">
+  </p>
+</form>

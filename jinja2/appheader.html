@@ -1,0 +1,16 @@
+{#
+    appheader.html
+    ~~~~~~~~~~~~~~
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- if fallback %}
+  <h1>{% trans %}Portal{% endtrans %}</h1>
+{%- else %}
+  {%- set h2 = h1_text != h2_text %}
+  <h1><a href="{{ h1_link }}"{% if h2 %} class="separator"{% endif %}>{{ h1_text|e }}</a></h1>
+  {%- if h2 %}
+    <h2><a href="{{ h2_link }}">{{ h2_text|e }}</a></h2>
+  {%- endif %}
+{%- endif %}

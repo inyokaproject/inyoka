@@ -1,0 +1,34 @@
+{#
+    portal/user_edit_settings.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Change the settings of a user.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{% extends 'portal/user_admin.html' %}
+
+{% set BREADCRUMBS = [(_('Members'), href('portal', 'users')),
+                      (user.username, user|url),
+                      (_('Edit'), href('portal', 'user', user.username, 'edit')),
+                      (_('Settings'), href('portal', 'user', user.username, 'edit', 'settings'))]
+                       + BREADCRUMBS|d([]) %}
+
+{% block content %}
+{{ super() }}
+<form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+  {{ csrf_token() }}
+    <h3>{% trans %}Settings{% endtrans %}</h3>
+    {{ render_form(form, ['notify', 'notifications', 'ubuntu_version','timezone']) }}
+
+    <h4>{% trans %}Interface{% endtrans %}</h4>
+    {{ render_form(form, ['hide_signatures', 'hide_profile']) }}
+
+    <h4>{% trans %}Forum{% endtrans %}</h4>
+    {{ render_form(form, ['mark_read_on_logout', 'autosubscribe', 'show_preview', 'show_thumbnails']) }}
+  <p>
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+  </p>
+</form>
+{% endblock %}

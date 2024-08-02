@@ -1,0 +1,61 @@
+{#
+    ikhaya/events.html
+    ~~~~~~~~~~~~~~~~~~
+
+    This is the overview of the events.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+
+{% set BREADCRUMBS = [(_('Events'), href('ikhaya', 'events'))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <h3>{% trans %}Events{% endtrans %}</h3>
+  <p class="linklist">
+  {%- if USER.has_perm('portal.add_event') %}
+  <a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a>
+  {%- endif %}
+  {%- if not show_all %}
+    | <a href="{{ href('ikhaya', 'events', 'all') }}">{% trans %}Display past events{% endtrans %}</a>
+  {%- endif %}
+  {%- if not invisible %}
+    | <a href="{{ href('ikhaya', 'events', 'invisible') }}">{% trans %}Show only invisible events{% endtrans %}</a>
+  {%- endif %}
+  {%- if invisible or show_all %}
+    | <a href="{{ href('ikhaya', 'events') }}">{% trans %}Show only upcoming events{% endtrans %}</a>
+  {%- endif %}
+  </p>
+  <table class="events">
+    <thead>
+      <tr>
+        <th class="name">{{ table.get_html('name', _('Name')) }}</th>
+        <th class="date">{{ table.get_html('date', _('Date')) }}</th>
+        <th class="author">{{ table.get_html('author', _('Author')) }}</th>
+        <th class="actions">{% trans %}Actions{% endtrans %}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {%- for event in events %}
+      <tr>
+        <td class="name"><a href="{{ event|url }}">{{ event.name|e }}</a></td>
+        <td class="date">{{ event.date|e }}</td>
+        <td class="author"><a href="{{ event.author|url }}">{{ event.author|e }}</a></th>
+        <td class="actions">
+          <a href="{{ event|url('edit') }}" class="event_edit" title="{% trans %}Edit{% endtrans %}"></a>
+          <a href="{{ event|url('delete') }}" class="event_delete" title="{% trans %}Delete{% endtrans %}"></a>
+          <a href="{{ event|url('copy') }}" class="event_copy" title="{% trans %}Copy{% endtrans %}"></a>
+        </td>
+      </tr>
+    {%- else %}
+      <tr>
+        <td colspan="4">
+          {%- trans link=href('ikhaya', 'event', 'new') -%}
+            No event was added yet, <a href="{{ link }}">create</a> the first one now!
+          {%- endtrans -%}
+      </tr>
+    {%- endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,5 @@
+Hallo,
+
+dein Nutzername {{ oldname }} auf inyokaproject.org wurde zu {{ user.username }} geändert. Du kannst dich ab sofort nur mit deinem neuen Namen oder deiner E-Mail-Adresse anmelden.
+
+Dein Team von inyokaproject.org

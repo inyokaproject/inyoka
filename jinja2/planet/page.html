@@ -1,0 +1,72 @@
+{#
+    planet/page.html
+    ~~~~~~~~~~~~~~~~
+
+    This template is included by all planet templates and adds the elements
+    they all use (stylesheets etc).
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'overall.html' %}
+
+{% set BREADCRUMBS = [(_('Planet'), href('planet'))] + BREADCRUMBS|d([]) %}
+{% set active_app = 'planet' %}
+{% set navi_type  = 'sidebar' %}
+{% set styles = styles|default([]) + ['planet'] %}
+
+{%- block html_head %}
+  {{ super() }}
+  <script>
+    /*<![CDATA[*/
+      var $SIDEBAR_HIDDEN = {{ USER.settings.planet_sidebar_hidden and 'true' or 'false' }};
+    /*]]>*/
+  </script>
+{%- endblock %}
+
+{% block sidebar %}
+  <div class="container">
+    <h3 class="navi_planet">{% trans %}Planet{% endtrans %}</h3>
+    {{ planet_description_rendered|default('', True) }}
+
+    <h3 class="navi_blogs">{% trans %}Export blogs{% endtrans %}</h3>
+    <ul class="export">
+      <li><img src="{{ href('static', 'img', 'opml.png') }}"><a href="{{ href('planet', 'blogs', 'export', 'opml') }}">OPML</a>
+      <li><img src="{{ href('static', 'img', 'foaf.png') }}"><a href="{{ href('planet', 'blogs', 'export', 'foaf') }}">FOAF</a>
+    </ul>
+
+    {%- if blogs %}
+      <h3 class="navi_blogs admin_link_hover">
+        {% trans %}Blogs{% endtrans %}
+      </h3>
+      <ul>
+        {%- for blog in blogs %}
+          <li class="admin_link_hover">
+            {%- if USER.has_perm('planet.change_blog') -%}
+              <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
+            {%- endif -%}
+            <a href="{{ blog|url|e }}">{{ blog.name|e }}</a>
+          </li>
+        {%- endfor %}
+      </ul>
+    {%- endif %}
+    {%- if USER.has_perm('planet.add_blog') %}
+      <h3 class="navi_blogs admin_link_hover">
+        {% trans %}Configuration{% endtrans %}
+      </h3>
+      <ul>
+        <li>
+          <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}">{% trans %}Add blog{% endtrans %}</a>
+        </li>
+        <li>
+          <a class="admin_link" href="{{ href('planet', 'blogs') }}">{% trans %}Bloglist{% endtrans %}</a>
+        </li>
+      </ul>
+    {%- endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
+  {%- block planet_content %}
+  {%- endblock %}
+{%- endblock %}

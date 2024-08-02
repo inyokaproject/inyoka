@@ -1,0 +1,93 @@
+{#
+    forum/topiclist.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Show a list of all recent posts.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'forum/page.html' %}
+
+{% from 'forum/_forum.html' import topic_icon with context %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% block forum_content %}
+  <table class="forum">
+    <thead>
+      <tr><th colspan="6" class="category">{{ title }}</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th class="topic" colspan="2">{% trans %}Topic{% endtrans %}</th>
+        <th class="forum">{% trans %}Forum{% endtrans %}</th>
+        <th class="view_count">{% trans %}Views{% endtrans %}</th>
+        <th class="post_count">{% trans %}Replies{% endtrans %}</th>
+        <th class="last_post">{% trans %}Last reply{% endtrans %}</th>
+      </tr>
+
+      {%- for topic in topics if not (topic.hidden and not can_moderate(topic))
+                             and not (hide_sticky and topic.sticky) %}
+        {%- set classes = [] %}
+        {%- if can_moderate(topic) and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
+        {%- if can_moderate(topic) and topic.reported %}{% do classes.append('reported') %}{% endif %}
+        {%- if topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
+        <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
+          <td class="icon">
+            {{ topic_icon(topic) }}
+          </td>
+          <td class="topic">
+            <p class="topic_title">
+              {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+              {% if can_moderate(topic) and topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
+              {% if can_moderate(topic) and topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
+              <a href="{{ topic|url }}">{{ topic.title|e }}</a>
+              {%- if not topic.get_read_status(USER) %}
+                <a href="{{ topic|url('first_unread') }}"
+                   title="{% trans %}Show unread posts{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/forum/goto.png') }}"
+                         alt="{% trans %}Show unread posts{% endtrans %}">{#
+                #}</a>
+              {%- endif %}
+            </p>
+            <p class="description note">
+              {%- trans author=topic.author.username|e, link=topic.author|url -%}
+                by <a href="{{ link }}">{{ author }}</a>
+              {%- endtrans %} |
+              {{ topic.first_post.pub_date|datetime }}
+              {%- if topic.paginated %} |
+                {% trans %}Go to page{% endtrans %}
+                <span class="pagination">{{ render_small_pagination(topic.get_pagination()) }}</span>
+              {%- endif -%}
+            </p>
+          </td>
+          <td><a href="{{ topic.forum|url }}">{{ topic.forum.name|e }}</a></td>
+          <td class="view_count">{{ topic.view_count }}</td>
+          <td class="post_count">{{ topic.post_count.value() - 1 }}</td>
+          <td class="last_post">
+            {%- if topic.last_post %}
+              <a href="{{ topic.last_post|url}}" class="date">{{
+                topic.last_post.pub_date|datetime }}</a><br>
+              <a href="{{ topic.last_post.author|url}}">{{ topic.last_post.author }}</a>
+            {%- else %}
+              –
+            {%- endif %}
+          </td>
+        </tr>
+      {%- else %}
+        <tr>
+          <td colspan="6">
+            {% trans %}No topics were found.{% endtrans %}
+          </td>
+        </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+  <div class="forum_offset_pagination">
+    <div class="pagination pagination_right">
+      {{ rendered_pagination }}
+    </div>
+  </div>
+{% endblock %}

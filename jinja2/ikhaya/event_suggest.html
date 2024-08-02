@@ -1,0 +1,53 @@
+{#
+    ikhaya/event_suggest.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    This page is for new calendar events.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% set styles = ['editor', 'datetimefield'] %}
+{% set scripts = ['WikiEditor','DateTime'] %}
+
+{% set BREADCRUMBS = [(_('Suggest event'), href('ikhaya', 'event', 'suggest'))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <h2>{% trans %}Suggest event{% endtrans %}</h2>
+  <p>
+    {%- trans link_calendar=href('portal', 'calendar'), link_newsteam=href('wiki', 'ubuntuusers/Ikhayateam', _anchor='Teammitglieder') -%}
+      By using this form you can suggest a new entry for the <a href="{{ link_calendar }}">calendar</a>. A team member will review your suggestion as soon as possible. If you want to change an existing calendar entry please contact the <a href="{{ link_newsteam }}">news team</a>.
+    {%- endtrans -%}
+  </p>
+  <form action="" method="post" enctype="multipart/form-data">
+    {{ csrf_token() }}
+    {%- if form.errors %}
+      <ul>{{ form.errors }}</ul>
+    {%- endif %}
+    <dt><label for="id_name">{% trans %}Name:{% endtrans %}</label></dt>
+    <dd>{{ form.name }}</dd>
+    <dt>{% trans %}Time:{% endtrans %}</dt>
+    <dd><label for="id_date">{% trans %}Date (from):{% endtrans %}</label> {{ form.date }}</dd>
+    <dd><label for="id_time">{% trans %}Time (from):{% endtrans %}</label> {{ form.time }}</dd>
+    <dd><label for="id_enddate">{% trans %}Date (to):{% endtrans %}</label> {{ form.enddate }}</dd>
+    <dd><label for="id_endtime">{% trans %}Time (to):{% endtrans %}</label> {{ form.endtime }}</dd>
+    <dt><label for="id_description">{% trans %}Description:{% endtrans %}</label></dt>
+    <dd>{{ form.description }}</dd>
+    <dt>{% trans %}Venue:{% endtrans %}</dt>
+    <dd><label for="id_location_town">{% trans %}Town:{% endtrans %}</label> {{ form.location_town }}</dd>
+    <dd><label for="id_location">{% trans %}Venue:{% endtrans %}</label> {{ form.location }}</dd>
+
+    <dt>{% trans %}Coordinates:{% endtrans %}</dt>
+    <dd><label for="id_location_long">{% trans %}Longitude:{% endtrans %}</label> {{ form.location_long }}</dd>
+    <dd><label for="id_location_lat">{% trans %}Latitude:{% endtrans %}</label> {{ form.location_lat }}</dd>
+
+    <p><input type="submit" value="{% trans %}Submit{% endtrans %}"></p>
+  </form>
+
+  <script>
+    /* <![CDATA[ */
+    var text = new WikiEditor('#id_description');
+    /* ]]> */
+  </script>
+{% endblock %}

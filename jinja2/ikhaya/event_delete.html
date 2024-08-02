@@ -1,0 +1,21 @@
+{#
+    ikhaya/event_delete.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Template for deleting an event.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+<form action="{{ object|url('delete')|e }}" method="post">
+  {{ csrf_token() }}
+  <p>
+    {%- trans link=object|url('show'), event=object.name|e -%}
+      Do you really want to delete the event <a href="{{ link }}">{{ event }}</a>?
+    {%- endtrans -%}
+  <p>
+    <input type="submit" value="{% trans %}Delete{% endtrans %}">
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}">
+  </p>
+</form>

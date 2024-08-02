@@ -1,0 +1,40 @@
+{#
+    portal/edit_user.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Just edit an user...
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% set BREADCRUMBS = [(_('Members'), href('portal', 'users')),
+                      (user.username, user|url),
+                      (_('Edit'), href('portal', 'user', user.username, 'edit'))]
+                       + BREADCRUMBS|d([]) %}
+
+{% macro user_edit_button(link, icon, name) %}
+  <li>
+    <span><a href="{{ link }}">{#
+      #}<img src="{{ href('static', 'img/portal/usercp-%s.svg'|format(icon)) }}" alt="{{ name }}"><br>
+      {{- name -}}
+    </a></span>
+  </li>
+{% endmacro %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+    {{ csrf_token() }}
+    <div class="usercp_control">
+      <ul>
+        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'profile'), 'profile', _('Profile')) }}
+        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'settings'), 'preferences', _('Settings')) }}
+        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'groups'), 'groups', _('Group memberships')) }}
+        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'status'), 'deactivate', _('State')) }}
+      </ul>
+    </div>
+    <a href="{{ href('portal', 'user', user.username) }}">{% trans %}View public profile{% endtrans %}</a>
+  </form>
+{% endblock %}

@@ -1,0 +1,73 @@
+/**
+ * style.layout
+ * ~~~~~~~~~~~~
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'colors.less';
+@import 'fonts.less';
+
+/*
+ * Border-radius-mixins
+ */
+
+.rounded(@radius: 5px) {
+  border-radius: @radius;
+}
+
+.top-rounded(@radius: 5px) {
+  border-top-left-radius: @radius;
+  border-top-right-radius: @radius;
+}
+
+.bottom-rounded(@radius: 5px) {
+  border-bottom-right-radius: @radius;
+  border-bottom-left-radius: @radius;
+}
+
+.left-rounded(@radius: 5px) {
+  border-bottom-left-radius: @radius;
+  border-top-left-radius: @radius;
+}
+
+.right-rounded(@radius: 5px) {
+  border-top-right-radius: @radius;
+  border-bottom-right-radius: @radius;
+}
+
+
+/*
+ * Other mixins
+ */
+
+.break-word() {
+  overflow-wrap: break-word; /* "newer" name; only supported in Chrome/Opera */
+  word-wrap: break-word; /* "older" alternative name */
+}
+
+.gradient(@from: #ccc, @to: #000, @default: #999) {
+  background: repeat-x @default; /* fallback */
+  background: linear-gradient(to bottom,  @from,  @to);
+}
+
+.reset() {
+  /* reset margin and padding */
+  padding: 0;
+  margin: 0;
+}
+
+.horizontal-space-big-width() {
+  @media(min-width: @big-width) {
+    padding-left: calc(@h_space + @body-innerspace);
+    padding-right: calc(@h_space + @body-innerspace);
+  }
+}
+
+.preview-border() {
+  border-right: .5em dashed @orange_s_light;
+  border-image: repeating-linear-gradient(45deg, @orange_s_light, @orange_s_light 35px, rgba(0,0,0,.5) 35px, rgba(0,0,0,.5) 70px) 10;
+  margin: 20px 0 20px 0;
+  padding-right: 1em;
+}

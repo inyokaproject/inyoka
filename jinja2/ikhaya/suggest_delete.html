@@ -1,0 +1,25 @@
+{#
+    ikhaya/suggest_delete.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ask the user if he really wants to delete a
+    suggestion.
+    Keep it small since it's saved inside a cookie when flashing.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+-#}
+
+
+<form action="{{ href('ikhaya', 'suggest', s.id, 'delete') }}" method="post">
+  {{ csrf_token() }}
+  <p>{% trans %}Explanation for the author of the suggestion:{% endtrans %}</p>
+  <p><textarea name="note"></textarea></p>
+  <p class="note">
+    {%- trans -%}
+      Leave this field empty if the suggestion should be deleted without an explanation.
+    {%- endtrans -%}
+  </p>
+  <p><input type="submit" value="{% trans %}Delete{% endtrans %}">{#
+   #}<input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}"></p>
+</form>

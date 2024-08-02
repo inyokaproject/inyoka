@@ -1,0 +1,55 @@
+{#
+    wiki/action_diff.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This template shows a diff between two revisions. It renders the
+    ``wiki/_diff.html`` template indirectly (in fact the diff object
+    renders it), so have a look at that one if you want to change the
+    appereance of the diff table.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set BREADCRUMBS = [(_('Difference'), '')] + BREADCRUMBS|d([]) %}
+{% set action = 'log' %}
+{% block wiki_content %}
+  <div class="main_content">
+    {%- if diff.old_rev == diff.new_rev %}
+      <p>
+        {%- trans link=diff.page|url, article=diff.page.title|e -%}
+          You are trying to compare two equal revision of the article “<a href="{{ link }}">{{ article }}</a>”. For this reason no change is displayed.
+        {%- endtrans -%}
+      </p>
+      <p>
+        {%- trans link=href('wiki', diff.page.name, action='log') -%}
+          But you can display <a href="{{ link }}">a list of changes</a> of this page and compare individual revisions.
+        {%- endtrans -%}
+      </p>
+    {%- else %}
+      <p>
+        {%- trans article_link=diff.page|url, article=diff.page.title|e,
+                 old_rev_link=diff.old_rev|url,
+                 old_rev_note=diff.old_rev.note|e,
+                 old_rev=diff.old_rev.change_date|datetime,
+                 new_rev_link=diff.new_rev|url,
+                 new_rev_note=diff.new_rev.note|e,
+                 new_rev=diff.new_rev.change_date|datetime -%}
+          The following table shows the difference of the article “<a href="{{ article_link }}">{{ article }}</a>” between <a href="{{ old_rev_link }}">revision {{ old_rev }}</a> ({{ old_rev_note }}) and <a href="{{ new_rev_link }}">revision {{ new_rev }}</a> ({{ new_rev_note }}).
+        {%- endtrans -%}
+      </p>
+      <p>
+        {%- trans link_diff=href('wiki', diff.page.name, 'a', 'udiff',
+                                diff.old_rev.id, diff.new_rev.id),
+                 link_list=diff.page|url('log') -%}
+          You can also download the changes as <a href="{{ link_diff }}">unified diff</a> or display a <a href="{{ link_list }}">list of the last changes</a> and compare individual revisions.
+        {%- endtrans -%}
+      </p>
+      {{ diff.render() }}
+    {%- endif %}
+    <h1 class="pagetitle">{% trans new_rev=diff.new_rev.change_date|datetime %} Revision {{ new_rev }} {% endtrans %}</h1>
+    {{ diff.new_rev.rendered_text }}
+  </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{#
+    portal/confirm.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    The user can confirm various actions here. With the action flag the messages can be customized.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{% extends 'portal/overall.html' %}
+
+{%- block portal_content %}
+  {% if action == 'reactivate_user' %}
+    <p>{% trans %}You can restore your account here if you deleted it. Please note that this is only possible one month after the deletion.{% endtrans %}</p>
+  {% elif action == 'reset_email' %}
+    <p>{% trans %}You can reset your email address here if you changed it accidentally.{% endtrans %}</p>
+  {% endif %}
+
+  <form method="post" action="">
+    {{ csrf_token() }}
+    {{ form.as_p() }}
+    <p><input type="submit" value="{% trans %}Submit{% endtrans %}"></p>
+  </form>
+{% endblock %}

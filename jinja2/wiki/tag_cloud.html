@@ -1,0 +1,29 @@
+{#
+    wiki/tag_cloud.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to show a tag cloud of the most used wiki tags.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set BREADCRUMBS = [(_('Tag Cloud'), href('wiki', 'wiki/tagcloud'))] + BREADCRUMBS|d([]) %}
+
+{% block wiki_content %}
+  <div class="main_content">
+    {% if tag_list %}
+      <h1 class="pagetitle">{% trans %}Tag Cloud{% endtrans %}</h1>
+      <p>{% trans %}Wiki articles can be tagged by key words. The following tag list overviews them. This is useful to find more articles to a specified topic, etc. There is also a complete <a href="/wiki/tags">alphabetical list</a> of all tags in the wiki.{% endtrans %}</p>
+      <div class="tagcloud">
+      {% for tag in tag_list %}
+        <a title="{{ tag.count }} {% trans %}pages{% endtrans %}" href="/wiki/tags/{{ tag.name|e }}" class="tag-{{ tag.size }}">{{ tag.name|e }}</a>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p>{% trans %}There are no tags in the wiki, yet.{% endtrans %}</p>
+    {% endif %}
+  </div>
+{% endblock %}

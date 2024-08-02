@@ -1,0 +1,6 @@
+# Font Squirrel Font-face Generator Configuration File
+# Upload this file to the generator to recreate the settings
+# you used to create these fonts.
+# ubuntu-0.83 used as base font http://font.ubuntu.com/download/ubuntu-font-family-0.83.zip
+
+{"mode":"expert","formats":["ttf","woff","woff2"],"tt_instructor":"ttfautohint","fix_vertical_metrics":"Y","metrics_ascent":"","metrics_descent":"","metrics_linegap":"","add_spaces":"Y","add_hyphens":"Y","fallback":"none","fallback_custom":"100","options_subset":"basic","subset_range":["currency","typographics","english","german"],"subset_custom":"","subset_custom_range":"","subset_ot_features_list":"","css_stylesheet":"","filename_suffix":"","emsquare":"2048","spacing_adjustment":"0","rememberme":"Y"}

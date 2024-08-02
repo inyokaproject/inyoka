@@ -1,0 +1,19 @@
+{#
+    portal/user_admin.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    user administration interface.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+{% set styles = ['editor', 'datetimefield', 'portal'] %}
+{% set scripts = ['WikiEditor', 'DateTime', 'jquery.autocomplete'] %}
+
+{% block content %}
+  <div class="warning_important">{% trans name=user.username -%}
+    Attention: You are currently editing “{{ name }}”.
+  {%- endtrans %}</div>
+{% endblock %}

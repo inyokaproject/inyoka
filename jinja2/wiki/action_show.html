@@ -1,0 +1,56 @@
+{#
+    wiki/action_show.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to show a page of the most recent revision or
+    of a specific revision.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'wiki/page.html' %}
+{% set action = 'show' %}
+
+{% block html_head %}
+  {{ super() }}
+
+  <link rel="canonical" href="{{ page|url('show')|e }}">
+{% endblock %}
+
+{% block wiki_content %}
+  <h1 class="pagetitle">
+    {% if page.rev.attachment %}{% trans %}Attachment:{% endtrans %}{% endif %}
+    {{ page.short_title|e }}
+  </h1>
+
+  {% if page.rev.attachment %}
+    <div id="attachment">{{ page.rev.attachment.html_representation }}</div>
+  {% endif %}
+
+  <div id="page">{{ page.rev.rendered_text }}</div>
+
+  <p class="meta">
+    {% if page.rev.user %}
+      {% trans rev_link=page.rev|url, date=page.rev.change_date|datetime,
+               author_link=page.rev.user|url, author=page.rev.user.username|e -%}
+        <a href="{{ rev_link }}">This revision</a> was created on {{ date }} by <a href="{{ author_link }}">{{ author }}</a>.
+      {%- endtrans %}
+    {% else %}
+      {% trans rev_link=page.rev|url, date=page.rev.change_date|datetime,
+               author=page.rev.remote_addr|e -%}
+        <a href="{{ rev_link }}">This revision</a> was created on {{ date }} by {{ author }}.
+      {%- endtrans %}
+    {% endif %}
+    {%- if tags %}
+      <br>
+      {%- trans -%}
+        At this page the following tags have been assigned:
+      {%- endtrans %}
+      {% for tag in tags -%}
+        <a href="{{ href('wiki', 'wiki', 'tags', tag) }}">{{ tag|e }}</a>
+        {%- if not loop.last %}, {% endif %}
+      {%- endfor %}
+    {%- endif %}
+  </p>
+{% endblock %}

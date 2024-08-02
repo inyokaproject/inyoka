@@ -1,0 +1,37 @@
+{#
+    wiki/action_rename.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is (unlike most other action templates) not a full HTML page
+    but flashed to the show action.  So keep it small, it's in a cookie!
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+-#}
+
+
+<form action="{{ page|url('rename')|e }}" method="post">
+  {{ csrf_token() }}
+  <p><small>
+    {%- trans -%}
+      If you rename this page, all revisions will be renamed. The old page will redirect to the new one.
+    {%- endtrans -%}
+  </small></p>
+  <p>{% trans %}New page name:{% endtrans %}</p>
+  <p>
+    <input type="text" name="new_name" size="30" value="{{ new_name|e }}">
+    <input type="checkbox" id="id_add_redirect" name="add_redirect">
+    <label for="id_add_redirect">{% trans %}Set redirect to new page{% endtrans %}</label><br>
+    {% if force %}
+      <input type="hidden" name="force" value="{{ force|e }}">
+    {% endif %}
+    <input type="submit" value="{% trans %}Rename{% endtrans %}">
+  </p>
+  {% if force %}
+    <strong>
+      {%- trans -%}
+        Duplicate attachments on the target page will be overwritten!
+      {%- endtrans -%}
+    </strong>
+  {% endif %}
+</form>

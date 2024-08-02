@@ -1,0 +1,52 @@
+{#
+    ikhaya/report_new.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Formular to report a mistake in an article.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor'] %}
+
+{% set BREADCRUMBS = [(article.subject, article|url),
+                      ('Meldungen', article|url('reports')),
+                      ('Neue Meldung', article|url('report_new'))] + BREADCRUMBS|d([]) %}
+
+{% block ikhaya_content %}
+  {{ form.errors.text }}
+  <h2>
+    {%- trans link=article|url, article=article.subject|e -%}
+      New report for the article “<a href="{{ link }}">{{ article }}</a>”
+    {%- endtrans -%}
+  </h2>
+  <p>
+    {%- trans link=article|url + 'reports/' -%}
+      Describe here briefly the discovered mistake. Please make sure that the mistake was not <a href="{{ link }}">already reported</a>.
+    {%- endtrans -%}
+  </p>
+  <form action="" method="post" id="new_report">
+    {{ csrf_token() }}
+    {{ form.text }}
+    <p>
+      <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}">
+      <input type="submit" name="send" value="{% trans %}Submit{% endtrans %}">
+    </p>
+  </form>
+  {%- if preview %}
+    <div class="preview_wrapper">
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+      <div class="preview">{{ preview }}</div>
+    </div>
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /*<![CDATA[*/
+      new WikiEditor('textarea[name="text"]', 'forum');
+  </script>
+{% endblock %}

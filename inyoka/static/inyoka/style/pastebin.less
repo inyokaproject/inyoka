@@ -1,0 +1,41 @@
+/**
+ * style.pastebin
+ * ~~~~~~~~~~~~~~
+ *
+ * The style for the pastebin.
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+@import 'colors.less';
+
+ul.pastes {
+  padding: 0;
+  list-style: none;
+
+  li {
+    margin: 0.2em 0 0.2em 0;
+    span.number {
+      display: block;
+      float: left;
+      font-weight: bold;
+      padding-right: 0.5em;
+
+      @media (min-width: @medium-width) {
+        width: 5em;
+      }
+    }
+  }
+  li:hover {
+    background-color: #eee;
+  }
+  li > time {
+    color: #777;
+    @media (min-width: @medium-width) {
+      float: right;
+    }
+  }
+}
+div.code, pre {
+  max-height: none;
+}

@@ -1,0 +1,26 @@
+{#
+    errors/403.html
+    ~~~~~~~~~~~~~~~
+
+    This template is shown if the user requested a page he isn't allowed to see.
+
+    If the user isn't logged in, a login form will be displayed.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+
+{% block portal_content %}
+  <div class="error">
+    <p>
+      {% trans %}You do not have permissions to access this page.{% endtrans %}
+    </p>
+    {% if not USER.is_authenticated %}
+      <p>
+        {% trans %}This may be because you are not logged in.{% endtrans %}
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}

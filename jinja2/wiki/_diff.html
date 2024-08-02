@@ -1,0 +1,33 @@
+{#
+    wiki/_diff.html
+    ~~~~~~~~~~~~~~~
+
+    Used by the `Diff` class that is used to represent diffs between
+    revisions of a page. The class can work with diffs between different
+    pages too, so does this template, but there are no query methods so far.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- if diff.template_diff.chunks %}
+  <table class="diff">
+    {%- for chunk in diff.template_diff.chunks -%}
+      {% if not loop.first -%}
+        <tr class="ellipsis">
+          <th colspan="3">...</th>
+        </tr>
+      {%- endif -%}
+      {% for line in chunk %}
+        <tr class="line {{ line.action }}">
+          <th class="old_rev">{{ line.old_lineno }}</th>
+          <th class="new_rev">{{ line.new_lineno }}</th>
+          <td class="code">{{ line.line }}</td>
+        </tr>
+      {%- endfor -%}
+    {% endfor %}
+  </table>
+{% else %}
+  <p>{% trans %}The two revisions are identical.{% endtrans %}</p>
+{% endif %}

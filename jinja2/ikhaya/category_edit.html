@@ -1,0 +1,28 @@
+{#
+    ikhaya/category_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Template for editing or creating a ikhaya category.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% from 'macros.html' import render_form %}
+
+{% if not category %}
+  {% set BREADCRUMBS = [(_('Create category'), href('ikhaya', 'category', 'new'))] + BREADCRUMBS|d([]) %}
+{% else %}
+  {% set BREADCRUMBS = [(category.name, category|url),
+                        (_('Edit'), category|url('edit'))] + BREADCRUMBS|d([]) %}
+{% endif %}
+
+{% block content %}
+  <form action="" method="post" class="ikhaya">
+    {{ csrf_token() }}
+    {{ render_form(form, ['name', 'icon']) }}
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    </p>
+  </form>
+{% endblock %}
