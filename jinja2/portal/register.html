@@ -23,17 +23,17 @@
                             'email'], inline=true)}}
       <dt>Nutzungshinweise:</dt>
       {# include the agreement letter #}
-      <dd>{{ form.terms_of_usage }} <label for="id_terms_of_usage">Ich bestätige den <a href="{{ href('portal', 'lizenz') }}">Lizenztext</a> gelesen zu haben und erkläre mich mit der Veröffentlichung unter dieser Lizenz einverstanden.<br>Durch das Abschließen der Registrierung stimme ich den <a href="{{ href('portal', 'nutzungsbedingungen') }}">Nutzungsbedingungen</a> und <a href="//wiki.inyokaproject.org/ubuntuusers/Moderatoren/Portalregeln/">Portalregeln/</a> ebenfalls zu.</label><br>
+      <dd>{{ form.terms_of_usage }} <label for="id_terms_of_usage">Ich bestätige den <a href="{{ href('portal', 'lizenz') }}">Lizenztext</a> gelesen zu haben und erkläre mich mit der Veröffentlichung unter dieser Lizenz einverstanden.<br>Durch das Abschließen der Registrierung stimme ich den <a href="{{ href('portal', 'nutzungsbedingungen') }}">Nutzungsbedingungen</a> und <a href="//wiki.{{ BASE_DOMAIN_NAME }}/ubuntuusers/Moderatoren/Portalregeln/">Portalregeln/</a> ebenfalls zu.</label><br>
       {{ form.errors.terms_of_usage }}
       <p>Um möglichst gute Hilfe erhalten, beachte bitte folgende Punkte:</p>
       <ul>
-        <li><p>inyokaproject.org unterliegt deutscher Rechtsprechung. Beiträge, die deutschem Recht widersprechen, sind nicht erlaubt.</p></li>
+        <li><p>{{ BASE_DOMAIN_NAME }} unterliegt deutscher Rechtsprechung. Beiträge, die deutschem Recht widersprechen, sind nicht erlaubt.</p></li>
         <li><p>Wenn bei einem Problem die eigene Recherche keine Lösung liefert, erstelle bitte für jedes Problem ein eigenes Thema mit aussagekräftigem Titel im richtigen Unterforum.</p></li>
         <li><p>Beschreibe Dein Problem genau: Mit welchem Produkt/Programm tritt welches Problem mit welcher Fehlermeldung auf? Schreibe Deinen Beitrag gut leserlich.</p></li>
         <li><p>Alle Helfenden sind freiwillig hier. Bleibe daher geduldig und behandle andere mit der Freundlichkeit und dem Respekt, den Du auch erwartest.</p></li>
       </ul>
-      <p>Die <a href="//wiki.inyokaproject.org/ubuntuusers/Moderatoren/Forenregeln">vollständigen Regeln</a> erläutern die einzelnen Punkte genauer. Bei Fragen kannst Du Dich an die entsprechenden <a href="{{ href('portal', 'groups') }}">Teams</a> wenden.</p>
-      <p>Wir wünschen Dir viel Spass und Erfolg auf inyokaproject.org!</p>
+      <p>Die <a href="//wiki.{{ BASE_DOMAIN_NAME }}/ubuntuusers/Moderatoren/Forenregeln">vollständigen Regeln</a> erläutern die einzelnen Punkte genauer. Bei Fragen kannst Du Dich an die entsprechenden <a href="{{ href('portal', 'groups') }}">Teams</a> wenden.</p>
+      <p>Wir wünschen Dir viel Spass und Erfolg auf {{ BASE_DOMAIN_NAME }}!</p>
       </dd>
       <dd style="display: none"><input type="submit"></dd><!-- at enter the first submit button is used -->
       {{ render_form(form, ['captcha'], inline=true) }}

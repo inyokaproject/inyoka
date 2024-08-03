@@ -1,10 +1,10 @@
 Hallo {{ user.username }},
 
-du hast auf inyokaproject.org deinen Account gelöscht. Zum Schutz vor Missbrauch kannst du deinen Account wiederherstellen. Dies ist bis zu einen Monat ab heute möglich.
+du hast auf {{ BASE_DOMAIN_NAME }} deinen Account gelöscht. Zum Schutz vor Missbrauch kannst du deinen Account wiederherstellen. Dies ist bis zu einen Monat ab heute möglich.
 
 Besuche dazu {{ href('portal', 'confirm', 'reactivate_user', token=token) }}
 Falls nötig gib dort die folgende Zeichenkette ein:
 
     {{ token|indent(4) }}
 
-Dein Team von inyokaproject.org
+Dein Team von {{ BASE_DOMAIN_NAME }}
