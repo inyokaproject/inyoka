@@ -11,7 +11,6 @@ Idea
 ====
 
 Inyoka_ is developed via GitHub_.
-You need the correct access rights to see the GitHub repository!
 You can find a documentation on how to use Git here: `<http://git-scm.com/>`_
 
 The idea for developing Inyoka is to fork the main project, do your changes in
@@ -23,13 +22,6 @@ The changes in Inyoka will not immediately be visible on `ubuntuusers.de
 
 Preparation
 ===========
-
-Getting access to the Inyoka repository
-***************************************
-
-You need to contact a team member who will give you access rights to fork the project.
-After that, simply fork the `<https://github.com/inyokaproject/inyoka>`_ repository
-to create a new *private* fork of this repository.
 
 Installation
 ============
@@ -97,8 +89,7 @@ Installing the theme
 
 Inyoka supports multiple themes, all of them are listed (among other things) on
 `GitHub`__. Please refer to the specific
-theme `README` file in order to get installation instructions. You will not be
-able to run Inyoka without installing a theme!
+theme `README` file in order to get installation instructions.
 
 __ Inyoka_
 
@@ -133,8 +124,8 @@ The entry ``/home/$USER/.venvs/inyoka/bin`` should appear at the beginning.
 Preparing the database
 **********************
 
-Inyoka supports only PostgreSQL as database, all other databases supported by django are
-without any support! Inyoka also needs a running redis server.
+Inyoka supports mainly PostgreSQL as database. PostgreSQL is proven and tested on `ubuntuusers.de`. All other databases
+supported by Django can have performance issues or less supported features! Inyoka also needs a running redis server.
 
 .. code-block:: console
 
