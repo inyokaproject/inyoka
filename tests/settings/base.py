@@ -44,6 +44,13 @@ if os.environ.get('INYOKA_THEME') == 'theme-ubuntuusers':
         'inyoka_theme_ubuntuusers',
     )
 
+    from os.path import join
+    THEME_PATH = join(BASE_PATH, '..', 'theme-ubuntuusers', 'inyoka_theme_ubuntuusers')
+    STATICFILES_DIRS = [join(THEME_PATH, 'static'),  # let own theme take precedence, so files can be overwritten
+                       ] + STATICFILES_DIRS
+    TEMPLATES[1]['DIRS'].insert(0, join(THEME_PATH, 'jinja2'))
+
+
 SECRET_KEY = 'test-secret-key'
 
 INYOKA_AKISMET_KEY = 'inyokatestkey'

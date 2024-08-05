@@ -104,17 +104,6 @@ jobs:
         npm ci
         npm run all
 
-    - name: Create inyoka settings
-      run: |
-        cp example_development_settings.py development_settings.py
-        sed -i "s/None/'supersecreteTest'/g" development_settings.py
-    - name: Set theme
-      if: ${{ matrix.theme != '' }}
-      run: |
-        theme_app=${{ matrix.theme }}
-        theme_app=${theme_app//-/_}  # replace - with _
-        echo "INSTALLED_APPS = INSTALLED_APPS + ('inyoka_${theme_app}',)" >> development_settings.py
-
     - name: Start postgres
       if: ${{ matrix.database == 'postgresql' }}
       run: |

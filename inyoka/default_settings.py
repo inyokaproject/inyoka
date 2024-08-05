@@ -424,7 +424,9 @@ TEMPLATES = [
     {
         'NAME': 'jinja',
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': ['jinja2'],
+        'DIRS': [
+            join(BASE_PATH, '..', 'jinja2'),  # global files of inyoka
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'inyoka.utils.templating.environment',
