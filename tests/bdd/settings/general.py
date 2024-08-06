@@ -1,3 +1,4 @@
+import os
 from uuid import uuid1
 
 from inyoka.default_settings import *
@@ -12,9 +13,10 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS = INSTALLED_APPS + (
-    'inyoka_theme_ubuntuusers',
-)
+if os.environ.get('INYOKA_THEME') == 'theme-ubuntuusers':
+    INSTALLED_APPS = INSTALLED_APPS + (
+        'inyoka_theme_ubuntuusers',
+    )
 
 # debug settings
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = False

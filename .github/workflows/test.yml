@@ -14,10 +14,12 @@ jobs:
       matrix:
         python-version: ['3.12']
         database: ['postgresql', 'sqlite']
+        theme: ['', 'theme-ubuntuusers']
 
         include:
           - python-version: 3.12
             database: 'postgresql'
+            theme: ''
             build_docs: true
 
     steps:
@@ -33,34 +35,35 @@ jobs:
     - name: Checkout theme from repo branch # (e.g. staging)
       id: checkout-branch
       continue-on-error: true
-      if: ${{ !github.event.pull_request }}
+      if: ${{ !github.event.pull_request && matrix.theme != '' }}
       uses: actions/checkout@v4
       with:
-        repository: inyokaproject/theme-ubuntuusers
+        repository: inyokaproject/${{ matrix.theme }}
         ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }} # ssh key of inyokatestci, read only, see https://docs.github.com/en/actions/reference/encrypted-secrets
         ref: ${{ github.ref }}
-        path: theme-ubuntuusers
+        path: ${{ matrix.theme }}
         persist-credentials: false
     - name: Checkout theme in PR
       id: checkout-pr
       continue-on-error: true
-      if: ${{ github.event.pull_request }}
+      if: ${{ github.event.pull_request && matrix.theme != '' }}
       uses: actions/checkout@v4
       with:
-        repository: ${{ github.event.pull_request.head.repo.owner.login }}/theme-ubuntuusers
+        repository: ${{ github.event.pull_request.head.repo.owner.login }}/${{ matrix.theme }}
         ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
         ref: ${{ github.head_ref }}
-        path: theme-ubuntuusers
+        path: ${{ matrix.theme }}
         persist-credentials: false
     - name: "Checkout fallback theme: repo theme-ubuntuusers, staging branch"
-      if: steps.checkout-branch.outcome == 'failure' || steps.checkout-pr.outcome == 'failure'
+      if: ${{ matrix.theme != '' && (steps.checkout-branch.outcome == 'failure' || steps.checkout-pr.outcome == 'failure') }}
       uses: actions/checkout@v4
       with:
-        repository: inyokaproject/theme-ubuntuusers
+        repository: inyokaproject/${{ matrix.theme }}
         ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
         ref: staging
-        path: theme-ubuntuusers
+        path: ${{ matrix.theme }}
         persist-credentials: false
+    # if theme == '', the the default theme inside inyoka is used
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -82,14 +85,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install --no-deps --require-hashes -r ${{ env.REQUIREMENTS_FILE }}
 
+    - name: Build static files
+      run: |
+        npm ci
+        npm run all
+
     - name: Link theme
-      working-directory: ./theme-ubuntuusers
+      working-directory: ./${{ matrix.theme }}
+      if: ${{ matrix.theme != '' }}
       run: |
         . ~/venv/bin/activate
         pip install -e .
 
-    - name: Build static files
-      working-directory: ./theme-ubuntuusers
+    - name: Build static files theme
+      working-directory: ./${{ matrix.theme }}
+      if: ${{ matrix.theme != '' }}
       run: |
         npm ci
         npm run all
@@ -98,7 +108,12 @@ jobs:
       run: |
         cp example_development_settings.py development_settings.py
         sed -i "s/None/'supersecreteTest'/g" development_settings.py
-        sed -i "s/inyoka_theme_default/inyoka_theme_ubuntuusers/g" development_settings.py
+    - name: Set theme
+      if: ${{ matrix.theme != '' }}
+      run: |
+        theme_app=${{ matrix.theme }}
+        theme_app=${theme_app//-/_}  # replace - with _
+        echo "INSTALLED_APPS = INSTALLED_APPS + ('inyoka_${theme_app}',)" >> development_settings.py
 
     - name: Start postgres
       if: ${{ matrix.database == 'postgresql' }}
@@ -133,6 +148,7 @@ jobs:
     - name: Run Tests
       env:
         PYTHONWARNINGS: 'always'
+        INYOKA_THEME: ${{ matrix.theme }}
       run: |
         . ~/venv/bin/activate
         coverage run manage.py test --settings tests.settings.${{ matrix.database }}
@@ -142,7 +158,7 @@ jobs:
     - name: Save coverage report for tests
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-py${{ matrix.python-version }}-${{ matrix.database }}
+        name: coverage-py${{ matrix.python-version }}-${{ matrix.database }}-${{ matrix.theme }}
         path: htmlcov.zip
 
 
@@ -150,7 +166,7 @@ jobs:
       if: ${{ matrix.database == 'postgresql' }}
       env:
         DJANGO_SETTINGS_MODULE: 'tests.bdd.settings.headless'
-        #PATH: '$PATH:/usr/lib/chromium-browser/'
+        INYOKA_THEME: ${{ matrix.theme }}
         COVERAGE_RCFILE: 'tests/bdd/settings/.coveragerc'
       run: |
         . ~/venv/bin/activate
@@ -167,7 +183,7 @@ jobs:
       if: ${{ matrix.database == 'postgresql' }}
       uses: actions/upload-artifact@v4
       with:
-        name: BDD-coverage-py${{ matrix.python-version }}-${{ matrix.database }}
+        name: BDD-coverage-py${{ matrix.python-version }}-${{ matrix.database }}-${{ matrix.theme }}
         path: bdd_coverage.zip
 
 

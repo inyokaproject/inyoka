@@ -1,3 +1,4 @@
+import os
 from uuid import uuid1
 
 from inyoka.default_settings import *  # NOQA
@@ -36,8 +37,12 @@ INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 # explicitly add tests.utils to apps to run unittests here
 INSTALLED_APPS = INSTALLED_APPS + (
     'tests.utils',
-    'inyoka_theme_ubuntuusers',
 )
+
+if os.environ.get('INYOKA_THEME') == 'theme-ubuntuusers':
+    INSTALLED_APPS = INSTALLED_APPS + (
+        'inyoka_theme_ubuntuusers',
+    )
 
 SECRET_KEY = 'test-secret-key'
 
