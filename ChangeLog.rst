@@ -24,6 +24,19 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+0.36.1 (2024-08-06)
+===================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+🔒 Security
+-----------
+
+* Update ``Django`` due to a security vulnerability → <https://www.djangoproject.com/weblog/2024/aug/06/security-releases/>
+
 0.36.0 (2024-07-14)
 ===================
 
