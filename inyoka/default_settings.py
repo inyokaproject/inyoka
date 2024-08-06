@@ -79,6 +79,9 @@ MEDIA_URL = '//media.%s/' % BASE_DOMAIN_NAME
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = '//static.%s/' % BASE_DOMAIN_NAME
+STATICFILES_DIRS = [
+    join(BASE_PATH, 'static'),
+]
 
 # system user and group related settings
 INYOKA_SYSTEM_USER = 'inyokaproject.de'
