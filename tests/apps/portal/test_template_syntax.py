@@ -1,11 +1,8 @@
-from __future__ import unicode_literals
-
 import os
 import unittest
 
+from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
-
-from inyoka_theme_inyoka import INYOKA_THEME
 
 
 def mkdummy(name):
@@ -29,7 +26,7 @@ def mkenv(root):
     )
 
     for n in ('date', 'datetime', 'hnumber', 'ischeckbox', 'jsonencode',
-               'naturalday', 'time', 'timetz', 'timedeltaformat', 'url', 'urlencode'):
+              'naturalday', 'time', 'timetz', 'timedeltaformat', 'url', 'urlencode'):
         env.filters[n] = mkdummy(n)
 
     return env
@@ -38,7 +35,7 @@ def mkenv(root):
 class TestTemplateSyntax(unittest.TestCase):
 
     def setUp(self):
-        self.env = mkenv(root)
+        self.env = mkenv(inyoka_root)
 
 
 def main(root):
@@ -48,12 +45,11 @@ def main(root):
             self.env.get_template(template_name)
         return test_func
 
-    for path, dirs, files in os.walk(root):
-        for file in files:
-            name = os.path.relpath(os.path.join(path, file), root)
-            func_name = 'test_%s' % name.replace('/', '__').replace('.', '_')
-            setattr(TestTemplateSyntax, func_name, gen_test_func(name))
+    for file in root.glob('./**/jinja2/**/*.html'):
+        name = os.path.relpath(os.path.join(file), root)
+        func_name = 'test_%s' % name.replace('/', '__').replace('.', '_')
+        setattr(TestTemplateSyntax, func_name, gen_test_func(name))
 
 
-root = os.path.join(INYOKA_THEME, 'jinja2')
-main(root)
+inyoka_root = Path(__file__).resolve().parent.parent.parent.parent
+main(inyoka_root)
