@@ -31,6 +31,6 @@ node_modules
 jinja2/static/img/*-sprite.png
 jinja2/static/style/*-sprite.less
 
-!jinja2/static/js/jquery.min.js
-!jinja2/static/js/jquery.ba-hashchange.min.js
-!jinja2/static/js/jquery.cookie.min.js
+!inyoka/static/js/jquery.min.js
+!inyoka/static/js/jquery.ba-hashchange.min.js
+!inyoka/static/js/jquery.cookie.min.js
