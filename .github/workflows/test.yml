@@ -178,6 +178,9 @@ jobs:
 
     - name: Build documentation
       if: ${{ matrix.build_docs }}
+      env:
+        DJANGO_SETTINGS_MODULE: tests.settings.${{ matrix.database }}
+        INYOKA_THEME: ${{ matrix.theme }}
       run: |
         . ~/venv/bin/activate
         make -C docs html
