@@ -29,16 +29,9 @@
 {% block sidebar %}
   {%- block pre_navigation %}{% endblock -%}
   <div class="container">
-    <h3 class="navi_ubuntu">
-      <a href="{{ href('wiki', 'Ubuntu') }}">Ubuntu</a>
-    </h3>
-    <ul>
-      <li><a href="{{ href('wiki', 'Ubuntu FAQ') }}">{% trans %}FAQ{% endtrans %}</a></li>
-      <li><a href="https://verein.ubuntu-de.org/" class="extlink">Verein</a></li>
-    </ul>
     <h3 class="navi_ubuntuusers"><a href="{{ href('portal') }}">{{ BASE_DOMAIN_NAME }}</a></h3>
     <ul>
-      <li><a href="{{ href('wiki', 'ubuntuusers') }}">Über {{ BASE_DOMAIN_NAME }}</a></li>
+      <li><a href="{{ href('wiki', 'ubuntuusers') }}">{{ _('About') }} {{ BASE_DOMAIN_NAME }}</a></li>
       <li><a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Portalregeln') }}">Portalregeln</a></li>
       <li><a href="{{ href('portal', 'users') }}">{% trans %}Members{% endtrans %}</a></li>
 
