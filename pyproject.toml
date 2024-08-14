@@ -1,0 +1,84 @@
+[build-system]
+requires = [ "setuptools>=72.2.0" ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inyoka"
+dynamic = ["version"]
+description = "All-in-one portal software with Forum, Wiki, Planet, News and Calendar"
+readme = "README.rst"
+keywords = [ "calendar", "django", "forum", "news", "planet", "wiki" ]
+license = { file = "LICENSE" }
+authors = [
+  { name = "Inyoka Team" },
+]
+requires-python = ">=3.9"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: Django",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Message Boards",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Wiki",
+]
+
+dependencies = [
+  "babel",
+  "beautifulsoup4",
+  "celery[redis]",
+  "defusedxml",
+  "django[argon2]<5",
+  "django-filter",
+  "django-guardian",
+  "django-hosts",
+  "django-redis",
+  "feedparser",
+  "gunicorn",
+  "html5lib",
+  "icalendar",
+  "jinja2",
+  "lxml[html-clean]",
+  "pillow",
+  "pip-tools",
+  "psycopg2",
+  "pygments",
+  "python-dateutil",
+  "python-magic",
+  "requests",
+  "sentry-sdk",
+  "tzdata",
+  "werkzeug",
+]
+optional-dependencies.dev = [
+  "allure-behave",
+  "bump2version",
+  "coverage",
+  "django-codemod",
+  "django-debug-toolbar",
+  "django-test-migrations",
+  "django-upgrade",
+  "flake8==3.5",
+  "freezegun",
+  "isort",
+  "responses",
+  "selenium",
+  "sphinx",
+  "sphinx-rtd-theme",
+]
+urls.Changelog = "https://github.com/inyokaproject/inyoka/blob/master/ChangeLog.rst"
+urls.Homepage = "https://inyokaproject.org/"
+urls.Issues = "https://github.com/inyokaproject/inyoka/issues"
+urls.Source = "https://github.com/inyokaproject/inyoka"
+
+[tool.setuptools.dynamic]
+version = { attr = "inyoka.INYOKA_VERSION" }
+
+[tool.setuptools]
+packages = [ "inyoka" ]

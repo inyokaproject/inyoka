@@ -20,9 +20,8 @@ To generate the requirement files run
 
    python manage.py generate_requirements
 
--  For production the dependencies are defined in ``setup.py``
--  The (additional) development dependencies are defined via
-   ``extra/requirements/development.in``
+The production and development dependencies are defined in ``pyproject.toml``,
+the latter via a ``dev`` extra.
 
 To update all packages run
 
