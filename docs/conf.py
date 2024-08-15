@@ -1,13 +1,13 @@
 import sys
 import datetime
 import django
-from os import environ
+import os
 from os.path import join, dirname
 from subprocess import PIPE, Popen
 
 sys.path.insert(0, join(dirname(__file__), '..'))
 
-environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "development_settings")
 
 django.setup()
 

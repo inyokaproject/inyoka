@@ -1,0 +1,96 @@
+/**
+ * style.search
+ * ~~~~~~~~~~~~
+ *
+ * Some hacky style-definitions for the search-field.
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'fonts.less';
+
+@icon-size-search: 16px 16px;
+
+form.search {
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  img { /* startpage icon */
+    max-height: 2em;
+    vertical-align: bottom;
+  }
+
+  .search_query { /* text-input-field for the search-words */
+    font-family: @font-content;
+    max-width: 15em;
+
+    background-image: url(../img/icons/portal.svg);
+    background-size: @icon-size-search;
+    background-repeat: no-repeat;
+    background-position: 1px 1px;
+    padding: 1px 1px 1px 22px;
+  }
+
+  input[type=submit] {
+    background: url(../img/icons/search.svg);
+    background-size: 16px 16px;
+    color:#333333;
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px;
+    &:hover {
+      background-color:#FFFFFF;
+    }
+  }
+
+  .search_expander { /* little down-arrow at the righbottom of the search-location-selector (→ just eyecandy) */
+    cursor: pointer;
+    margin-top: -25px;
+    position: absolute;
+    background-image: url(../img/search_expander.png);
+    background-position: 11px 13px;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 18px;
+  }
+
+  ul.search_area { /* a popup where the search-location can be selected */
+    position: absolute;
+    z-index: 99;
+    margin-top: 19px;
+    line-height: 1em;
+    list-style: none;
+    border: solid 1px #888;
+    background-color: #fefefe;
+    padding: 0;
+    li {
+      padding: 0.3em 0.4em 0.3em 18px;
+      cursor: pointer;
+      color: black;
+      background: transparent url(../img/icons/portal.svg) left no-repeat;
+      background-size: @icon-size-search;
+    }
+    li.active {
+      font-weight: bold;
+    }
+    li:hover {
+      background-color: #eee;
+    }
+  }
+}
+
+form.search ul.search_area li.area_wiki, .search input.area_wiki {
+  background-image: url(../img/wiki.svg);
+}
+form.search ul.search_area li.area_forum, .search input.area_forum {
+  background-image: url(../img/icons/forum.svg);
+}
+form.search ul.search_area li.area_planet, .search input.area_planet {
+  background-image: url(../img/icons/planet.svg);
+}
+form.search ul.search_area li.area_ikhaya, .search input.area_ikhaya {
+  background-image: url(../img/icons/ikhaya.svg);
+}

@@ -1,0 +1,76 @@
+{#
+    ikhaya/reports.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Shows a list of suggested improved verions of an article.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+
+{% set BREADCRUMBS = [(article.subject, article|url),
+                      (_('Reports'), article|url('reports'))] + BREADCRUMBS|d([]) %}
+
+{% block html_head %}
+  {{ super() }}
+  <meta name="robots" content="noindex">
+{% endblock %}
+
+{% block ikhaya_content %}
+  {%- for report in reports if not report.deleted or can_edit %}
+    <div class="report{% if report.solved %} solved{% endif%}{% if report.deleted %} hidden{% endif %}" id="report_{{ report.id }}">
+      <div class="report_header">
+        <a href="#report_{{ report.id }}">#{{ report.id }}</a>
+      </div>
+      <div class="text">
+        {{ report.text_rendered }}
+      </div>
+      <p class="meta admin_link_hover">
+        {% trans link=report.author|url, author=report.author.username|e -%}
+          Reported by <a href="{{ link }}">{{ author }}</a>
+        {%- endtrans %}
+        <span class="linklist"> | </span>
+        {{ report.pub_date|datetime }}
+        {%- if can_edit %}
+          <span class="admin_link">
+            <span class="linklist"> |</span>
+            {%- if report.deleted %}
+              <a href="{{ report|url('restore')|e }}" class="action action_restore">{% trans %}Restore{% endtrans %}</a>
+            {%- else %}
+              <a href="{{ report|url('hide')|e }}" class="action action_hide">{% trans %}Hide{% endtrans %}</a>
+            {%- endif %}
+            <span class="linklist"> | </span>
+            {%- if not report.solved %}
+              <a href="{{ report|url('solve')|e }}" class="action action_solve">{% trans %}Solved{% endtrans %}</a>
+            {%- else %}
+              <a href="{{ report|url('unsolve')|e }}" class="action action_unsolve">{% trans %}Unsolved{% endtrans %}</a>
+            {%- endif %}
+            <span class="linklist"> | </span>
+            <a href="{{ report.article|url('edit')|e }}" class="action action_edit">{% trans %}Edit article{% endtrans %}</a>
+          </span>
+        {%- endif %}
+      </p>
+    </div>
+  {%- else -%}
+    <strong>{% trans %}There are no reports yet.{% endtrans %}</strong>
+  {%- endfor %}
+  <p>
+    <a href="{{ article|url('report_new')|e }}">{% trans %}Report an error in this article{% endtrans %}</a>
+  </p>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    $('.report .report_header').click(function() {
+      var report = $(this).parent('.report')
+      report.find('.text').toggle();
+      report.find('.meta').toggle();
+    });
+    $('.solved').find('.text').hide();
+    $('.solved .meta').hide();
+    /* ]]> */
+  </script>
+{% endblock %}

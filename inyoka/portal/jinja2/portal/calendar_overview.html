@@ -1,0 +1,56 @@
+{#
+    portal/calendar_overview.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Show the next few events.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% set BREADCRUMBS = [(_('Calendar'), href('portal', 'calendar'))] + BREADCRUMBS|d([]) %}
+{% set styles = ['calendar'] %}
+
+{% block html_head %}
+  {{ super() }}
+  <link rel="profile" href="http://microformats.org/profile/hcalendar">
+{% endblock %}
+
+{% block portal_content %}
+  <ul class="switcher">
+    {%- for y in range(year - 2, year + 3) %}
+    {% if y == year %}<li class="active"><a href="/calendar/{{ y }}/{{ '%02d' % month }}/">{{ y }}</a></li>
+    {%- else %}<li><a href="/calendar/{{ y }}/{{ '%02d' % month }}/">{{ y }}</a></li>
+    {%- endif %}
+    {%- endfor %}
+  </ul>
+  <ul class="switcher">
+    {%- for i in MONTHS %}
+      {% if i == month %}
+        <li class="active">
+          <a href="/calendar/{{ year }}/{{ '%02d' % i }}/">{{ MONTHS[i]|e }}</a>
+        </li>
+      {%- else %}
+        <li>
+          <a href="/calendar/{{ year }}/{{ '%02d' % i }}/">{{ MONTHS[i]|e }}</a>
+        </li>
+      {%- endif %}
+    {%- endfor %}
+  </ul>
+  <br>
+
+  <h3>{% trans %}Upcoming events{% endtrans %}</h3>
+  {% if events %}
+    <ul class="events vcalendar">
+      {% for event in events %}
+      <li>{{ event.friendly_title(with_html_link=true) }} – {{ event.date|naturalday }}</li>
+      {%- endfor %}
+    </ul>
+  {% else %}
+    <p>{% trans %}Currently there are no events listed.{% endtrans %}</p>
+  {% endif %}
+  {% if USER.has_perm('portal.suggest_event') %}
+    <p><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest new event{% endtrans %}</a></p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,7 @@
+Hallo {{ username }},
+
+der Benutzer {{ author_username }} hat einen neuen Beitrag im Thema „{{ topic_title }}“ geschrieben.
+Du kannst ihn dir hier ansehen: {{ post_url }}
+
+Falls du bei Beiträgen in diesem Thema in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ topic_unsubscribe }}
+Du erhältst keine weitere Benachrichtigung, solange du das Thema nicht im angemeldeten Zustand besuchst.

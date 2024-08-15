@@ -1,0 +1,52 @@
+{#
+    portal/user_edit_status.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Change the status of a user.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% set BREADCRUMBS = [(_('Members'), href('portal', 'users')),
+                      (user.username, user|url),
+                      (_('Edit'), href('portal', 'user', user.username, 'edit')),
+                      (_('Status'), href('portal', 'user', user.username, 'edit', 'status'))]
+                       + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+    {{ csrf_token() }}
+    <h3>{% trans %}Status{% endtrans %}</h3>
+      {{ form.non_field_errors() }}
+      <dt>{{ form.status.label_tag() }}</dt>
+      <dd>{{ form.status }} {{ form.errors.status }}
+        <div class="note">{% trans date=user.last_login|datetime -%}
+          Last login: {{ date }}
+        {%- endtrans %}</div>
+        <div class="note">{% trans date=user.date_joined|datetime -%}
+          Member since: {{ date }}
+        {%- endtrans %}</div>
+        <div class="note">
+          {% trans link=href('portal', 'user', user.username, 'mail', next=CURRENT_URL),
+                   name=user.username -%}
+            <a href="{{ link }}">Send an email</a> to {{ name }}
+          {%- endtrans %}
+        </div>
+        {%- if activation_link %}
+          <div class="note">
+            <a href="{{ href('portal', 'users', 'resend_activation_mail', user=user, next=CURRENT_URL) }}">{% trans %}Resend activation mail{% endtrans %}</a>
+          </div>
+          <div class="note">
+            {% trans %} Activation link:{% endtrans %}
+            <a href="{{ activation_link }}">{{ activation_link }}</a>
+          </div>
+        {%- endif %}
+      </dd>
+      {{ render_form(form, ['banned_until'], inline=true) }}
+    {{ render_form(form, ['gpgkey']) }}
+    <p><input type="submit" value="{% trans %}Submit{% endtrans %}"></p>
+  </form>
+{% endblock %}

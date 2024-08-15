@@ -1,0 +1,21 @@
+{#
+    portal/static_page.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Used for static pages (imprint, licence etc.)
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+
+{% set BREADCRUMBS = [(title, href('portal', key))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <h3>{{ title|e }}
+    {%- if USER.has_perm('portal.change_staticpage') %}
+      <a href="{{ page|url('edit') }}"><img src="{{ href('static', 'img', 'icons', 'edit.svg') }}" height="16px" width="16px"></a><a href="{{ page|url('delete') }}"><img src="{{ href('static', 'img', 'forum', 'delete.png') }}"></a>
+    {%- endif %}
+  </h3>
+  {{ content|safe }}
+{% endblock %}

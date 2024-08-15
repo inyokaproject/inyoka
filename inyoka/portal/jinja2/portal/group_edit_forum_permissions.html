@@ -1,0 +1,61 @@
+{#
+    portal/group_edit_forum_permissions.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Edit the permission of a group within the forum.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+
+{% set tmp_crumb = [(_('Groups'), href('portal', 'groups'))] %}
+{% do tmp_crumb.extend([(group.name, href('portal', 'group', group.name))]) %}
+{% do tmp_crumb.extend([(_('Edit'), href('portal', 'group', group.name, 'edit'))]) %}
+{% do tmp_crumb.extend([(_('Forum Permissions'), href('portal', 'group', group.name, 'edit', 'forum_permissions'))]) %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  {{ form.non_field_errors() }}
+
+  <input type="search" id="table-search" placeholder="Filter by Title">
+
+  <form class="edit-forum-permissions" method="post" action="">
+    {{ csrf_token() }}
+
+    {% set first_field = form.fields[form.fields.keys()|first] %}
+    {% set number_permissions = first_field.choices|list|length %}
+
+    <table>
+        {% for i in range(0, number_permissions+1) %}
+          <colgroup></colgroup>
+        {% endfor %}
+        <tr>
+          <th rowspan="2">{% trans %}Forum{% endtrans %}</th>
+          <th colspan="{{ number_permissions }}">{% trans %}Permissions{% endtrans %}</th>
+        </tr>
+        <tr class="permissions-description">
+            {% for choice in first_field.choices %}
+              <th>{{ choice[1] }}</th>
+            {% endfor %}
+        </tr>
+
+        {% for field in form %}
+          <tr {% if field.field.is_category %}class="head"{% endif %}>
+            {{ field.errors }}
+            <th>
+              {{ field.label }}
+            </th>
+
+            {% for input in field %}
+              <td>
+                {{ input.tag() }}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+    </table>
+
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+  </form>
+{% endblock %}

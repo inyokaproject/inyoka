@@ -1,0 +1,176 @@
+/***
+ * style.print
+ * ~~~~~~~~~~~
+ *
+ * Print definitions.
+ *
+ * only tested with Ikhaya- and wiki-articles and forum-thread-pages
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'layout.less';
+
+/*
+ * custom constants
+ *
+ * use pt instead of px for print-media!
+ *
+ */
+@thick-border: 2pt;
+@thin-border: 1pt;
+
+/*
+ * General
+ */
+
+body, html {
+  width: 100%;
+  .reset;
+
+  font-size: 10pt;
+  display: block; // do not use CSS grid
+}
+
+body * {
+  color: black !important;
+}
+
+/* hidden elements */
+audio, embed, object, video,
+body > :not(main),
+#admin_menu, .admin_link_js,
+.codeblock_resizer, .pagination,
+.message, .linklist, .signature, .pathbar {
+  display: none;
+}
+
+main:after {
+  content: "Inhalte von inyokaproject.org lizenziert unter Creative Commons, siehe https://inyokaproject.org/lizenz/.";
+}
+
+a {
+  font-weight: bold !important;
+  color: black !important;
+  text-decoration: none !important;
+
+  &:after {
+    content: " [" attr(href) "]";
+    font-size: 90%;
+    font-weight: normal;
+
+    white-space: pre-wrap;
+  }
+
+  /* urls that should NOT be printed:
+   *  o page-internal links
+   *  o link to user-profile
+   *  o images from cnd
+   */
+  &[href^="#"],
+  &[href*="/user/"],
+  &[href*="media.cdn.ubuntu-de.org"]
+  {
+    &:after { content: none;}
+  }
+
+  &.headerlink, &.anchor {
+    display: none;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid; /* Firefox does not support it, https://developer.mozilla.org/de/docs/Web/CSS/page-break-after#Browser_Kompatibilit.C3.A4t*/
+
+  /* do not show headings-urls */
+  a:after {
+    content: none;
+  }
+}
+
+img {
+  max-width: 500px;
+  max-height: 500px;
+  height: auto;
+}
+
+#page > p {
+  orphans: 3; /*see https://developer.mozilla.org/en-US/docs/Web/CSS/orphans*/
+  widows: 3; /*see https://developer.mozilla.org/de/docs/Web/CSS/widows*/
+}
+
+pre span {
+  font-family: monospace;
+}
+
+div.bash, div.code, pre {
+  background-color: white !important;
+  font-family: monospace !important;
+
+  white-space: pre-wrap;
+}
+
+div.box, div.warning, div.notice {
+  background: none !important;
+
+  a:after {
+    content: none;
+  }
+}
+
+div.bash {
+  border-width: @thick-border;
+
+  .contents {
+    border: none;
+  }
+}
+
+.notranslate {
+  border-width: @thin-border;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* table of contents */
+.toc {
+  float: none;
+  max-width: 100%;
+  border: none;
+  background: none;
+}
+
+/* tables */
+tr, td {
+  background: white !important;
+  border-color: #333 !important;
+}
+
+/*
+ * Ikhaya
+ */
+a.action, a.show_comments {
+  display: none;
+}
+
+/*
+ * Forum
+ */
+table.topic td.post div.postinfo,
+.topic_box > h2 {
+  background: white !important;
+}
+
+.author {
+  > * {
+    display: none;
+  }
+  .username, .member_title {
+    display: block;
+  }
+
+  .username > a:after {
+    content: none;
+  }
+}

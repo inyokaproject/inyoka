@@ -1,0 +1,59 @@
+{#
+    errors/400_csrf.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Rendered on CSRF attempts.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+
+{% block portal_content %}
+  <h2>{% trans %}Forbidden (403){% endtrans %}</h2>
+  <p>
+    {% trans -%}
+    CSRF verification failed. Request aborted.
+    {%- endtrans %}
+  </p>
+
+  {% if no_referer %}
+    <p>
+    {% trans -%}
+      You are seeing this message because this HTTPS site requires a
+      'Referer header' to be sent by your Web browser, but none was
+      sent. This header is required for security reasons, to ensure
+      that your browser is not being hijacked by third parties.
+    {%- endtrans %}
+    </p>
+
+    <p>
+    {% trans -%}
+      If you have configured your browser to disable 'Referer' headers,
+      please re-enable them, at least for this site, or for HTTPS
+      connections, or for 'same-origin' requests.
+    {%- endtrans %}
+    </p>
+  {% endif %}
+
+  {% if no_cookie %}
+    <p>
+    {% trans -%}
+      You are seeing this message because this site requires a CSRF
+      cookie when submitting forms. This cookie is required for
+      security reasons, to ensure that your browser is not being
+      hijacked by third parties.
+    {%- endtrans %}
+    </p>
+
+    <p>
+    {% trans -%}
+      If you have configured your browser to disable cookies, please
+      re-enable them, at least for this site, or for 'same-origin'
+      requests.
+    {%- endtrans %}
+    </p>
+  {% endif %}
+
+{% endblock %}

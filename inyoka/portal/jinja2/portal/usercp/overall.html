@@ -1,0 +1,25 @@
+{#
+    portal/usercp/overall.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows the user control panel overall page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% set BREADCRUMBS = [(_('Control panel'), href('portal', 'usercp'))] + BREADCRUMBS|d([]) %}
+
+{% block sidebar %}
+  <div class="container noh3">
+    <ul>
+      <li><a href="{{ href('portal', 'usercp') }}"{{ selected == None and ' class="active"' or '' }}>{% trans %}Overview{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'profile') }}"{{ selected == 'profile' and ' class="active"' or '' }}>{% trans %}Profile{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'settings') }}"{{ selected == 'settings' and ' class="active"' or '' }}>{% trans %}Settings{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'password') }}"{{ selected == 'password' and ' class="active"' or '' }}>{% trans %}Change password{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'subscriptions') }}"{{ selected == 'subscriptions' and ' class="active"' or '' }}>{% trans %}Subscriptions{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'deactivate') }}"{{ selected == 'deactivate' and ' class="active"' or '' }}>{% trans %}Deactivate account{% endtrans %}</a></li>
+    </ul>
+  </div>
+{% endblock %}

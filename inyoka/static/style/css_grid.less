@@ -1,0 +1,99 @@
+/**
+ * style.css_grid
+ * ~~~~~~~~~~~~
+ *
+ * Style definitions for CSS grid.
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import "colors.less";
+
+body {
+  display: grid;
+
+  grid:
+    "navi_global"
+    "header"
+    "admin_menu"
+    "search"
+    "breadcrumb_top"
+    "sidebar"
+    "tabbar"
+    "content" 1fr
+    "breadcrumb_bottom"
+    "footer"
+   / auto;
+
+  @media (min-width: @medium-width) {
+    grid:
+    "navi_global       navi_global       navi_global"
+    "header            header            header"
+    ".                 .                 admin_menu"
+    "breadcrumb_top    breadcrumb_top    search"
+    "sidebar           tabbar            tabbar"
+    "sidebar           content           content" 1fr
+    "breadcrumb_bottom breadcrumb_bottom breadcrumb_bottom"
+    "footer            footer            footer"
+    / minmax(auto, 15em) 1fr auto;
+  }
+
+  min-height: 100vh;
+}
+
+@media(min-width: @big-width) {
+  body {
+    grid:
+    "navi_global  navi_global        navi_global       navi_global       navi_global"
+    "header       header             header            header            header"
+    ".            .                  .                 admin_menu        ."
+    ".            breadcrumb_top     breadcrumb_top    search            ."
+    ".            sidebar            tabbar            tabbar            ."
+    ".            sidebar            content           content           ." 1fr
+    ".            breadcrumb_bottom  breadcrumb_bottom breadcrumb_bottom ."
+    "footer       footer             footer            footer            footer"
+    / @h_space    minmax(auto, 15em) 1fr               auto              @h_space;
+  }
+}
+
+body > .header {
+  grid-area: header;
+}
+body > .navi_global {
+  grid-area: navi_global;
+}
+body > #admin_menu {
+  grid-area: admin_menu;
+  justify-self: end;
+}
+body > .search {
+  grid-area: search;
+  justify-self: end;
+}
+body > .breadcrumb.-top {
+  grid-area: breadcrumb_top;
+}
+body > .breadcrumb.-bottom {
+  grid-area: breadcrumb_bottom;
+}
+body > .navi_sidebar {
+  grid-area: sidebar;
+}
+body > .navi_tabbar {
+  grid-area: tabbar;
+}
+body > .content {
+  grid-area: content;
+  overflow: auto;
+}
+body > .footer {
+  grid-area: footer;
+}
+body > div.dropdown {
+  grid-area: forum_dropdown;
+  max-height: 1em; /* prevent size change, when dropdown opens on hover */
+}
+body > .pathbar_extension {
+  grid-area: pathbar_extension;
+}

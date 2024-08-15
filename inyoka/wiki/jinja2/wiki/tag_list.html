@@ -1,0 +1,31 @@
+{#
+    wiki/tag_list.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to show a alphabetical list of all wiki tags.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set BREADCRUMBS = [(_('Tag List'), href('wiki', 'wiki/tags'))] + BREADCRUMBS|d([]) %}
+
+{% block wiki_content %}
+  <div class="main_content">
+    {% if tag_list %}
+      <h1 class="pagetitle">{% trans %}Tag List{% endtrans %}</h1>
+      <p>{% trans %}Wiki articles can be tagged by key words. The following alphabetical tag list shows all of them. This is useful to find more articles to a specified topic, etc. There is also a <a href="/wiki/tagcloud">tag cloud</a> overviewing the most used tags of the wiki.{% endtrans %}</p>
+      <div>
+        <ul>
+        {% for tag in tag_list %}
+          <li><a title="{{ tag.count }} {% trans %}pages{% endtrans %}" href="/wiki/tags/{{ tag.name|e }}">{{ tag.name|e }}</a></li>
+        {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <p>{% trans %}There are no tags in the wiki, yet.{% endtrans %}</p>
+    {% endif %}
+  </div>
+{% endblock %}

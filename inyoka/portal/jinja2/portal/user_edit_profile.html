@@ -1,0 +1,53 @@
+{#
+    portal/user_edit_profile.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Change a userprofile
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+{% import 'macros.html' as macros %}
+
+{% set BREADCRUMBS = [(_('Members'), href('portal', 'users')),
+                      (user.username, user|url),
+                      (_('Edit'), href('portal', 'user', user.username, 'edit')),
+                      (_('Profile'), href('portal', 'user', user.username, 'edit', 'profile'))]
+                       + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+    {{ csrf_token() }}
+    {{ render_form(form, ['username'], inline=true) }}
+    <dt>{{ form.member_title.label_tag() }}</dt>
+    <dd>{{ form.member_title }}
+      {% if user.groups.all() %}
+      <div class="group_titles">
+      {% for group in user.groups.all() %}
+        <input type="checkbox" name="group_titles" value="{{ group }}"> {{ group }}
+      {% endfor %}
+      </div>
+      {%- endif %}
+    </dd>
+    <dt>{{ form.icon.label_tag() }}</dt>
+    <dd>{{ form.icon }} </dd>
+    <h3>{% trans %}Avatar settings{% endtrans %}:</h3>
+    <dt>{{ form.avatar.label_tag() }}</dt>
+    <dd>
+      {{ macros.add_user_avatar(user, 'usercp_avatar') }}
+    </dd>
+    <dd>{{ form.avatar }}</dd>
+    <dd class="note">{% trans height=avatar_height, width=avatar_width -%}
+      (Will be scaled to {{ width }}x{{ height }})
+    {%- endtrans %}</dd>
+    <h3>{% trans %}Contact addresses{% endtrans %}</h3>
+    {{ render_form(form, ['email', 'gpgkey', 'jabber', 'website', 'launchpad', 'location']) }}
+    <h3>{% trans %}Signature{% endtrans %}</h3>
+    <p>{{ form.signature }}</p>
+    <h3>{% trans %}User page{% endtrans %}</h3>
+    <p>{{ form.userpage }}</p>
+    <p><input type="submit" value="{% trans %}Submit{% endtrans %}"></p>
+  </form>
+{% endblock %}

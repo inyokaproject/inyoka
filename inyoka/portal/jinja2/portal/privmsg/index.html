@@ -1,0 +1,182 @@
+{#
+    portal/privmsg/index.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Display a list of private messages.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/privmsg/overall.html' %}
+{% import 'macros.html' as macros %}
+{% set rendered_pagination = macros.render_pagination(pagination) %}
+{% set selected = folder.id %}
+{% set BREADCRUMBS = [(folder.name, folder.href)] + BREADCRUMBS|d([]) %}
+
+{% block portal_content %}
+  {%- if message %}
+    <div class="prvmsg">
+      {{ macros.add_user_avatar(message.author) }}
+      <dl class="prvmsg_header">
+        <dt>{% trans %}From:{% endtrans %}</dt>
+        <dd><a{% if not message.author.is_active %} class="user_inactive"{% endif %} href="{{ message.author|url }}">
+            {{- message.author|e }}</a></dd>
+        <dt>{% trans %}To:{% endtrans %}</dt>
+        <dd>{% for user in message.recipients -%}
+          <a{% if not user.is_active %} class="user_inactive"{% endif %} href="{{ user|url }}">{{ user|e }}</a>
+          {%- if not loop.last %}, {% endif %}{% else %}…{% endfor %}</dd>
+        <dt>{% trans %}Subject:{% endtrans %}</dt>
+        <dd>{{ message.subject|e }}</dd>
+        <dt>{% trans %}Date:{% endtrans %}</dt>
+        <dd>{{ message.pub_date|datetime }}</dd>
+      </dl>
+      <div class="prvmsg_body">
+        {{ message.text_rendered }}
+      </div>
+      <div class="linklist pn_actions">
+        {%- if not message.author == USER %}
+          {% if message.author.is_active %}
+          <a class="pn_reply" href="{{ message|url('reply') }}">{% trans %}Reply{% endtrans %}</a> |
+          {%- endif %}
+          {%- if message.recipients|length> 1 %}
+          <a class="pn_reply_all" href="{{ message|url('reply_to_all') }}">{% trans %}Reply to all{% endtrans %}</a> |
+          {%- endif %}
+        {%- endif %}
+        <a class="pn_forward" href="{{ message|url('forward') }}">{% trans %}Forward{% endtrans %}</a> |
+        {%- if folder.id == 'trash' %}
+        <a class="pn_restore" href="?action=restore">{% trans %}Restore{% endtrans %}</a> |
+        {%- elif folder.id != 'archive' %}
+        <a class="pn_archive" href="?action=archive">{% trans %}Archive{% endtrans %}</a> |
+        {%- endif %}
+        <a class="pn_delete" href="?action=delete">{% trans %}Delete message{% endtrans %}</a>
+      </div>
+    </div>
+    <br>
+    <div>
+      {%- trans moderators='//wiki.{{ BASE_DOMAIN_NAME }}/ubuntuusers/Moderatoren' -%}
+        If you received a spam message, please forward it to a <a href="{{ moderators }}">moderator</a>.
+      {%- endtrans -%}
+    </div>
+  {%- endif %}
+
+  <form action="" method="post">
+    {{ csrf_token() }}
+    <table class="pms">
+      <thead>
+        <tr>
+          <th class="subject">{% trans %}Subject{% endtrans %}</th>
+          <th class="author">{% trans %}From{% endtrans %}</th>
+          <th class="recipients">{% trans %}To{% endtrans %}</th>
+          <th class="date">{% trans %}Date{% endtrans %}</th>
+          <th class="actions">{% trans %}Actions{% endtrans %}</th>
+          <th class="delete" style="white-space: nowrap">{% trans %}Delete{% endtrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for entry in entries %}
+          <tr{% if message == entry.message %} class="active_pn"{% endif %}>
+            <td>
+              {% if not entry.read %}<strong>{% endif -%}
+                <a href="{{ entry|url }}">{{ entry.message.subject|e }}</a>
+              {%- if not entry.read %}</strong>{% endif %}
+            </td>
+            <td>
+              <a{% if not entry.message.author.is_active %} class="user_inactive"{% endif %} href="{{ entry.message.author|url }}">
+                    {{- entry.message.author|e -}}
+              </a>
+            </td>
+            <td>
+              {%- if entry.message.recipients|length == 0 %}
+                <a{% if not entry.message.author.is_active %} class="user_inactive"{% endif %} href="{{ entry.message.author|url }}">
+                  {{- entry.message.author|e -}}
+                </a>
+              {% else %}
+                <a{% if not entry.message.recipients[0].is_active %} class="user_inactive"{% endif %} href="{{ entry.message.recipients[0]|url }}">
+                  {{- entry.message.recipients[0]|e -}}
+                </a>
+              {%- endif %}
+              {%- if entry.message.recipients|length > 1 %}, …{% endif %}
+            </td>
+            <td>{{ entry.message.pub_date|datetime }}</td>
+            <td class="actions">
+              {%- if not entry.is_own_message %}
+                {% if entry.message.author.is_active %}
+                  <a href="{{ entry|url('reply') }}" title="{% trans %}Reply{% endtrans %}">{#
+                    #}<img src="{{ href('static', 'img/icons/msg-reply.svg') }}" alt="{% trans %}Reply{% endtrans %}" width="16px" height="16px">{#
+                  #}</a>
+                {%- endif -%}
+                {%- if entry.message.recipients|length > 1 %}
+                  <a href="{{ entry|url('reply_to_all') }}" title="{% trans %}Reply to all{% endtrans %}">{#
+                    #}<img src="{{ href('static', 'img/icons/msg-reply-all.svg') }}" alt="{% trans %}Reply to all{% endtrans %}" width="16px" height="16px">{#
+                  #}</a>
+                {%- endif -%}
+              {%- endif %}
+              <a href="{{ entry|url('forward') }}" title="{% trans %}Forward{% endtrans %}">{#
+                #}<img src="{{ href('static', 'img/icons/msg-forward.svg') }}" alt="{% trans %}Forward{% endtrans %}" height="16px" width="16px">{#
+              #}</a>
+              {%- if not entry.in_archive %}
+                <a href="{{ entry|url }}?action=archive" title="{% trans %}Archive{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/icons/archive.svg') }}" alt="{% trans %}Archive{% endtrans %}" width="16px" height="16px">{#
+                #}</a>
+              {%- endif %}
+            </td>
+            <td class="pn_delete">
+              <input type="checkbox" name="delete" value="{{ entry.id }}">
+            </td>
+          </tr>
+        {%- else %}
+          <tr>
+            <td colspan="6">
+              {% trans %}Currently there are no messages in this folder.{% endtrans %}
+            </td>
+          </tr>
+        {%- endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="6">
+            <div class="pnfooter">
+              <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+              <p class="onepage">
+                {% if one_page %}
+                  <a href="{{ href('portal', 'privmsg', folder.id) }}">
+                    {%- trans %}Split messages into multiple pages{% endtrans -%}
+                  </a>
+                {% else %}
+                  <a href="{{ href('portal', 'privmsg', folder.id, 'all') }}">
+                    {%- trans %}Display all messages on one page{% endtrans -%}
+                  </a>
+                {% endif %}
+              </p>
+            </div>
+            <p class="linklist">
+              <a href="{{ href('portal', 'privmsg', 'new') }}">{% trans %}Compose message{% endtrans %}</a> |
+              <input type="submit" value="{% trans %}Delete marked messages{% endtrans %}" class="linkbutton">
+            </p>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </form>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    var all_checked = false;
+    $('table.pms th.delete').click(function() {
+      $('input[name="delete"]').each(function() {
+        if (all_checked)
+          this.checked = false;
+        else
+          this.checked = true;
+      });
+      if (all_checked)
+        all_checked = false;
+      else
+        all_checked = true;
+    });
+    /* ]]> */
+  </script>
+{% endblock %}

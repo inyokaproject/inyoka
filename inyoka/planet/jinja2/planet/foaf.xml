@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:rss="http://purl.org/rss/1.0/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+>
+<foaf:Group>
+
+  <foaf:name>{% trans sitename=SETTINGS.BASE_DOMAIN_NAME %}{{ sitename }} | Planet{% endtrans %}</foaf:name>
+  <foaf:homepage>{{ href('planet') }}</foaf:homepage>
+  <rdfs:seeAlso rdf:resource="{{ href('planet', 'blogs', 'export', 'foaf') }}" />
+
+  {% for blog in blogs %}
+  <foaf:member>
+    <foaf:Person>
+      <foaf:name>{{ blog.name|e }}</foaf:name>
+      <foaf:weblog>
+        <foaf:Document rdf:about="{{ blog.blog_url|e }}">
+          <rdfs:seeAlso>
+            <rss:channel rdf:about="{{ blog.feed_url|e }}" />
+          </rdfs:seeAlso>
+        </foaf:Document>
+      </foaf:weblog>
+    </foaf:Person>
+  </foaf:member>
+  {% endfor %}
+
+</foaf:Group>
+</rdf:RDF>

@@ -1,0 +1,118 @@
+{#
+    portal/usercp/subscriptions.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all subscriptions of the user and let him
+    manage them.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/usercp/overall.html' %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% set BREADCRUMBS = [(_('Subscriptions'), href('portal', 'usercp',
+                                'subscriptions'))] + BREADCRUMBS|d([]) %}
+{% set selected = 'subscriptions' %}
+
+{% block sidebar %}
+  {{ super() }}
+
+  <h3>{% trans %}Filter{% endtrans %}</h3>
+  <div class="container noh3">
+    {{ filtersets[0].form.content_type }}
+  </div>
+{% endblock %}
+
+
+{% block portal_content %}
+  <h3>{% trans %}Subscriptions{% endtrans %}</h3>
+  <form class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
+    <table class="usercp_subscriptions">
+     <colgroup>
+        <col width="1%">
+        <col width="84%">
+        <col width="10%">
+        <col width="5%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="checkboxes"><input type="checkbox" id="check_all" title="{% trans %}(De)select all{% endtrans %}"></th>
+          <th class="name">{% trans %}Name{% endtrans %}</th>
+          <th class="read">{% trans %}Read{% endtrans %}</th>
+          <th class="status">{% trans %}State{% endtrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for sub in subscriptions -%}
+          {%- set type = sub.content_type.model -%}
+          {%- set object = sub.content_object -%}
+          {%- if type != 'suggestion' and object -%}
+            <tr>
+              <td class="checkboxes"><input type="checkbox" name="select" value="{{ sub.id }}"></td>
+              <td class="items{% if not sub.can_read %} unreadable{% endif %}">
+                {{ object._meta.verbose_name }}: <a href="{{ object|url }}">{{ object|e }}</a>
+                {% if type == 'topic' -%}
+                  {%- if not object.get_read_status(USER) %}
+                    <a href="{{ object|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">{#-
+                      -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}">{#-
+                    -#}</a>
+                  {%- endif %}
+                  {%- if object.paginated %} &#160; &#160; [<span class="pagination">
+                    {{ render_small_pagination(object.get_pagination()) }}
+                  </span>]{% endif -%}
+                {% elif type == 'article' -%}
+                  <a href="{{ object|url('last_comment') }}" title="{% trans %}Go to last comment{% endtrans %}">{#-
+                    -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Go to last comment{% endtrans %}">{#-
+                  -#}</a>
+                {% elif type == 'page' -%}
+                  <a href="{{ object|url('log') }}" title="{% trans %}Revisions{% endtrans %}">{#-
+                    -#}<img src="{{ href('static', 'img/icons/raw.svg') }}" alt="{% trans %}Revisions{% endtrans %}" height="16" width="16">{#-
+                  -#}</a>
+                {%- endif %}
+              </td>
+              <td class="read">
+                {%- if sub.notified %}
+                  <img src="{{ href('static', 'img', 'icons', 'new.svg') }}" alt="neu" title="{% trans %}Changes since last visit{% endtrans %}" width="16" height="16">
+                {%- endif %}
+              </td>
+              <td class="status">
+                {% if type == 'topic' %}
+                  <span class="status_{{ object.solved and 'solved' or 'unsolved' }}"></span>
+                {% endif %}
+              </td>
+            </tr>
+          {%- endif %}
+        {%- else %}
+          <tr>
+            <td colspan="4">{% trans %}You did not yet subscribed to any topics or articles.{% endtrans %}</td>
+          </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
+    <div>
+      <input type="submit" name="delete" value="{% trans %}Delete selected subscriptions{% endtrans %}">
+      <input type="submit" name="mark_read" value="{% trans %}Mark selected subscriptions as read{% endtrans %}">
+    </div>
+  </form>
+  <div class="pagination right">{{ rendered_pagination }}</div>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    (function () {
+      $('#check_all').click(function() {
+        var checked = this.checked
+        $('input[name="select"]').each(function() {
+          this.checked = checked;
+        });
+      });
+    })();
+  /*]]> */
+  </script>
+{% endblock %}

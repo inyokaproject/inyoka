@@ -1,0 +1,41 @@
+{#
+    templates.admin.file_edit
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Template for editing or creating a static file.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+
+{% set tmp_crumb = [(_('Static files'), href('portal', 'files'))] %}
+{% if not file %}
+  {% do tmp_crumb.append((_('Create'), href('portal', 'files', 'new'))) %}
+{% else %}
+  {% do tmp_crumb.append((file.identifier|e, file|url('edit'))) %}
+{% endif %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block content %}
+<form action="" method="post" enctype="multipart/form-data">
+  {{ csrf_token() }}
+  <dl>
+    {{ render_form(form, ['is_ikhaya_icon', 'file'], inline=true) }}
+    {%- if file %}
+    <span style="color:red;">{% trans %}CAUTION: A change of the file destroys all links from articles to this file!{% endtrans %}</span>
+    <dt>{% trans %}URL:{% endtrans %}</dt>
+    <dd><tt>{{ file|url }}</tt></dd>
+    <dt>{% trans %}Usage:{% endtrans %}</dt>
+    <dd><tt>{%- if ' ' in file.identifier|e %}[[Bild("{{ file.identifier|e }}")]]{%- else -%}
+            [[Bild({{ file.identifier|e}})]]{% endif %}</tt></dd>
+    <dd><tt>{%- if ' ' in file.identifier|e %}[[Vorlage(Ikhayabild, "{{ file.identifier|e }}", Link oder Größe, "Beschreibung", left|right)]]{%- else %}
+            [[Vorlage(Ikhayabild, {{ file.identifier|e }}, Link oder Größe, "{% trans %}Description{% endtrans %}", left|right)]]{% endif %}</tt></dd>
+    {%- endif %}
+  </dl>
+  <p>
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+  </p>
+</form>
+{% endblock %}

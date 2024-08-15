@@ -1,0 +1,26 @@
+{#
+    wiki/action_manage_discussion.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    Let the user set the discussion of a page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set BREADCRUMBS = [(_('Link discussion'), page|url('manage_discussion'))] + BREADCRUMBS|d([]) %}
+{% block wiki_content %}
+  <form action="{{ page|url('discussion')|e }}" method="post">
+    {{ csrf_token() }}
+    <p>
+      {%- trans %}You can choose a topic as the discussion topic of this article.{% endtrans -%}
+    <p>
+      <label for="id_topic">{% trans %}URL of the topic:{% endtrans %}</label> {{ form.topic }}
+      <span class="help_text">{{ form.topic.help_text }}</span>
+      {{ form.topic.errors }}
+    </p>
+    <p><input type="submit" value="{% trans %}Link{% endtrans %}"></p>
+  </form>
+{% endblock %}

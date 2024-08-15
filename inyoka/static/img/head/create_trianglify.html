@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/2.0.0/trianglify.min.js"></script>
+<script>
+	var pattern = Trianglify({
+		width: 1900,
+		height: 250,
+		cell_size: 80,
+		x_colors: ['#f8edd7', '#E95420', '#77216F'],
+		stroke_width: .6,
+		seed: '100',
+	});
+	document.body.appendChild(pattern.svg({includeNamespace: true}))
+</script>
+
+<!-- easiest way to save the SVG in a file seems to be copy & paste from web developer tools… -->
+
+</body>
+</html>

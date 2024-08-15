@@ -1,0 +1,21 @@
+@import "base_xmas.less";
+
+.header {
+    background-image: url(../../img/head/xmas_with_santa.svg);
+}
+/* remove animation in header background, if
+   1) user selected it in Inyoka-settings or
+   2) in browser settings
+*/
+html.reduce-motion .header {
+  background-image: url(../../img/head/xmas_with_santa_noanimation.svg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    background-image: url(../../img/head/xmas_with_santa_noanimation.svg);
+  }
+}
+
+.header h1 a {
+    background-image: url(../../img/logo-advent4.png);
+}

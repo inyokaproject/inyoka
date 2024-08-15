@@ -1,0 +1,49 @@
+{#
+    pastebin/display.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This template shows a single pastebin entry and displays a list of actions
+    the user can execute.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'pastebin/page.html' %}
+
+{% set BREADCRUMBS = [(entry.title, entry|url)] + BREADCRUMBS|d([]) %}
+{% set styles = ['highlight'] %}
+{% set scripts = ['Pastebin'] %}
+
+{% block navigation %}
+  {{ tab_navigation('browse') }}
+{% endblock %}
+
+{% block sidebar %}
+  {{ super() }}
+
+  <div class="container">
+    <ul class="paste_actions">
+      <li><a href="{{ entry|url('raw') }}">{% trans %}Display entry as raw text{% endtrans %}</a></li>
+      {%- if USER.has_perm('pastebin.delete_entry') %}
+        <li><a href="{{ entry|url('delete') }}" class="admin_link">{% trans %}Delete entry{% endtrans %}</a></li>
+      {%- endif %}
+    </ul>
+  </div>
+{% endblock %}
+
+{% block paste_content %}
+  <h1>{{ entry.title|e }}</h1>
+
+  <dl>
+    {%- if not entry.author.is_anonymous %}
+      <dt>{% trans %}Author:{% endtrans %}</dt>
+      <dd id="entry_author"><a href="{{ entry.author|url }}">{{ entry.author.username|e }}</a></dd>
+    {%- endif %}
+    <dt>{% trans %}Date:{% endtrans %}</dt>
+    <dd id="entry_date">{{ entry.pub_date|datetime }}</dd>
+    <dt>{% trans %}Code:{% endtrans %}</dt>
+    <dd id="entry_code">
+      {{ entry.code_rendered }}
+    </dd>
+  </dl>
+{% endblock %}

@@ -1,0 +1,32 @@
+{#
+    portal/usercp/index.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows the user control panel index page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/usercp/overall.html' %}
+
+{% macro usercp_button(link, icon, name) %}
+  <li>
+    <span><a href="{{ link }}">{#
+      #}<img src="{{ href('static', 'img/portal/usercp-%s.svg'|format(icon)) }}" alt="{{ name }}"><br>
+      {{- name -}}
+    </a></span>
+  </li>
+{% endmacro %}
+
+{% block portal_content %}
+  <div class="usercp_control">
+    <ul>
+      {{ usercp_button(href('portal', 'usercp', 'profile'), 'profile', _('Profile')) }}
+      {{ usercp_button(href('portal', 'usercp', 'settings'), 'preferences', _('Settings')) }}
+      {{ usercp_button(href('portal', 'usercp', 'password'), 'password', _('Change password')) }}
+      {{ usercp_button(href('portal', 'usercp', 'subscriptions'), 'subscriptions', _('Subscriptions')) }}
+      {{ usercp_button(href('portal', 'usercp', 'deactivate'), 'deactivate', _('Deactivate account')) }}
+    </ul>
+  </div>
+{% endblock %}

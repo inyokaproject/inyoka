@@ -1,0 +1,32 @@
+{#
+    wiki/mv_baustelle.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to show the user a small dialog that let
+    him / her move the article to "Baustelle"
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% from 'macros.html' import render_form %}
+{% set action = 'mv_baustelle' %}
+{% set styles = ['datetimefield'] %}
+{% set scripts = ['DateTime'] %}
+{% block wiki_content %}
+  <h1>
+    {%- trans page=page.name %}Mark page “{{ page }}” as “under construction”{% endtrans -%}
+  </h1>
+  <form action="{{ page|url('mv_baustelle')}}" method="post">
+    {{ csrf_token() }}
+    {{ form.errors.__all__ }}
+    <dl>
+      {{ render_form(form, ['new_name', 'user', 'completion_date'], inline=true) }}
+    </dl>
+    <p>
+      <input type="submit" value="{% trans %}Mark{% endtrans %}" name="send">
+    </p>
+  </form>
+{% endblock %}

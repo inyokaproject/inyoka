@@ -1,0 +1,94 @@
+{#
+    ikhaya/page.html
+    ~~~~~~~~~~~~~~~~
+
+    they all use (stylesheets etc).
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'overall.html' %}
+{% set BREADCRUMBS = [(_('Ikhaya'), href('ikhaya'))] + BREADCRUMBS|d([]) %}
+{% set styles = styles|default([]) + ['ikhaya', 'highlight'] %}
+{% set scripts = scripts|default([]) + ['ikhaya'] %}
+{% set active_app = 'ikhaya' %}
+{% set navi_type  = 'sidebar' %}
+
+{%- block html_head %}
+  {{ super() }}
+  <script>
+    /*<![CDATA[*/
+      var $SIDEBAR_HIDDEN = {{ USER.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
+    /*]]>*/
+  </script>
+{%- endblock %}
+
+{% block sidebar %}
+  <div class="container">
+    <h3 class="navi_about_ikhaya">{% trans %}About Ikhaya{% endtrans %}</h3>
+    {{ ikhaya_description_rendered|default('', True) }}
+
+    <h3 class="navi_new_article admin_link_hover">{% trans %}Suggest{% endtrans %}</h3>
+    <ul>
+      {% if USER.has_perm('ikhaya.suggest_article') %}
+        <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>
+      {% endif %}
+      {% if USER.has_perm('portal.suggest_event') %}
+        <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest event{% endtrans %}</a></li>
+      {% endif %}
+      {%- if USER.has_perm('ikhaya.change_article') -%}
+        <li class="admin_link"><a href="{{ href('ikhaya', 'article', 'new') }}">{% trans %}New article{% endtrans %}</a></li>
+      {%- endif -%}
+      {%- if USER.has_perm('ikhaya.change_event') -%}
+        <li class="admin_link"><a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a></li>
+      {%- endif -%}
+    </ul>
+    <h3 class="navi_archive">{% trans %}Archive{% endtrans %}</h3>
+    <ul>
+      <li><a href="{{ href('ikhaya') }}">{% trans %}Current articles{% endtrans %}</a></li>
+      {%- for date in archive -%}
+        <li>
+          <a href="{{ href('ikhaya', date.strftime('%Y/%m')) }}">{{-
+            MONTHS[date.month] }} {{ date.strftime('%Y') }}</a>
+        </li>
+      {%- endfor %}
+      {%- if short_archive %}
+        <li>
+          <a href="{{ href('ikhaya', 'archive') }}">{% trans %}Entire archive{% endtrans %}</a>
+        </li>
+      {% endif -%}
+    </ul>
+    {% if categories or USER.has_perm('ikhaya.change_category') %}
+      <h3 class="navi_categories admin_link_hover{% if not categories %} admin_link{% endif %}">{% trans %}Categories{% endtrans %}</h3>
+      <ul>
+        {%- if USER.has_perm('ikhaya.change_category') -%}
+          <li class="admin_link"><a href="{{ href('ikhaya', 'category', 'new') }}">{% trans %}Add category{% endtrans %}</a></li>
+        {%- endif -%}
+        {%- for category in categories -%}
+          <li class="admin_link_hover">
+            {%- if USER.has_perm('ikhaya.change_category') -%}
+              <a class="admin_link" href="{{ href('ikhaya', 'category', category.slug, 'edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
+            {%- endif -%}
+            <a href="{{ category|url }}">{{ category.name|e }}</a>
+          </li>
+        {%- endfor %}
+      </ul>
+    {% endif %}
+    {% if show_full_choice %}
+      <h3 class="navi_full_articles">{% trans %}Display options{% endtrans %}</h3>
+      <ul>
+        {% if full %}
+          <li><a href="{{ teaser_link }}">{% trans %}Show only teaser{% endtrans %}</a></li>
+        {% else %}
+          <li><a href="{{ full_link }}">{% trans %}Show full article{% endtrans %}</a></li>
+        {% endif %}
+      </ul>
+    {% endif %}
+
+  </div>
+{% endblock %}
+
+{% block content %}
+  {%- block ikhaya_content %}
+  {%- endblock %}
+{%- endblock %}

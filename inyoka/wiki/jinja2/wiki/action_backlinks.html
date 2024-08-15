@@ -1,0 +1,62 @@
+{#
+    wiki/action_backlinks.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Display a list of backlinks to a page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set BREADCRUMBS = [(_('Backlinks'), page|url('backlinks'))] + BREADCRUMBS|d([]) %}
+{% set action = 'backlinks' %}
+{% block wiki_content %}
+  {%- if page.backlinks %}
+    <p>
+      {%- trans title=page.title|e -%}
+        The following pages are referring to the article “{{ title }}” by manual linking:
+      {%- endtrans -%}
+    </p>
+    <ul>
+    {%- for page in page.backlinks %}
+      <li><a href="{{ page|url|e }}">{{ page.title|e }}</a></li>
+    {%- endfor %}
+    </ul>
+  {%- endif %}
+  {%- if page.embedders %}
+    <p>
+      {%- trans -%}
+        The following pages are embedding this articles as attachment.
+      {%- endtrans %}
+      {% if not page.rev.attachment %}
+        {% trans -%}
+          But the article itself is not listed as an attachment, perhaps these pages are using the article mistakenly or an old revision was an attachment.
+        {%- endtrans %}
+      {% endif %}
+      {#Folgende Seiten betten diesen Artikel als Anhang ein. {% if not
+      page.rev.attachment %}Allerdings wird der Artikel selbst nicht als
+      Attachment geführt,  möglicherweise verwenden diese Artikel die Seite
+      irrtümlich oder eine alte Revision war ein Attachment.{% endif %}#}
+    </p>
+    <ul>
+    {%- for page in page.embedders %}
+      <li><a href="{{ page|url|e }}">{{ page.title|e }}</a></li>
+    {%- endfor %}
+    </ul>
+  {%- endif %}
+  {%- if not page.backlinks and not page.embedders %}
+    <p>
+      {%- if page.rev.attachment -%}
+        {% trans -%}
+          This attachment is an orphan and not referenced by any site.
+        {%- endtrans %}
+      {%- else -%}
+        {% trans -%}
+          This article is an orphan and not referenced by any site.
+        {%- endtrans %}
+      {%- endif -%}
+    </p>
+  {%- endif %}
+{% endblock %}

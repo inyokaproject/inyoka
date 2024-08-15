@@ -1,0 +1,100 @@
+{#
+    wiki/action_log.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to show the user a small dialog that let
+    him / her compare various revisions (and later restoring them too).
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% import 'macros.html' as macros %}
+{% set rendered_pagination = macros.render_pagination(pagination) %}
+
+{% set BREADCRUMBS = [(_('Revisions'), page|url('log'))] + BREADCRUMBS|d([]) %}
+{% set action = 'log' %}
+{% set feeds = [
+  (_('Page revisions'), page|url('feed'))
+] %}
+{% block wiki_content %}
+  <div class="main_content">
+    {% set latest_rev = revisions[0] -%}
+    <p>
+      {%- trans count=pagination.total, link=page|url, article=page.title|e -%}
+        The article “<a href="{{ link }}">{{ article }}</a>” has currently {{ count }} revision.
+      {%- pluralize -%}
+        The article “<a href="{{ link }}">{{ article }}</a>” has currently {{ count }} revisions.
+      {%- endtrans %}
+
+      {% if latest_rev.user %}
+        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetime,
+                 author_link=latest_rev.user|url, author=latest_rev.user.username|e -%}
+          The <a href="{{ rev_link }}">most recent revision</a> is {{ rev }} and was created by <a href="{{ author_link }}">{{ author }}</a>.
+        {%- endtrans %}
+      {% else %}
+        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetime,
+                 author=latest_rev.remote_addr|e -%}
+          The <a href="{{ rev_link }}">most recent revision</a> is {{ rev }} and was created by {{ author }}.
+        {%- endtrans %}
+      {% endif %}
+    </p>
+    <p>
+      {%- trans feed_link=page|url('feed'),
+               subscribe_link=page|url('subscribe') -%}
+        To be always up to date you can read the <a href="{{ feed_link }}">atom feed</a> or <a href="{{ subscribe_link }}">subscribe</a>.
+      {%- endtrans -%}
+    </p>
+    <form action="" method="post" class="nosubmitprotect">
+      {{ csrf_token() }}
+      <input type="submit" value="{% trans %}Compare{% endtrans %}">
+      <input type="hidden" name="action" value="diff">
+
+      <table class="revisions zebra">
+        {%- for revision in revisions %}
+          <tr>
+            <td class="compare">
+              <input type="radio" name="rev" value="{{ revision.id }}"{% if loop.index == 2 or revisions|count == 1 %} checked="checked"{% endif %}>
+              <input type="radio" name="new_rev" value="{{ revision.id }}"{% if loop.index == 1 %} checked="checked"{% endif %}>
+            </td>
+            <td class="author">
+              {%- if revision.user %}
+                <a href="{{ revision.user|url|e }}">
+                  {{ macros.add_user_avatar(revision.user) }}
+                  <span class="username">{{ revision.user.username|e }}</span>
+                </a>
+              {% else %}
+                {{ revision.remote_addr|e }}
+              {% endif %}
+            </td>
+            <td class="changeset">
+              <span class="time-elapsed">
+                <abbr title="{{ revision.change_date|timedeltaformat }}">{{ revision.change_date|datetime }}</abbr>
+                {%- if revision.note %}:{% endif %}</span>
+              {% if revision.note %}{{ revision.note|e }}{% endif %}
+            </td>
+            <td>{{ revision.id }}</td>
+            <td class="actions">
+              <a href="{{ revision|url|e }}" class="view" title="{% trans %}View{% endtrans %}"><span>{% trans %}View{% endtrans %}</span></a>
+              {%- if can.manage %}
+              <a href="{{ page|url('revert', revision=revision.id) }}" class="revert"
+                 title="{% trans %}Restore{% endtrans %}"><span>{% trans %}Restore{% endtrans %}</span></a>
+              {%- endif %}
+              <a href=" {{ page|url('export', format='raw', revision=revision.id) }}" class="raw"
+                 title="{% trans %}Raw{% endtrans %}"><span>{% trans %}Raw{% endtrans %}</span></a>
+            </td>
+          </tr>
+        {%- endfor %}
+      </table>
+      {% if revisions|count > 10 %}<input type="submit" value="{% trans %}Compare{% endtrans %}" >{% endif %}
+    </form>
+
+    <br>
+
+    <div class="pagination left_pagination">
+      {{ rendered_pagination }}
+    </div>
+  </div>
+{% endblock %}

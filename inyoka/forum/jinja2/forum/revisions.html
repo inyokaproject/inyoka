@@ -1,0 +1,39 @@
+{#
+    forum/revisions.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all old revisions of a post and gives the moderator the
+    possibility to restore it.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'forum/page.html' %}
+{% set BREADCRUMBS = [(post.topic.title, post.topic|url),
+                      (_('Old revisions'), post|url('revisions'))] + BREADCRUMBS|d([]) %}
+
+{% block forum_content %}
+  <table class="topic">
+    <tbody>
+      {%- for rev in revisions %}
+        <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
+          <td class="post admin_link_hover">
+            <div class="postinfo">
+              <div class="linklist">
+                <a href="{{ rev|url('restore') }}" class="action action_review admin_link">{% trans %}Restore{% endtrans %}</a>
+              </div>
+              {% trans date=rev.store_date|datetime %}Edited: {{ date }}{% endtrans %}
+              {% if post.text == rev.text %}
+                | {% trans %}Current revision{% endtrans %}
+              {% endif %}
+            </div>
+            <div class="text">
+              {{ rev.text_rendered }}
+            </div>
+          </td>
+        </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+{% endblock %}

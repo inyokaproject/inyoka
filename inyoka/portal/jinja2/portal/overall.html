@@ -1,0 +1,111 @@
+{#
+    portal/overall.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    This is the base layout for all portal pages.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'overall.html' %}
+{% if not active_app %}
+  {% set active_app = 'portal' %}
+{% endif %}
+{% if not navi_type %}
+  {% set navi_type  = 'sidebar' %}
+{% endif %}
+{% set styles = ['portal'] + styles|default([]) %}
+
+{% set BREADCRUMBS = [(_('Portal'), href('portal'))] + BREADCRUMBS|d([]) %}
+
+{% macro feed_button(link) -%}
+  <a href="{{ link }}" class="feed_icon"><img src="{{ href('static', 'img', 'feed.svg') }}" alt="Newsfeed"></a>
+{%- endmacro %}
+
+{% block content %}
+  {% block portal_content %}{% endblock %}
+{% endblock %}
+
+{% block sidebar %}
+  {%- block pre_navigation %}{% endblock -%}
+  <div class="container">
+    <h3 class="navi_ubuntuusers"><a href="{{ href('portal') }}">{{ BASE_DOMAIN_NAME }}</a></h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'ubuntuusers') }}">{{ _('About') }} {{ BASE_DOMAIN_NAME }}</a></li>
+      <li><a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Portalregeln') }}">Portalregeln</a></li>
+      <li><a href="{{ href('portal', 'users') }}">{% trans %}Members{% endtrans %}</a></li>
+
+      {% if USER.is_team_member %}
+        <li><a href="{{ href('portal', 'groups') }}">{% trans %}Groups{% endtrans %}</a></li>
+      {% else %}
+        <li>
+          <a href="{{ href('wiki', 'ubuntuusers', 'Gesamtteam') }}">
+            {% trans %}Groups{% endtrans %}
+          </a>
+        </li>
+      {% endif %}
+
+      <li><a href="{{ href('wiki', 'ubuntuusers', 'Spenden') }}">Spenden</a></li>
+      <li><a href="{{ href('portal', 'kontakt') }}">{% trans %}Contact{% endtrans %}</a></li>
+      <li><a href="{{ href('pastebin') }}">Ablage</a></li>
+      <li><a href="{{ href('portal', 'whoisonline') }}">{% trans %}Who is online?{% endtrans %}</a></li>
+    </ul>
+    <h3 class="navi_forum">
+      <a href="{{ href('forum') }}">{% trans %}Forum{% endtrans %}</a>
+      {{ feed_button(href('portal', 'feeds', 'forum')) }}
+    </h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'Forum', 'Kurzanleitung') }}">Kurzanleitung</a></li>
+      <li><a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Richtig_fragen') }}">Richtig fragen</a></li>
+      <li><a href="{{ href('wiki', 'Forum', 'Syntax') }}">Foren-Syntax</a></li>
+    </ul>
+    <h3 class="navi_wiki">
+      <a href="{{ href('wiki') }}">Wiki</a>
+      {{ feed_button(href('portal', 'feeds', 'wiki')) }}
+    </h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'wiki') }}">Übersicht</a></li>
+      <li><a href="{{ href('wiki', SETTINGS.WIKI_MAIN_PAGE) }}">{{ SETTINGS.WIKI_MAIN_PAGE }}</a></li>
+    </ul>
+    <h3 class="navi_ikhaya">
+      <a href="{{ href('ikhaya') }}">Ikhaya</a>
+      {{ feed_button(href('portal', 'feeds', 'ikhaya')) }}
+    </h3>
+    {%- if USER.has_perm('ikhaya.suggest_article') or USER.has_perm('portal.suggest_event') %}
+    <ul>
+      {% if USER.has_perm('ikhaya.suggest_article') %}
+        <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest an article{% endtrans %}</a></li>
+      {% endif %}
+      {%- if USER.has_perm('portal.suggest_event') %}
+        <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest an event{% endtrans %}</a></li>
+      {%- endif %}
+    </ul>
+    {%- endif %}
+    <h3 class="navi_planet">
+      <a href="{{ href('planet') }}">Planet</a>
+      {{ feed_button(href('portal', 'feeds', 'planet')) }}
+    </h3>
+    {%- if USER.has_perm('planet.suggest_blog') %}
+    <ul>
+      <li><a href="{{ href('planet', 'suggest') }}">{% trans %}Suggest a blog{% endtrans %}</a></li>
+    </ul>
+    {%- endif %}
+    {%- if USER.has_perm('portal.change_staticpage') or USER.has_perm('portal.change_staticfile') or USER.has_perm('portal.change_storage') or USER.has_perm('portal.change_linkmap') %}
+    <h3 class="navi_config">{% trans %}Configuration{% endtrans %}</h3>
+    <ul>
+    {%- if USER.has_perm('portal.change_storage') %}
+      <li><a href="{{ href('portal', 'config') }}">{% trans %}General{% endtrans %}</a></li>
+    {%- endif %}
+    {% if USER.has_perm('portal.change_linkmap') %}
+      <li><a href="{{ href('portal', 'linkmap') }}">{% trans %}Linkmap{% endtrans %}</a></li>
+    {%- endif %}
+    {%- if USER.has_perm('portal.change_staticpage') %}
+      <li><a href="{{ href('portal', 'pages') }}">{% trans %}Static pages{% endtrans %}</a></li>
+    {% endif %}
+    {%- if USER.has_perm('portal.change_staticfile') %}
+      <li><a href="{{ href('portal', 'files') }}">{% trans %}Static files{% endtrans %}</a></li>
+    {% endif %}
+    </ul>
+    {%- endif %}
+  </div>
+{% endblock %}

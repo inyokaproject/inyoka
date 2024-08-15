@@ -1,0 +1,22 @@
+{#
+    wiki/export.html
+    ~~~~~~~~~~~~~~~~
+
+    A minimalistic html template for exporting wiki pages.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="robots" content="noindex">
+    <title>{{ page.title|e }}</title>
+  </head>
+  <body>
+    <h1 class="title">{{ page.title|e }}</h1>
+    {{ page.rev.rendered_text }}
+  </body>
+</html>

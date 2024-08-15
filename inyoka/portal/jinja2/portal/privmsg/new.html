@@ -1,0 +1,76 @@
+{#
+    portal/privmsg/new.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    Template for writing and sending new private messages.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/privmsg/overall.html' %}
+{% from 'macros.html' import render_form %}
+{% set styles = ['editor'] %}
+{% set scripts = ['WikiEditor', 'jquery.autocomplete', 'jquery.tokenfield'] %}
+{% set BREADCRUMBS = [(_('Compose message'), href('portal', 'privmsg', 'new'))] + BREADCRUMBS|d([]) %}
+{% set selected = 'new' %}
+
+{% block portal_content %}
+  <form action="{{ href('portal', 'privmsg', 'new') }}" method="post">
+    {{ csrf_token() }}
+    {{ form.non_field_errors() }}
+    {% if USER.has_perm('portal.send_group_privatemessage') %}
+    {{ render_form(form, ['recipient', 'group_recipient','subject', 'text']) }}
+    {% else %}
+    {{ render_form(form, ['recipient', 'subject', 'text']) }}
+    {% endif %}
+    <p>
+      <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}">
+      <input type="submit" value="{% trans %}Send message{% endtrans %}">
+    </p>
+  </form>
+  {%- if preview %}
+  <div class="preview_wrapper">
+    <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+    <div id="preview" class="preview">{{ preview }}</div>
+  </div>
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    var text = new WikiEditor('textarea[name="text"]', 'forum');
+    (function() {
+      var
+        editor = $('textarea[name="text"]'),
+        output = $('<div class="preview"></div>')
+      var preview = $('<div class="preview_wrapper"></div>')
+        .hide()
+        .append('<h2 class="title">{% trans %}Preview{% endtrans %}<\/h2>')
+        .append(output);
+
+      $('form input[name="preview"]').click(function() {
+        $('body, input, textarea').css('cursor', 'progress');
+        preview.hide();
+        $.post('/?__service__=wiki.render_preview', {
+          text: editor.val()
+        }, function(data) {
+          output.html(data);
+          preview.slideDown('fast');
+          $('body, input, textarea').css('cursor', 'auto');
+        });
+        return false;
+      }).parent().parent().parent().append(preview);
+    })();
+    $("#id_recipient").wrap($('<div class="tf_tokenfield"><div>')).token_field("/?__service__=portal.get_user_autocompletion", {
+                delay: 40, maxItemsToShow: 10, limit: 10, minChars: 3});
+	$("#id_recipient").parent().parent().parent().children("p.note").remove();
+	{% if USER.has_perm('portal.send_group_privatemessage') %}
+    $("#id_group_recipient").wrap($('<div class="tf_tokenfield"><div>')).token_field("/?__service__=portal.get_group_autocompletion", {
+                delay: 40, maxItemsToShow: 10, limit: 10, minChars: 1});
+	$("#id_group_recipient").parent().parent().parent().children("p.note").remove();
+	{% endif %}
+    /* ]]> */
+  </script>
+{% endblock %}

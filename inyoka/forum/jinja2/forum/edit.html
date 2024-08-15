@@ -1,0 +1,223 @@
+{#
+    forum/edit.html
+    ~~~~~~~~~~~~~~~
+
+    This page shows a form where the user can either create a new thread or
+    write / edit a post.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+
+#}
+{% from 'macros.html' import render_form %}
+{%- extends 'forum/page.html' %}
+
+{% set tmp_crumb = [] %}
+{% for parent in forum.parents|reverse %}
+  {% do tmp_crumb.append((parent.name, parent|url)) %}
+{% endfor %}
+{% do tmp_crumb.append((forum.name, forum|url)) %}
+{% if not topic %}
+  {% do tmp_crumb.append((_('New topic'), forum|url('newtopic'))) %}
+{% else %}
+  {% do tmp_crumb.append((topic.title, topic|url)) %}
+  {% if post %}
+    {% do tmp_crumb.append((_('Edit post'), '')) %}
+  {% else %}
+    {% do tmp_crumb.append((_('New reply'), topic|url('reply'))) %}
+  {% endif %}
+{% endif %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% set scripts = ['WikiEditor', 'NewTopic'] %}
+{% set styles = ['editor'] %}
+
+{% from 'forum/_edit_latestpost_row.html' import post_row %}
+{% from 'forum/_forum.html' import render_article_list %}
+
+{% block forum_content %}
+  <form action="" method="post" enctype="multipart/form-data" class="post_editor">
+    {{ csrf_token() }}
+    <a href="{{ href('pastebin') }}" class="pastelink" title="{% trans %}Please save long code snippets or program outputs in our paste service and link to the respective entry.{% endtrans %}">
+      {%- trans %}Paste{% endtrans -%}
+    </a>
+    {%- if topic %}
+      {%- if post %}
+        <h2>{% trans %}Edit post{% endtrans %}</h2>
+      {%- else %}
+        <h2>{% trans topic=topic.title|e %}New reply in “{{ topic }}”{% endtrans %}</h2>
+      {%- endif %}
+      {%- if topic.get_version_info() and not (isfirstpost or isnewtopic) %}
+        <p class="ubuntu_version">
+          <strong>Ubuntu-Version:</strong> {{ topic.get_version_info() }}
+        </p>
+      {%- endif %}
+      {%- if discussions %}
+      <div class="topic_box discussion_info">
+        {%- trans count=discussions|count, article_list=render_article_list(discussions) -%}
+          This topic is the discussion of the article {{ article_list }}.
+        {%- pluralize -%}
+          This topic is the discussion of the articles {{ article_list }}.
+        {%- endtrans -%}
+      </div>
+      {%- endif %}
+    {%- else %}
+      <h2>{% trans forum=forum.name|e %}New topic in “{{ forum }}”{% endtrans %}</h2>
+    {%- endif %}
+    <dl>
+      {%- if isnewtopic or isfirstpost %}
+        {%- if not article %}
+          <strong>{% trans %}Title:{% endtrans %}</strong>
+          {{ form.title }}{{ form.errors.title }}
+          <p class="version_chooser">
+            {{ form.ubuntu_distro }}{{ form.errors.ubuntu_distro }}
+            {{ form.ubuntu_version }}{{ form.errors.ubuntu_version }}
+            <span id="version_info"></span>
+          </p>
+        {%- else %}
+          <dd><input type="hidden" name="title" value="{{ article.name|e }}"></dd>
+        {%- endif %}
+      {%- endif %}
+      <dt class="text">{% trans %}Text:{% endtrans %}</dt>
+      <dd class="text">
+      {# There must be another solution to cann `form.text` and modify the attributes in place… --entequak #}
+        <textarea id="id_text" rows="10" cols="40" name="text"{% if topic.locked and can_moderate %} class="mod_action"{% endif %}>
+          {%- if form.data.text -%}
+            {{ form.data.text|e }}
+          {%- elif form.initial.text != none -%}
+            {{ form.initial.text|e }}
+          {%- endif -%}
+        </textarea>
+        {{ form.errors.text }}
+      </dd>
+      {%- if storage['license_note_rendered'] %}
+        <dd class="license_note">{{ storage['license_note_rendered'] }}</dd>
+      {%- endif %}
+      <dd style="display: none"><input type="submit" value="Absenden" name="send"></dd>
+      {%- if (isnewtopic or isfirstpost) and can_create_poll %}
+        <dt class="collapse{% if poll_form.errors %} has_errors{% endif %}">Umfragen:</dt>
+        {%- if polls %}
+          <dd>{% trans %}Existing polls:{% endtrans %}
+            <ul>
+              {%- for poll in polls or () %}
+                <li>{{ poll.question|e }} <button name="delete_poll" value="{{ poll.id }}">{% trans %}Delete{% endtrans %}</button></li>
+              {%- endfor %}
+            </ul>
+          </dd>
+        {%- endif %}
+        <dd>{% trans %}Question:{% endtrans %} {{ poll_form.question }} {{ poll_form.question.errors }}</dd>
+        <dd>{{ poll_form.multiple }} <label for="id_multiple">{% trans %}Allow multiple answers{% endtrans %}</label></dd>
+        {%- if poll_form.options.errors %}
+          <dd>{{ poll_form.options.errors }}</dd>
+        {%- endif %}
+        {%- for option in options %}
+          <dd class="newtopic_polls_replies">Antwort {{ loop.index }}: <input type="text" name="options" maxlength="250" size="40" value="{{ option }}">
+            {%- if loop.last %}
+              <input type="submit" name="add_option" value="{% trans %}Additional answer{% endtrans %}" id="id_add_option">
+            {%- endif -%}
+          </dd>
+        {%- endfor %}
+        <dd>{% trans duration=poll_form.duration %}Duration of the poll: {{ duration }} days{% endtrans %} {{ poll_form.duration.errors }}</dd>
+        <dd class="note">{% trans %}Leave that feel empty for an endless duration{% endtrans %}</dd>
+        <dd><input type="submit" name="add_poll" value="{% trans %}Add poll{% endtrans %}"></dd>
+      {%- endif %}
+      {%- if can_attach %}
+      <dt class="collapse{% if attach_form.errors %} has_errors{% endif %}">{% trans %}Attachments:{% endtrans %}</dt>
+      <dd>
+        {%- if attachments %}
+          <ul>
+            {%- for att in attachments %}
+              <li>
+                <a href="{{ att.get_absolute_url() }}">{{ att.name|e }}</a> - {{ att.size|filesizeformat(true) }}
+                <button type="submit" name="delete_attachment" value="{{ att.id }}">{% trans %}Delete{% endtrans %}</button>
+              </li>
+            {%- endfor %}
+          </ul>
+        {%- endif %}
+        <p><label for="id_attachment">{% trans %}Attachment:{% endtrans %}</label>
+          {{ attach_form.attachment }}{{ attach_form.errors.attachment }}</p>
+        <p><label for="id_filename">{% trans %}Rename to:{% endtrans %}</label>
+          {{ attach_form.filename }}{{ attach_form.errors.filename }}</p>
+        <p><label for="id_text">{% trans %}Description:{% endtrans %}</label>
+          {{ attach_form.comment }}{{ attach_form.errors.comment }}</p>
+        <p>{{ attach_form.override }} <label for="id_override">{% trans -%}
+          Overwrite existing attachment with the same name.{%- endtrans %}</label></p>
+        <p><input type="submit" value="{% trans %}upload attachment{% endtrans %}" name="attach"></p>
+      </dd>
+      {%- endif %}
+      {%- if can_sticky and (isnewtopic or isfirstpost) %}
+      <dt>Optionen:</dt>
+      <dd>{{ form.sticky }} <label for="id_sticky">{% trans %}Mark topic as “Important:”{% endtrans %}</label></dd>
+      {%- endif %}
+    </dl>
+    <p>
+      <input type="hidden" name="attachments" id="id_attachments" value="{%- for att in attachments or () %}{% if not loop.first %},{% endif %}{{ att.id }}{% endfor %}">
+      <input type="hidden" name="polls" id="id_polls" value="{%- for poll in polls or () %}{% if not loop.first %},{% endif %}{{ poll.id }}{%- endfor %}">
+      {{ form.errors.__all__ }}
+      <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview">
+      <input type="submit" value="{% trans %}Publish{% endtrans %}" name="send" id="submit_post">
+      <input type="submit" value="{% trans %}Cancel{% endtrans %}" name="cancel">
+    </p>
+  </form>
+  <div class="preview_wrapper">
+    {%- if preview %}
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+      <div class="preview">{{ preview }}</div>
+    {%- endif %}
+  </div>
+  {%- if not isnewtopic %}
+    <table class="topic" style="position:relative; top:11px">
+      <thead>
+        <tr><th id="recent_posts" colspan="2">{% trans %}Recent posts{% endtrans %}</th></tr>
+      </thead>
+    </table>
+    <table class="topic latest_posts">
+      <tbody>
+        {%- for post in posts %}
+          {{ post_row(post) }}
+        {%- endfor %}
+      </tbody>
+    </table>
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    var editor = new WikiEditor('textarea[name="text"]', 'forum');
+    (function() {
+      var
+        editor = $('textarea[name="text"]'),
+        output = $('<div class="preview"></div>')
+      var preview = $('div.preview_wrapper')
+        .hide()
+        .append('<h2 id="preview" name="preview" class="title">{% trans %}Preview{% endtrans %}<\/h2>')
+        .append(output);
+
+      var after_rendering = function(data) {
+        output.html(data);
+        preview.slideDown('fast');
+        $('body, input, textarea').css('cursor', 'auto');
+        if (document.location.href.match(/#preview/))
+          document.location.href = document.location.href;
+        else
+          document.location += '#preview';
+      };
+
+      $('form input[name="preview"]').click(function() {
+        $('body, input, textarea').css('cursor', 'progress');
+        preview.hide();
+        var values = {text: editor.val(),
+                      attachments: $('input[name="attachments"]').val()};
+        {% if post %}
+        values['post'] = "{{ post.pk }}";
+        {% endif %}
+        $.post('/?__service__=wiki.render_preview',
+               values, after_rendering);
+        return false;
+      });
+    })();
+    /* ]]> */
+  </script>
+{% endblock %}

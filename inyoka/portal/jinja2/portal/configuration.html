@@ -1,0 +1,80 @@
+{#
+    templates.admin.configuration
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    On this page the administrator can set general configuration values.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+
+{% set BREADCRUMBS = [(_('Configuration'), href('portal', 'config'))] + BREADCRUMBS|d([]) %}
+{% set styles = ['datetimefield'] %}
+{% set scripts = ['DateTime', 'jstableform'] %}
+
+{% block content %}
+<form enctype="multipart/form-data" action="" method="post" id="configuration">
+  {{ csrf_token() }}
+  <h3>{% trans %}General settings{% endtrans %}</h3>
+  <dl>
+    {{ render_form(form, ['global_message', 'welcome_message', 'blocked_hosts', 'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'wiki_edit_note', 'license_note', 'ikhaya_description', 'planet_description'], inline=true) }}
+    {% if team_icon_url %}<dd><img class="admin_teamicon" src="{{ team_icon_url }}" alt="Team Icon"></dd>{% endif %}
+    <dt>{{ form.team_icon.label }}</dt>
+    <dd>{{ form.team_icon }} {{ form.errors.team_icon }}</dd>
+  </dl>
+  <h3>Release-Countdown</h3>
+  {{ render_form(form, ['countdown_active', 'countdown_target_page', 'countdown_image_url', 'countdown_date'], inline=true) }}
+  <br>
+  <h3>Distributions Versionen</h3>
+  <table id="distri-table" class="jstableform">
+    <thead>
+      <tr>
+        <td class="jstableform-_jswarning" colspan="8">
+          Um diese Funktion nutzen zu können muss JavaScript aktiviert sein!
+        </td>
+      </tr>
+      <tr>
+        <td class="jstableform-key-number jstableform-type-string jstableform-validate-versionnumber">Version</td>
+        <td class="jstableform-key-name jstableform-type-string jstableform-validate-versionname">Name</td>
+        <td class="jstableform-key-lts jstableform-type-boolean">LTS</td>
+        <td class="jstableform-key-active jstableform-type-boolean">Aktiv</td>
+        <td class="jstableform-key-current jstableform-type-boolean">Aktuell</td>
+        <td class="jstableform-key-dev jstableform-type-boolean">Entwicklung</td>
+        <td class="jstableform-key-_cmdedit"></td>
+        <td class="jstableform-key-_cmddel"></td>
+      </tr>
+    </thead>
+    <tfoot><tr>
+      <td colspan="8"><a href="#distri-table" name="jstableform-add">Hinzufügen</a></td>
+    </tr></tfoot>
+    <tbody>
+      {%- for version in versions -%}
+        <tr name="jstableform-{{ version.number|e }}">
+          <td name="jstableform-key-number">{{ version.number|e }}</td>
+          <td name="jstableform-key-name">{{ version.name|e }}</td>
+          <td name="jstableform-key-lts" class="jstableform-status-{% if version.lts %}yes{% else %}no{% endif %}"></td>
+          <td name="jstableform-key-active" class="jstableform-status-{% if version.active %}yes{% else %}no{% endif %}"></td>
+          <td name="jstableform-key-current" class="jstableform-status-{% if version.current %}yes{% else %}no{% endif %}"></td>
+          <td name="jstableform-key-dev" class="jstableform-status-{% if version.dev %}yes{% else %}no{% endif %}"></td>
+          <td name="jstableform-key-_cmdedit"><a href="#distri-table">Ändern</a></td>
+          <td name="jstableform-key-_cmddel"><a href="#distri-table">Löschen</a></td>
+        </tr>
+      {%- endfor -%}
+    </tbody>
+  </table>
+  {{ form.distri_versions }}
+  <p>
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+  </p>
+</form>
+{% endblock %}
+
+{% block additional_scripts %}
+<script>
+  $(function() {
+    JSTableForm($('#distri-table'), $('#id_distri_versions'));
+  });
+</script>
+{% endblock %}

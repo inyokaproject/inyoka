@@ -1,0 +1,4 @@
+Hallo {{ username }},
+
+das Thema „{{ topic.title }}“ wurde von {{ mod }} aus dem Forum „{{ old_forum_name }}“ nach „{{ forum_name }}“ verschoben.
+Du kannst es dir hier ansehen: {{ topic|url }}

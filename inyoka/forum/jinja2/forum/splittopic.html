@@ -1,0 +1,122 @@
+{#
+    forum/splittopic.html
+    ~~~~~~~~~~~~~~~~
+
+    This page shows the "splittopic" form.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'forum/page.html' %}
+{% import 'macros.html' as macros %}
+{% set BREADCRUMBS = [(_('Split topic'), topic|url('split')),
+                      (topic.forum.name, topic.forum|url),
+                      (topic.title, topic|url)] + BREADCRUMBS|d([]) %}
+
+{% block forum_content %}
+  <form action="" method="post" class="new_topic">
+    {{ csrf_token() }}
+    <h2>{% trans topic=topic.title|e %}Split topic “{{ topic }}”{% endtrans %}</h2>
+    <p>
+      {% trans %}The chosen posts can form a new topic or be attached to an existing topic.{% endtrans %}
+    </p>
+    <dl>
+      <dt>
+        <input type="radio" name="action" value="new" id="id_new"{% if form.data.action == 'new' %} checked="checked"{% endif %}>
+        <label for="id_new">{% trans %}Create new topic{% endtrans %}</label>
+      </dt>
+      <dd>
+        {% trans %}Forum of the new topic:{% endtrans %} {{ form.forum }}{{ form.errors.forum }}
+      </dd>
+      <dd>
+        {% trans %}Title of the new topic:{% endtrans %} {{ form.new_title }}{{ form.errors.new_title }}
+      </dd>
+      <dd>
+        Version des neuen Topics:
+        {{ form.ubuntu_distro }}{{ form.errors.ubuntu_distro }}
+        {{ form.ubuntu_version }}{{ form.errors.ubuntu_version }}
+      </dd>
+      <dt>
+        <input type="radio" name="action" value="add" id="id_add"{% if form.data.action == 'add' %} checked="checked" {% endif %}>
+        <label for="id_add">{% trans %}Attach to old topic{% endtrans %}</label>
+      </dt>
+      <dd>
+        {% trans %}URL of the topic:{% endtrans %} {{ form.topic_to_move }}{{ form.errors.topic_to_move }}
+      </dd>
+      <dt>{{ form.edit_post.label_tag() }}</dt>
+      <dd>{{ form.edit_post }}</dd>
+    </dl>
+
+    <h3>{% trans %}Preview{% endtrans %}</h3>
+    <p>{% trans %}The following posts will be split off:{% endtrans %}</p>
+
+    <table class="topic admin_link_hover">
+      <tbody>
+        {%- for post in posts %}
+          <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
+            <td class="author{% if post.author_id == USER.id %} -own{% endif %}">
+              <p class="username{% if not post.author.is_active %} inactive{% endif %}">
+                <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
+                {%- if post.author.primary_group and post.author.primary_group.icon %}
+                <img class="teamicon" src="{{ post.author.primary_group.icon_url }}" alt="Teamicon">
+                {%- endif %}
+              </p>
+              {%- if post.author.member_title %}
+                <div class="member_title">{{ post.author.member_title|e }}</div>
+              {%- endif %}
+              {%- if post.author == topic.author and not loop.first %}
+                <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
+              {%- endif %}
+              {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
+                {{ macros.add_user_avatar(post.author) }}
+              {%- endif %}
+              <p>{% trans %}Member since:{% endtrans %}<br>{{ post.author.date_joined|naturalday }}</p>
+              <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
+            </td>
+            <td class="post{% if post.author_id == USER.id %} -own{% endif %}">
+              <div class="postinfo">
+                <div class="linklist">
+                </div>
+                <a href="{{ post|url }}" title="{% trans %}Link to this post{% endtrans %}">
+                  {{ post.pub_date|datetime }}
+                </a>
+              </div>
+              <div class="text">
+                {{ post.get_text() }}
+              </div>
+              {%- set attachments = post.grouped_attachments %}
+              {%- if attachments %}
+                <dl class="attachments">
+                  {%- for group, list, class in attachments %}
+                    {%- if group %}
+                      <dt>{{ group }}</dt>
+                      <ul class="attr_list{% if class %} {{ class }}{% endif %}">
+                      {%- for att in list %}
+                        <li>{{ att.html_representation }}</li>
+                      {%- endfor %}
+                      </ul>
+                    {%- else %}
+                      {%- for att in list %}
+                        <dt>{{ att.name|e }} ({{ att.size|filesizeformat(true) }})</dt>
+                        {%- if att.comment %}
+                          <dd class="comment">{{ att.comment|e }}</dd>
+                        {%- endif %}
+                        <dd>{{ att.html_representation }}</dd>
+                      {%- endfor %}
+                    {%- endif %}
+                  {%- endfor %}
+                </dl>
+              {%- endif %}
+              {%- if post.author.signature and not USER.settings['hide_signatures'] %}
+                <div class="signature">
+                  {{ post.author.signature_rendered }}
+                </div>
+              {%- endif %}
+            </td>
+          </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
+    <input type="submit" name="split" value="{% trans %}Split posts{% endtrans %}">
+  </form>
+{% endblock %}

@@ -1,0 +1,55 @@
+{#
+    wiki/action_attachments_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to edit an existing attachment
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+
+{% set BREADCRUMBS = [(_('Edit'), page|url('edit'))] + BREADCRUMBS|d([]) %}
+{% set action = 'manage' %}
+{% set styles = ['editor'] %}
+{% set scripts = ['WikiEditor'] %}
+
+{% block wiki_content %}
+  <h1 class="pagetitle">{% trans %}Edit attachment{% endtrans %}</h1>
+
+  <div id="page">
+    <form action="{{ page|url('edit') }}" method="post"
+      enctype="multipart/form-data" id="form_addattachment">
+      {{ csrf_token() }}
+      <p>
+        <label for="id_attachment">{% trans %}New attachment:{% endtrans %}</label>
+        {{ form.attachment }}
+      </p>
+      <p>
+        <label for="id_text">{% trans %}Description:{% endtrans %}</label>
+        <br>
+      </p>
+      <p>{{ form.text }}</p>
+      <p>
+        <label for="id_note">{% trans %}Edit summary:{% endtrans %}</label>
+        <br>
+        {{ form.note }}
+      </p>
+      <p>
+        <input type="submit" value="{% trans %}Edit attachment{% endtrans %}">
+        <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}">
+      </p>
+    </form>
+  </div>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    var text = new WikiEditor('textarea[name="text"]');
+    /* ]]> */
+  </script>
+{% endblock %}

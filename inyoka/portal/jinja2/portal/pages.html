@@ -1,0 +1,44 @@
+{#
+    portal/pages.html
+    ~~~~~~~~~~~~~~~~
+
+    This is the overview of the static pages configuration.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+
+{% set BREADCRUMBS = [(_('Static pages'), href('portal', 'pages'))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+<h3>{% trans %}Static pages{% endtrans %}</h3>
+<p><a href="{{ href('portal', 'page', 'new') }}">{% trans %}Create new page{% endtrans %}</a></p>
+<table class="static_pages">
+  <thead>
+    <tr>
+      <th>{{ table.get_html('key', _('Key')) }}</th>
+      <th>{{ table.get_html('title', _('Title')) }}</th>
+      <th>{% trans %}Actions{% endtrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%- for page in pages %}
+      <tr>
+        <td class="pagekey"><a href="{{ page|url }}">{{ page.key }}</a></td>
+        <td class="title">{{ page.title }}</td>
+        <td class="actions">
+          <a href="{{ page|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
+          <a href="{{ page|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
+        </td>
+      </tr>
+    {%- else %}
+      <tr>
+        <td colspan="3">
+          {% trans %}There are no static pages, create the first one now!{% endtrans %}
+        </td>
+      </tr>
+    {%- endfor %}
+  </tbody>
+</table>
+{% endblock %}

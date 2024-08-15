@@ -1,0 +1,95 @@
+{#
+    ikhaya/index.html
+    ~~~~~~~~~~~~~~~~~
+
+    This page shows some of the latest ikhaya entries.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{%- from 'macros.html' import render_pagination %}
+
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% if category %}
+  {% set name = category.name %}
+  {% set feeds = [
+    (name + _('Captions'), href('ikhaya', 'feeds', category.slug, 'title/20')),
+    (name + _('Teaser'), href('ikhaya', 'feeds', category.slug, 'short/20')),
+    (name + _('Full'), href('ikhaya', 'feeds', category.slug, 'full/20')),
+  ] %}
+  {% set BREADCRUMBS = [(category.name, category|url)] + BREADCRUMBS|d([]) %}
+{% else %}
+  {% set feeds = [
+    (_('News') + ' - ' + _('Captions'), href('ikhaya', 'feeds/title/20')),
+    (_('News') + ' - ' + _('Teaser'), href('ikhaya', 'feeds/short/20')),
+    (_('News') + ' - ' + _('Full'), href('ikhaya', 'feeds/full/20')),
+    (_('Comments') + ' - ' + _('Full'), href('ikhaya', 'feeds/comments/title/20')),
+    (_('Comments') + ' - ' + _('Full'), href('ikhaya', 'feeds/comments/short/20')),
+    (_('Comments') + ' - ' + _('Full'), href('ikhaya', 'feeds/comments/full/20')),
+    ] %}
+{% endif %}
+
+{% if full %}
+  {% set deny_robots = 'noindex' %}
+{% endif %}
+
+{% block ikhaya_content %}
+  {%- if articles %}
+    <ul class="articles">
+      {%- for article in articles %}
+        <li class="article{{ article.hidden and ' hidden' or '' }}">
+          <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
+          {%- if article.article_icon %}
+            <img class="icon" src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}">
+          {%- endif %}
+          {% if full %}
+            <div class="intro">
+              {{ article.get_intro() }}
+            </div>
+            <div class="text">
+              {{ article.get_text() }}
+            </div>
+            <br>
+          {% else %}
+            <div class="text">{{ article.get_intro() }}</div>
+          {% endif %}
+          <p class="meta admin_link_hover">
+            {% trans link=article.author|url, author=article.author.username|e -%}
+              Published by <a href="{{ link }}">{{ author }}</a>
+            {%- endtrans %} |
+            {{ article.pub_datetime|datetime }} |
+            {% trans %}Category:{% endtrans %}
+            <a href="{{ article.category|url }}">{{ article.category.name|e }}</a> |
+            {%- if article.updated > article.pub_datetime %}
+              {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }} |
+            {%- endif %}
+            {%- if article.comments_enabled %}
+              {% trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize, link=article|url + '#comments' -%}
+                {{ count }} <a href="{{ link }}">comment</a>
+              {%- pluralize pluralindicator -%}
+                {{ count }} <a href="{{ link }}">comments</a>
+              {%- endtrans %}
+              {%- if article.id in subscription_ids and USER.is_authenticated %}
+                (<a href="{{ article|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>)
+              {%- elif article.id not in subscription_ids and USER.is_authenticated %}
+                (<a href="{{ article|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a>)
+              {%- endif %}
+            {%- endif %}
+            | <a href="{{ article|url('id') }}">#</a>
+            {%- if USER.has_perm('ikhaya.change_article') -%}
+              <span class="admin_link"> |
+                <a href="{{ article|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
+              </span>
+            {%- endif %}
+          </p>
+        </li>
+      {%- endfor %}
+    </ul>
+  {%- else %}
+    <p>{% trans %}There is no article.{% endtrans %}</p>
+  {%- endif %}
+
+  <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+{% endblock %}
