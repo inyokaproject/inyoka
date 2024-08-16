@@ -39,7 +39,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: inyokaproject/${{ matrix.theme }}
-        ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }} # ssh key of inyokatestci, read only, see https://docs.github.com/en/actions/reference/encrypted-secrets
         ref: ${{ github.ref }}
         path: ${{ matrix.theme }}
         persist-credentials: false
@@ -50,7 +49,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: ${{ github.event.pull_request.head.repo.owner.login }}/${{ matrix.theme }}
-        ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
         ref: ${{ github.head_ref }}
         path: ${{ matrix.theme }}
         persist-credentials: false
@@ -59,11 +57,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: inyokaproject/${{ matrix.theme }}
-        ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
         ref: staging
         path: ${{ matrix.theme }}
         persist-credentials: false
-    # if theme == '', the the default theme inside inyoka is used
+    # if theme == '', the default theme inside inyoka is used
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
