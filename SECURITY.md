@@ -1,1 +1,1 @@
-see https://github.com/inyokaproject/inyoka/tree/staging/docs/security.rst
+See [SECURITY.rst](docs/security.rst).
