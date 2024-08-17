@@ -24,6 +24,37 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+
+Unreleased AA.BB.CC (2024-MM-DD)
+=====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+* Add default theme based on ubuntuusers theme to the inyoka repository
+* Migrate from ``setup.py`` to ``pyproject.toml``
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+🔒 Security
+-----------
+
+
 0.36.1 (2024-08-06)
 ===================
 
