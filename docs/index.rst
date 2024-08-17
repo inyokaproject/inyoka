@@ -27,6 +27,7 @@ Releases
 
     release_procedure
     releases/index
+    security
 
 Indices and tables
 ==================
