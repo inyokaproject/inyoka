@@ -7,15 +7,19 @@
     :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from unittest.mock import patch
+
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test.utils import override_settings
-from unittest.mock import patch
 
 from inyoka.forum.models import Attachment, Forum, Post, PostRevision, Topic
 from inyoka.utils.test import TestCase
-from tests.apps.forum.forum_test_class import ForumTestCase, ForumTestCaseWithSecondItems
+from tests.apps.forum.forum_test_class import (
+    ForumTestCase,
+    ForumTestCaseWithSecondItems,
+)
 
 
 class TestAttachmentModel(TestCase):

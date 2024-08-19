@@ -9,7 +9,13 @@ from unittest import TestCase
 
 from django.test import override_settings
 
-from inyoka.utils.text import human_number, join_pagename, normalize_pagename, increment_string, get_pagetitle, wiki_slugify
+from inyoka.utils.text import (
+    get_pagetitle,
+    human_number,
+    join_pagename,
+    normalize_pagename,
+    wiki_slugify,
+)
 
 
 class TestHumanNumber(TestCase):

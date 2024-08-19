@@ -9,8 +9,10 @@
 """
 # Secure XML libraries till a python solution exists.
 import defusedxml
+
 defusedxml.defuse_stdlib()
 import xml
+
 assert xml.sax.make_parser is defusedxml.sax.make_parser
 # End XML patching.
 

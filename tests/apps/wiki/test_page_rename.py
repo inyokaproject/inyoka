@@ -7,9 +7,9 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.core.files import File
-from os.path import join, dirname
+from os.path import dirname, join
 
+from django.core.files import File
 from django.test import RequestFactory
 
 from inyoka.portal.user import User
@@ -37,7 +37,9 @@ class PageRename(TestCase):
         request.user = self.user
 
         new_name = 'new_test'
-        from inyoka.wiki.actions import _rename  # local import, as __getitem__ of storage uses ORM
+        from inyoka.wiki.actions import (
+            _rename,  # local import, as __getitem__ of storage uses ORM
+        )
         _rename(request, page, new_name)
 
         page.refresh_from_db()
@@ -57,7 +59,9 @@ class PageRename(TestCase):
         request.user = self.user
 
         new_name = 'new_test'
-        from inyoka.wiki.actions import _rename  # local import, as __getitem__ of storage uses ORM
+        from inyoka.wiki.actions import (
+            _rename,  # local import, as __getitem__ of storage uses ORM
+        )
         _rename(request, page, new_name)
 
         page.refresh_from_db()
@@ -96,7 +100,9 @@ class PageRename(TestCase):
         request.user = self.user
 
         new_name = 'new_test'
-        from inyoka.wiki.actions import _rename  # local import, as __getitem__ of storage uses ORM
+        from inyoka.wiki.actions import (
+            _rename,  # local import, as __getitem__ of storage uses ORM
+        )
         _rename(request, page, new_name)
 
         page.refresh_from_db()
@@ -134,7 +140,9 @@ class PageRename(TestCase):
         request.user = self.user
 
         new_name = 'new_test'
-        from inyoka.wiki.actions import _rename  # local import, as __getitem__ of storage uses ORM
+        from inyoka.wiki.actions import (
+            _rename,  # local import, as __getitem__ of storage uses ORM
+        )
         _rename(request, page, new_name)
 
         page.refresh_from_db()

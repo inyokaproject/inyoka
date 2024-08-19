@@ -7,11 +7,9 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import sys
 
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
-
 from django_hosts import host, patterns
 
 

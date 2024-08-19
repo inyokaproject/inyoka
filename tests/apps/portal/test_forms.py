@@ -8,15 +8,13 @@
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
-
 from os import path
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from inyoka.portal.models import StaticPage, StaticFile
-from inyoka.utils.test import TestCase
-
 from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm
+from inyoka.portal.models import StaticFile, StaticPage
+from inyoka.utils.test import TestCase
 
 
 class TestEditStaticPageForm(TestCase):

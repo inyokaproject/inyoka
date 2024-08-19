@@ -1,9 +1,10 @@
-import sys
 import datetime
-import django
 import os
-from os.path import join, dirname
+import sys
+from os.path import dirname, join
 from subprocess import PIPE, Popen
+
+import django
 
 sys.path.insert(0, join(dirname(__file__), '..'))
 
@@ -17,14 +18,17 @@ django.setup()
 
 # Fix FileField
 from django.db.models.fields.files import FileDescriptor
+
 FileDescriptor.__get__ = lambda self, *args, **kwargs: self
 
 #Fix JSONField
 from inyoka.utils.database import SimpleDescriptor
+
 SimpleDescriptor.__get__ = lambda self, *args, **kwargs: self
 
 # Remove Redis dependency
 from inyoka.utils.storage import CachedStorage
+
 CachedStorage.get = lambda self, key, *args, **kwargs: key
 
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',

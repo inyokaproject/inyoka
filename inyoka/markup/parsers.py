@@ -22,7 +22,7 @@ from pygments.util import ClassNotFound
 
 from inyoka.markup import nodes
 from inyoka.markup.templates import expand_page_template
-from inyoka.markup.utils import debug_repr, ArgumentCollector
+from inyoka.markup.utils import ArgumentCollector, debug_repr
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.text import join_pagename, normalize_pagename
 

@@ -76,30 +76,30 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
-from typing import Optional
-
-import magic
+import locale
 import random
 import time
 from collections import defaultdict
+from datetime import datetime
+from functools import partial
+from hashlib import sha1
+from typing import Optional
+
+import magic
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.db.models import Count, Max
+from django.db.models import Count
 from django.db.models.functions import Upper
-from django.utils.html import escape
-from django.utils.translation import gettext as _, to_locale, get_language
-from django.utils.translation import gettext_lazy
-from functools import partial
-from hashlib import sha1
 from django.utils.functional import cached_property
+from django.utils.html import escape
+from django.utils.translation import get_language, gettext_lazy, to_locale
+from django.utils.translation import gettext as _
 from werkzeug.utils import secure_filename
 
-import locale
-from inyoka import default_settings
-from inyoka.markup import nodes, templates, base as markup
+from inyoka.markup import base as markup
+from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.dates import datetime_to_timezone, format_datetime
@@ -110,10 +110,18 @@ from inyoka.utils.html import striptags
 from inyoka.utils.local import local as local_cache
 from inyoka.utils.logger import logger
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
+from inyoka.utils.text import (
+    get_pagetitle,
+    join_pagename,
+    wiki_slugify,
+)
 from inyoka.utils.urls import href
 from inyoka.wiki.exceptions import CaseSensitiveException
-from inyoka.wiki.tasks import update_related_pages, update_page_by_slug, render_one_revision
+from inyoka.wiki.tasks import (
+    render_one_revision,
+    update_page_by_slug,
+    update_related_pages,
+)
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8

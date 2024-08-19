@@ -7,17 +7,23 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, time as dt_time
+from datetime import datetime
+from datetime import time as dt_time
 
 from django import forms
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy
 
-from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from inyoka.ikhaya.models import Article, Category, Event, Suggestion
 from inyoka.portal.models import StaticFile
-from inyoka.utils.forms import (UserField, TimeWidget, DateWidget,
-    DateTimeField, StrippedCharField)
 from inyoka.utils.dates import datetime_to_timezone
+from inyoka.utils.forms import (
+    DateTimeField,
+    DateWidget,
+    StrippedCharField,
+    TimeWidget,
+    UserField,
+)
 from inyoka.utils.text import slugify
 
 
@@ -76,7 +82,7 @@ class EditArticleForm(forms.ModelForm):
         if self.cleaned_data.get('updated', None):
             instance.updated = self.cleaned_data['updated']
         elif {'pub_date', 'pub_time'} in set(self.cleaned_data.keys()):
-            instance.updated = date_time_to_datetime(
+            instance.updated = datetime.combine(
                 self.cleaned_data['pub_date'],
                 self.cleaned_data['pub_time'])
         instance.save()

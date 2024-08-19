@@ -7,30 +7,29 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import shutil
 import datetime
-import zoneinfo
+import shutil
 from os import makedirs, path
 from random import randint
+from unittest.mock import patch
 
 import feedparser
 import responses
+import zoneinfo
 from django.conf import settings
-from django.core.cache import cache
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.http import Http404
 from django.test import RequestFactory
 from django.test.utils import override_settings
-from django.utils import translation, timezone
+from django.utils import timezone, translation
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import gettext as _
-from unittest.mock import patch
-
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum import constants, views
-from inyoka.forum.constants import get_version_choices, get_distro_choices
+from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import (
     Attachment,
     Forum,
@@ -1749,7 +1748,7 @@ class TestPostForumFeed(TestCase):
         self.assertEqual(len(feed.entries), 0)
 
     def test_invalid_forum_slug(self):
-        response = self.client.get(f'/feeds/forum/fooBarBAZ/short/10/', follow=True)
+        response = self.client.get('/feeds/forum/fooBarBAZ/short/10/', follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_multiple_topics(self):

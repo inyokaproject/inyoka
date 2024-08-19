@@ -10,8 +10,8 @@
 from django import forms
 from django.utils.translation import gettext_lazy
 
-from inyoka.utils.forms import UserField
 from inyoka.planet.models import Blog
+from inyoka.utils.forms import UserField
 
 
 class SuggestBlogForm(forms.Form):

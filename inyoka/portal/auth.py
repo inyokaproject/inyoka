@@ -35,7 +35,7 @@ class InyokaAuthBackend(BaseBackend):
         """
         try:
             user = User.objects.get_by_username_or_email(username)
-        except:
+        except Exception:
             User().set_password(password)
             return None
 

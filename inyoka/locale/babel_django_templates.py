@@ -39,15 +39,16 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from django.template.base import Lexer
-from django.template.base import TokenType
-
-from django.utils.translation import trim_whitespace
+from django.template.base import Lexer, TokenType
 from django.utils.encoding import smart_str
-
+from django.utils.translation import trim_whitespace
 from django.utils.translation.template import (
-    inline_re, block_re, endblock_re, plural_re, constant_re)
-
+    block_re,
+    constant_re,
+    endblock_re,
+    inline_re,
+    plural_re,
+)
 
 TOKEN_TEXT = TokenType.TEXT
 TOKEN_VAR = TokenType.VAR

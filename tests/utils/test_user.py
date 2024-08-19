@@ -9,9 +9,9 @@ from hashlib import sha1
 
 from django.conf import settings
 
-from inyoka.portal.user import User, Group
-from inyoka.utils.user import gen_activation_key
+from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
+from inyoka.utils.user import gen_activation_key
 
 
 class TestUtilsUser(TestCase):

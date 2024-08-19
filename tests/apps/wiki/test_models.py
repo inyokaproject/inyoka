@@ -6,8 +6,8 @@ from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from inyoka.utils.test import TestCase
-from inyoka.wiki.models import Page, Attachment, Revision
 from inyoka.wiki.exceptions import CaseSensitiveException
+from inyoka.wiki.models import Attachment, Page, Revision
 
 BASE_PATH = path.dirname(__file__)
 

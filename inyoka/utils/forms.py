@@ -10,10 +10,11 @@
 """
 import re
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from hashlib import md5
 from random import randrange
-import urllib.request, urllib.parse, urllib.error
-import urllib.parse
 
 from django import forms
 from django.conf import settings

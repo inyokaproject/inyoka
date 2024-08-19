@@ -8,9 +8,9 @@
     :license: BSD, see LICENSE for more details.
 """
 import datetime
-import zoneinfo
 
 import feedparser
+import zoneinfo
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
@@ -19,8 +19,8 @@ from django.utils.dateparse import parse_datetime
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
-from inyoka.ikhaya.models import Article, Category, Comment, Report, Suggestion, Event
-from inyoka.ikhaya.views import events, event_delete
+from inyoka.ikhaya.models import Article, Category, Comment, Event, Report, Suggestion
+from inyoka.ikhaya.views import event_delete, events
 from inyoka.portal.user import User
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient, TestCase
@@ -578,31 +578,31 @@ class TestCommentsFeed(TestCase):
         storage['ikhaya_description_rendered'] = '<em>Just</em> to describe ikhaya'
 
     def test_modes(self):
-        response = self.client.get(f'/feeds/comments/short/10/')
+        response = self.client.get('/feeds/comments/short/10/')
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(f'/feeds/comments/title/20/')
+        response = self.client.get('/feeds/comments/title/20/')
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(f'/feeds/comments/full/50/')
+        response = self.client.get('/feeds/comments/full/50/')
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
         with self.assertNumQueries(3):
-            self.client.get(f'/feeds/comments/full/50/')
+            self.client.get('/feeds/comments/full/50/')
 
     def test_multiple_comments(self):
         self.comment = Comment.objects.create(article=self.article, text="Some other Text",
                             author=self.user, pub_date=self.now)
 
-        response = self.client.get(f'/feeds/comments/full/10/')
+        response = self.client.get('/feeds/comments/full/10/')
         self.assertIn(self.article.subject, response.content.decode())
 
         feed = feedparser.parse(response.content)
         self.assertEqual(len(feed.entries), 2)
 
     def test_content_exact(self):
-        response = self.client.get(f'/feeds/comments/full/10/')
+        response = self.client.get('/feeds/comments/full/10/')
 
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),

@@ -11,7 +11,6 @@
 """
 import re
 
-
 from django.utils.encoding import smart_str
 
 from inyoka.markup.parsertools import TokenStream

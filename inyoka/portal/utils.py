@@ -7,14 +7,14 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import json
 import calendar
-from datetime import datetime, date, time
+import json
+from datetime import date, datetime, time
+from urllib.parse import quote_plus
 
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from urllib.parse import quote_plus
 
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
@@ -163,7 +163,7 @@ def get_ubuntu_versions():
         for obj in jsonobjs:
             version = UbuntuVersion(**obj)
             versions.add(version)
-    except:
+    except Exception:
         transaction.savepoint_rollback(sid)
     else:
         transaction.savepoint_commit(sid)

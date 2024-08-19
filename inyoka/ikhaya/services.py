@@ -8,10 +8,10 @@
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
+
 from inyoka.ikhaya.models import Suggestion
 from inyoka.portal.models import User
 from inyoka.utils.services import SimpleDispatcher
-
 
 dispatcher = SimpleDispatcher()
 

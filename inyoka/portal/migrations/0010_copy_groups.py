@@ -1,5 +1,6 @@
-from django.db import migrations, models
 import django
+from django.db import migrations, models
+
 
 def copy_groups(apps, schema_editor):
     InyokaGroup = apps.get_model('portal','Group')

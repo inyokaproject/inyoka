@@ -24,17 +24,23 @@ r"""
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import re
-import random
 import operator
-from functools import total_ordering, partial
+import random
+import re
+from functools import partial, total_ordering
 
 from django.utils.encoding import smart_str
 from django.utils.translation import gettext as _
 
 from inyoka.markup.base import escape, unescape_string
 from inyoka.markup.parsertools import TokenStream
-from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, simple_match
+from inyoka.markup.utils import (
+    debug_repr,
+    has_key,
+    join_array,
+    regex_match,
+    simple_match,
+)
 from inyoka.wiki.exceptions import CaseSensitiveException
 
 
@@ -45,8 +51,8 @@ def process(source, context=()):
 
 def expand_page_template(template, context, macro_behavior=False):
     """A helper for the template macro and wiki-parser."""
-    from inyoka.wiki.models import Page
     from inyoka.markup import nodes
+    from inyoka.wiki.models import Page
     if template is None:
         if not macro_behavior:
             raise ValueError('no template given')

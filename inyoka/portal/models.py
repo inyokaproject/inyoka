@@ -7,10 +7,10 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import os
 import glob
 import gzip
 import hashlib
+import os
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -18,13 +18,14 @@ from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
-from django.utils.translation import gettext_lazy
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy
 
-from .user import User
 from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
+
+from .user import User
 
 
 class SubscriptionManager(ContentTypeManager):
@@ -318,7 +319,7 @@ class Subscription(models.Model):
             return True
 
     def can_read(self, forum_id=None):
-        if self.content_type is None and not forum_id is None:
+        if self.content_type is None and forum_id is not None:
             # Check for ubuntu version subscriptions
             from inyoka.forum.models import Forum
 

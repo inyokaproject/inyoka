@@ -64,13 +64,12 @@ optional-dependencies.dev = [
   "django-debug-toolbar",
   "django-test-migrations",
   "django-upgrade",
-  "flake8==3.5",
   "freezegun",
-  "isort",
   "responses",
   "selenium",
   "sphinx",
   "sphinx-rtd-theme",
+  "ruff",
 ]
 urls.Changelog = "https://github.com/inyokaproject/inyoka/blob/master/ChangeLog.rst"
 urls.Homepage = "https://inyokaproject.org/"

@@ -9,10 +9,11 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from urllib.parse import quote, quote_plus
+
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.utils.encoding import force_str
-from urllib.parse import quote, quote_plus
 from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django_hosts.resolvers import get_host, get_host_patterns
 

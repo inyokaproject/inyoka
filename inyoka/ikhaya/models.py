@@ -264,7 +264,7 @@ class Article(models.Model, LockableObject):
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()
-                if not self.get_absolute_url() in current:
+                if self.get_absolute_url() not in current:
                     # We may be at the ikhaya index page.
                     if 'next' not in query:
                         query['next'] = current_request.build_absolute_uri()

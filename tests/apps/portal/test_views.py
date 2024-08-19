@@ -17,16 +17,17 @@ from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
-
 from guardian.shortcuts import assign_perm
 
 from inyoka.forum.models import Forum
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
+    Linkmap,
     PrivateMessage,
     PrivateMessageEntry,
+    StaticPage,
     Subscription,
-    StaticPage, Linkmap)
+)
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
 from inyoka.utils.test import InyokaClient, TestCase
@@ -702,7 +703,7 @@ class TestStaticPageEdit(TestCase):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         assign_perm('portal.change_staticpage', registered_group)
 
-        response = self.client.post(href('portal', 'page', 'new'),
+        self.client.post(href('portal', 'page', 'new'),
                                     {'send': 'Send', 'title': 'foo2',
                                      'content': 'My great content'})
 

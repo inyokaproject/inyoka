@@ -10,7 +10,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from pickle import dumps, loads, HIGHEST_PROTOCOL
+from pickle import HIGHEST_PROTOCOL, dumps, loads
 
 from django.utils.translation import gettext as _
 
@@ -25,7 +25,7 @@ class NodeCompiler:
 
     def compile(self, format):
         """Return a compiled instruction set."""
-        assert not '\0' in format
+        assert '\0' not in format
         result = []
         text_buffer = []
         is_dynamic = False

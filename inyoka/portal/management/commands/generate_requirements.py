@@ -8,13 +8,12 @@
     :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from typing import List
-
 import argparse
 import os
+import platform
 import subprocess
 import sys
-import platform
+from typing import List
 
 from django.core.management.base import BaseCommand
 

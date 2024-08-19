@@ -1,0 +1,25 @@
+exclude = [
+    "build",
+    ".*/",
+    "./make_testdata.py",
+]
+
+line-length = 88
+
+[lint]
+# default flake8 selection plus isort
+select = ["F", "E", "W", "I"]
+ignore = [
+    "E402",
+    "E501",
+    "E731",
+    "E203",
+    "E741",
+]
+
+[lint.per-file-ignores]
+"apps.py" = ["F401"]
+"**/migrations/*.py" = ["F401"]
+"tests/**/settings/*.py" = ["F405", "F403"]
+"tests/bdd/steps/*.py" = ["F811"]
+"inyoka/locale/de_DE/formats.py" = ["F403"]
