@@ -399,10 +399,6 @@ $(document).ready(function () {
   });
 });
 
-String.prototype.htmlEscape = function () {
-  return this.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/, "&quot;");
-};
-
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
