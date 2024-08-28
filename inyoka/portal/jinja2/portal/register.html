@@ -45,24 +45,3 @@
   </form>
 {% endblock %}
 
-{% block additional_scripts %}
-  {{ super() }}
-  <script>
-    /*<![CDATA[*/
-    (function() {
-      var img = $('img.captcha').load(function() {
-        input.attr('disabled', '');
-      });
-      var captcha_url = img.attr('src').split('&')[0];
-      var input = $('input[name="renew_captcha"]')
-        .click(function() {
-          input.attr('disabled', 'diabled');
-          var uid = Math.random().toString().substring(2, 10);
-          img.attr('src', captcha_url + '&rnd=' + uid);
-          return false;
-        });
-      $('#id_username').focus();
-    })();
-    /*]]>*/
-  </script>
-{% endblock %}
