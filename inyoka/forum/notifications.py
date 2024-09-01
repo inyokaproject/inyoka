@@ -162,7 +162,7 @@ def send_deletion_notification(user, topic, reason):
 
 def send_notification_for_topics(request_user_id, template, template_args, subject, topic_ids, include_forums=False,
                                  forum_ids=None):
-    from inyoka.forum.models import Topic, Forum
+    from inyoka.forum.models import Forum, Topic
 
     notification_args = {
         'request_user_id': request_user_id,

@@ -1,6 +1,6 @@
 from django.core.cache import cache
 
-from inyoka.forum.models import Forum, Topic, Post
+from inyoka.forum.models import Forum, Post, Topic
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 

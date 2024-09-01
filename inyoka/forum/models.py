@@ -7,10 +7,8 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from typing import List, Optional
-
-import pickle
 import os
+import pickle
 import re
 from datetime import datetime
 from functools import reduce
@@ -19,18 +17,19 @@ from itertools import groupby
 from operator import attrgetter, itemgetter
 from os import path
 from time import time
+from typing import List, Optional
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
-from django.db.models import Count, F, Max, Sum, QuerySet
+from django.db.models import Count, F, Max, QuerySet, Sum
 from django.utils.encoding import DjangoUnicodeDecodeError, force_str
 from django.utils.html import escape, format_html
 from django.utils.translation import gettext as _
-from django.utils.translation import pgettext, gettext_lazy
+from django.utils.translation import gettext_lazy, pgettext
 from werkzeug.utils import secure_filename
 
 from inyoka.forum.constants import (

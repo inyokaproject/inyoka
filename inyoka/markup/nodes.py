@@ -17,18 +17,19 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from urllib.parse import urlparse, urlunparse, quote_plus
+from urllib.parse import quote_plus, urlparse, urlunparse
 
 from django.apps import apps
 from django.conf import settings
 from django.utils.html import escape, smart_urlquote
-from django.utils.translation import gettext_lazy, gettext as _
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 
-from inyoka.markup.machine import NodeRenderer, NodeCompiler, NodeQueryInterface
+from inyoka.markup.machine import NodeCompiler, NodeQueryInterface, NodeRenderer
 from inyoka.markup.utils import debug_repr
-from inyoka.utils.html import striptags, build_html_tag
+from inyoka.utils.html import build_html_tag, striptags
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import slugify, get_pagetitle, normalize_pagename
+from inyoka.utils.text import get_pagetitle, normalize_pagename, slugify
 from inyoka.utils.urls import href
 
 

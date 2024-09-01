@@ -9,13 +9,13 @@
 """
 from datetime import datetime, timedelta
 
-from django.contrib.auth.models import Group
 from django.conf import settings
+from django.contrib.auth.models import Group
 from guardian.shortcuts import assign_perm
 
-from inyoka.utils.test import TestCase
 from inyoka.portal.auth import InyokaAuthBackend
 from inyoka.portal.user import User, UserBanned
+from inyoka.utils.test import TestCase
 
 
 class TestInyokaAuthBackend(TestCase):

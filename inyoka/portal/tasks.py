@@ -46,7 +46,7 @@ def clean_expired_users():
                          settings.ANONYMOUS_USER_NAME,
                          settings.INYOKA_SYSTEM_USER})):
         if not user.has_content():
-            logger.info('Deleting expiered User %s' % user.username)
+            logger.info('Deleting expired User %s' % user.username)
             user.delete()
 
 

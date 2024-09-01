@@ -8,8 +8,10 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
+from django.contrib.auth.mixins import (
+    PermissionRequiredMixin as _PermissionRequiredMixin,
+)
 from django.contrib.auth.views import redirect_to_login
-from django.contrib.auth.mixins import PermissionRequiredMixin as _PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
 from django.utils.html import escape

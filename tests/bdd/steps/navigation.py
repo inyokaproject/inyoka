@@ -1,6 +1,4 @@
 from behave import given, step
-
-from tests.bdd.steps.utils import take_screenshot
 from selenium.webdriver.common.by import By
 
 

@@ -7,6 +7,8 @@
     :copyright: (c) 2013-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from os import path
+
 from django.conf import settings
 from django.test import override_settings
 
@@ -16,8 +18,6 @@ from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
-
-from os import path
 
 
 def render(source, transformers=None):

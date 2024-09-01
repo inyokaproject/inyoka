@@ -7,7 +7,6 @@
 """
 import re
 
-
 acceptable_css_properties = frozenset((
     'azimuth', 'background-color', 'border-bottom-color',
     'border-collapse', 'border-color', 'border-left-color',
@@ -67,7 +66,7 @@ def filter_style(css):
         elif prop.split('-', 1)[0].lower() in \
              ('background', 'border', 'margin', 'padding'):
             for keyword in value.split():
-                if not keyword in acceptable_css_keywords and \
+                if keyword not in acceptable_css_keywords and \
                    not _css_unit_re.match(keyword):
                     break
             else:
@@ -110,7 +109,7 @@ class ArgumentCollector(type):
                     if typedef in (int, float, str):
                         try:
                             value = typedef(value)
-                        except:
+                        except Exception:
                             value = default
                     elif typedef is bool:
                         value = value.lower() in ('ja', 'wahr', 'positiv', '1')

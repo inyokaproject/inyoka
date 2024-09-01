@@ -12,8 +12,8 @@ from shutil import rmtree
 from django.conf import settings
 from django.core import management
 
-from inyoka.portal.user import User
 from inyoka.portal.models import StaticPage
+from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
 

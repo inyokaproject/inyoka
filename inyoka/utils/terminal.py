@@ -25,13 +25,13 @@ _formats = {
 def get_dimensions():
     """Return the current terminal dimensions or fall back to (80, 24)."""
     try:
-        from struct import pack, unpack
         from fcntl import ioctl
+        from struct import pack, unpack
         from termios import TIOCGWINSZ
         s = pack('HHHH', 0, 0, 0, 0)
         return unpack('HHHH', ioctl(sys.stdout.fileno(),
                                     TIOCGWINSZ, s))[1::-1]
-    except:
+    except Exception:
         return (80, 24)
 
 

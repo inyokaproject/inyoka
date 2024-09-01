@@ -7,8 +7,8 @@
     :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from PIL import Image
 from django.utils.translation import gettext_lazy
+from PIL import Image
 
 from inyoka.portal.utils import get_ubuntu_versions
 

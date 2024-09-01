@@ -22,7 +22,6 @@ from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, urlencode
 from inyoka.wiki.models import MetaData, Page, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
-from inyoka.wiki.exceptions import CaseSensitiveException
 from inyoka.wiki.views import fetch_real_target
 
 

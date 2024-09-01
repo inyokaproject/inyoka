@@ -14,11 +14,10 @@
 import datetime
 from functools import partial
 from hashlib import sha1
-from urllib.parse import unquote as url_unquote
-
 from os import chmod, mkdir, path, unlink, walk
 from re import compile, escape, sub
 from shutil import copy, copytree, rmtree
+from urllib.parse import unquote as url_unquote
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -27,15 +26,15 @@ from django.template.defaultfilters import date
 from django.utils.encoding import force_str
 from django.utils.translation import activate
 
+from inyoka.portal.models import Linkmap, StaticPage
 from inyoka.portal.user import User
-from inyoka.portal.models import StaticPage, Linkmap
 from inyoka.utils.http import templated
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
-from inyoka.wiki.models import Page
 from inyoka.wiki.exceptions import CaseSensitiveException
+from inyoka.wiki.models import Page
 
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False

@@ -1,6 +1,7 @@
 # From http://docs.celeryproject.org/en/latest/django/first-steps-with-django.html
 
 import os
+
 import celery
 
 # Set the default Django settings module for the 'celery' program.

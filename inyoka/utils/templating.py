@@ -17,24 +17,22 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.forms.widgets import CheckboxInput
 from django.template import loader
-from django.template.loaders.app_directories import Loader
-from django.template.backends.jinja2 import Jinja2
 from django.template.backends.utils import csrf_input
 from django.utils import translation
-from django.utils.http import urlencode
-
 from django.utils.encoding import force_str
 from django.utils.functional import Promise
+from django.utils.http import urlencode
 from django.utils.timesince import timesince
-import jinja2
 
+import jinja2
 from inyoka import INYOKA_VERSION
 from inyoka.utils.dates import (
     format_date,
     format_datetime,
     format_time,
     format_timetz,
-    naturalday)
+    naturalday,
+)
 from inyoka.utils.local import current_request
 from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
@@ -44,9 +42,9 @@ from inyoka.utils.urls import href, url_for
 def context_data(request):
     """Fill in context defaults."""
     from inyoka.forum.models import Topic
+    from inyoka.ikhaya.models import Event, Report, Suggestion
     from inyoka.portal.models import PrivateMessageEntry
     from inyoka.utils.storage import storage
-    from inyoka.ikhaya.models import Suggestion, Event, Report
 
     user = request.user
 

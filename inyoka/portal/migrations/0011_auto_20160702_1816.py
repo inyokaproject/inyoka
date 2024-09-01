@@ -1,5 +1,6 @@
 from django.db import migrations, models
 
+
 def postgresql_drop_indexes(apps, schema_editor):
     if schema_editor.connection.vendor.startswith('postgre'):
         schema_editor.execute('DROP INDEX IF EXISTS portal_user_groups_e8701ad4;')

@@ -7,9 +7,8 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from functools import partial
-
 from datetime import datetime, timedelta
+from functools import partial
 from itertools import groupby
 from operator import attrgetter
 
@@ -21,8 +20,8 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.text import Truncator
-from django.utils.translation import gettext as _, gettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from guardian.mixins import PermissionRequiredMixin as GuardianPermissionRequiredMixin
 
@@ -47,21 +46,23 @@ from inyoka.forum.models import (
     Post,
     PostRevision,
     Topic,
-    mark_all_forums_read)
+    mark_all_forums_read,
+)
 from inyoka.forum.notifications import (
+    notify_reported_topic_subscribers,
     send_deletion_notification,
     send_discussion_notification,
     send_edit_notifications,
     send_newtopic_notifications,
     send_notification_for_topics,
-    notify_reported_topic_subscribers)
+)
 from inyoka.markup.base import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.dates import format_datetime, _localtime
+from inyoka.utils.dates import _localtime, format_datetime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
@@ -71,8 +72,7 @@ from inyoka.utils.http import (
     does_not_exist_is_404,
     templated,
 )
-from inyoka.utils.notification import (
-    send_notification)
+from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template

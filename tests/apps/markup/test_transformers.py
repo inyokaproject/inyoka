@@ -17,7 +17,7 @@ from inyoka.markup.transformers import (
     AutomaticParagraphs,
     FootnoteSupport,
     HeadlineProcessor,
-    SmileyInjector
+    SmileyInjector,
 )
 
 

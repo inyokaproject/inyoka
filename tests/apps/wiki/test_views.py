@@ -7,22 +7,20 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
+from unittest.mock import patch
 
 import feedparser
 from django.conf import settings
 from django.test.utils import override_settings
-from unittest.mock import patch
-
 from freezegun import freeze_time
 
 from inyoka.portal.user import User
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
-from inyoka.wiki.storage import storage
 from inyoka.wiki.models import Page
+from inyoka.wiki.storage import storage
 
 
 class TestViews(TestCase):
@@ -347,7 +345,7 @@ class TestRevisionFeed(TestCase):
     def test_multiple_revisions(self):
         self.page.edit(text='another text', user=self.user)
 
-        response = self.client.get(f'/_feed/10/')
+        response = self.client.get('/_feed/10/')
         self.assertIn(self.page.name, response.content.decode())
 
         feed = feedparser.parse(response.content)
@@ -358,7 +356,7 @@ class TestRevisionFeed(TestCase):
             self.client.get('/_feed/10/')
 
     def test_content_exact(self):
-        response = self.client.get(f'/_feed/10/')
+        response = self.client.get('/_feed/10/')
 
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),

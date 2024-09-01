@@ -3,9 +3,7 @@ from django.contrib.auth.models import Group
 from django.core.cache import cache
 from guardian.shortcuts import assign_perm, remove_perm
 
-from inyoka.forum.models import (
-    Forum,
-    Topic)
+from inyoka.forum.models import Forum, Topic
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase

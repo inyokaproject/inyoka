@@ -11,8 +11,8 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_page
 
-from . import views
 from ..utils.http import global_not_found, server_error
+from . import views
 
 urlpatterns = [
     path('', views.index),

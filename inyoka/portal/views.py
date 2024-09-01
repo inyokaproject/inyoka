@@ -9,25 +9,23 @@
     :license: BSD, see LICENSE for more details.
 """
 import csv
-from functools import partial
-
 from datetime import date, datetime, timedelta
-from django.contrib.messages.views import SuccessMessageMixin
-from django.db import IntegrityError
-from icalendar import Calendar as iCal, Event as iEvent
+from functools import partial
 from time import time
 
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.auth.models import Group
+from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from django.db import IntegrityError
 from django.forms.models import model_to_dict
 from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.middleware.csrf import REASON_NO_REFERER, REASON_NO_CSRF_COOKIE
+from django.middleware.csrf import REASON_NO_CSRF_COOKIE, REASON_NO_REFERER
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
@@ -35,6 +33,8 @@ from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_POST
+from icalendar import Calendar as iCal
+from icalendar import Event as iEvent
 from PIL import Image
 
 from inyoka.forum.models import Forum
@@ -52,10 +52,11 @@ from inyoka.portal.forms import (
     EditUserGroupsForm,
     EditUserProfileForm,
     EditUserStatusForm,
-    GroupGlobalPermissionForm,
-    GroupForumPermissionForm,
     ForumFeedSelectorForm,
+    GroupForumPermissionForm,
+    GroupGlobalPermissionForm,
     IkhayaFeedSelectorForm,
+    LinkMapFormset,
     LoginForm,
     LostPasswordForm,
     PlanetFeedSelectorForm,
@@ -69,16 +70,15 @@ from inyoka.portal.forms import (
     UserCPSettingsForm,
     UserMailForm,
     WikiFeedSelectorForm,
-    LinkMapFormset
 )
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
+    Linkmap,
     PrivateMessage,
     PrivateMessageEntry,
     StaticFile,
     StaticPage,
     Subscription,
-    Linkmap
 )
 from inyoka.portal.user import (
     User,

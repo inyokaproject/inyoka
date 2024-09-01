@@ -12,7 +12,7 @@ from datetime import date, datetime, time, timedelta
 import freezegun
 from django.conf import settings
 
-from inyoka.ikhaya.models import Article, Category, Event, Suggestion, Comment
+from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase

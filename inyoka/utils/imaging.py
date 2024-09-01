@@ -8,7 +8,6 @@
     :license: BSD, see LICENSE for more details.
 """
 import os
-from contextlib import closing
 
 from django.conf import settings
 from django.utils.encoding import force_str

@@ -86,6 +86,18 @@ If you don't want to use the export of the settings you may also run
     (inyoka)$ python manage.py behave --settings tests.bdd.settings.general
 
 
+Code style
+**********
+
+The project uses `ruff <https://docs.astral.sh/ruff/>`_ to run code quality checks
+on Inyoka's code base. Start the linter as follows from the project's root directory:
+
+.. code-block:: console
+
+    (inyoka)$ ruff check
+
+Most style violations should be directly fixable via the ``--fix`` option.
+
 Translate Inyoka
 ================
 

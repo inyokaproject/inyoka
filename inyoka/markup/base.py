@@ -5,17 +5,17 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unicodedata
 import re
-from urllib.parse import urlsplit
+import unicodedata
 from functools import partial
+from urllib.parse import urlsplit
 
 from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
 from inyoka.markup.constants import HTML_COLORS
 from inyoka.markup.lexer import Lexer, escape
-from inyoka.markup.machine import Renderer, RenderContext
+from inyoka.markup.machine import RenderContext, Renderer
 from inyoka.markup.transformers import DEFAULT_TRANSFORMERS
 from inyoka.markup.utils import filter_style
 from inyoka.utils.urls import href
