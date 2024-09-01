@@ -9,12 +9,12 @@
 """
 import pathlib
 import re
+import zoneinfo
 from datetime import date
 from datetime import timezone as py_timezone
 from functools import lru_cache
 from operator import attrgetter
 
-import zoneinfo
 from django.contrib.humanize.templatetags.humanize import naturalday as djnaturalday
 from django.template import defaultfilters
 from django.utils import timezone

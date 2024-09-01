@@ -8,9 +8,9 @@
     :license: BSD, see LICENSE for more details.
 """
 import datetime
+import zoneinfo
 
 import feedparser
-import zoneinfo
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
