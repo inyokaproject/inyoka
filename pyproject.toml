@@ -90,6 +90,9 @@ exclude = [
 ]
 line-length = 88
 
+[tool.ruff.format]
+quote-style = "single"
+
 [tool.ruff.lint]
 # default flake8 selection plus isort
 select = ["F", "E", "W", "I"]
