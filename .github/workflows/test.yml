@@ -191,6 +191,10 @@ jobs:
         name: 'Inyoka_Documentation'
         path: doc.zip
 
+    - name: Lint
+      run: |
+        . ~/venv/bin/activate
+        ruff check
 
     - name: Compress statics
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_docs }}
