@@ -51,6 +51,194 @@ class TestHtmlRenderer(TestCase):
             '<pre class="notranslate">&lt;em&gt;blub&lt;/em&gt;</pre>'
         ))
 
+    def test_color(self):
+        html = render(" [color=red]TEXT[/color]  [color=#ABCDEF]TEXT[/color] ")
+        self.assertHTMLEqual(html, (
+            '<span style="color: #ff0000">TEXT</span> <span style="color: #abcdef">TEXT</span>'
+        ))
+
+    def test_color_not_existing(self):
+        html = render(" [color=redfuu]TEXT[/color]")
+        self.assertHTMLEqual(html, (
+            '<span style="color: #000000">TEXT</span>'
+        ))
+
+    def test_small(self):
+        html = render("~-(TEXT)-~")
+        self.assertHTMLEqual(html, (
+            '<small>TEXT</small>'
+        ))
+
+    def test_big(self):
+        html = render("~+(TEXT)+~")
+        self.assertHTMLEqual(html, (
+            '<big>TEXT</big>'
+        ))
+
+    def test_size(self):
+        html = render("[size=2]TEXT[/size]")
+        self.assertHTMLEqual(html, (
+            '<span style="font-size: 14.00%">TEXT</span>'
+        ))
+
+    def test_font(self):
+        html = render("[font=serif]TEXT[/font]")
+        self.assertHTMLEqual(html, (
+            '<span style="font-family: serif">TEXT</span>'
+        ))
+
+        html = render("[font=Ubuntu]TEXT[/font]")
+        self.assertHTMLEqual(html, (
+            '''<span style="font-family: 'Ubuntu'">TEXT</span>'''
+        ))
+
+    def test_code(self):
+        html = render("`TEXT`")
+        self.assertHTMLEqual(html, (
+            '<code class="notranslate">TEXT</code>'
+        ))
+
+    def test_note(self):
+        html = render("a  ((NOTE)) ")
+        self.assertHTMLEqual(html, (
+            'a<small class="note">NOTE</small>'
+        ))
+
+    def test_mod_box(self):
+        html = render('[mod=NAME]TEXT[/mod]')
+        self.assertHTMLEqual(html, (
+            '''<div class="moderated">
+<p><strong>Moderated by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/NAME/">NAME</a>:</strong>
+</p>TEXT</div>'''
+        ))
+
+    def test_edit_box(self):
+        html = render('[edit=NAME]TEXT[/edit]')
+        self.assertHTMLEqual(html, (
+            '''<div class="edited">
+<p><strong>Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/NAME/">NAME</a>:</strong>
+</p>TEXT</div>'''
+        ))
+
+    def test_mark(self):
+        html = render('[mark]TEXT[/mark]')
+        self.assertHTMLEqual(html, (
+            '<strong class="highlighted">TEXT</strong>'
+        ))
+
+    def test_mark_in_code(self):
+        html = render('{{{ start [mark]TEXT[/mark] code}}}')
+        self.assertHTMLEqual(html, (
+            '''<pre class="notranslate">start<strong class="highlighted">TEXT</strong>code</pre>'''
+        ))
+
+    def test_ruler(self):
+        html = render('------')
+        self.assertHTMLEqual(html, '<hr>')
+
+    def test_div(self):
+        html = render('{{|<style="margin:auto; max-width:1200px"> foo')
+        self.assertHTMLEqual(html, (
+            '''
+            <div style="margin: auto; max-width: 1200px">
+                <div class="contents">foo</div>
+            </div>
+            '''
+        ))
+
+    def test_span(self):
+        html = render("[[SPAN('text')]]")
+        self.assertHTMLEqual(html, (
+            '<span>text</span>'
+        ))
+
+    def test_anchor(self):
+        html = render('[[Anker(NAME)]]')
+        self.assertHTMLEqual(html, (
+            '<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>'
+        ))
+
+        html = render('[[Anchor(NAME)]]')
+        self.assertHTMLEqual(html, (
+            '<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>'
+        ))
+
+    def test_newline(self):
+        html = render("""a \\\\
+b""")
+        self.assertHTMLEqual(html, 'a<br>b')
+
+    def test_break(self):
+        html = render('[[BR]]')
+        self.assertHTMLEqual(html, '<br>')
+
+    def test_not_existing_macro(self):
+        html = render('[[BROOOO]]')
+        self.assertHTMLEqual(html, '''<div class="error">
+<strong>Missing macro</strong>
+<p>The macro “BROOOO” does not exist.</p>
+</div>
+''')
+
+    def test_template_no_argument(self):
+            html = render('[[Template()]]')
+            self.assertHTMLEqual(html, '''<div class="error">
+<strong>Invalid arguments</strong>
+<p>The first argument must be the name of the template.</p>
+</div>''')
+
+    def test_user_interwiki_link(self):
+        html = render('[user:foobar:]')
+        self.assertHTMLEqual(html, '<a class="crosslink user" href="http://ubuntuusers.local:8080/user/foobar/">foobar</a>')
+
+    def test_ikhaya_interwiki_link(self):
+        html = render('[ikhaya:1:]')
+        self.assertHTMLEqual(html,'<a class="crosslink ikhaya" href="http://ubuntuusers.local:8080/ikhaya/1/">1</a>')
+
+        html = render('[ikhaya:foobar/baz:]')
+        self.assertHTMLEqual(html, '''
+        <a class="crosslink ikhaya" href="http://ikhaya.ubuntuusers.local:8080/foobar/baz/">foobar/baz</a>''')
+
+
+    def test_source_link(self):
+        html = render(''' just some text [1]
+
+[1]: reference''')
+
+        self.assertHTMLEqual(html, (
+            '''just some text<sup>
+<a href="#source-1">
+[1]
+</a>
+</sup><sup>
+<a href="#source-1">
+[1]
+</a>
+</sup>: reference
+'''
+        ))
+
+    def test_definition_list(self):
+        html = render(
+            """ a::
+                    foo
+                b::
+                    bar
+            """
+        )
+        self.assertHTMLEqual(html, ('''<dl>
+<dt>
+a
+</dt><dd>
+foo
+</dd><dt>
+ b
+</dt><dd>
+bar
+</dd>
+</dl>'''))
+
+
     def test_code_highlight(self):
         html = render("""{{{#!code bash
 #!/bin/bash
