@@ -842,7 +842,7 @@ class SourceLink(Element):
 class Code(Element):
     """
     This represents code. Usually formatted in a monospaced font that
-    preserves whitespace. Additionally this node is maked raw so children
+    preserves whitespace. Additionally, this node is marked raw, so children
     are not touched by the altering translators.
     """
     is_raw = True
@@ -1023,7 +1023,7 @@ class Font(Element):
 
 class DefinitionList(Element):
     """
-    A list of defintion terms.
+    A list of definition terms.
     """
     is_block_tag = True
 
@@ -1058,7 +1058,7 @@ class DefinitionTerm(Element):
 
 class List(Element):
     """
-    Sourrounds list items so that they appear as list.  Make sure that the
+    Surrounds list items so that they appear as list.  Make sure that the
     children are list items.
     """
     is_block_tag = True

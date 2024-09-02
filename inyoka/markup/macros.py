@@ -37,10 +37,10 @@ ALL_MACROS = {}
 
 def get_macro(name, args, kwargs):
     """
-    Instanciate a new macro or return `None` if it doesn't exist.  This is
+    Instantiate a new macro or return `None` if it doesn't exist.  This is
     used by the parser when it encounters a `macro_begin` token.  Usually
     there is no need to call this function from outside the parser.  There
-    may however be macros that want to extend the functionallity of an
+    may however be macros that want to extend the functionality of an
     already existing macro.
     """
     cls = ALL_MACROS.get(name)
