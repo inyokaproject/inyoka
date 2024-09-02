@@ -62,10 +62,10 @@
         for user wiki pages that should only give moderators, administrators
         and the owner of the page access.
 
-    Every internal key is only modifyable by people with the ``PRIV_MANAGE``
+    Every internal key is only modifiable by people with the ``PRIV_MANAGE``
     privilege.  Some keys like `X-Link` and `X-Attach` that are defined also
     by the wiki parser itself are marked as `LENIENT_METADATA_KEYS` which
-    gives users without the `PRIV_MANAGE` privlege to edit them.
+    gives users without the `PRIV_MANAGE` privilege to edit them.
 
     Apart of those users without this privilege will see the metadata in their
     editor but if they try to send changed metadata back to the database the

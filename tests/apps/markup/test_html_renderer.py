@@ -123,7 +123,7 @@ Tablet,167759,1843644,9.1%,8.63
         ))
 
     def test_topic_link_with_whitespace(self):
-        """Test topic link rendering with whitespace in target and describtion."""
+        """Test topic link rendering with whitespace in target and description."""
         html = render("[topic: with : whitespace ]")
         self.assertHTMLEqual(html, (
             '<a href="http://forum.ubuntuusers.local:8080/topic/with/" class="crosslink topic">'
