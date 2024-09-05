@@ -46,6 +46,15 @@ a[href$=".pdf"]:before {
   width: auto; // override behaviour of main.css for wiki & ikhaya
 }
 
+mark {
+  /* make marked text (not in <pre>) only bold */
+  background-color: transparent; /* prevent default yellow */
+  font-weight: bold;
+}
+pre mark {
+  background-color: #ffee33;
+}
+
 span.underline {
   text-decoration: underline;
 }
@@ -72,10 +81,6 @@ div.bash {
     font-family: @font-monospace;
     background-color: #454545;
     border: 1px solid #666;
-    .highlighted {
-      background-color: #ffee33;
-      color: #454545;
-    }
   }
   pre + pre {
     border-top:0 none;
@@ -209,9 +214,7 @@ h1:hover *, h2:hover *, h3:hover *, h4:hover *, h5:hover *, h6:hover * {
 .anchor {
   float: right;
 }
-.highlighted {
-  background-color: #ffee33;
-}
+
 div.edited {
   border: 1px solid #597A00;
   padding: 0.4em;

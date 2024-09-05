@@ -787,19 +787,16 @@ class Strong(Element):
         yield '</strong>'
 
 
-class Highlighted(Strong):
+class Highlighted(Element):
     """
     Marks highlighted text.
     """
 
     def prepare_html(self):
-        classes = ['highlighted']
-        if self.class_:
-            classes.append(self._class)
-        yield build_html_tag('strong', id=self.id, style=self.style,
-                             classes=classes)
+        yield build_html_tag('mark', id=self.id, style=self.style,
+                             classes=self.class_)
         yield from Element.prepare_html(self)
-        yield '</strong>'
+        yield '</mark>'
 
 
 class Emphasized(Element):

@@ -122,14 +122,14 @@ class TestHtmlRenderer(TestCase):
 
     def test_mark(self):
         html = render('[mark]TEXT[/mark]')
-        self.assertHTMLEqual(html, ('<strong class="highlighted">TEXT</strong>'))
+        self.assertHTMLEqual(html, '<mark>TEXT</mark>')
 
     def test_mark_in_code(self):
         html = render('{{{ start [mark]TEXT[/mark] code}}}')
         self.assertHTMLEqual(
             html,
             (
-                """<pre class="notranslate">start<strong class="highlighted">TEXT</strong>code</pre>"""
+                """<pre class="notranslate">start<mark>TEXT</mark>code</pre>"""
             ),
         )
 
