@@ -7,7 +7,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import Group

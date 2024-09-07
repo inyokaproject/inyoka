@@ -21,9 +21,9 @@ from django.db.models import F, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
-from django.utils import timezone as dj_timezone
 from django.views.generic import CreateView, DetailView, UpdateView
 from guardian.mixins import PermissionRequiredMixin as GuardianPermissionRequiredMixin
 

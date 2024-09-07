@@ -7,7 +7,7 @@
     :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import date, datetime, time, timedelta, UTC
+from datetime import UTC, date, datetime, time, timedelta
 
 import freezegun
 from django.conf import settings

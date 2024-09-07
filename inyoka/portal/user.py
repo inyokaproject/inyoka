@@ -11,7 +11,6 @@
 import os
 import secrets
 import string
-from datetime import datetime
 from json import dumps, loads
 
 from django.conf import settings

@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from os import path, remove
 
 from celery import shared_task

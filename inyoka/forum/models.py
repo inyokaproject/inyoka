@@ -25,7 +25,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
-from django.db.models import Count, F, Max, Sum, QuerySet
+from django.db.models import Count, F, Max, QuerySet, Sum
 from django.utils import timezone as dj_timezone
 from django.utils.encoding import DjangoUnicodeDecodeError, force_str
 from django.utils.html import escape, format_html
