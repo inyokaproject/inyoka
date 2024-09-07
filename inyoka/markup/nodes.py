@@ -17,6 +17,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+
 from urllib.parse import quote_plus, urlparse, urlunparse
 
 from django.apps import apps
@@ -35,10 +36,7 @@ from inyoka.utils.urls import href
 
 def error_box(title, message):
     """Create an error node."""
-    return Error([
-        Strong([Text(title)]),
-        Paragraph([Text(message)])
-    ])
+    return Error([Strong([Text(title)]), Paragraph([Text(message)])])
 
 
 def html_partial(template_name, block_level=False, **context):
@@ -56,6 +54,7 @@ class BaseNode:
     that implements the renderer and compiler interface but sometimes
     it can be useful to have a plain node.
     """
+
     __slots__ = ()
 
     #: if the current node is a document node (outermost one) this is
@@ -99,8 +98,7 @@ class BaseNode:
     is_linebreak_node = False
 
     def __eq__(self, other):
-        return self.__class__ is other.__class__ and \
-            self.__dict__ == other.__dict__
+        return self.__class__ is other.__class__ and self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -140,9 +138,7 @@ class Node(BaseNode, NodeRenderer, NodeCompiler, NodeQueryInterface):
         performance reasons.  The `prepare()` method itself is only
         used by the renderer and node compiler.
         """
-        return {
-            'html': self.prepare_html
-        }[format]()
+        return {'html': self.prepare_html}[format]()
 
     def prepare_html(self):
         """
@@ -254,7 +250,7 @@ class ConflictMarker(Node):
         yield {
             'left': _('<strong>Conflict</strong> – remote version'),
             'middle': _('<strong>Conflict</strong> – local Version'),
-            'right': _('<strong>Conflict End</strong>')
+            'right': _('<strong>Conflict End</strong>'),
         }[self.type]
         yield '</div>'
 
@@ -318,9 +314,16 @@ class Image(Node):
         self.style = style
 
     def prepare_html(self):
-        yield build_html_tag('img', src=self.href, alt=self.alt, id=self.id,
-                             class_=self.class_, style=self.style,
-                             title=self.title, loading='lazy')
+        yield build_html_tag(
+            'img',
+            src=self.href,
+            alt=self.alt,
+            id=self.id,
+            class_=self.class_,
+            style=self.style,
+            title=self.title,
+            loading='lazy',
+        )
 
     def __setstate__(self, dict):
         self.__dict__ = dict
@@ -332,6 +335,7 @@ class Container(Node):
     """
     A basic node with children.
     """
+
     is_container = True
 
     #: this is true if the container is plain (unstyled)
@@ -352,8 +356,11 @@ class Container(Node):
         required a block tag as container.
         """
         if inline_paragraph:
-            if len(self.children) == 1 and self.children[0].is_paragraph and \
-               self.children[0].is_plain:
+            if (
+                len(self.children) == 1
+                and self.children[0].is_paragraph
+                and self.children[0].is_plain
+            ):
                 return self.children[0].children, False
         is_block_tag = False
         for child in self.children:
@@ -379,6 +386,7 @@ class Document(Container):
     """
     Outermost node.
     """
+
     allows_paragraphs = True
     is_document = True
     allowed_in_signatures = True
@@ -388,6 +396,7 @@ class Raw(Container):
     """
     A raw container.
     """
+
     is_raw = True
 
 
@@ -421,12 +430,12 @@ class Span(Element):
 
     allowed_in_signatures = True
 
-    def __init__(self, children=None, id=None,
-                 style=None, class_=None):
+    def __init__(self, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
 
     def prepare_html(self):
-        yield build_html_tag('span',
+        yield build_html_tag(
+            'span',
             id=self.id,
             style=self.style,
             class_=self.class_,
@@ -442,13 +451,23 @@ class InternalLink(Element):
 
     allowed_in_signatures = True
 
-    def __init__(self, page, children=None, force_existing=False,
-                 anchor=None, id=None, style=None, class_=None):
+    def __init__(
+        self,
+        page,
+        children=None,
+        force_existing=False,
+        anchor=None,
+        id=None,
+        style=None,
+        class_=None,
+    ):
         page = normalize_pagename(page)
         if not children:
             title = get_pagetitle(page)
             if anchor:
-                text = _('{title} (section “{anchor}”)').format(title=title, anchor=anchor)
+                text = _('{title} (section “{anchor}”)').format(
+                    title=title, anchor=anchor
+                )
             else:
                 text = title
             children = [Text(text)]
@@ -460,15 +479,17 @@ class InternalLink(Element):
     def prepare_html(self):
         if not self.existing:
             from inyoka.wiki.models import Page
+
             self.existing = Page.objects.exists(self.page)
         url = href('wiki', self.page)
         if self.anchor:
             url += '#' + quote_plus(self.anchor)
-        yield build_html_tag('a',
+        yield build_html_tag(
+            'a',
             href=url,
             id=self.id,
             style=self.style,
-            classes=('internal', '' if self.existing else 'missing', self.class_)
+            classes=('internal', '' if self.existing else 'missing', self.class_),
         )
         yield from Element.prepare_html(self)
         yield '</a>'
@@ -481,8 +502,9 @@ class InterWikiLink(Element):
 
     allowed_in_signatures = True
 
-    def __init__(self, token, page, children=None, anchor=None,
-                 id=None, style=None, class_=None):
+    def __init__(
+        self, token, page, children=None, anchor=None, id=None, style=None, class_=None
+    ):
         if not children:
             children = [Text(page)]
         Element.__init__(self, children, id, style, class_)
@@ -498,12 +520,12 @@ class InterWikiLink(Element):
             return
         if self.anchor:
             target += '#' + self.anchor
-        yield build_html_tag('a',
+        yield build_html_tag(
+            'a',
             href=target,
             id=self.id,
             style=self.style,
-            classes=('interwiki', 'interwiki-' + self.token,
-                     self.class_)
+            classes=('interwiki', 'interwiki-' + self.token, self.class_),
         )
         yield from Element.prepare_html(self)
         yield '</a>'
@@ -541,8 +563,16 @@ class Link(Element):
 
     allowed_in_signatures = True
 
-    def __init__(self, url, children=None, title=None, id=None,
-                 style=None, class_=None, shorten=False):
+    def __init__(
+        self,
+        url,
+        children=None,
+        title=None,
+        id=None,
+        style=None,
+        class_=None,
+        shorten=False,
+    ):
         if not children:
             if shorten and len(url) > 50:
                 children = [
@@ -562,8 +592,14 @@ class Link(Element):
         self.scheme = self.netloc = None
         if url is not None:
             try:
-                self.scheme, self.netloc, self.path, self.params, self.querystring, \
-                    self.anchor = urlparse(url)
+                (
+                    self.scheme,
+                    self.netloc,
+                    self.path,
+                    self.params,
+                    self.querystring,
+                    self.anchor,
+                ) = urlparse(url)
                 self.valid_url = True
             except ValueError:
                 self.valid_url = False
@@ -575,35 +611,46 @@ class Link(Element):
         if not self.valid_url:
             return 'invalid-url'
         else:
-            return urlunparse((self.scheme, self.netloc, self.path, self.params,
-                               self.querystring, self.anchor))
+            return urlunparse(
+                (
+                    self.scheme,
+                    self.netloc,
+                    self.path,
+                    self.params,
+                    self.querystring,
+                    self.anchor,
+                )
+            )
 
     def prepare_html(self):
         if self.scheme == 'javascript':
             yield escape(self.caption)
             return
         rel = None
-        if not self.netloc or self.netloc == settings.BASE_DOMAIN_NAME or \
-           self.netloc.endswith('.' + settings.BASE_DOMAIN_NAME):
+        if (
+            not self.netloc
+            or self.netloc == settings.BASE_DOMAIN_NAME
+            or self.netloc.endswith('.' + settings.BASE_DOMAIN_NAME)
+        ):
             class_ = 'crosslink'
         else:
             class_ = 'external'
             rel = 'nofollow'
 
-        yield build_html_tag('a',
+        yield build_html_tag(
+            'a',
             rel=rel,
             id=self.id,
             style=self.style,
             title=self.title,
             classes=(class_, self.class_),
-            href=self.href
+            href=self.href,
         )
         yield from Element.prepare_html(self)
         yield '</a>'
 
 
 class Section(Element):
-
     def __init__(self, level, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.level = level
@@ -615,8 +662,7 @@ class Section(Element):
         class_ = 'section_%d' % self.level
         if self.class_:
             class_ += ' ' + self.class_
-        yield build_html_tag('section', id=self.id, style=self.style,
-                             class_=class_)
+        yield build_html_tag('section', id=self.id, style=self.style, class_=class_)
         yield from Element.prepare_html(self)
         yield '</section>'
 
@@ -626,6 +672,7 @@ class Paragraph(Element):
     A paragraph.  Everything is in there :-)
     (except of block level stuff)
     """
+
     is_block_tag = True
     is_paragraph = True
     allowed_in_signatures = True
@@ -636,8 +683,7 @@ class Paragraph(Element):
         return Element.text.__get__(self).strip() + '\n\n'
 
     def prepare_html(self):
-        yield build_html_tag('p', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('p', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</p>'
 
@@ -647,14 +693,13 @@ class Error(Element):
     If a macro is not renderable or not found this is
     shown instead.
     """
+
     is_block_tag = True
     allows_paragraphs = True
 
     def prepare_html(self):
-        yield build_html_tag('div',
-            id=self.id,
-            style=self.style,
-            classes=('error', self.class_)
+        yield build_html_tag(
+            'div', id=self.id, style=self.style, classes=('error', self.class_)
         )
         yield from Element.prepare_html(self)
         yield '</div>'
@@ -669,30 +714,32 @@ class Footnote(Element):
 
     def prepare_html(self):
         if self.id is None:
-            yield build_html_tag('small',
-                id=self.id,
-                style=self.style,
-                classes=('note', self.class_)
+            yield build_html_tag(
+                'small', id=self.id, style=self.style, classes=('note', self.class_)
             )
             yield from Element.prepare_html(self)
             yield '</small>'
         else:
-            yield '<a href="#fn-%d" id="bfn-%d" class="footnote">' \
-                  '<span class="paren">[</span>%d<span class="paren">]' \
-                  '</span></a>' % (self.id, self.id, self.id)
+            yield (
+                '<a href="#fn-%d" id="bfn-%d" class="footnote">'
+                '<span class="paren">[</span>%d<span class="paren">]'
+                '</span></a>' % (self.id, self.id, self.id)
+            )
 
 
 class Quote(Element):
     """
     A blockquote.
     """
+
     is_block_tag = True
     allows_paragraphs = True
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('blockquote', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag(
+            'blockquote', id=self.id, style=self.style, class_=self.class_
+        )
         yield from Element.prepare_html(self)
         yield '</blockquote>'
 
@@ -701,6 +748,7 @@ class Edited(Element):
     """
     Text that describes an edit action.
     """
+
     is_block_tag = True
     allows_paragraphs = True
     allowed_in_signatures = False
@@ -711,17 +759,17 @@ class Edited(Element):
     #: CSS Class used for styling
     css_class = 'edited'
 
-    def __init__(self, username, children=None, id=None, style=None,
-                 class_=None):
+    def __init__(self, username, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.username = username
 
     def prepare_html(self):
         yield '<div class="%s">' % self.css_class
-        yield '<p><strong>%s <a class="crosslink user" href="%s">' \
-              '%s</a>:</strong></p> ' % (self.msg,
-                href('portal', 'user', self.username),
-                  self.username)
+        yield (
+            '<p><strong>%s <a class="crosslink user" href="%s">'
+            '%s</a>:</strong></p> '
+            % (self.msg, href('portal', 'user', self.username), self.username)
+        )
         yield from Element.prepare_html(self)
         yield '</div>'
 
@@ -730,6 +778,7 @@ class Moderated(Edited):
     """
     Text that describes a moderation action.
     """
+
     msg = gettext_lazy('Moderated by')
     css_class = 'moderated'
 
@@ -738,13 +787,13 @@ class Preformatted(Element):
     """
     Preformatted text.
     """
+
     is_block_tag = True
     is_raw = True
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('pre', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('pre', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</pre>'
 
@@ -753,6 +802,7 @@ class Headline(Element):
     """
     Represents all kinds of headline tags.
     """
+
     is_block_tag = True
 
     def __init__(self, level, children=None, id=None, style=None, class_=None):
@@ -762,10 +812,8 @@ class Headline(Element):
             self.id = slugify(self.text, convert_lowercase=False)
 
     def prepare_html(self):
-        yield build_html_tag('h%d' % (self.level + 1),
-            id=self.id,
-            style=self.style,
-            class_=self.class_
+        yield build_html_tag(
+            'h%d' % (self.level + 1), id=self.id, style=self.style, class_=self.class_
         )
         yield from Element.prepare_html(self)
         yield '<a href="#%s" class="headerlink">¶</a>' % self.id
@@ -781,8 +829,7 @@ class Strong(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('strong', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('strong', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</strong>'
 
@@ -793,8 +840,7 @@ class Highlighted(Element):
     """
 
     def prepare_html(self):
-        yield build_html_tag('mark', id=self.id, style=self.style,
-                             classes=self.class_)
+        yield build_html_tag('mark', id=self.id, style=self.style, classes=self.class_)
         yield from Element.prepare_html(self)
         yield '</mark>'
 
@@ -808,14 +854,12 @@ class Emphasized(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('em', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('em', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</em>'
 
 
 class SourceLink(Element):
-
     allowed_in_signatures = False
 
     def __init__(self, target, children=None, id=None, style=None, class_=None):
@@ -829,8 +873,7 @@ class SourceLink(Element):
         return '[%d]' % self.target
 
     def prepare_html(self):
-        yield build_html_tag('sup', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('sup', id=self.id, style=self.style, class_=self.class_)
         yield '<a href="#source-%d">' % self.target
         yield from Element.prepare_html(self)
         yield '</a></sup>'
@@ -842,12 +885,12 @@ class Code(Element):
     preserves whitespace. Additionally, this node is marked raw, so children
     are not touched by the altering translators.
     """
+
     is_raw = True
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('code', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('code', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</code>'
 
@@ -862,10 +905,8 @@ class Underline(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('span',
-            id=self.id,
-            style=self.style,
-            classes=('underline', self.class_)
+        yield build_html_tag(
+            'span', id=self.id, style=self.style, classes=('underline', self.class_)
         )
         yield from Element.prepare_html(self)
         yield '</span>'
@@ -879,8 +920,7 @@ class Stroke(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('del', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('del', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</del>'
 
@@ -894,8 +934,7 @@ class Small(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('small', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('small', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</small>'
 
@@ -908,8 +947,7 @@ class Big(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('big', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('big', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</big>'
 
@@ -922,8 +960,7 @@ class Sub(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('sub', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('sub', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</sub>'
 
@@ -936,8 +973,7 @@ class Sup(Element):
     allowed_in_signatures = True
 
     def prepare_html(self):
-        yield build_html_tag('sup', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('sup', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</sup>'
 
@@ -950,19 +986,14 @@ class Color(Element):
 
     allowed_in_signatures = True
 
-    def __init__(self, value, children=None, id=None, style=None,
-                 class_=None):
+    def __init__(self, value, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.value = value
 
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
         style += 'color: %s' % self.value
-        yield build_html_tag('span',
-            id=self.id,
-            style=style,
-            class_=self.class_
-        )
+        yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</span>'
 
@@ -973,19 +1004,14 @@ class Size(Element):
     of backwards compatibility.  Requires the font size in percent.
     """
 
-    def __init__(self, size, children=None, id=None, style=None,
-                 class_=None):
+    def __init__(self, size, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.size = size
 
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
         style += 'font-size: %.2f%%' % self.size
-        yield build_html_tag('span',
-            id=self.id,
-            style=style,
-            class_=self.class_
-        )
+        yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</span>'
 
@@ -998,22 +1024,17 @@ class Font(Element):
 
     allowed_in_signatures = True
 
-    def __init__(self, faces, children=None, id=None, style=None,
-                 class_=None):
+    def __init__(self, faces, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.faces = faces
 
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
-        style += "font-family: %s" % ', '.join(
+        style += 'font-family: %s' % ', '.join(
             x in ('serif', 'sans-serif', 'fantasy') and x or "'%s'" % x
             for x in self.faces
         )
-        yield build_html_tag('span',
-            id=self.id,
-            style=style,
-            class_=self.class_
-        )
+        yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</span>'
 
@@ -1022,11 +1043,11 @@ class DefinitionList(Element):
     """
     A list of definition terms.
     """
+
     is_block_tag = True
 
     def prepare_html(self):
-        yield build_html_tag('dl', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('dl', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</dl>'
 
@@ -1035,17 +1056,16 @@ class DefinitionTerm(Element):
     """
     A definition term has a term (surprise) and a value (the children).
     """
+
     is_block_tag = True
     allows_paragraphs = True
 
-    def __init__(self, term, children=None, id=None, style=None,
-                 class_=None):
+    def __init__(self, term, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.term = term
 
     def prepare_html(self):
-        yield build_html_tag('dt', class_=self.class_, style=self.style,
-                             id=self.id)
+        yield build_html_tag('dt', class_=self.class_, style=self.style, id=self.id)
         yield escape(self.term)
         yield '</dt>'
         yield build_html_tag('dd', class_=self.class_)
@@ -1058,6 +1078,7 @@ class List(Element):
     Surrounds list items so that they appear as list.  Make sure that the
     children are list items.
     """
+
     is_block_tag = True
 
     def __init__(self, type, children=None, id=None, style=None, class_=None):
@@ -1071,8 +1092,9 @@ class List(Element):
         else:
             tag = 'ol'
             cls = self.type
-        yield build_html_tag(tag, id=self.id, style=self.style,
-                             classes=(self.class_, cls))
+        yield build_html_tag(
+            tag, id=self.id, style=self.style, classes=(self.class_, cls)
+        )
         yield from Element.prepare_html(self)
         yield '</%s>' % tag
 
@@ -1081,12 +1103,12 @@ class ListItem(Element):
     """
     Marks the children as list item.  Use in conjunction with list.
     """
+
     is_block_tag = True
     allows_paragraphs = True
 
     def prepare_html(self):
-        yield build_html_tag('li', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('li', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</li>'
 
@@ -1096,11 +1118,20 @@ class Box(Element):
     A dialog like object.  Usually renders to a layer with one headline and
     a second layer for the contents.
     """
+
     is_block_tag = True
     allows_paragraphs = True
 
-    def __init__(self, title=None, children=None, align=None, valign=None,
-                 id=None, style=None, class_=None):
+    def __init__(
+        self,
+        title=None,
+        children=None,
+        align=None,
+        valign=None,
+        id=None,
+        style=None,
+        class_=None,
+    ):
         Element.__init__(self, children, id, style, class_)
         self.title = title
         self.class_ = class_
@@ -1115,10 +1146,11 @@ class Box(Element):
             style.append('vertical-align: ' + self.valign)
         if self.style:
             style.append(self.style)
-        yield build_html_tag('div',
+        yield build_html_tag(
+            'div',
             id=self.id,
             style=style and ' '.join(style) or None,
-            classes=(self.class_,)
+            classes=(self.class_,),
         )
         if self.title is not None:
             yield build_html_tag('h3', class_=self.class_)
@@ -1134,12 +1166,12 @@ class Layer(Element):
     Like a box but without headline and an nested content section.  Translates
     into a plain old HTML div or something comparable.
     """
+
     is_block_tag = True
     allows_paragraphs = True
 
     def prepare_html(self):
-        yield build_html_tag('div', id=self.id, style=self.style,
-                             class_=self.class_)
+        yield build_html_tag('div', id=self.id, style=self.style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</div>'
 
@@ -1148,14 +1180,14 @@ class Table(Element):
     """
     A simple table.  This can only contain table rows.
     """
+
     is_block_tag = True
 
     def __init__(self, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
 
     def prepare_html(self):
-        yield build_html_tag('table', id=self.id, class_=self.class_,
-                             style=self.style)
+        yield build_html_tag('table', id=self.id, class_=self.class_, style=self.style)
         yield from Element.prepare_html(self)
         yield '</table>'
 
@@ -1165,14 +1197,14 @@ class TableRow(Element):
     A row in a table.  Only contained in a table and the only children
     nodes supported are table cells and headers.
     """
+
     is_block_tag = True
 
     def __init__(self, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
 
     def prepare_html(self):
-        yield build_html_tag('tr', id=self.id, class_=self.class_,
-                             style=self.style)
+        yield build_html_tag('tr', id=self.id, class_=self.class_, style=self.style)
         yield from Element.prepare_html(self)
         yield '</tr>'
 
@@ -1181,11 +1213,21 @@ class TableCell(Element):
     """
     Only contained in a table row and renders to a table cell.
     """
+
     is_block_tag = True
     _html_tag = 'td'
 
-    def __init__(self, children=None, colspan=None, rowspan=None, align=None,
-                 valign=None, id=None, style=None, class_=None):
+    def __init__(
+        self,
+        children=None,
+        colspan=None,
+        rowspan=None,
+        align=None,
+        valign=None,
+        id=None,
+        style=None,
+        class_=None,
+    ):
         Element.__init__(self, children, id, style, class_)
         self.colspan = colspan or 0
         self.rowspan = rowspan or 0
@@ -1201,12 +1243,13 @@ class TableCell(Element):
         if self.style:
             style.append(self.style)
 
-        yield build_html_tag(self._html_tag,
+        yield build_html_tag(
+            self._html_tag,
             colspan=self.colspan or None,
             rowspan=self.rowspan or None,
             style=style and '; '.join(style) or None,
             id=self.id,
-            class_=self.class_
+            class_=self.class_,
         )
 
         yield from Element.prepare_html(self)
@@ -1217,4 +1260,5 @@ class TableHeader(TableCell):
     """
     Exactly like a table cell but renders to <th>
     """
+
     _html_tag = 'th'
