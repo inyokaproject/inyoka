@@ -1024,19 +1024,17 @@ class Font(Element):
 
     allowed_in_signatures = True
 
-    def __init__(self, faces, children=None, id=None, style=None, class_=None):
+    def __init__(self, face=None, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
-        self.faces = faces
+        self.face = face
 
     def prepare_html(self):
-        style = self.style and self.style + '; ' or ''
-        style += 'font-family: %s' % ', '.join(
-            x in ('serif', 'sans-serif', 'fantasy') and x or "'%s'" % x
-            for x in self.faces
-        )
-        yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
+        if self.face:
+            style = 'font-family: %s' % self.face
+            yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
-        yield '</span>'
+        if self.face:
+            yield '</span>'
 
 
 class DefinitionList(Element):

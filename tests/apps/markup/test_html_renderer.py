@@ -77,6 +77,25 @@ class TestHtmlRenderer(TestCase):
         html = render('~+(TEXT)+~')
         self.assertHTMLEqual(html, '<big>TEXT</big>')
 
+    def test_font_and_size(self):
+        html = render('[size=2][font=serif]TEXT[/font][/size]')
+        self.assertHTMLEqual(html, '<span style="font-size: 14.00%"><span style="font-family: serif">TEXT</span></span>')
+
+    def test_font_and_font(self):
+        html = render('[font=sans-serif][font=serif]TEXT[/font]')
+        self.assertHTMLEqual(html, '<span style="font-family: sans-serif"><span style="font-family: serif">TEXT</span></span>')
+
+    def test_two_font(self):
+        html = render('[font=sans-serif,serif]TEXT[/font]')
+        self.assertHTMLEqual(html, 'TEXT')
+
+    def test_font_case(self):
+        html = render('[font=Arial]TEXT[/font]')
+        self.assertHTMLEqual(html, '<span style="font-family: arial">TEXT</span>')
+
+        html = render('[font=arial]TEXT[/font]')
+        self.assertHTMLEqual(html, '<span style="font-family: arial">TEXT</span>')
+
     def test_size(self):
         html = render('[size=2]TEXT[/size]')
         self.assertHTMLEqual(html, '<span style="font-size: 14.00%">TEXT</span>')
@@ -85,10 +104,9 @@ class TestHtmlRenderer(TestCase):
         html = render('[font=serif]TEXT[/font]')
         self.assertHTMLEqual(html, '<span style="font-family: serif">TEXT</span>')
 
+    def test_font_not_allowed(self):
         html = render('[font=Ubuntu]TEXT[/font]')
-        self.assertHTMLEqual(
-            html, """<span style="font-family: 'Ubuntu'">TEXT</span>"""
-        )
+        self.assertHTMLEqual(html, """TEXT""")
 
     def test_code(self):
         html = render('`TEXT`')
