@@ -984,8 +984,6 @@ class Color(Element):
     of backwards compatibility (this time to phpBB).
     """
 
-    allowed_in_signatures = True
-
     def __init__(self, value, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.value = value
@@ -1021,8 +1019,6 @@ class Font(Element):
     Gives the embedded text a font face.  Like `Underline` it just exists
     because of backwards compatibility.
     """
-
-    allowed_in_signatures = True
 
     def __init__(self, face=None, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
