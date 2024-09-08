@@ -989,8 +989,7 @@ class Color(Element):
         self.value = value
 
     def prepare_html(self):
-        style = self.style and self.style + '; ' or ''
-        style += 'color: %s' % self.value
+        style = 'color: %s' % self.value
         yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</span>'
@@ -1007,8 +1006,7 @@ class Size(Element):
         self.size = size
 
     def prepare_html(self):
-        style = self.style and self.style + '; ' or ''
-        style += 'font-size: %.2f%%' % self.size
+        style = 'font-size: %.2f%%' % self.size
         yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</span>'
