@@ -22,7 +22,7 @@ from urllib.parse import quote_plus, urlparse, urlunparse
 
 from django.apps import apps
 from django.conf import settings
-from django.utils.html import escape, smart_urlquote
+from django.utils.html import escape, format_html, smart_urlquote
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
@@ -764,11 +764,14 @@ class Edited(Element):
         self.username = username
 
     def prepare_html(self):
-        yield '<div class="%s">' % self.css_class
-        yield (
-            '<p><strong>%s <a class="crosslink user" href="%s">'
-            '%s</a>:</strong></p> '
-            % (self.msg, href('portal', 'user', self.username), self.username)
+        yield format_html(
+            '<div class="{}">'
+            '<p><strong>{} <a class="crosslink user" href="{}">'
+            '{}</a>:</strong></p> ',
+            self.css_class,
+            self.msg,
+            href('portal', 'user', self.username),
+            self.username
         )
         yield from Element.prepare_html(self)
         yield '</div>'

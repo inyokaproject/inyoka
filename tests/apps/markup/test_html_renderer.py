@@ -125,6 +125,24 @@ class TestHtmlRenderer(TestCase):
 </p>TEXT</div>""",
         )
 
+    def test_mod_box_escaped(self):
+        html = render('[mod=</a><span>BAR BAZ</span><a href="foo">]TEXT[/mod]')
+        self.maxDiff = None
+
+        self.assertHTMLEqual(
+            html,
+            """<div class="moderated">
+<p>
+<strong>
+Moderated by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/%3C/a%3E%3Cspan%3EBAR%20BAZ%3C/span%3E%3Ca%20href%3D%22foo%22%3E/">
+&lt;/a&gt;&lt;span&gt;BAR BAZ&lt;/span&gt;&lt;a href=&quot;foo&quot;&gt;
+</a>:
+</strong>
+</p>TEXT
+</div>"""
+        )
+
+
     def test_edit_box(self):
         html = render('[edit=NAME]TEXT[/edit]')
         self.assertHTMLEqual(
@@ -133,6 +151,22 @@ class TestHtmlRenderer(TestCase):
 <p><strong>Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/NAME/">NAME</a>:</strong>
 </p>TEXT</div>""",
         )
+
+    def test_edit_box_escaped(self):
+        html = render('''[edit=</a><script>console.log('hi')</script><a href="foo">]TEXT[/edit]''')
+        self.assertHTMLEqual(
+            html,
+            '''<div class="edited">
+<p>
+<strong>
+Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/%3C/a%3E%3Cscript%3Econsole.log%28%27hi%27%29%3C/script%3E%3Ca%20href%3D%22foo%22%3E/">
+&lt;/a&gt;&lt;script&gt;console.log(&#x27;hi&#x27;)&lt;/script&gt;&lt;a href=&quot;foo&quot;&gt;
+</a>:
+</strong>
+</p>TEXT
+</div>'''
+        )
+
 
     def test_mark(self):
         html = render('[mark]TEXT[/mark]')
