@@ -19,3 +19,11 @@ class TestUtilsCss(unittest.TestCase):
         self.assertEqual(filter_style('width: expression((documentElement.clientWidth < 725) ? "725px" : "auto" )'), '')
         # and this is also known to be a security risk in internet explorer
         self.assertEqual(filter_style('behavior: url("pngbehavior.htc");'), '')
+
+        self.assertEqual(filter_style('background: foobar;'), '')
+
+    def test_valid_css_properties(self):
+        self.assertEqual(filter_style('voice-family: yellow;'), 'voice-family: yellow')
+        self.assertEqual(filter_style('background: yellow;'), 'background: yellow')
+        self.assertEqual(filter_style('background: yellow; voice-family: yellow;'), 'background: yellow; voice-family: yellow')
+

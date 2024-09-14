@@ -14,19 +14,19 @@ from django.conf import settings
 from django.test import override_settings
 
 from inyoka.markup.base import Parser, RenderContext
-from inyoka.markup.transformers import SmileyInjector
+from inyoka.markup.transformers import DEFAULT_TRANSFORMERS, SmileyInjector
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
 
 
-def render(source, transformers=None):
+def render(source, transformers=None, application=None):
     """Parse source and render it to html."""
     if not transformers:
         transformers = []
     tree = Parser(source, transformers).parse()
-    html = tree.render(RenderContext(), 'html')
+    html = tree.render(RenderContext(application=application), 'html')
     return html
 
 
@@ -112,9 +112,32 @@ class TestHtmlRenderer(TestCase):
         html = render('`TEXT`')
         self.assertHTMLEqual(html, '<code class="notranslate">TEXT</code>')
 
+    def test_code__with_backtick(self):
+        html = render('``TE`XT``')
+        self.assertHTMLEqual(html, '<code class="notranslate">TE`XT</code>')
+
     def test_note(self):
         html = render('a  ((NOTE)) ')
         self.assertHTMLEqual(html, 'a<small class="note">NOTE</small>')
+
+    def test_footnote_with_default_transformer(self):
+        html = render('a  ((NOTE)) ', transformers=DEFAULT_TRANSFORMERS)
+        self.assertHTMLEqual(html, '''<p>
+        a<a class="footnote" href="#fn-1" id="bfn-1">
+        <span class="paren">
+        [
+        </span>1<span class="paren">
+        ]
+        </span>
+        </a>
+        </p><ul class="footnotes">
+        <li>
+        <a class="crosslink" href="#bfn-1" id="fn-1">
+        1
+        </a>: NOTE
+        </li>
+        </ul>
+        ''')
 
     def test_mod_box(self):
         html = render('[mod=NAME]TEXT[/mod]')
@@ -207,6 +230,17 @@ Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/%3C/
         html = render('[[Anchor(NAME)]]')
         self.assertHTMLEqual(
             html, '<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>'
+        )
+
+        html = render('[[Anchor(NA">"ME)]]')
+        self.assertHTMLEqual(
+            html, '<a class="anchor crosslink" href="#NA" id="NA">⚓︎</a>'
+        )
+
+        html = render('[[Anchor(NA">ME)]]')
+        self.assertHTMLEqual(
+            html,
+            """<a class="crosslink anchor" href='#NA"&gt;ME' id='NA"&gt;ME'>⚓︎</a>"""
         )
 
     def test_newline(self):
@@ -356,6 +390,74 @@ Tablet,167759,1843644,9.1%,8.63
         </table>""",
         )
 
+    def test_table_alignment(self):
+        html = render("""||<(>a ||<:>b ||<)>c ||<^>d ||<v>e ||<: cellstyle="background-color:#ff0000;"> f ||""")
+        self.assertHTMLEqual(html,"""<table>
+            <tr>
+            <td style="text-align: left">
+            a
+            </td><td style="text-align: center">
+            b
+            </td><td style="text-align: right">
+            c
+            </td><td style="vertical-align: top">
+            d
+            </td><td style="vertical-align: bottom">
+            e
+            </td><td style="text-align: center; background-color: #ff0000">
+            f
+            </td>
+            </tr>
+            </table>""")
+
+    def test_box_alignment(self):
+        html = render("{{|<^>foo \n |}}")
+        self.assertHTMLEqual(html, '''<div style="text-align: top">
+            <div class="contents">
+            foo
+            </div>
+            </div>''')
+
+    def test_long_link_splitted(self):
+        html = render(
+            'https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/')
+        self.assertHTMLEqual(html, '''
+                <a class="external" href="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/" rel="nofollow" title="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/">
+                <span class="longlink_show">
+                https://wiki.ubuntuusers.de/Ablage_%
+                </span><span class="longlink_collapse">
+                28Speicherung_im_Forum_-No_Past
+                </span><span>
+                e_Service-%29/
+                </span>
+                </a>''')
+
+    def test_interwiki_link(self):
+        html = render("[attachment:a:]")
+        self.assertHTMLEqual(html, '''
+        <a class="interwiki interwiki-attachment" href="http://wiki.ubuntuusers.local:8080/_attachment/?target=a">
+        a
+        </a>''')
+
+    def test_external_link(self):
+        html = render(
+            '[https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/]')
+        self.assertHTMLEqual(html, '''
+        <a class="external" href="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/" rel="nofollow" title="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/">
+        https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/
+        </a>''')
+
+    def test_javascript_link(self):
+        html = render("[javascript:alert('foo')]")
+        self.assertHTMLEqual(html, '[javascript:alert(&#x27;foo&#x27;)]')
+
+    def test_mailto_link(self):
+        html = render('[mailto:foo@bar.test]')
+        self.assertHTMLEqual(html, '''
+        <a class="crosslink" href="mailto:foo@bar.test" title="mailto:foo@bar.test">
+        foo@bar.test
+        </a>''')
+
     def test_invalid_parser(self):
         html = render('{{{#!not_existing_parser_1233456767867899789\ncONTENT}}}')
         self.assertHTMLEqual(html, '<pre class="notranslate">cONTENT</pre>')
@@ -427,6 +529,26 @@ Tablet,167759,1843644,9.1%,8.63
         link = '<a href="{url}" class="internal missing">foo (Abschnitt \u201eanchor\u201c)</a>'
         link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
         self.assertHTMLEqual(html, link)
+
+    def test_heading(self):
+        html = render('''= a =\n\n== B ==\n\ntext''')
+        self.assertHTMLEqual(
+            html, '''<h2 id="a">a<a href="#a" class="headerlink">¶</a></h2>
+<h3 id="B">B<a href="#B" class="headerlink">¶</a></h3>
+text'''
+        )
+
+    def test_heading_with_default_transformers(self):
+        html = render('''= a =\n\n== B ==\n\ntext''', transformers=DEFAULT_TRANSFORMERS)
+        self.assertHTMLEqual(
+            html, '''<section class="section_1"><h2 id="a">a<a href="#a" class="headerlink">¶</a></h2><p>
+</p><section class="section_2"><h3 id="B">B<a href="#B" class="headerlink">¶</a></h3><p>
+text</p></section></section>'''
+        )
+
+    def test_bold_link__to_escape(self):
+        html = render("""'''<a href="foo"></a>'''""")
+        self.assertEqual(html, '<strong>&lt;a href=&quot;foo&quot;&gt;&lt;/a&gt;</strong>')
 
     def test_heading_contains_arrow(self):
         html = render_smilies('= => g =')

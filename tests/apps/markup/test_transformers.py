@@ -23,7 +23,7 @@ from inyoka.markup.transformers import (
 
 def parse(source, transformer):
     """
-    Helper function that parses sourcecode with one transformer. Additionally
+    Helper function that parses sourcecode with one transformer. Additionally,
     it prints the tree so that it appears in the debug output.
     """
     tree = Parser(source, [transformer]).parse()
@@ -55,6 +55,15 @@ class TestTransformers(unittest.TestCase):
                 nodes.Text('blub')
             ])
         ]))
+
+    def test_automatic_paragraphs_heading(self):
+        tree = parse("= a =\n\n== B ==\n\ntext", AutomaticParagraphs())
+
+        self.assertEqual(tree, nodes.Document(
+            children=[nodes.Headline(children=[nodes.Text(text='a')], class_=None, id='a', level=1, style=None),
+                      nodes.Paragraph(children=[nodes.Text(text='\n')], class_=None, id=None, style=None),
+                      nodes.Headline(children=[nodes.Text(text='B')], class_=None, id='B', level=2, style=None),
+                      nodes.Paragraph(children=[nodes.Text(text='\ntext')], class_=None, id=None, style=None)]))
 
     def test_footnote_support(self):
         """Check if the footnote support works flawlessly."""
