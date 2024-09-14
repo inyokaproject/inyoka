@@ -13,7 +13,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
 from inyoka.forum.constants import get_distro_choices, get_version_choices
-from inyoka.forum.models import Forum
+from inyoka.forum.models import Forum, Topic
 from inyoka.utils.forms import MultiField, StrippedCharField, TopicField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
@@ -181,7 +181,7 @@ class SplitTopicForm(forms.Form):
     the posts should be moved into an existing or a new topic.
     """
     action = forms.ChoiceField(choices=(('add', ''), ('new', '')))
-    new_title = forms.CharField(max_length=200)
+    new_title = forms.CharField(max_length=Topic.TITLE_MAX_LENGTH)
     topic_to_move = TopicField()
     #: version info. defaults to the values set in the old topic.
     ubuntu_version = forms.ChoiceField(required=False)
