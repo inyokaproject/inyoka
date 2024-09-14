@@ -261,7 +261,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             'topic_to_move': t1.slug})
         # The order in Topic 1 should now be
         # p11 p22 p23 p12 p13
-        # Previously is was
+        # Previously it was
         # for Topic 1 p11 p22 p23 and for Topic 2 p21 p12 p13
         self.assertEqual(Post.objects.filter(topic_id=t1.pk).count(), 5)
         self.assertEqual(Post.objects.filter(topic_id=t2.pk).count(), 1)
