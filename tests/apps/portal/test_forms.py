@@ -1,8 +1,8 @@
 """
-    tests.apps.portal.test_views
+    tests.apps.portal.test_forms
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test portal views.
+    Test portal forms.
 
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
