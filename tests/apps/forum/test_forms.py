@@ -9,7 +9,10 @@
 """
 from functools import partial
 
+from guardian.shortcuts import assign_perm
+
 from inyoka.forum.forms import SplitTopicForm
+from inyoka.forum.models import Forum
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 
@@ -38,3 +41,34 @@ class TestSplitTopicForm(TestCase):
 
         self.assertNotIn('new_title', form.errors)
 
+    def _create_forum_objects(self):
+        self.user.status = User.STATUS_ACTIVE
+        self.user.save()
+
+        category = Forum(name='category')
+        category.save()
+        forum1 = Forum(name='forum1', parent=category)
+        forum1.save()
+
+        assign_perm('forum.view_forum', self.user, category)
+        assign_perm('forum.view_forum', self.user, forum1)
+
+        return category, forum1
+
+    def test_forum_validation(self):
+        _, forum1 = self._create_forum_objects()
+
+        data = {'new_title': 45 * 'a', 'action': 'new', 'forum': forum1.id,}
+
+        form = self.form_create(data)
+        self.assertTrue(form.is_valid())
+        self.assertNotIn('forum', form.errors)
+
+    def test_category_validation(self):
+        category, _ = self._create_forum_objects()
+
+        data = {'new_title': 45 * 'a', 'action': 'new', 'forum': category.id,}
+
+        form = self.form_create(data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('forum', form.errors)
