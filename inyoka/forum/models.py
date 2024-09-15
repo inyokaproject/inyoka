@@ -563,9 +563,11 @@ class Topic(models.Model):
     inside a forum. When creating a new topic, a new post is added to it
     automatically.
     """
+    TITLE_MAX_LENGTH = 100
+
     objects = TopicManager()
 
-    title = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=TITLE_MAX_LENGTH, blank=True)
     slug = models.CharField(max_length=50, blank=True)
     view_count = models.IntegerField(default=0)
     sticky = models.BooleanField(default=False, db_index=True)
