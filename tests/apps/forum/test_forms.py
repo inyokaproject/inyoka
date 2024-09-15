@@ -7,11 +7,12 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+
 from functools import partial
 
 from guardian.shortcuts import assign_perm
 
-from inyoka.forum.forms import SplitTopicForm, MoveTopicForm
+from inyoka.forum.forms import MoveTopicForm, SplitTopicForm
 from inyoka.forum.models import Forum
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
@@ -27,15 +28,18 @@ class TestSplitTopicForm(TestCase):
         self.form_create = partial(self.form, user=self.user)
 
     def test_forum_title_maximum_length(self):
-        data = {'new_title': 199*'a'}
+        data = {'new_title': 199 * 'a'}
 
         form = self.form_create(data)
 
         self.assertFalse(form.is_valid())
-        self.assertIn('Ensure this value has at most 100 characters (it has 199).', form.errors['new_title'])
+        self.assertIn(
+            'Ensure this value has at most 100 characters (it has 199).',
+            form.errors['new_title'],
+        )
 
     def test_forum_title_valid_length(self):
-        data = {'new_title': 99*'a'}
+        data = {'new_title': 99 * 'a'}
 
         form = self.form_create(data)
 
@@ -61,7 +65,11 @@ class TestSplitTopicForm(TestCase):
     def test_forum_validation(self):
         _, forum1, _ = self._create_forum_objects()
 
-        data = {'new_title': 45 * 'a', 'action': 'new', 'forum': forum1.id,}
+        data = {
+            'new_title': 45 * 'a',
+            'action': 'new',
+            'forum': forum1.id,
+        }
 
         form = self.form_create(data)
         self.assertTrue(form.is_valid())
@@ -70,7 +78,11 @@ class TestSplitTopicForm(TestCase):
     def test_category_validation(self):
         category, _, _ = self._create_forum_objects()
 
-        data = {'new_title': 45 * 'a', 'action': 'new', 'forum': category.id,}
+        data = {
+            'new_title': 45 * 'a',
+            'action': 'new',
+            'forum': category.id,
+        }
 
         form = self.form_create(data)
         self.assertFalse(form.is_valid())
