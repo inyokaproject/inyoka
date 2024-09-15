@@ -41,6 +41,8 @@ Deployment notes
 
 * Add default theme based on ubuntuusers theme to the inyoka repository
 * Migrate from ``setup.py`` to ``pyproject.toml``
+* Introduce ruff for code formatting
+* Render ``<mark>`` for highlighted text
 
 🗑 Deprecations
 --------------
@@ -48,11 +50,17 @@ Deployment notes
 🔥 Removals
 -----------
 
+* Remove unused javascript on register and for escaping
+
 🐛 Fixes
 --------
 
+* Splittopic form: Fix maximum length for title of new topic
+
 🔒 Security
 -----------
+
+* Add ``SECURITY.md``
 
 
 0.36.1 (2024-08-06)
