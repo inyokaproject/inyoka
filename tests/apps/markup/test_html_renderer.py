@@ -53,7 +53,7 @@ class TestHtmlRenderer(TestCase):
         """Check if pre renders correctly."""
         self.assertHTMLEqual(
             render('{{{\n<em>blub</em>\n}}}'),
-            ('<pre class="notranslate">&lt;em&gt;blub&lt;/em&gt;</pre>'),
+            '<pre class="notranslate">&lt;em&gt;blub&lt;/em&gt;</pre>',
         )
 
     def test_color(self):
@@ -67,70 +67,64 @@ class TestHtmlRenderer(TestCase):
 
     def test_color_not_existing(self):
         html = render(' [color=redfuu]TEXT[/color]')
-        self.assertHTMLEqual(html, ('<span style="color: #000000">TEXT</span>'))
+        self.assertHTMLEqual(html, '<span style="color: #000000">TEXT</span>')
 
     def test_small(self):
         html = render('~-(TEXT)-~')
-        self.assertHTMLEqual(html, ('<small>TEXT</small>'))
+        self.assertHTMLEqual(html, '<small>TEXT</small>')
 
     def test_big(self):
         html = render('~+(TEXT)+~')
-        self.assertHTMLEqual(html, ('<big>TEXT</big>'))
+        self.assertHTMLEqual(html, '<big>TEXT</big>')
 
     def test_size(self):
         html = render('[size=2]TEXT[/size]')
-        self.assertHTMLEqual(html, ('<span style="font-size: 14.00%">TEXT</span>'))
+        self.assertHTMLEqual(html, '<span style="font-size: 14.00%">TEXT</span>')
 
     def test_font(self):
         html = render('[font=serif]TEXT[/font]')
-        self.assertHTMLEqual(html, ('<span style="font-family: serif">TEXT</span>'))
+        self.assertHTMLEqual(html, '<span style="font-family: serif">TEXT</span>')
 
         html = render('[font=Ubuntu]TEXT[/font]')
         self.assertHTMLEqual(
-            html, ("""<span style="font-family: 'Ubuntu'">TEXT</span>""")
+            html, """<span style="font-family: 'Ubuntu'">TEXT</span>"""
         )
 
     def test_code(self):
         html = render('`TEXT`')
-        self.assertHTMLEqual(html, ('<code class="notranslate">TEXT</code>'))
+        self.assertHTMLEqual(html, '<code class="notranslate">TEXT</code>')
 
     def test_note(self):
         html = render('a  ((NOTE)) ')
-        self.assertHTMLEqual(html, ('a<small class="note">NOTE</small>'))
+        self.assertHTMLEqual(html, 'a<small class="note">NOTE</small>')
 
     def test_mod_box(self):
         html = render('[mod=NAME]TEXT[/mod]')
         self.assertHTMLEqual(
             html,
-            (
-                """<div class="moderated">
+            """<div class="moderated">
 <p><strong>Moderated by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/NAME/">NAME</a>:</strong>
-</p>TEXT</div>"""
-            ),
+</p>TEXT</div>""",
         )
 
     def test_edit_box(self):
         html = render('[edit=NAME]TEXT[/edit]')
         self.assertHTMLEqual(
             html,
-            (
-                """<div class="edited">
+            """<div class="edited">
 <p><strong>Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/NAME/">NAME</a>:</strong>
-</p>TEXT</div>"""
-            ),
+</p>TEXT</div>""",
         )
 
     def test_mark(self):
         html = render('[mark]TEXT[/mark]')
-        self.assertHTMLEqual(html, ('<strong class="highlighted">TEXT</strong>'))
+        self.assertHTMLEqual(html, '<mark>TEXT</mark>')
 
     def test_mark_in_code(self):
         html = render('{{{ start [mark]TEXT[/mark] code}}}')
         self.assertHTMLEqual(
             html,
-            (
-                """<pre class="notranslate">start<strong class="highlighted">TEXT</strong>code</pre>"""
-            ),
+            """<pre class="notranslate">start<mark>TEXT</mark>code</pre>""",
         )
 
     def test_ruler(self):
@@ -141,28 +135,26 @@ class TestHtmlRenderer(TestCase):
         html = render('{{|<style="margin:auto; max-width:1200px"> foo')
         self.assertHTMLEqual(
             html,
-            (
-                """
+            """
             <div style="margin: auto; max-width: 1200px">
                 <div class="contents">foo</div>
             </div>
-            """
-            ),
+            """,
         )
 
     def test_span(self):
         html = render("[[SPAN('text')]]")
-        self.assertHTMLEqual(html, ('<span>text</span>'))
+        self.assertHTMLEqual(html, '<span>text</span>')
 
     def test_anchor(self):
         html = render('[[Anker(NAME)]]')
         self.assertHTMLEqual(
-            html, ('<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>')
+            html, '<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>'
         )
 
         html = render('[[Anchor(NAME)]]')
         self.assertHTMLEqual(
-            html, ('<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>')
+            html, '<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>'
         )
 
     def test_newline(self):
