@@ -209,9 +209,6 @@ class SplitTopicForm(forms.Form):
 
     def clean_forum(self):
         forum = Forum.objects.get(id=self.cleaned_data.get('forum'))
-        if forum.is_category:
-            raise forms.ValidationError(_('You cannot move a topic into a '
-                                          'category. Please choose a forum.'))
         return forum
 
 
