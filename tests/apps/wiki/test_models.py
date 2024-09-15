@@ -188,7 +188,6 @@ class TestAttachment(TestCase):
                                        text='foo', note='create')
 
         page.edit(deleted=True)
-        print(Revision.objects.all().values('id', 'deleted'))
         attachment = Page.objects.attachment_for_page(page.name)
         self.assertIsNotNone(attachment)  # TODO should it be None?
 
