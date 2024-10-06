@@ -31,7 +31,6 @@ from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
 from django.forms import HiddenInput, modelformset_factory
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from guardian.shortcuts import assign_perm, get_perms, remove_perm
@@ -209,10 +208,10 @@ class RegisterForm(forms.Form):
         exists = User.objects.filter(email__iexact=self.cleaned_data['email'])\
                              .exists()
         if exists:
-            raise forms.ValidationError(mark_safe(
+            raise forms.ValidationError(format_html(
                 _('The given email address is already in use. If you forgot '
-                  'your password, you can <a href="%(link)s">restore it</a>.')
-                % {'link': href('portal', 'lost_password')}))
+                  'your password, you can <a href="{link}">restore it</a>.'),
+                link=href('portal', 'lost_password')))
         return self.cleaned_data['email']
 
 
