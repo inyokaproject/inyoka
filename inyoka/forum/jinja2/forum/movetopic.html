@@ -13,7 +13,7 @@
 {% for parent in topic.forum.parents|reverse %}
   {% do tmp_crumb.append((parent.name, parent|url)) %}
 {% endfor %}
-{% do tmp_crumb.extend([(topic.forum.name, topic.forum|url), (topic.title, topic|url),
+{% do tmp_crumb.extend([(topic.forum.name, topic.forum|url), (topic.title|e, topic|url),
                         (_('Move'), topic|url('move'))])%}
 {% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
 

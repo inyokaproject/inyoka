@@ -10,7 +10,7 @@
 #}
 
 {%- extends 'forum/page.html' %}
-{% set BREADCRUMBS = [(post.topic.title, post.topic|url),
+{% set BREADCRUMBS = [(post.topic.title|e, post.topic|url),
                       (_('Old revisions'), post|url('revisions'))] + BREADCRUMBS|d([]) %}
 
 {% block forum_content %}

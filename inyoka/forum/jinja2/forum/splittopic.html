@@ -11,7 +11,7 @@
 {% import 'macros.html' as macros %}
 {% set BREADCRUMBS = [(_('Split topic'), topic|url('split')),
                       (topic.forum.name, topic.forum|url),
-                      (topic.title, topic|url)] + BREADCRUMBS|d([]) %}
+                      (topic.title|e, topic|url)] + BREADCRUMBS|d([]) %}
 
 {% block forum_content %}
   <form action="" method="post" class="new_topic">

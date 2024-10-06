@@ -24,7 +24,7 @@
 {% for parent in forum.parents|reverse %}
   {% do tmp_crumb.append((parent.name, parent|url)) %}
 {% endfor %}
-{% do tmp_crumb.extend([(forum.name, forum|url), (topic.title, topic|url)]) %}
+{% do tmp_crumb.extend([(forum.name, forum|url), (name, topic|url)]) %}
 {% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
 
 {% set rendered_pagination = render_pagination(pagination) %}

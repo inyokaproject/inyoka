@@ -44,7 +44,7 @@
                 <ul class="note_list">
                   {% for change in recentchanges[day][page] %}
                     <li>
-                      {{ change['note'] }}
+                      {{ change['note']|e }}
                       {% if change['username'] %}
                       ({% trans %}from{% endtrans %} <a href="{{ href('portal', 'user', change['username']|e ) }}">{{ change['username']|e }}</a>)
                       {% endif %}

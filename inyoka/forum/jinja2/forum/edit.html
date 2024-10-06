@@ -20,7 +20,7 @@
 {% if not topic %}
   {% do tmp_crumb.append((_('New topic'), forum|url('newtopic'))) %}
 {% else %}
-  {% do tmp_crumb.append((topic.title, topic|url)) %}
+  {% do tmp_crumb.append((topic.title|e, topic|url)) %}
   {% if post %}
     {% do tmp_crumb.append((_('Edit post'), '')) %}
   {% else %}
