@@ -61,7 +61,7 @@ Deployment notes
 -----------
 
 * Add ``SECURITY.md``
-
+* Update requirements (at least the dependencies ``Django`` include known security fixes)
 
 0.36.1 (2024-08-06)
 ===================
