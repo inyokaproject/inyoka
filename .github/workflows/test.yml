@@ -4,8 +4,8 @@ on: [push, pull_request]
 
 
 jobs:
-  test:
 
+  test:
     runs-on: ubuntu-latest
     env:
       DEFAULT_BRANCH: 'refs/heads/staging'
@@ -194,3 +194,37 @@ jobs:
       with:
         name: 'Static_files'
         path: inyoka/static-collected
+
+  # Deploy documentation to GitHub Pages
+  deploy_docu:
+    if: github.ref_name == 'staging'
+    needs: test
+    # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+    # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      pages: write
+      id-token: write
+      actions: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Download documentation artifact from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: 'Inyoka_Documentation'
+          path: 'docs'
+      - name: Upload artifact for GitHub pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
