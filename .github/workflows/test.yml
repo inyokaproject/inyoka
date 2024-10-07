@@ -139,13 +139,11 @@ jobs:
         . ~/venv/bin/activate
         coverage run manage.py test --settings tests.settings.${{ matrix.database }}
         coverage html
-    - name: Compress coverage report
-      run: zip htmlcov.zip -r htmlcov
     - name: Save coverage report for tests
       uses: actions/upload-artifact@v4
       with:
         name: coverage-py${{ matrix.python-version }}-${{ matrix.database }}-${{ matrix.theme }}
-        path: htmlcov.zip
+        path: htmlcov
 
 
     - name: Run BDD tests
@@ -162,15 +160,12 @@ jobs:
         python manage.py collectstatic --noinput
         coverage run -m behave --tags=-skip
         coverage html -d bdd_coverage
-    - name: Compress BDD results
-      if: ${{ matrix.database == 'postgresql' }}
-      run: zip bdd_coverage.zip -r bdd_coverage
     - name: Save BDD results
       if: ${{ matrix.database == 'postgresql' }}
       uses: actions/upload-artifact@v4
       with:
         name: BDD-coverage-py${{ matrix.python-version }}-${{ matrix.database }}-${{ matrix.theme }}
-        path: bdd_coverage.zip
+        path: bdd_coverage
 
 
     - name: Build documentation
@@ -181,27 +176,21 @@ jobs:
       run: |
         . ~/venv/bin/activate
         make -C docs html
-    - name: Compress documentation
-      if: ${{ matrix.build_docs }}
-      run: zip doc.zip -r docs/build/html
     - name: Save documentation
       if: ${{ matrix.build_docs }}
       uses: actions/upload-artifact@v4
       with:
         name: 'Inyoka_Documentation'
-        path: doc.zip
+        path: docs/build/html
 
     - name: Lint
       run: |
         . ~/venv/bin/activate
         ruff check
 
-    - name: Compress statics
-      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_docs }}
-      run: zip static-collected.zip -r inyoka/static-collected
     - name: Save statics
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_docs }}
       uses: actions/upload-artifact@v4
       with:
         name: 'Static_files'
-        path: static-collected.zip
+        path: inyoka/static-collected
