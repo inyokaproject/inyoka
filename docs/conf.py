@@ -94,10 +94,9 @@ add_function_parentheses = True
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-# Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'django': ('https://docs.djangoproject.com/en/4.2',
-               'https://docs.djangoproject.com/en/4.2/_objects'),
+               'https://docs.djangoproject.com/en/4.2/_objects/'),
     'python': ('https://docs.python.org/3', None),
     'sphinx': ('https://www.sphinx-doc.org', None),
 }
