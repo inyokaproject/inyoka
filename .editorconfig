@@ -13,6 +13,6 @@ max_line_length = 88
 indent_style = space
 indent_size = 4
 
-[*.{html,js,less}]
+[*.{html,js,less,toml,yaml,yml}]
 indent_style = space
 indent_size = 2
