@@ -66,16 +66,10 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-
-    - name: Cache venv
-      id: cache-venv
-      uses: actions/cache@v4
-      with:
-        path: ~/venv/
-        key: ${{ runner.os }}-venv-py${{ matrix.python-version }}-${{ hashFiles(env.REQUIREMENTS_FILE) }}
+        cache: 'pip'
+        cache-dependency-path: 'extra/requirements/*.txt'
 
     - name: Build virtualenv
-      if: steps.cache-venv.outputs.cache-hit != 'true'
       run: |
         python -m venv ~/venv
         . ~/venv/bin/activate
