@@ -53,7 +53,7 @@
     </div>
     <br>
     <div>
-      {%- trans moderators='//wiki.{{ BASE_DOMAIN_NAME }}/ubuntuusers/Moderatoren' -%}
+      {%- trans moderators=href('wiki', 'ubuntuusers/Moderatoren') -%}
         If you received a spam message, please forward it to a <a href="{{ moderators }}">moderator</a>.
       {%- endtrans -%}
     </div>
