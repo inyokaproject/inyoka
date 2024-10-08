@@ -6,7 +6,6 @@ build/
 
 *_settings.py
 *.py[co]
-inyoka.xapdb/
 inyoka/media/
 inyoka/static-collected/
 *.db
