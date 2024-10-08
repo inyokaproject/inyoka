@@ -4,7 +4,7 @@ Inyoka
 ======
 
 **If possible, please read the**
-`pretty version (select the newest build, download the artifact 'Inyoka_Documentation') <https://github.com/inyokaproject/inyoka/actions?query=branch%3Astaging>`_.
+`pretty version at doc.inyokaproject.org <https://doc.inyokaproject.org>`_.
 
 
 The Inyoka portal system is divided into multiple modules to which we
