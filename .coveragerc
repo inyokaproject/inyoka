@@ -1,4 +1,0 @@
-[run]
-branch = True
-source = inyoka/
-omit = inyoka/*/migrations/*
