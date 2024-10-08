@@ -66,6 +66,7 @@ optional-dependencies.dev = [
   "django-upgrade",
   "freezegun",
   "responses",
+  "myst-parser[linkify]", # markdown for sphinx
   "selenium",
   "sphinx",
   "sphinx-rtd-theme",
