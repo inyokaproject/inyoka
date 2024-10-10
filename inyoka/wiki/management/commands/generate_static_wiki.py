@@ -167,7 +167,7 @@ class Command(BaseCommand):
             return ""
 
         rel_path = url_unquote(rel_path)
-        rel_path = sub(r'\?v=v[\d\.]*', '', rel_path)
+        rel_path = sub(r'\?v=[\d\.]*', '', rel_path)
         if rel_path:
             abs_path = path.join(base, rel_path)
             hash_code = sha1(force_str(rel_path).encode('utf-8')).hexdigest()
