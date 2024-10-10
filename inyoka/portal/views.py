@@ -17,7 +17,11 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
-from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetView
+from django.contrib.auth.views import (
+    PasswordChangeView,
+    PasswordResetConfirmView,
+    PasswordResetView,
+)
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -42,7 +46,6 @@ from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (
     NOTIFICATION_CHOICES,
-    ChangePasswordForm,
     ConfigurationForm,
     CreateUserForm,
     DeactivateUserForm,
@@ -600,33 +603,11 @@ def usercp_settings(request):
     }
 
 
-@login_required
-@templated('portal/usercp/change_password.html')
-def usercp_password(request):
+class InyokaPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
     """User control panel view for changing the password."""
-    if request.method == 'POST':
-        form = ChangePasswordForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            user = request.user
-            if not user.check_password(data['old_password']):
-                form.errors['old_password'] = ErrorList(
-                    [_('The entered password did not match your old password.')])
-        if form.is_valid():
-            user.set_password(data['new_password'])
-            user.save()
-            messages.success(request, _('Your password was changed successfully.'))
-            auth.update_session_auth_hash(request, user)
-            return HttpResponseRedirect(href('portal', 'usercp', 'password'))
-        else:
-            generic.trigger_fix_errors_message(request)
-    else:
-        form = ChangePasswordForm()
-
-    return {
-        'form': form,
-        'user': request.user,
-    }
+    success_url = href('portal', 'usercp')
+    success_message = _('Your password was changed successfully.')
+    template_name = 'portal/usercp/change_password.html'
 
 
 class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):

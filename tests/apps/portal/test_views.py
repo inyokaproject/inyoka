@@ -577,6 +577,37 @@ class TestRegister(TestCase):
                          ['Please do not enter an email address as username.'])
 
 
+class TestPasswordChangeView(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+
+        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+        self.client.login(username='user', password='user')
+
+    def test_invalid__new_password_does_not_match_confirm(self):
+        data = {'old_password': 'PASS123', 'new_password1': 'PASS456',
+                'new_password2': 'XYZ'}
+        response = self.client.post('/usercp/password/', data=data)
+        self.assertIn(
+            "The two password fields didn’t match.",
+            response.content.decode('utf-8'),
+        )
+
+    def test_success_url(self):
+        data = {"old_password": "user", "new_password1": "new", "new_password2": "new"}
+        response = self.client.post('/usercp/password/', data=data, follow=True)
+
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/usercp/')
+        self.assertIn(
+            'Your password was changed successfully.',
+            response.content.decode('utf-8'),
+        )
+
+
 class TestPrivMsgViews(TestCase):
 
     client_class = InyokaClient

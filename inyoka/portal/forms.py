@@ -238,17 +238,6 @@ class LostPasswordForm(auth_forms.PasswordResetForm):
         )
 
 
-class ChangePasswordForm(forms.Form):
-    """Simple form for changing the password."""
-    old_password = forms.CharField(label=gettext_lazy('Old password'),
-                                   widget=forms.PasswordInput)
-    new_password = forms.CharField(label=gettext_lazy('New password'),
-                                   widget=forms.PasswordInput)
-    new_password_confirm = forms.CharField(
-        label=gettext_lazy('Confirm new password'),
-        widget=forms.PasswordInput)
-
-
 class UserCPSettingsForm(forms.Form):
     """
     Form used for the user control panel – dialog.
