@@ -8,6 +8,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 #}
+
 {#
     render_form
     ===========
@@ -87,23 +88,6 @@
   {%- endfor -%}
 {% endmacro %}
 
-
-{# Pagination macro for mobile #}
-{% macro render_pagination_mobile(pagination, threshold=2) %}
-  {%- if pagination.first -%}
-    <a href="{{ pagination.first }}" class="prev first">«</a>
-  {%- endif -%}
-  {%- if pagination.prev -%}
-    <a href="{{ pagination.prev }}" class="prev">« {% trans %}Previous{% endtrans %}</a>
-  {%- endif -%}
-  <span class="active">{% trans %}Page{% endtrans %} {{ pagination.page }} / {{ pagination.pages }}</span>
-  {%- if pagination.next -%}
-    <a href="{{ pagination.next }}" class="next">{% trans %}Next{% endtrans %} »</a>
-  {%- endif -%}
-  {%- if pagination.last %}
-    <a href="{{ pagination.last }}" class="next last">»</a>
-  {%- endif -%}
-{% endmacro %}
 
 {% macro add_user_avatar(user, css_classes='avatar') %}
   <img class="{{ css_classes }}"
