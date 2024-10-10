@@ -6,7 +6,7 @@ on: [push, pull_request]
 jobs:
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       DEFAULT_BRANCH: 'refs/heads/staging'
       REQUIREMENTS_FILE: extra/requirements/linux-py${{ matrix.python-version }}-development.txt
@@ -98,7 +98,7 @@ jobs:
     - name: Start postgres
       if: ${{ matrix.database == 'postgresql' }}
       run: |
-        cat << '__EOF__' | sudo tee /etc/postgresql/14/main/pg_hba.conf > /dev/null
+        cat << '__EOF__' | sudo tee /etc/postgresql/16/main/pg_hba.conf > /dev/null
         # TYPE  DATABASE        USER            ADDRESS                 METHOD
         # "local" is for Unix domain socket connections only
         local   all             all                                     trust
