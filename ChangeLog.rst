@@ -46,6 +46,7 @@ Deployment notes
 * Control characters are stripped from all HTTP-POST parameters
 * Documentation: Now possible to use Markdown
 * Documentation is now published at https://doc.inyokaproject.org/
+* Use Django's view and form for change password
 
 🗑 Deprecations
 --------------
