@@ -721,7 +721,7 @@ class Parser:
 
     def parse_free_link(self, stream):
         """
-        Parses an free link.
+        Parses a free link.
 
         Returns a `Link` node.
         """
@@ -730,7 +730,7 @@ class Parser:
             urlsplit(target)
         except ValueError:
             return nodes.Text(target)
-        return nodes.Link(target, shorten=True)
+        return nodes.Link(target)
 
     def parse_ruler(self, stream):
         """

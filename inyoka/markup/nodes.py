@@ -571,20 +571,12 @@ class Link(Element):
         id=None,
         style=None,
         class_=None,
-        shorten=False,
     ):
         if not children:
-            if shorten and len(url) > 50:
-                children = [
-                    Span([Text(url[:36])], class_='longlink_show'),
-                    Span([Text(url[36:-14])], class_='longlink_collapse'),
-                    Span([Text(url[-14:])]),
-                ]
-            else:
-                text = url
-                if text.startswith('mailto:'):
-                    text = text[7:]
-                children = [Text(text)]
+            text = url
+            if text.startswith('mailto:'):
+                text = text[7:]
+            children = [Text(text)]
             if title is None:
                 title = url
         Element.__init__(self, children, id, style, class_)

@@ -471,19 +471,15 @@ Tablet,167759,1843644,9.1%,8.63
             </div>
             </div>''')
 
-    def test_long_link_splitted(self):
+    def test_long_link(self):
         html = render(
             'https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/')
         self.assertHTMLEqual(html, '''
-                <a class="external" href="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/" rel="nofollow" title="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/">
-                <span class="longlink_show">
-                https://wiki.ubuntuusers.de/Ablage_%
-                </span><span class="longlink_collapse">
-                28Speicherung_im_Forum_-No_Past
-                </span><span>
-                e_Service-%29/
-                </span>
-                </a>''')
+        <a class="external" href="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/"
+           rel="nofollow"
+           title="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/">
+        https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/
+        </a>''')
 
     def test_interwiki_link(self):
         html = render("[attachment:a:]")
