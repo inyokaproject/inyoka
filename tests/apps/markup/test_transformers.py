@@ -61,7 +61,6 @@ class TestTransformers(unittest.TestCase):
 
         self.assertEqual(tree, nodes.Document(
             children=[nodes.Headline(children=[nodes.Text(text='a')], class_=None, id='a', level=1, style=None),
-                      nodes.Paragraph(children=[nodes.Text(text='\n')], class_=None, id=None, style=None),
                       nodes.Headline(children=[nodes.Text(text='B')], class_=None, id='B', level=2, style=None),
                       nodes.Paragraph(children=[nodes.Text(text='\ntext')], class_=None, id=None, style=None)]))
 

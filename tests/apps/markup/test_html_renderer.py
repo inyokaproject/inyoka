@@ -209,7 +209,6 @@ Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/%3C/
 6
 
 6 "4A6 ) 6 96366B,6,[/mark]''')
-        print(html)
         self.assertHTMLEqual(
             html,
             "<mark> 6 @$0 1  91934 35 62 162 6 6 &quot;4A6 ) 6 96366B,6,</mark>",
@@ -595,8 +594,8 @@ text'''
     def test_heading_with_default_transformers(self):
         html = render('''= a =\n\n== B ==\n\ntext''', transformers=DEFAULT_TRANSFORMERS)
         self.assertHTMLEqual(
-            html, '''<section class="section_1"><h2 id="a">a<a href="#a" class="headerlink">¶</a></h2><p>
-</p><section class="section_2"><h3 id="B">B<a href="#B" class="headerlink">¶</a></h3><p>
+            html, '''<section class="section_1"><h2 id="a">a<a href="#a" class="headerlink">¶</a></h2>
+            <section class="section_2"><h3 id="B">B<a href="#B" class="headerlink">¶</a></h3><p>
 text</p></section></section>'''
         )
 
@@ -637,6 +636,49 @@ text</p></section></section>'''
         code = node.compile('html')
         html = render(code, RenderContext())
         self.assertHTMLEqual(html, '<p>Hello World!</p><p><em>foo bar spam</em></p>')
+
+    def test_bigger_excerpt_with_default_transformers(self):
+        self.maxDiff = None
+        html = render('''Word
+
+||a||b||
+
+{{{ a }}}
+
+= head =
+
+para
+
+ * 1
+ * 2
+
+= head =
+
+ * 3
+ * 4
+
+ * 5
+ * 6
+
+= head =
+== subhead ==
+
+word ''', transformers=DEFAULT_TRANSFORMERS)
+        self.assertHTMLEqual(
+            html, '''
+<p>Word</p>
+<table><tr><td>a</td><td>b</td></tr></table>
+<pre class="notranslate"> a </pre>
+<section class="section_1"><h2 id="head">head<a href="#head" class="headerlink">¶</a></h2>
+<p>para</p>
+<ul><li><p>1</p></li><li><p>2</p></li></ul>
+</section><section class="section_1"><h2 id="head-2">head<a href="#head-2" class="headerlink">¶</a></h2>
+<ul><li><p>3</p></li><li><p>4</p></li></ul>
+<ul><li><p>5</p></li><li><p>6</p></li></ul></section>
+<section class="section_1"><h2 id="head-3">head<a href="#head-3" class="headerlink">¶</a></h2>
+<section class="section_2"><h3 id="subhead">subhead<a href="#subhead" class="headerlink">¶</a></h3>
+<p>word </p></section></section>'''
+        )
 
 
 class TestTemplateHtmlRenderer(TestCase):
