@@ -202,6 +202,19 @@ Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/%3C/
             """<pre class="notranslate">start<mark>TEXT</mark>code</pre>""",
         )
 
+    def test_mark_control_characters(self):
+        # excerpt from https://forum.ubuntuusers.de/post/6601232/
+        html = render('''[mark] 6 @$0 1  91934 35 62 162
+
+6
+
+6 "4A6 ) 6 96366B,6,[/mark]''')
+        print(html)
+        self.assertHTMLEqual(
+            html,
+            "<mark> 6 @$0 1  91934 35 62 162 6 6 &quot;4A6 ) 6 96366B,6,</mark>",
+        )
+
     def test_ruler(self):
         html = render('------')
         self.assertHTMLEqual(html, '<hr>')
@@ -372,6 +385,47 @@ sed -i 's/root/arch/' $HOME/.bash_profile
         </pre></div>
         </td></tr></table></div></div>""",
         )
+
+    def test_control_characters_stripped_in_code(self):
+        html = render('{{{ \x00\x07 t }}}')
+        self.maxDiff = None
+        self.assertHTMLEqual(
+            html,
+            '<pre class="notranslate">t</pre>'
+        )
+
+        html = render('''{{{#!code bash
+                       \x00\x07
+                       foo
+                      }}}''')
+        self.assertHTMLEqual(
+            html,
+            '''<div class="code"><div class="notranslate syntax"><table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><span class="w">                       </span>
+<span class="w">                       </span>foo
+<span class="w">                      </span>
+</pre></div></td></tr></table></div>
+</div>''')
+
+        # excerpt from https://forum.ubuntuusers.de/post/1828238/
+        html = render('''{{{#!code html
+(II) fglrx(0):  H361C171WU1
+(II) fglrx(0):  2AIl¹ÿ
+(II) fglrx(0): EDID (in hex):
+        }}}''')
+        self.assertHTMLEqual(html, '''<div class="code"><div class="notranslate syntax"><table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span>(II) fglrx(0):  H361C171WU1
+(II) fglrx(0):
+2AIl¹ÿ
+(II) fglrx(0): EDID (in hex):
+
+</pre></div></td></tr></table></div>
+</div>
+        ''')
 
     def test_csv_to_table(self):
         html = render("""{{{#!csv
