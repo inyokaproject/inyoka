@@ -34,7 +34,7 @@ class Transformer:
     def transform(self, tree):
         """
         This is passed a tree that should be processed.  A class can modify
-        a tree in place, the return value has to be the tree then.  Otherwise
+        a tree in place, the return value has to be the tree then.  Otherwise,
         it's safe to return a new tree.
         """
         return tree
@@ -105,7 +105,7 @@ class AutomaticParagraphs(Transformer):
                 parent.children.append(paragraph)
             else:
                 for node in paragraph:
-                    if not node.is_text_node or node.text:
+                    if (not node.is_text_node or node.text) and not node.text == '\n':
                         parent.children.append(nodes.Paragraph(paragraph))
                         break
 
@@ -219,7 +219,7 @@ class KeyHandler(Transformer):
 
 class FootnoteSupport(Transformer):
     """
-    Looks for footnote nodes, gives them an unique id and moves the
+    Looks for footnote nodes, gives them a unique id and moves the
     text to the bottom into a list.  Without this translator footnotes
     are just <small>ed and don't have an id.
     """

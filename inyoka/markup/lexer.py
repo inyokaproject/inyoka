@@ -94,9 +94,10 @@ _url_pattern = (
     r'(?:mailto|telnet|s?news|sips?|skype|apt):)'
 )
 
+_control_characters = r'[\x00-\x08\x0B-\x0C\x0E-\x1F\x80-\x9F]'
+
 rules = {
     'everything': ruleset(
-        rule(r'[\x00-\x08\x0B-\x0C\x0E-\x1F]', None),  # ignore control character
         include('block'),
         include('inline'),
         include('links')
@@ -107,6 +108,7 @@ rules = {
     ),
     'block': ruleset(
         rule('(?m)^##.*?(\n|$)', None),
+        rule(_control_characters, None),  # ignore control character
         rule(r'(?m)^#\s*(.*?)\s*:\s*', bygroups('metadata_key'),
              enter='metadata'),
         rule(r'(?m)^={1,5}\s*', enter='headline'),
@@ -121,6 +123,7 @@ rules = {
     ),
     'inline': ruleset(
         rule('(?s)<!--.*?-->', None),
+        rule(_control_characters, None),  # ignore control character
         rule("'''", enter='strong'),
         rule("''", enter='emphasized'),
         rule('``', enter='escaped_code'),
@@ -286,6 +289,7 @@ rules = {
         include('function_call')
     ),
     'parser_data': ruleset(
+        rule(_control_characters, None),  # ignore control character
         rule(r'\}\}\}', leave=1)
     ),
     'pre_data': ruleset(

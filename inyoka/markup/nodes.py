@@ -22,7 +22,7 @@ from urllib.parse import quote_plus, urlparse, urlunparse
 
 from django.apps import apps
 from django.conf import settings
-from django.utils.html import escape, smart_urlquote
+from django.utils.html import escape, format_html, smart_urlquote
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
@@ -571,20 +571,12 @@ class Link(Element):
         id=None,
         style=None,
         class_=None,
-        shorten=False,
     ):
         if not children:
-            if shorten and len(url) > 50:
-                children = [
-                    Span([Text(url[:36])], class_='longlink_show'),
-                    Span([Text(url[36:-14])], class_='longlink_collapse'),
-                    Span([Text(url[-14:])]),
-                ]
-            else:
-                text = url
-                if text.startswith('mailto:'):
-                    text = text[7:]
-                children = [Text(text)]
+            text = url
+            if text.startswith('mailto:'):
+                text = text[7:]
+            children = [Text(text)]
             if title is None:
                 title = url
         Element.__init__(self, children, id, style, class_)
@@ -764,11 +756,14 @@ class Edited(Element):
         self.username = username
 
     def prepare_html(self):
-        yield '<div class="%s">' % self.css_class
-        yield (
-            '<p><strong>%s <a class="crosslink user" href="%s">'
-            '%s</a>:</strong></p> '
-            % (self.msg, href('portal', 'user', self.username), self.username)
+        yield format_html(
+            '<div class="{}">'
+            '<p><strong>{} <a class="crosslink user" href="{}">'
+            '{}</a>:</strong></p> ',
+            self.css_class,
+            self.msg,
+            href('portal', 'user', self.username),
+            self.username
         )
         yield from Element.prepare_html(self)
         yield '</div>'
@@ -984,15 +979,12 @@ class Color(Element):
     of backwards compatibility (this time to phpBB).
     """
 
-    allowed_in_signatures = True
-
     def __init__(self, value, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
         self.value = value
 
     def prepare_html(self):
-        style = self.style and self.style + '; ' or ''
-        style += 'color: %s' % self.value
+        style = 'color: %s' % self.value
         yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</span>'
@@ -1009,8 +1001,7 @@ class Size(Element):
         self.size = size
 
     def prepare_html(self):
-        style = self.style and self.style + '; ' or ''
-        style += 'font-size: %.2f%%' % self.size
+        style = 'font-size: %.2f%%' % self.size
         yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
         yield '</span>'
@@ -1022,21 +1013,17 @@ class Font(Element):
     because of backwards compatibility.
     """
 
-    allowed_in_signatures = True
-
-    def __init__(self, faces, children=None, id=None, style=None, class_=None):
+    def __init__(self, face=None, children=None, id=None, style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
-        self.faces = faces
+        self.face = face
 
     def prepare_html(self):
-        style = self.style and self.style + '; ' or ''
-        style += 'font-family: %s' % ', '.join(
-            x in ('serif', 'sans-serif', 'fantasy') and x or "'%s'" % x
-            for x in self.faces
-        )
-        yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
+        if self.face:
+            style = 'font-family: %s' % self.face
+            yield build_html_tag('span', id=self.id, style=style, class_=self.class_)
         yield from Element.prepare_html(self)
-        yield '</span>'
+        if self.face:
+            yield '</span>'
 
 
 class DefinitionList(Element):

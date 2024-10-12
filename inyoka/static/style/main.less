@@ -557,12 +557,7 @@ span.highlight {
 }
 
 a {
-  .longlink_collapse {
-    display: none;
-  }
-  .longlink_show::after {
-    content: "…";
-  }
+  .break-word()
 }
 div.code, pre {
   overflow: auto;
@@ -936,7 +931,7 @@ form.search {
     flex-wrap: wrap;
   }
   > ul > li {
-     /* top and bottom padding on each li → if they wrap, there's spacing between each other */
+    /* top and bottom padding on each li → if they wrap, there's spacing between each other */
     padding: 1em 0;
   }
   a {

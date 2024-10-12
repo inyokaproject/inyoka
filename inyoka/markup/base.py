@@ -558,12 +558,17 @@ class Parser:
         Returns a `Font` node.
         """
         stream.expect('font_begin')
-        face = stream.expect('font_face').value.strip()
+        face = stream.expect('font_face').value.strip().lower()
+        allowed_font_faces = ('serif', 'sans-serif', 'arial', 'courier')
+        if face not in allowed_font_faces:
+            face = None
+
         children = []
         while stream.current.type != 'font_end':
             children.append(self.parse_node(stream))
         stream.expect('font_end')
-        return nodes.Font([face], children)
+
+        return nodes.Font(face, children)
 
     def parse_mod(self, stream):
         """
@@ -716,7 +721,7 @@ class Parser:
 
     def parse_free_link(self, stream):
         """
-        Parses an free link.
+        Parses a free link.
 
         Returns a `Link` node.
         """
@@ -725,7 +730,7 @@ class Parser:
             urlsplit(target)
         except ValueError:
             return nodes.Text(target)
-        return nodes.Link(target, shorten=True)
+        return nodes.Link(target)
 
     def parse_ruler(self, stream):
         """

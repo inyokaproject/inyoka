@@ -14,19 +14,19 @@ from django.conf import settings
 from django.test import override_settings
 
 from inyoka.markup.base import Parser, RenderContext
-from inyoka.markup.transformers import SmileyInjector
+from inyoka.markup.transformers import DEFAULT_TRANSFORMERS, SmileyInjector
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
 
 
-def render(source, transformers=None):
+def render(source, transformers=None, application=None):
     """Parse source and render it to html."""
     if not transformers:
         transformers = []
     tree = Parser(source, transformers).parse()
-    html = tree.render(RenderContext(), 'html')
+    html = tree.render(RenderContext(application=application), 'html')
     return html
 
 
@@ -77,6 +77,25 @@ class TestHtmlRenderer(TestCase):
         html = render('~+(TEXT)+~')
         self.assertHTMLEqual(html, '<big>TEXT</big>')
 
+    def test_font_and_size(self):
+        html = render('[size=2][font=serif]TEXT[/font][/size]')
+        self.assertHTMLEqual(html, '<span style="font-size: 14.00%"><span style="font-family: serif">TEXT</span></span>')
+
+    def test_font_and_font(self):
+        html = render('[font=sans-serif][font=serif]TEXT[/font]')
+        self.assertHTMLEqual(html, '<span style="font-family: sans-serif"><span style="font-family: serif">TEXT</span></span>')
+
+    def test_two_font(self):
+        html = render('[font=sans-serif,serif]TEXT[/font]')
+        self.assertHTMLEqual(html, 'TEXT')
+
+    def test_font_case(self):
+        html = render('[font=Arial]TEXT[/font]')
+        self.assertHTMLEqual(html, '<span style="font-family: arial">TEXT</span>')
+
+        html = render('[font=arial]TEXT[/font]')
+        self.assertHTMLEqual(html, '<span style="font-family: arial">TEXT</span>')
+
     def test_size(self):
         html = render('[size=2]TEXT[/size]')
         self.assertHTMLEqual(html, '<span style="font-size: 14.00%">TEXT</span>')
@@ -85,18 +104,40 @@ class TestHtmlRenderer(TestCase):
         html = render('[font=serif]TEXT[/font]')
         self.assertHTMLEqual(html, '<span style="font-family: serif">TEXT</span>')
 
+    def test_font_not_allowed(self):
         html = render('[font=Ubuntu]TEXT[/font]')
-        self.assertHTMLEqual(
-            html, """<span style="font-family: 'Ubuntu'">TEXT</span>"""
-        )
+        self.assertHTMLEqual(html, """TEXT""")
 
     def test_code(self):
         html = render('`TEXT`')
         self.assertHTMLEqual(html, '<code class="notranslate">TEXT</code>')
 
+    def test_code__with_backtick(self):
+        html = render('``TE`XT``')
+        self.assertHTMLEqual(html, '<code class="notranslate">TE`XT</code>')
+
     def test_note(self):
         html = render('a  ((NOTE)) ')
         self.assertHTMLEqual(html, 'a<small class="note">NOTE</small>')
+
+    def test_footnote_with_default_transformer(self):
+        html = render('a  ((NOTE)) ', transformers=DEFAULT_TRANSFORMERS)
+        self.assertHTMLEqual(html, '''<p>
+        a<a class="footnote" href="#fn-1" id="bfn-1">
+        <span class="paren">
+        [
+        </span>1<span class="paren">
+        ]
+        </span>
+        </a>
+        </p><ul class="footnotes">
+        <li>
+        <a class="crosslink" href="#bfn-1" id="fn-1">
+        1
+        </a>: NOTE
+        </li>
+        </ul>
+        ''')
 
     def test_mod_box(self):
         html = render('[mod=NAME]TEXT[/mod]')
@@ -107,6 +148,24 @@ class TestHtmlRenderer(TestCase):
 </p>TEXT</div>""",
         )
 
+    def test_mod_box_escaped(self):
+        html = render('[mod=</a><span>BAR BAZ</span><a href="foo">]TEXT[/mod]')
+        self.maxDiff = None
+
+        self.assertHTMLEqual(
+            html,
+            """<div class="moderated">
+<p>
+<strong>
+Moderated by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/%3C/a%3E%3Cspan%3EBAR%20BAZ%3C/span%3E%3Ca%20href%3D%22foo%22%3E/">
+&lt;/a&gt;&lt;span&gt;BAR BAZ&lt;/span&gt;&lt;a href=&quot;foo&quot;&gt;
+</a>:
+</strong>
+</p>TEXT
+</div>"""
+        )
+
+
     def test_edit_box(self):
         html = render('[edit=NAME]TEXT[/edit]')
         self.assertHTMLEqual(
@@ -115,6 +174,22 @@ class TestHtmlRenderer(TestCase):
 <p><strong>Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/NAME/">NAME</a>:</strong>
 </p>TEXT</div>""",
         )
+
+    def test_edit_box_escaped(self):
+        html = render('''[edit=</a><script>console.log('hi')</script><a href="foo">]TEXT[/edit]''')
+        self.assertHTMLEqual(
+            html,
+            '''<div class="edited">
+<p>
+<strong>
+Edited by<a class="crosslink user" href="http://ubuntuusers.local:8080/user/%3C/a%3E%3Cscript%3Econsole.log%28%27hi%27%29%3C/script%3E%3Ca%20href%3D%22foo%22%3E/">
+&lt;/a&gt;&lt;script&gt;console.log(&#x27;hi&#x27;)&lt;/script&gt;&lt;a href=&quot;foo&quot;&gt;
+</a>:
+</strong>
+</p>TEXT
+</div>'''
+        )
+
 
     def test_mark(self):
         html = render('[mark]TEXT[/mark]')
@@ -125,6 +200,18 @@ class TestHtmlRenderer(TestCase):
         self.assertHTMLEqual(
             html,
             """<pre class="notranslate">start<mark>TEXT</mark>code</pre>""",
+        )
+
+    def test_mark_control_characters(self):
+        # excerpt from https://forum.ubuntuusers.de/post/6601232/
+        html = render('''[mark] 6 @$0 1  91934 35 62 162
+
+6
+
+6 "4A6 ) 6 96366B,6,[/mark]''')
+        self.assertHTMLEqual(
+            html,
+            "<mark> 6 @$0 1  91934 35 62 162 6 6 &quot;4A6 ) 6 96366B,6,</mark>",
         )
 
     def test_ruler(self):
@@ -155,6 +242,17 @@ class TestHtmlRenderer(TestCase):
         html = render('[[Anchor(NAME)]]')
         self.assertHTMLEqual(
             html, '<a class="anchor crosslink" href="#NAME" id="NAME">⚓︎</a>'
+        )
+
+        html = render('[[Anchor(NA">"ME)]]')
+        self.assertHTMLEqual(
+            html, '<a class="anchor crosslink" href="#NA" id="NA">⚓︎</a>'
+        )
+
+        html = render('[[Anchor(NA">ME)]]')
+        self.assertHTMLEqual(
+            html,
+            """<a class="crosslink anchor" href='#NA"&gt;ME' id='NA"&gt;ME'>⚓︎</a>"""
         )
 
     def test_newline(self):
@@ -287,6 +385,47 @@ sed -i 's/root/arch/' $HOME/.bash_profile
         </td></tr></table></div></div>""",
         )
 
+    def test_control_characters_stripped_in_code(self):
+        html = render('{{{ \x00\x07 t }}}')
+        self.maxDiff = None
+        self.assertHTMLEqual(
+            html,
+            '<pre class="notranslate">t</pre>'
+        )
+
+        html = render('''{{{#!code bash
+                       \x00\x07
+                       foo
+                      }}}''')
+        self.assertHTMLEqual(
+            html,
+            '''<div class="code"><div class="notranslate syntax"><table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><span class="w">                       </span>
+<span class="w">                       </span>foo
+<span class="w">                      </span>
+</pre></div></td></tr></table></div>
+</div>''')
+
+        # excerpt from https://forum.ubuntuusers.de/post/1828238/
+        html = render('''{{{#!code html
+(II) fglrx(0):  H361C171WU1
+(II) fglrx(0):  2AIl¹ÿ
+(II) fglrx(0): EDID (in hex):
+        }}}''')
+        self.assertHTMLEqual(html, '''<div class="code"><div class="notranslate syntax"><table class="notranslate syntaxtable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span>(II) fglrx(0):  H361C171WU1
+(II) fglrx(0):
+2AIl¹ÿ
+(II) fglrx(0): EDID (in hex):
+
+</pre></div></td></tr></table></div>
+</div>
+        ''')
+
     def test_csv_to_table(self):
         html = render("""{{{#!csv
 Device,Clicks,Impressions,CTR,Position
@@ -303,6 +442,70 @@ Tablet,167759,1843644,9.1%,8.63
         <tr><td>Tablet</td><td>167759</td><td>1843644</td><td>9.1%</td><td>8.63</td></tr>
         </table>""",
         )
+
+    def test_table_alignment(self):
+        html = render("""||<(>a ||<:>b ||<)>c ||<^>d ||<v>e ||<: cellstyle="background-color:#ff0000;"> f ||""")
+        self.assertHTMLEqual(html,"""<table>
+            <tr>
+            <td style="text-align: left">
+            a
+            </td><td style="text-align: center">
+            b
+            </td><td style="text-align: right">
+            c
+            </td><td style="vertical-align: top">
+            d
+            </td><td style="vertical-align: bottom">
+            e
+            </td><td style="text-align: center; background-color: #ff0000">
+            f
+            </td>
+            </tr>
+            </table>""")
+
+    def test_box_alignment(self):
+        html = render("{{|<^>foo \n |}}")
+        self.assertHTMLEqual(html, '''<div style="text-align: top">
+            <div class="contents">
+            foo
+            </div>
+            </div>''')
+
+    def test_long_link(self):
+        html = render(
+            'https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/')
+        self.assertHTMLEqual(html, '''
+        <a class="external" href="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/"
+           rel="nofollow"
+           title="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/">
+        https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/
+        </a>''')
+
+    def test_interwiki_link(self):
+        html = render("[attachment:a:]")
+        self.assertHTMLEqual(html, '''
+        <a class="interwiki interwiki-attachment" href="http://wiki.ubuntuusers.local:8080/_attachment/?target=a">
+        a
+        </a>''')
+
+    def test_external_link(self):
+        html = render(
+            '[https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/]')
+        self.assertHTMLEqual(html, '''
+        <a class="external" href="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/" rel="nofollow" title="https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/">
+        https://wiki.ubuntuusers.de/Ablage_%28Speicherung_im_Forum_-No_Paste_Service-%29/
+        </a>''')
+
+    def test_javascript_link(self):
+        html = render("[javascript:alert('foo')]")
+        self.assertHTMLEqual(html, '[javascript:alert(&#x27;foo&#x27;)]')
+
+    def test_mailto_link(self):
+        html = render('[mailto:foo@bar.test]')
+        self.assertHTMLEqual(html, '''
+        <a class="crosslink" href="mailto:foo@bar.test" title="mailto:foo@bar.test">
+        foo@bar.test
+        </a>''')
 
     def test_invalid_parser(self):
         html = render('{{{#!not_existing_parser_1233456767867899789\ncONTENT}}}')
@@ -376,6 +579,26 @@ Tablet,167759,1843644,9.1%,8.63
         link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
         self.assertHTMLEqual(html, link)
 
+    def test_heading(self):
+        html = render('''= a =\n\n== B ==\n\ntext''')
+        self.assertHTMLEqual(
+            html, '''<h2 id="a">a<a href="#a" class="headerlink">¶</a></h2>
+<h3 id="B">B<a href="#B" class="headerlink">¶</a></h3>
+text'''
+        )
+
+    def test_heading_with_default_transformers(self):
+        html = render('''= a =\n\n== B ==\n\ntext''', transformers=DEFAULT_TRANSFORMERS)
+        self.assertHTMLEqual(
+            html, '''<section class="section_1"><h2 id="a">a<a href="#a" class="headerlink">¶</a></h2>
+            <section class="section_2"><h3 id="B">B<a href="#B" class="headerlink">¶</a></h3><p>
+text</p></section></section>'''
+        )
+
+    def test_bold_link__to_escape(self):
+        html = render("""'''<a href="foo"></a>'''""")
+        self.assertEqual(html, '<strong>&lt;a href=&quot;foo&quot;&gt;&lt;/a&gt;</strong>')
+
     def test_heading_contains_arrow(self):
         html = render_smilies('= => g =')
         self.assertHTMLEqual(
@@ -409,6 +632,49 @@ Tablet,167759,1843644,9.1%,8.63
         code = node.compile('html')
         html = render(code, RenderContext())
         self.assertHTMLEqual(html, '<p>Hello World!</p><p><em>foo bar spam</em></p>')
+
+    def test_bigger_excerpt_with_default_transformers(self):
+        self.maxDiff = None
+        html = render('''Word
+
+||a||b||
+
+{{{ a }}}
+
+= head =
+
+para
+
+ * 1
+ * 2
+
+= head =
+
+ * 3
+ * 4
+
+ * 5
+ * 6
+
+= head =
+== subhead ==
+
+word ''', transformers=DEFAULT_TRANSFORMERS)
+        self.assertHTMLEqual(
+            html, '''
+<p>Word</p>
+<table><tr><td>a</td><td>b</td></tr></table>
+<pre class="notranslate"> a </pre>
+<section class="section_1"><h2 id="head">head<a href="#head" class="headerlink">¶</a></h2>
+<p>para</p>
+<ul><li><p>1</p></li><li><p>2</p></li></ul>
+</section><section class="section_1"><h2 id="head-2">head<a href="#head-2" class="headerlink">¶</a></h2>
+<ul><li><p>3</p></li><li><p>4</p></li></ul>
+<ul><li><p>5</p></li><li><p>6</p></li></ul></section>
+<section class="section_1"><h2 id="head-3">head<a href="#head-3" class="headerlink">¶</a></h2>
+<section class="section_2"><h3 id="subhead">subhead<a href="#subhead" class="headerlink">¶</a></h3>
+<p>word </p></section></section>'''
+        )
 
 
 class TestTemplateHtmlRenderer(TestCase):

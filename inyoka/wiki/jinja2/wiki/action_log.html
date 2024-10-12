@@ -77,12 +77,12 @@
             </td>
             <td>{{ revision.id }}</td>
             <td class="actions">
-              <a href="{{ revision|url|e }}" class="view" title="{% trans %}View{% endtrans %}"><span>{% trans %}View{% endtrans %}</span></a>
+              <a href="{{ revision|url|e }}" class="view" title="{% trans %}View{% endtrans %}"><span>{% trans %}View{% endtrans %}</span></a>
               {%- if can.manage %}
               <a href="{{ page|url('revert', revision=revision.id) }}" class="revert"
                  title="{% trans %}Restore{% endtrans %}"><span>{% trans %}Restore{% endtrans %}</span></a>
               {%- endif %}
-              <a href=" {{ page|url('export', format='raw', revision=revision.id) }}" class="raw"
+              <a href=" {{ page|url('export', format='raw', revision=revision.id) }}" class="raw"
                  title="{% trans %}Raw{% endtrans %}"><span>{% trans %}Raw{% endtrans %}</span></a>
             </td>
           </tr>
@@ -94,7 +94,7 @@
     <br>
 
     <div class="pagination left_pagination">
-      {{ rendered_pagination }}
+      {{ rendered_pagination }}
     </div>
   </div>
 {% endblock %}
