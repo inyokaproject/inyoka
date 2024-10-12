@@ -48,7 +48,7 @@ class EditCommentForm(forms.Form):
     text = StrippedCharField(label=gettext_lazy('Text'), widget=forms.Textarea,
              help_text=gettext_lazy('To refer to another comment, you '
                'can write <code>@commentnumber</code>.<br />'
-               'Clicking on “reply” will automatically insert this code.'))
+               'Clicking on “reply” will automatically insert this code.'), strip=False)
 
 
 class EditArticleForm(forms.ModelForm):
