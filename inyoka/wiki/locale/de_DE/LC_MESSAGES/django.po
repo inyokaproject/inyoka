@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-04 17:58+0100\n"
-"PO-Revision-Date: 2019-01-25 20:45+0100\n"
+"POT-Creation-Date: 2024-10-13 15:19+0200\n"
+"PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,7 +16,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
+
+#, python-format
+msgid " Revision %(new_rev)s "
+msgstr "Revision %(new_rev)s"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -42,14 +46,33 @@ msgstr "%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. Zusamm
 msgid "%(user)s edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr "%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. Zusammenfassung: %(summary)s"
 
+#, python-format
+msgid "(last modified on %(date)s by %(author)s)"
+msgstr "(zuletzt bearbeitet am %(date)s von %(author)s)"
+
+#, python-format
+msgid "(last modified on %(date)s by <a href=\"%(link)s\">%(author)s</a>)"
+msgstr "(zuletzt bearbeitet am %(date)s von <a href=\"%(link)s\">%(author)s</a>)"
+
 msgid "-"
 msgstr "-"
+
+#, python-format
+msgid "<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by %(author)s."
+msgstr "<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von %(author)s erstellt."
+
+#, python-format
+msgid "<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by <a href=\"%(author_link)s\">%(author)s</a>."
+msgstr "<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von <a href=\"%(author_link)s\">%(author)s</a> erstellt."
 
 msgid "A page with this name already exists."
 msgstr "Eine andere Seite mit diesem Namen existiert bereits."
 
 msgid "A site name needs to be entered to create this page."
 msgstr "Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben wurde."
+
+msgid "Add attachment"
+msgstr "Anhang hinzufügen"
 
 msgid "An anonymous user"
 msgstr "Ein anonymer Benutzer"
@@ -61,38 +84,123 @@ msgstr "Es existiert bereits eine Seite oder ein Anhang mit diesem Namen."
 msgid "Another site named “%(title)s” already exists."
 msgstr "Eine andere Seite mit dem Namen „%(title)s“ existiert bereits."
 
+msgid "Are you sure you want to delete this page?"
+msgstr "Bist du sicher, dass du diese Seite löschen möchtest?"
+
+msgid "Are you sure you want to mark the page as “discontinued”?"
+msgstr "Bist du sicher, dass du den Artikel als „Verlassen“ markieren möchtest?"
+
+msgid "Are you sure you want to move the page into the wiki?"
+msgstr "Bist du sicher, dass du diese Seite in das Wiki verschieben möchtest?"
+
+msgid "Around the Wiki"
+msgstr "Rund ums Wiki"
+
+msgid "Article"
+msgstr "Artikel"
+
+msgid "Article Ideas"
+msgstr "Artikelideen"
+
+msgid "At this page the following tags have been assigned:"
+msgstr "Die folgenden Schlagworte wurden dem Artikel zugewiesen:"
+
+msgid "Attachment"
+msgstr "Anhang"
+
 msgid "Attachment edited successfully."
 msgstr "Der Dateianhang wurde erfolgreich bearbeitet."
 
 msgid "Attachment saved successfully."
 msgstr "Der Dateianhang wurde erfolgreich gespeichert."
 
+msgid "Attachment:"
+msgstr "Anhang:"
+
 msgid "Attachments within attachments are not allowed!"
 msgstr "Anhänge in Anhängen sind nicht erlaubt!"
+
+msgid "Backlinks"
+msgstr "Backlinks"
+
+msgid "But the article itself is not listed as an attachment, perhaps these pages are using the article mistakenly or an old revision was an attachment."
+msgstr "Aber der Artikel selbst ist nicht als Anhang aufgeführt; vielleicht verwenden diese Seiten den Artikel versehentlich oder eine alte Revision war ein Anhang."
+
+#, python-format
+msgid "But you can display <a href=\"%(link)s\">a list of changes</a> of this page and compare individual revisions."
+msgstr "Aber du kannst dir eine <a href=\"%(link)s\">Liste an Änderungen</a> dieser Seite anzeigen und einzelne Revisionen vergleichen."
+
+msgid "Cancel"
+msgstr "Abbrechen"
 
 msgid "Canceled."
 msgstr "Abgebrochen."
 
-msgid "Circular import"
-msgstr "Zirkulärer Import"
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Check if you have a typo in the URL."
+msgstr "Bitte überprüfe, ob du einen Tippfehler in der URL hast."
+
+msgid "Compare"
+msgstr "Vergleichen"
 
 msgid "Completion date"
 msgstr "Fertigstellungsdatum"
 
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "Create"
+msgstr "Erstellen"
+
+msgid "Create a Howto"
+msgstr "Howto anlegen"
+
+msgid "Create a wiki article"
+msgstr "Wikiartikel anlegen"
+
+msgid "Create page"
+msgstr "Seite erstellen"
+
 msgid "Created"
 msgstr "Erstellt"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Delete page"
+msgstr "Seite löschen"
 
 msgid "Description of attachment"
 msgstr "Beschreibung des Anhangs"
 
-msgid "Detected a circular include macro call"
-msgstr "Detected a circular include macro call"
+msgid "Description:"
+msgstr "Beschreibung"
+
+msgid "Difference"
+msgstr "Unterschied"
+
+msgid "Discussion"
+msgstr "Diskussion"
 
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
+msgid "Duplicate attachments on the target page will be overwritten!"
+msgstr "Doppelte Anhänge der Zielseite werden überschrieben!"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Edit attachment"
+msgstr "Anhang bearbeiten"
+
 msgid "Edit summary"
 msgstr "Änderungsnotiz"
+
+msgid "Edit summary:"
+msgstr "Änderungskommentar:"
 
 msgid "Edited by"
 msgstr "Bearbeitet von"
@@ -100,8 +208,20 @@ msgstr "Bearbeitet von"
 msgid "Editing of this page was canceled."
 msgstr "Bearbeiten der Seite abgebrochen."
 
+msgid "Existing attachments"
+msgstr "Bestehende Anhänge"
+
+msgid "Expandable Articles"
+msgstr "Ausbaufähige Artikel"
+
+msgid "Export"
+msgstr "Exportieren"
+
 msgid "Extensive (for beginners)"
 msgstr "Umfangreich (für Einsteiger)"
+
+msgid "FAQ"
+msgstr "FAQ"
 
 msgid "Feed contains revisions of the whole wiki"
 msgstr "Feed enthält Revisionen des gesamten Wikis"
@@ -110,17 +230,84 @@ msgstr "Feed enthält Revisionen des gesamten Wikis"
 msgid "Feed contains revisions of the wiki page “%(pagename)s”."
 msgstr "Feed enthält Revisionen der Wiki-Seite „%(pagename)s“."
 
+msgid "HTML"
+msgstr "HTML"
+
+msgid "However, you are missing the permissions to create this article."
+msgstr "Allerdings fehlen dir die Berechtigungen, um diesen Artikel zu erstellen."
+
 msgid "Howto"
 msgstr "Howto"
 
 msgid "I don't want a template"
 msgstr "Ich möchte keine Vorlage verwenden"
 
+msgid "If you rename this page, all revisions will be renamed. The old page will redirect to the new one."
+msgstr "Beim Umbenennen dieser Seite werden auch alle ihre Revisionen umbenannt. Unter der alten Seite wird dann eine Weiterleitung zum neuen Namen eingerichtet."
+
+msgid "Incorrect Articles"
+msgstr "Fehlerhafte Artikel"
+
+msgid "Index"
+msgstr "Index"
+
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
 
+msgid "Link"
+msgstr "Link"
+
+msgid "Link discussion"
+msgstr "Diskussion verlinken"
+
+msgid "List of new articles"
+msgstr "Liste neuer Artikel"
+
+msgid "Log"
+msgstr "Verlauf"
+
+msgid "Manage attachments"
+msgstr "Anhänge verwalten"
+
+msgid "Mark"
+msgstr "Verschieben"
+
+msgid "Mark as discontinued"
+msgstr "Als Verlassen markieren"
+
+msgid "Mark page as “under construction”"
+msgstr "Seite in die Baustelle verschieben"
+
+#, python-format
+msgid "Mark page “%(page)s” as “under construction”"
+msgstr "Verschiebe „%(page)s“ in die Baustelle"
+
+msgid "Metadata"
+msgstr "Metadaten"
+
+msgid "Missing Pages"
+msgstr "Fehlende Artikel"
+
+msgid "Missing article"
+msgstr "Fehlender Artikel"
+
+msgid "Move"
+msgstr "Verschieben"
+
+msgid "Move page back to the wiki"
+msgstr "Seite zurück ins Wiki verschieben"
+
+msgid "Move page to “discontinued”"
+msgstr "Seite nach „Baustelle/Verlassen/“ verschieben"
+
+msgid "New attachment:"
+msgstr "Neuer Anhang:"
+
 msgid "New page name"
 msgstr "Neuer Seitenname"
+
+msgid "New page name:"
+msgstr "Neuer Seitenname:"
 
 msgid "No page name given."
 msgstr "Kein Seitenname eingegeben."
@@ -134,25 +321,64 @@ msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 msgid "Normal (for experienced authors)"
 msgstr "Normal (für erfahrene Autoren)"
 
+msgid "Overview"
+msgstr "Übersicht"
+
+msgid "Overwrite existing attachments with same name:"
+msgstr "Anhang mit gleichem Namen überschreiben:"
+
 msgid "Overwrite existing file with same name"
 msgstr "Überschreibe Datei mit identischem Namen"
 
-msgid "Page not found"
-msgstr "Seite nicht gefunden"
+msgid "Page revisions"
+msgstr "Seitenrevisionen"
 
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr "Seiten mit Tag „%(name)s“"
 
+msgid "Participation"
+msgstr "Mitmachen"
+
 msgid "Please enter a name for this attachment."
 msgstr "Bitte gib einen Dateinamen für den Anhang an."
+
+msgid "Preview"
+msgstr "Vorschau"
+
+msgid "Random Pages"
+msgstr "Zufallsseiten"
+
+msgid "Raw"
+msgstr "Rohformat"
+
+msgid "Reason:"
+msgstr "Begründung:"
+
+msgid "Recent Changes"
+msgstr "Letzte Änderungen"
+
+msgid "Recent Changes are currently unavailable."
+msgstr "Letzte Änderungen sind aktuell noch nicht verfügbar."
+
+msgid "Recent changes"
+msgstr "Letzte Änderungen"
 
 #, python-format
 msgid "Redirected from “<a href=\"%(link)s\">%(title)s</a>”."
 msgstr "Von „<a href=\"%(link)s\">%(title)s</a>“ weitergeleitet."
 
+msgid "Rename"
+msgstr "Umbenennen"
+
+msgid "Rename page"
+msgstr "Seite umbenennen"
+
 msgid "Rename the file after upload"
 msgstr "Benennt die Datei nach dem Hochladen um"
+
+msgid "Rename to:"
+msgstr "Umbenennen zu:"
 
 #, python-format
 msgid "Renamed from %(old_name)s"
@@ -165,6 +391,9 @@ msgstr "Die Seite wurde erfolgreich umbenannt."
 msgid "Renamed to %(new_name)s"
 msgstr "Umbenannt nach %(new_name)s"
 
+msgid "Restore"
+msgstr "Wiederherstellen"
+
 msgid "Revert aborted."
 msgstr "Wiederherstellen abgebrochen."
 
@@ -175,8 +404,26 @@ msgstr "Revision %(id)d (%(title)s)"
 msgid "Revision is the latest one, revert aborted."
 msgstr "Keine Änderungen durchgeführt, da die Revision bereits die aktuelle ist."
 
+msgid "Revisions"
+msgstr "Revisionen"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Set redirect to new page"
+msgstr "Umleitung auf neue Seite setzen"
+
+msgid "Show backlinks"
+msgstr "Backlinks anzeigen"
+
+msgid "Sites under construction"
+msgstr "Baustellen"
+
 msgid "Somebody else edited the page while you were making your changes. We tried to merge the text automatically. Please confirm that everything is ok."
 msgstr "Während du die Seite geöffnet hattest, wurde sie von einem anderen Benutzer ebenfalls bearbeitet. Bitte kontrolliere, ob das Zusammenführen der Änderungen zufriedenstellend funktioniert hat"
+
+msgid "Subscribe"
+msgstr "Abonnieren"
 
 msgid "Successfully linked the discussion with the article."
 msgstr "Diskussion erfolgreich mit dem Artikel verknüpft."
@@ -184,8 +431,63 @@ msgstr "Diskussion erfolgreich mit dem Artikel verknüpft."
 msgid "Successfully unlinked the discussion from the article."
 msgstr "Diskussion erfolgreich vom Artikel gelöst."
 
+msgid "Tag Cloud"
+msgstr "Wortwolke"
+
+msgid "Tag List"
+msgstr "Tagliste"
+
+#, python-format
+msgid "The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was created by %(author)s."
+msgstr "Die <a href=\"%(rev_link)s\">aktuelle Revision</a> ist %(rev)s und wurde durch %(author)s erstellt."
+
+#, python-format
+msgid "The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was created by <a href=\"%(author_link)s\">%(author)s</a>."
+msgstr "Die <a href=\"%(rev_link)s\">aktuelle Revision</a> ist %(rev)s und wurde durch <a href=\"%(author_link)s\">%(author)s</a> erstellt."
+
+msgid "The article is already under construction, help improving and finishing it!"
+msgstr "Dieser Artikel existiert bereits in der Baustelle; hilf dabei ihn zu verbessern und fertigzustellen!"
+
+#, python-format
+msgid "The article “%(title)s” does not exist yet."
+msgstr "Der Artikel „%(title)s“ existiert noch nicht."
+
+#, python-format
+msgid "The article “%(title)s” was deleted. You can restore it or create a new one in the action menu."
+msgstr "Der Artikel „%(title)s” wurde gelöscht. Du kannst ihn wiederherstellen oder über das Aktionsmenü einen neuen erstellen."
+
+#, python-format
+msgid "The article “<a href=\"%(link)s\">%(article)s</a>” has currently %(count)s revision."
+msgid_plural "The article “<a href=\"%(link)s\">%(article)s</a>” has currently %(count)s revisions."
+msgstr[0] "Der Artikel “<a href=\"%(link)s\">%(article)s</a>“ hat eine Revision."
+msgstr[1] "Der Artikel „<a href=\"%(link)s\">%(article)s</a>“ hat %(count)s Revisionen."
+
 msgid "The article „{name}“ does not exist, you can try to create it now."
 msgstr "Der Artikel „{name}“ existiert nicht, du kannst versuchen ihn jetzt zu erstellen."
+
+msgid "The following list consists of 10 randomly selected wiki articles. <a href=\"/wiki/randompages\">Reload</a> to see more pages."
+msgstr "Die nachfolgende Liste besteht aus 10 zufällig ausgewählten Wiki-Artikeln. Um weitere Zufallsseiten zu sehen, einfach diese <a href=\"/wiki/randompages\">Seite neuladen</a>."
+
+msgid "The following pages are embedding this articles as attachment."
+msgstr "Die folgenden Seiten binden diesen Artikel als Anhang ein:"
+
+msgid "The following pages are referring this article:"
+msgstr "Die folgenden Seiten verweisen auf diesen Artikel:"
+
+#, python-format
+msgid "The following pages are referring to the article “%(title)s” by manual linking:"
+msgstr "Die folgenden Seiten beziehen sich auf den Artikel „%(title)s“ durch manuelle Verlinkung:"
+
+msgid "The following pages have similar names:"
+msgstr "Die folgenden Seiten haben einen ähnlichen Namen:"
+
+#, python-format
+msgid "The following table shows the difference of the article “<a href=\"%(article_link)s\">%(article)s</a>” between <a href=\"%(old_rev_link)s\">revision %(old_rev)s</a> (%(old_rev_note)s) and <a href=\"%(new_rev_link)s\">revision %(new_rev)s</a> (%(new_rev_note)s)."
+msgstr "Die folgende Tabelle zeigt die Änderungen im Artikel „<a href=\"%(article_link)s\">%(article)s</a>“ zwischen <a href=\"%(old_rev_link)s\">Revision %(old_rev)s</a> (%(old_rev_note)s) und <a href=\"%(new_rev_link)s\">Revision %(new_rev)s</a> (%(new_rev_note)s) auf."
+
+#, python-format
+msgid "The following wiki articles have been tagged with \"%(tag)s\":"
+msgstr "Die folgenden Wikiartikel haben den Tag \"%(tag)s\":"
 
 msgid "The given revision does not exist for this article, using last revision instead."
 msgstr "Die angegebene Revisionsnummer existiert nicht, verwende stattdessen die letzte Revision "
@@ -204,10 +506,6 @@ msgstr "Die Seite „<a href=\"{link}\">{name}</a>“ wurde erstellt."
 msgid "The page has been edited."
 msgstr "Die Seite wurde bearbeitet."
 
-#, python-format
-msgid "The page “%(name)s” was not found"
-msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
-
 msgid "The page “{name}” was changed"
 msgstr "Die Seite „{name}“ wurde geändert"
 
@@ -223,15 +521,86 @@ msgstr "Der Text enthält zu viele verschachtelte Elemente."
 msgid "The title of the article you want to create."
 msgstr "Der Titel der Seite, die du anlegen möchtest."
 
+msgid "The two revisions are identical."
+msgstr "Die beiden Revisionen sind identisch."
+
+msgid "There are no attachments yet for this site."
+msgstr "Es gibt noch keine Anhänge für diese Seite"
+
+msgid "There are no tags in the wiki, yet."
+msgstr "Es wurden bisher noch keine Wikiartikel mit Tags markiert."
+
+msgid "There are no wiki articles that could be shown, yet."
+msgstr "Es gibt noch keine Wikiartikel, die gezeigt werden könnten."
+
+msgid "There aren't any links to missing pages in the wiki. Congratulations!"
+msgstr "Es gibt keine verwaisten Links im Wiki. Glückwunsch!"
+
+#, python-format
+msgid "There is currently one attachment assigned to this page."
+msgid_plural "There are currently %(count)s attachments assigned to this page."
+msgstr[0] "Diese Seite hat aktuell einen Anhang."
+msgstr[1] "Diese Seite hat aktuell %(count)s Anhänge."
+
 #, python-format
 msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of conflicting attachments</a>,"
 msgstr "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: %(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a href=\\\"%(link)s\\\">Umbenennen und Löschung doppelter Anhänge erzwingen</a>."
 
+msgid "This article is an orphan and not referenced by any site."
+msgstr "Dieser Artikel ist verwaist und von keiner Seite referenziert."
+
+msgid "This attachment is an orphan and not referenced by any site."
+msgstr "Dieser Anhang ist verwaist und von keiner Seite referenziert."
+
 msgid "This page contains a redirect that leads to a redirect loop!"
 msgstr "Diese Seite enthält eine Weiterleitung die zu einer Endlosschleife führt."
 
+#, python-format
+msgid "To be always up to date you can read the <a href=\"%(feed_link)s\">atom feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>."
+msgstr "Um immer auf dem aktuellen Stand zu sein, kannst du den <a href=\"%(feed_link)s\">Atom Feed</a> lesen oder <a href=\"%(subscribe_link)s\">abonnieren</a>."
+
+msgid "To refer to an attachment you can either link to the corresponding wiki page or include it with the <code>[[Bild()]]</code> macro."
+msgstr "Um auf einen Anhang zu verweisen, kannst du entweder zu der entsprechenden Wikiseite verlinken oder diese mit dem <code>[[Bild()]]</code> Makro einbinden."
+
+msgid "URL of the topic:"
+msgstr "URL des Themas:"
+
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
+
+msgid "Unsubscribe"
+msgstr "Abbestellen"
+
+msgid "Untested Articles"
+msgstr "Ungetestete Artikel"
+
+msgid "Upload attachments"
+msgstr "Anhänge hochladen"
+
+msgid "Usage"
+msgstr "Benutzung"
+
+msgid "View"
+msgstr "Ansehen"
+
+msgid "Wiki"
+msgstr "Wiki"
+
+msgid "Wiki Reference"
+msgstr "Wiki-Referenz"
+
+msgid "Wiki Syntax"
+msgstr "Wiki-Syntax"
+
+msgid "Wiki articles can be tagged by key words. The following alphabetical tag list shows all of them. This is useful to find more articles to a specified topic, etc. There is also a <a href=\"/wiki/tagcloud\">tag cloud</a> overviewing the most used tags of the wiki."
+msgstr "Durch Tags kann man einem Wiki-Artikel Schlagworte hinzufügen. Dadurch kann man schnell einen Überblick gewinnen, was zu einem Stichwort bzw. Thema sonst noch interessant sein könnte. Auf dieser Seite werden alle Tags vom Wiki alphabetisch sortiert aufgelistet. Es gibt außerdem die <a href=\"/wiki/tagcloud\">Wortwolke</a>, welche einen Überblick über die meistgenutzten Tags gibt."
+
+msgid "Wiki articles can be tagged by key words. The following tag list overviews them. This is useful to find more articles to a specified topic, etc. There is also a complete <a href=\"/wiki/tags\">alphabetical list</a> of all tags in the wiki."
+msgstr "Durch Tags kann man einem Wiki-Artikel Schlagworte hinzufügen. Die nachfolgende Ansicht stellt eine Übersicht der verfügbaren Tags dar. Zusätzlich gibt es auch eine <a href=\"/wiki/tags\">alphabetische sortierte Liste</a> aller Tags."
+
+#, python-format
+msgid "Wiki articles tagged with \"%(tag)s\""
+msgstr "Wikiartikel mit dem Tag \"%(tag)s\""
 
 msgid "Wiki page"
 msgstr "Wikiseite"
@@ -239,14 +608,33 @@ msgstr "Wikiseite"
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
+#, python-format
+msgid "With this form you can create a new wiki article that covers f.e. the usage of a program. If you need support by a specific problem, open a new thread in the <a href=\"%(forum_link)s\">forum</a>."
+msgstr "Mit Hilfe der folgenden Maske kannst du einen neuen Wikiartikel (z.B. für ein Programm, zur Nutzung von Systemkomponenten etc.) anlegen. Falls du eine Supportanfrage hast, ist <a href=\"%(forum_link)s\">das Forum</a> der richtige Platz."
+
 msgid "You are already subscribed"
 msgstr "Du wirst bereits benachrichtigt"
 
 msgid "You are not permitted to make this change."
 msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
 
+#, python-format
+msgid "You are trying to compare two equal revision of the article “<a href=\"%(link)s\">%(article)s</a>”. For this reason no change is displayed."
+msgstr "Du vergleichst zwei identische Revisionen des Arikels „<a href=\"%(link)s\">%(article)s</a>. Daher werden keine Änderungen angezeigt."
+
 msgid "You are viewing an old revision of this wiki page."
 msgstr "Du betrachtest eine alte Revision dieser Wikiseite."
+
+#, python-format
+msgid "You can also <a href=\"%(link)s\">create</a> this article."
+msgstr "Du kannst diesen Artikel auch <a href=\"%(link)s\">erstellen</a>"
+
+#, python-format
+msgid "You can also download the changes as <a href=\"%(link_diff)s\">unified diff</a> or display a <a href=\"%(link_list)s\">list of the last changes</a> and compare individual revisions."
+msgstr "Du kannst dir die Änderungen als <a href=\"%(link_diff)s\">unified diff</a> herunterladen oder dir eine <a href=\"%(link_list)s\">Liste an Änderungen</a> anzeigen und einzelne Revisionen vergleichen."
+
+msgid "You can choose a topic as the discussion topic of this article."
+msgstr "Du kannst ein Thema als Diskussionsthema dieses Artikels wählen."
 
 msgid "You can not create a page with a reserved name."
 msgstr "Du kannst keine Seiten mit einem reservierten Namen anlegen."
@@ -269,6 +657,22 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite benachrichtigt."
 msgid "You won't be notified for changes on this page anymore"
 msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachrichtigt"
 
+msgid "create"
+msgstr "Erstellen"
+
+msgid "dead link"
+msgstr "Verwaister Link"
+
+msgid "found in"
+msgstr "Gefunden in"
+
+msgid "from"
+msgstr "von"
+
+msgid "pages"
+msgstr "Seiten"
+
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
+
