@@ -9,9 +9,15 @@
 """
 from django.conf import settings
 from django.urls import include, path, re_path
-from django.views.static import serve as view
+from django.views.static import serve
 
 from inyoka.utils.http import global_not_found, server_error
+
+def view(*args, **kwargs):
+    response = serve(*args, **kwargs)
+    if settings.DEBUG:
+        response['Access-Control-Allow-Origin'] = '*'
+    return response
 
 urlpatterns = [
     re_path(r'^(?P<path>.*)$', view, {'document_root': settings.STATIC_ROOT}),
