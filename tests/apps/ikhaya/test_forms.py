@@ -1,5 +1,5 @@
 """
-    tests.apps.ikhaya.test_views
+    tests.apps.ikhaya.test_forms
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test ikhaya forms.
