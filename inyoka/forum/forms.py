@@ -70,7 +70,7 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
     This form takes the additional keyword argument `is_first_post`.
     It's generally used together with `AddAttachmentForm`.
     """
-    text = StrippedCharField(widget=forms.Textarea)
+    text = StrippedCharField(widget=forms.Textarea, strip=False)
     # the following fields only appear if the post is the first post of the
     # topic.
     #: the user can select, whether the post's topic should be sticky or not.
@@ -119,7 +119,7 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
     """
     title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60, 'spellcheck': 'true'}),
                               max_length=100)
-    text = StrippedCharField(widget=forms.Textarea)
+    text = StrippedCharField(widget=forms.Textarea, strip=False)
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
     sticky = forms.BooleanField(required=False)

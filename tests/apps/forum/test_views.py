@@ -574,6 +574,25 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'newpost text',
         )
 
+    def test_newtopic__text_whitespace_not_stripped(self):
+        self.client.login(username='admin', password='admin')
+
+        text = ' * a \n * b\n'
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': text,
+        }
+
+        # Test send
+        self.post_request(f'/forum/{self.forum.slug}/newtopic/', postdata, 1, 1, submit=True)
+
+        # Check that the content is in the database
+        self.assertEqual(
+            Topic.objects.get(slug='newpost-title').last_post.text,
+            text,
+        )
+
     def test_newtopic_user(self):
         self.client.login(username='user', password='user')
         # Test preview
@@ -924,6 +943,26 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(
             Topic.objects.get(pk=topic.pk).last_post.text,
             'newpost text',
+        )
+
+    def test_new_post__text_whitespace_not_stripped(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text='first post', author=self.admin, topic=topic)
+
+        self.client.login(username='admin', password='admin')
+        text = ' * a \n * b\n'
+        postdata = {
+            'text': text,
+        }
+
+        # Test send
+        self.post_request(f'/topic/{topic.slug}/reply/', postdata, 1, 2, submit=True)
+
+        # Test that the data is in the database
+        topic.refresh_from_db()
+        self.assertEqual(
+            topic.last_post.text,
+            text,
         )
 
     def test_new_post_user(self):
