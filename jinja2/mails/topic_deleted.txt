@@ -1,0 +1,8 @@
+Hallo {{ username }},
+
+dein Thema „{{ topic_title }}“ wurde von {{ mod }} gelöscht.
+Du wirst nicht mehr über Veränderungen in diesem Thema benachrichtigt.
+{%- if reason %}
+
+Grund: {{ reason }}
+{%- endif %}

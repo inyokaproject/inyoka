@@ -1,0 +1,76 @@
+{#
+    portal/calendar_detail.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Show a single event, header etc. part
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% block html_head %}
+    {{ super() }}
+    <link rel="profile" href="http://microformats.org/profile/hcalendar">
+{% endblock %}
+{% set styles = ['calendar'] %}
+{% set month = event.date.month %}
+{% set year = event.date.year %}
+{% set BREADCRUMBS = [('Kalender', href('portal', 'calendar')),
+                      ('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month)),
+                      (event.name, event|url)] + BREADCRUMBS|d([]) %}
+
+{% block portal_content %}
+<h3>
+  {%- trans title=event.name|e %}Event “{{ title }}”{% endtrans -%}
+</h3>
+<table class="vevent admin_link_hover">
+  <tr><th>{% trans %}Date{% endtrans %}</th><td>
+    {%- if event.date != None %}
+      {{ _('from') }}
+      {% if event.time == None %}
+        {{ event.date|naturalday }}
+      {% else %}
+        {{ event.startdatetime|naturalday }}
+        {{ event.startdatetime|time }}
+      {% endif %}
+      {%- if event.enddate != None %}
+        {{ _('to') }}
+        {% if event.endtime == None %}
+          {{ event.enddate|naturalday }}
+        {% else %}
+          {{ event.enddatetime|naturalday }}
+          {{ event.enddatetime|time }}
+        {% endif %}
+      {% endif %}
+    {% else %}
+      –
+    {% endif %}
+  </td></tr>
+  {%- if event.location_town %}
+  <tr>
+    <th>{% trans %}Venue{% endtrans %}</th>
+    <td>
+      {% if event.location %}<span class="location">{{ event.location|e }} in {% endif %}{{ event.location_town|e }}</span>
+      {%- if event.location_lat and event.location_long %}
+        (<a href="{{ event.coordinates_url|e }}"><abbr class="geo" title="{{ event.simple_coordinates|e }}">{{ event.natural_coordinates|e }}</abbr></a>)
+      {%- endif %}
+    </td>
+  </tr>
+  {%- endif %}
+  <tr>
+    <th colspan="2">{% trans %}Details{% endtrans %}
+      {%- if USER.has_perm('portal.change_event') %}
+        <small class="admin_link">
+          (<a href="{{ event|url('edit') }}">{% trans %}edit{% endtrans %}</a>)
+        </small>
+      {% endif %}
+    </th>
+  </tr>
+  <tr><td colspan="2"><span class="description">{{ event.description_rendered or '–' }}</span></td></tr>
+</table>
+<span class="hcal-downloads extension-note">
+  <a href="{{ ical_link }}">{% trans %}Download iCal{% endtrans %}</a> |
+  <a href="{{ google_link }}">{% trans %}Enter in Google Calendar{% endtrans %}</a>
+</span>
+{% endblock %}

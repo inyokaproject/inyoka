@@ -3,7 +3,11 @@ import os
 from behave import use_fixture
 from django.conf import settings
 
-from tests.bdd.behave_fixtures import browser_chrome, django_test_case, django_test_runner
+from tests.bdd.behave_fixtures import (
+    browser_chrome,
+    django_test_case,
+    django_test_runner,
+)
 from tests.bdd.steps.utils import take_screenshot
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.bdd.settings.headless'

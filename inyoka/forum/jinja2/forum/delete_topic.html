@@ -1,0 +1,35 @@
+{#
+    forum/delete_topic.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to delete the selected topic.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+<form action="{{ topic|url(action)|e }}" method="post">
+  {{ csrf_token() }}
+  <p>
+    {%- if action=='delete' -%}
+      {% trans title=topic.title|e -%}
+        Do you really want to delete the topic “{{ title }}”? This action cannot be undone!
+      {%- endtrans %}
+    {%- else -%}
+      {% trans title=topic.title|e -%}
+        Do you really want to hide the topic “{{ title }}”?
+      {%- endtrans %}
+    {%- endif -%}
+  </p>
+  {% if action=='delete' %}
+    <p>
+      <label for="delete_topic_reason">{% trans %}Reason:{% endtrans %}</label>
+      <input name="reason" id="delete_topic_reason">
+    </p>
+  {% endif %}
+  <p>
+    <input type="submit" value="{% if action=='delete' %}{% trans %}Delete{% endtrans %}{% else %}{% trans %}Hide{% endtrans %}{% endif %}">
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}">
+  </p>
+</form>

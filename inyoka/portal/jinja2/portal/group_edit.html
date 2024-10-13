@@ -1,0 +1,47 @@
+{#
+    portal/group_edit.html
+    ~~~~~~~~~~~~~~~~~
+
+
+    Edit/Create a new group.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+
+{% set tmp_crumb = [(_('Groups'), href('portal', 'groups'))] %}
+{% if not group is defined %}
+  {% do tmp_crumb.append((_('New group'), href('portal', 'group', 'new'))) %}
+{% else %}
+ {% do tmp_crumb.extend([(group.name, href('portal', 'group', group.name))]) %}
+ {% do tmp_crumb.extend([(_('Edit'), href('portal', 'group', group.name, 'edit'))]) %}
+{% endif %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  {{ super() }}
+
+  <form class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
+
+    {{ form.as_p() }}
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+  </form>
+
+  {% if group is defined %}
+    <ul>
+      <li>
+        <a href="{{ href('portal', 'group', group.name, 'edit', 'global_permissions') }}">
+          {% trans %}Global Permissions{% endtrans %}
+        </a>
+      </li>
+      <li>
+        <a href="{{ href('portal', 'group', group.name, 'edit', 'forum_permissions') }}">
+          {% trans %}Forum Permissions{% endtrans %}
+        </a>
+      </li>
+    </ul>
+  {% endif %}
+{% endblock %}

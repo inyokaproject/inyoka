@@ -1,0 +1,19 @@
+{#
+    wiki/action_revert.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is (unlike most other action templates) not a full HTML page
+    but flashed to the show action.  So keep it small, it's in a cookie!
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+-#}
+
+
+<form action="{{ page|url('revert', revision=page.rev.id)|e }}" method="post">
+  {{ csrf_token() }}
+  <p>{% trans %}Reason:{% endtrans %}</p>
+  <p><input type="text" name="note" size="30">
+     <input type="submit" value="{% trans %}Restore{% endtrans %}">{#
+   #}<input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}"></p>
+</form>

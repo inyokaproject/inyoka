@@ -8,13 +8,12 @@
     :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from typing import List
-
 import argparse
 import os
+import platform
 import subprocess
 import sys
-import platform
+from typing import List
 
 from django.core.management.base import BaseCommand
 
@@ -42,7 +41,7 @@ class Command(BaseCommand):
     def remove_requirements_files(self) -> None:
         """
         If nothing should be upgraded, remove the requirement-files of the current environment.
-        Thus, preexisting requirement-files are no more a constrain for pip-tools.
+        Thus, preexisting requirement-files are no more a constraint for pip-tools.
         """
         for s in self.stages:
             try:
@@ -54,7 +53,7 @@ class Command(BaseCommand):
         full_path = self._get_requirements_path(stage)
 
         program_name = 'pip-compile'
-        arguments = ['--allow-unsafe', '--generate-hashes', '--strip-extras', '--resolver', 'backtracking', '--output-file', full_path]
+        arguments = ['--verbose', '--allow-unsafe', '--generate-hashes', '--strip-extras', '--resolver', 'backtracking', '--output-file', full_path, "pyproject.toml"]
 
         if upgrade_all and upgrade_packages:
             raise ValueError("Both upgrade_all and upgrade_packages are given. That's invalid")

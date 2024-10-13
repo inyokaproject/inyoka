@@ -1,0 +1,38 @@
+{% if page %}
+  <h3 class="navi_config">{% trans %}Configuration{% endtrans %}</h3>
+    <ul>
+      {% if can %}
+        {% if can.manage %}
+          <li><a href="{{ page|url('rename') }}">{% trans %}Rename page{% endtrans %}</a></li>
+          {% if can.delete %}
+            <li><a href="{{ page|url('delete') }}">{% trans %}Delete page{% endtrans %}</a></li>
+          {% endif %}
+
+          {% if page.name.startswith('Baustelle/Verlassen') %}
+            <li><a href="{{ page|url('mv_baustelle') }}">{% trans %}Mark page as “under construction”{% endtrans %}</a></li>
+          {% elif page.name.startswith('Baustelle') %}
+            <li><a href="{{ page|url('mv_discontinued') }}">{% trans %}Move page to “discontinued”{% endtrans %}</a></li>
+            <li><a href="{{ page|url('mv_back') }}">{% trans %}Move page back to the wiki{% endtrans %}</a></li>
+          {% else %}
+            <li><a href="{{ page|url('mv_baustelle') }}">{% trans %}Mark page as “under construction”{% endtrans %}</a></li>
+          {% endif %}
+
+          <li><a href="{{ page|url('discussion') }}">{% trans %}Link discussion{% endtrans %}</a></li>
+        {% endif %}
+
+        {% if can.attach %}
+          <li><a href="{{ page|url('attachments') }}">{% trans %}Manage attachments{% endtrans %}</a></li>
+        {% endif %}
+      {% endif %}
+
+      <li><a href="{{ page|url('backlinks') }}">{% trans %}Show backlinks{% endtrans %}</a></li>
+      <li>
+        {% trans %}Export{% endtrans %}
+        <ul>
+          <li><a href="{{ page|url('export', format='meta') }}" rel="nofollow">{% trans %}Metadata{% endtrans %}</a></li>
+          <li><a href="{{ page|url('export', format='raw') }}" rel="nofollow">{% trans %}Raw{% endtrans %}</a></li>
+          <li><a href="{{ page|url('export', format='html') }}" rel="nofollow">{% trans %}HTML{% endtrans %}</a></li>
+        </ul>
+      </li>
+    </ul>
+{% endif %}

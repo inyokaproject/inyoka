@@ -33,7 +33,7 @@ class SessionMiddleware(middleware.SessionMiddleware):
     def process_request(self, request):
         super().process_request(request)
         # Force creation of a session key so every browser is id-able.
-        if not 'sid' in request.session:
+        if 'sid' not in request.session:
             request.session['sid'] = str(uuid.uuid4())
             request.session.new = True
         else:

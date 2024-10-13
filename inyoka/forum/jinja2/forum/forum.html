@@ -1,0 +1,172 @@
+{#
+    forum/forum.html
+    ~~~~~~~~~~~~~~~~
+
+    This template shows a forum with all subforums and topics inside.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'forum/page.html' %}
+{% from 'forum/_forum.html' import render_forum, topic_icon,
+                                   generate_subscription_link with context %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
+
+{% macro forum_actions() %}
+  <p class="actions linklist">
+    {% if can_create %}
+      <a href="{{ forum|url('newtopic') }}" class="action action_reply">{% trans %}New topic{% endtrans %}</a> |
+    {%- endif %}
+    {% if USER.is_authenticated %}
+      {%- if is_subscribed %}
+        <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">{% trans %}Unsubscribe{% endtrans %}</a>
+      {%- else %}
+        <a href="{{ generate_subscription_link() }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">{% trans %}Subscribe{% endtrans %}</a>
+      {%- endif %}
+      | <a href="{{ forum|url('markread') }}">{% trans %}Mark as read{% endtrans %}</a>
+    {%- endif %}
+  </p>
+{% endmacro %}
+
+{% set name = 'Forum „%s“ - ' % forum.name|e %}
+{% set rendered_pagination = render_pagination(pagination) %}
+{% set feeds = [
+  (name + _('Captions'), href('forum', 'feeds/forum', forum.slug, 'title/20')),
+  (name + _('Teaser'), href('forum', 'feeds/forum', forum.slug, 'short/20')),
+  (name + _('Full post'), href('forum', 'feeds/forum', forum.slug, 'full/20'))
+] %}
+
+{% set tmp_crumb = [] %}
+{% for parent in forum.parents|reverse %}
+  {% do tmp_crumb.append((parent.name, parent|url)) %}
+{% endfor %}
+{% do tmp_crumb.append((forum.name, forum|url)) %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block search_areas %}
+  <option value="current_forum" selected="selected">{% trans %}Current forum{% endtrans %}</option>
+{% endblock %}
+
+{% block forum_content %}
+  <table class="forum admin_link_hover">
+    <thead>
+      <tr><th colspan="5" class="category">{{ forum.name|e }}
+        {%- if USER.has_perm('forum.change_forum') -%}
+          <a href="{{ href('forum', 'forum', forum.slug, 'edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" class="admin_link right"></a>
+        {%- endif -%}
+        </th></tr>
+      <tr>
+        <td colspan="5">
+          {%- if forum.description %}
+            <p class="description">{{ forum.description|e }}</p>
+          {%- endif %}
+          <p class="description">
+            {%- if supporters %}
+              {% trans count=supporters|count %}Supporter:{% pluralize %}Supporters:{% endtrans %}
+              {%- for supporter in supporters %}
+                <a href="{{supporter|url }}">{{ supporter.username|e }}</a>
+                {%- if not loop.last %}, {% endif %}
+              {%- endfor %}
+            {%- else %}
+              &nbsp;
+            {%- endif %}
+            <span class="description" style="float: right;">
+              {% trans n=forum.topic_count %}Topics: <strong>{{ n }}</strong>{% endtrans %} |
+              {% trans n=forum.post_count %}Posts: <strong>{{ n }}</strong>{% endtrans %}
+            </span>
+          </p>
+          <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+          {{ forum_actions() }}
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+    {%- for subforum in subforums %}
+      {{ render_forum(subforum, subforum.children, last_posts) }}
+    {%- endfor %}
+    <tr>
+      <th class="topic" colspan="2">{% trans %}Topic{% endtrans %}</th>
+      <th class="view_count">{% trans %}Views{% endtrans %}</th>
+      <th class="post_count">{% trans %}Replies{% endtrans%}</th>
+
+      <th class="last_post">{% trans %}Last post{% endtrans %}</th>
+    </tr>
+    {# TODO: workaround for topics without first or last_post to not mess up with server errors #}
+    {%- for topic in topics  -%}
+      {%- if not topic.hidden or can_moderate %}
+        {% set classes = [] %}
+        {% if can_moderate and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
+        {% if can_moderate and topic.reported %}{% do classes.append('reported') %}{% endif %}
+        {% if topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
+        {% if topic.author == USER %}{% do classes.append('own') %}{% endif %}
+        {% if topic.sticky %}{% do classes.append('sticky') %}{% endif %}
+        <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
+          <td class="icon">{{ topic_icon(topic) }}</td>
+          <td class="topic">
+            <p class="topic_title">
+              {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+              {% if can_moderate and topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
+              {% if can_moderate and topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
+              <a href="{{ topic|url }}">{{ topic.title|e }}</a>
+              {% if topic.get_version_info(False) %}
+                » <span class="ubuntu_version">{{ topic.get_version_info() }}</span>
+              {%- endif %}
+              {%- if not topic.get_read_status(USER) %}
+                <a href="{{ topic|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}">{#
+                #}</a>
+              {%- endif %}
+            </p>
+            <p class="description note">
+              {%- trans author=topic.author.username|e, link=topic.author|url -%}
+                by <a href="{{ link }}">{{ author }}</a>
+              {%- endtrans %} |
+              {{ topic.first_post.pub_date|datetime }}
+              {%- if topic.paginated %} |
+                {% trans %}Go to page{% endtrans %}
+                <span class="pagination">
+                    {{ render_small_pagination(topic.get_pagination()) }}
+                </span>
+              {%- endif -%}
+            </p>
+          </td>
+          <td class="view_count">{{ topic.view_count }}</td>
+          <td class="post_count">{{ topic.post_count.value() - 1 }}</td>
+          <td class="last_post">
+            {%- if topic.last_post_id %}
+              <a href="{{ topic.last_post|url}}" class="date">
+                {{- topic.last_post.pub_date|datetime -}}
+              </a><br>
+              {% trans author=topic.last_post.author|e, link=topic.last_post.author|url -%}
+                by <a href="{{ link }}">{{ author }}</a>
+              {%- endtrans %}
+            {%- else %}
+              ---
+            {% endif %}
+          </td>
+        </tr>
+      {%- endif %}
+    {%- else -%}
+      <tr>
+        <td colspan="5">
+          {%- trans link=forum|url('newtopic') -%}
+            There are no topics. <a href="{{ link }}">Create</a> the first one now!
+          {%- endtrans -%}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    <thead>
+      <tr>
+        <td colspan="5">
+          {%- if forum.description %}
+            <p class="description">{{ forum.description|e }}</p>
+          {%- endif %}
+          <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+          {{ forum_actions() }}
+        </td>
+      </tr>
+    </thead>
+  </table>
+{% endblock %}

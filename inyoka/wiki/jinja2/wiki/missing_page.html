@@ -1,0 +1,88 @@
+{#
+    wiki/missing_page.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This page is displayed if a wiki page does not exist yet but
+    it was requested with the show action. We do not show a normal
+    wiki page so that we don't hit the database.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set action = 'show' %}
+{% block wiki_content %}
+  <h2>{% trans %}Missing article{% endtrans %}</h2>
+  {%- if not page %}
+    <p>
+      {%- trans title=title|e -%}
+        The article “{{ title }}” does not exist yet.
+      {%- endtrans -%}
+    </p>
+  {%- else %}
+    <p>
+      {%- trans title=title|e -%}
+        The article “{{ title }}” was deleted. You can restore it or create a new one in the action menu.
+      {%- endtrans -%}
+    </p>
+  {%- endif %}
+  {%- if not_finished %}
+    <p>
+      {%- trans -%}
+        The article is already under construction, help improving and finishing it!
+      {%- endtrans -%}
+    </p>
+    <ul>
+      <li>
+        <a href="{{ href('wiki', not_finished.name)|e }}">{{ not_finished.title|e }}</a>
+      </li>
+    </ul>
+  {%- endif %}
+  {%- if backlinks %}
+    <p>
+      {%- trans -%}
+        The following pages are referring this article:
+      {%- endtrans -%}
+    </p>
+    <ul>
+      {%- for link in backlinks %}
+        <li>
+          <a href="{{ href('wiki', link.name)|e }}">{{ link.title|e }}</a>
+        </li>
+      {%- endfor %}
+    </ul>
+  {%- endif %}
+  <p>
+    {%- trans -%}
+      Check if you have a typo in the URL.
+    {%- endtrans %}
+    {% if similar -%}
+      {% trans -%}
+        The following pages have similar names:
+      {%- endtrans %}
+    {%- endif -%}
+  </p>
+  {%- if similar %}
+    <ul>
+    {%- for link in similar %}
+      <li><a href="{{ href('wiki', link.name)|e
+        }}">{{ link.title|e }}</a></li>
+    {%- endfor %}
+    </ul>
+  {%- endif %}
+  {%- if create_link %}
+    <p>
+      {%- trans link=create_link -%}
+        You can also <a href="{{ link }}">create</a> this article.
+      {%- endtrans -%}
+    </p>
+  {%- else %}
+  <p>
+    {%- trans -%}
+      However, you are missing the permissions to create this article.
+    {%- endtrans -%}
+  </p>
+  {%- endif %}
+{% endblock %}

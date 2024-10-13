@@ -1,0 +1,32 @@
+{#
+    portal/group_edit_global_permissions.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    Edit the permission of a group within ikhaya, portal, pastebin and planet.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+
+{% set tmp_crumb = [(_('Groups'), href('portal', 'groups'))] %}
+{% do tmp_crumb.extend([(group.name, href('portal', 'group', group.name))]) %}
+{% do tmp_crumb.extend([(_('Edit'), href('portal', 'group', group.name, 'edit'))]) %}
+{% do tmp_crumb.extend([(_('Global Permissions'), href('portal', 'group', group.name, 'edit', 'global_permissions'))]) %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  {{ form.non_field_errors() }}
+
+  <form class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
+    {% for field in form %}
+      {{ field.errors }}
+        <h2>{{ field.label }}</h2>
+        {{ field }}
+    {% endfor %}
+
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+  </form>
+{% endblock %}

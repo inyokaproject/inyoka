@@ -1,0 +1,366 @@
+/**
+ * style.markup
+ * ~~~~~~~~~~~~
+ *
+ * :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'layout.less';
+
+:link.missing, :visited.missing {
+  color: #666;
+}
+
+a.interwiki {
+  background-repeat: no-repeat;
+}
+/* these links are hardcoded into the markup-parser
+   and not configurable via the linkmap */
+a.user, a.team, a.search, a.ikhaya, a.paste {
+  background-repeat: no-repeat;
+  padding-left: 16px;
+}
+a.paste {
+  background-image: url(../img/favicon.ico);
+}
+a.ikhaya {
+  background-image: url(../img/icons/ikhaya.svg);
+  background-size: 16px 16px;
+}
+a.user {
+  background-image: url(../img/interwiki/user.png);
+}
+a.team {
+  background-image: url(../img/interwiki/team.png);
+  color: #597A00;
+}
+a.search {
+  background-image: url(../img/interwiki/search.png);
+}
+a[href$=".pdf"]:before {
+  content: '📄 ';
+}
+
+#page table {
+  width: auto; // override behaviour of main.css for wiki & ikhaya
+}
+
+mark {
+  /* make marked text (not in <pre>) only bold */
+  background-color: transparent; /* prevent default yellow */
+  font-weight: bold;
+}
+pre mark {
+  background-color: #ffee33;
+}
+
+span.underline {
+  text-decoration: underline;
+}
+.image-left, .image-right, .image-center {
+  margin: 1.5em 1em 0;
+}
+.image-right {
+  float: right;
+  clear: right;
+}
+.image-left {
+  float: left;
+}
+.image-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.bash {
+  margin: 0.3em 0;
+  pre {
+    color: white;
+    font-family: @font-monospace;
+    background-color: #454545;
+    border: 1px solid #666;
+  }
+  pre + pre {
+    border-top:0 none;
+    margin-top:-0.3em;
+  }
+}
+
+div.box {
+  margin: 0.5em 0;
+  border-bottom: thin solid;
+  border-top: thin solid;
+  overflow: auto;
+
+  > div.contents {
+    padding: 0 1em;
+    margin: 0.5em 0;
+  }
+  h3 {
+    margin: 0;
+    margin-top: 0.5em;
+    font-weight: bold;
+    padding: 0 1rem;
+  }
+
+  &.notice, &.experts {
+    background-color: #f5f5f5;
+    border-color: #858585;
+  }
+  &.improvable {
+    background-color: #f5f5f5;
+    border-color: #73A76F;
+  }
+  &.advanced {
+    background-color: #e5e8eb;
+    border-color: #708090;
+  }
+  &.tested_for {
+    background-color: #e8f1e9;
+    border-color: @green_d_dark;
+  }
+  &.left {
+    background-color: #ebf0ee;
+    border-color: #3E6E58;
+  }
+  &.warning, &.fixme {
+    background-color: #FFF4F4;
+    border-color: #D40000;
+    border-width: 0.2em;
+  }
+  &.warning {
+    border-left-style: solid;
+    border-right-style: solid;
+  }
+  &.knowledge, &.ut_box {
+    background-color:#F1E8F0;
+    border-color:#84377D;
+
+    .anchor {
+      background-image: none;
+    }
+  }
+  &.workinprogress {
+    background-color: #f7fafc;
+    border-color: #3F7DB1;
+  }
+  &.award {
+    background-color: #fcfdea;
+    border-color: @yellow_dark;
+  }
+}
+
+/* used f.e. at <host>/user/<username>/edit/profile/ */
+div.warning_important {
+  background-color: #D40000;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 1em;
+  text-align: center;
+
+  a {
+    color: white;
+  }
+}
+
+
+.toc {
+  .top-rounded(.25em);
+  padding: .5em;
+  background-color: @grey_light; /* prevents that horizontal borders of other elements like headings are shown */
+  border: thin solid @grey_dark;
+
+  @media (min-width: @medium-width) {
+    float: right;
+    margin: 0 0 1.5em 1.5em;
+    max-width: 40ex;
+  }
+
+  .head {
+    font-weight: bold;
+  }
+
+  .head > ol {
+    margin-top: 1.8em;
+  }
+}
+.toc a.toctoggle,.toc .head a {
+  text-decoration: none;
+}
+.key {
+  border: 1px solid #7D8186;
+  box-shadow: 0 2px 0 -1px #FFF, 0 2px 0 #828282;
+  display: inline-block;
+  font-size: 0.8em;
+  line-height: 1em;
+  padding: 0.15em 0.5em 0.25em;
+  white-space: pre;
+
+  * {
+    display: inline;
+  }
+}
+.headerlink {
+  display: none;
+  margin: 0 0 0 0.2em;
+  text-decoration: none;
+  color: #999;
+}
+h1:hover *, h2:hover *, h3:hover *, h4:hover *, h5:hover *, h6:hover * {
+  display: inline;
+}
+.anchor {
+  float: right;
+}
+
+div.edited {
+  border: 1px solid #597A00;
+  padding: 0.4em;
+  font-size: 0.8em;
+  strong {
+    color: #597A00;
+  }
+}
+div.moderated {
+  border: 1px solid #cc7777;
+  padding: 0.4em;
+  font-size: 0.8em;
+  strong {
+    color: #aa3333;
+  }
+}
+div.moderated p, div.edited p {
+  margin: 0;
+}
+
+
+/* custom 'emojis' that are not included in unicode and thus use a image */
+span[class^='icon-'] {
+  display: inline-block;
+  height: 2.2ex;
+  width: 1em;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+span {
+  &.icon-frog-xmas {
+    background-image: url('../img/smiley_icons/frog-xmas.png');
+  }
+  &.icon-tux {
+    background-image: url('../img/smiley_icons/tux.png');
+  }
+  &.icon-ubuntu {
+    background-image: url('../img/smiley_icons/ubuntu.png');
+  }
+  &.icon-ubuntugnome {
+    background-image: url('../img/smiley_icons/ubuntugnome.png');
+  }
+  &.icon-kubuntu {
+    background-image: url('../img/smiley_icons/kubuntu.png');
+  }
+  &.icon-lubuntu {
+    background-image: url('../img/smiley_icons/lubuntu.png');
+  }
+  &.icon-ubuntumate {
+    background-image: url('../img/smiley_icons/ubuntumate.png');
+  }
+  &.icon-mythbuntu {
+    background-image: url('../img/smiley_icons/mythbuntu.png');
+  }
+  &.icon-ubuntutouch {
+    background-image: url('../img/smiley_icons/ubuntutouch.png');
+  }
+  &.icon-xubuntu {
+    background-image: url('../img/smiley_icons/xubuntu.png');
+  }
+  &.icon-overview {
+    background-image: url('../img/smiley_icons/overview.png');
+  }
+}
+
+
+/* table styles to ease highlighting of every second row */
+table.zebra tr:nth-child(even),
+table.zebra_start2 tr:nth-child(2n+3),
+table.zebra_start3 tr:nth-child(2n+4) {
+  background-color: @grey_light;
+}
+
+
+/* table styles for each ubuntu derivat */
+tr {
+  &.verlauf, &.titel, &.kde-titel, &.xfce-titel, &.lxde-titel, &.edu-titel, &.studio-titel {
+    /* treat verlauf like title for legacy reasons */
+    font-weight: bold;
+    > td {
+      border-top: none;
+    }
+  }
+  &.kopf {
+    font-weight: bold;
+    border-bottom: 0.25em solid @orange_d_medium;
+  }
+  &.normal {
+    background: @white;
+    color: @black;
+  }
+  &.trennzeile {
+    background: #DDDDDD;
+    color: @black;
+  }
+  &.highlight, &.kde-highlight, &.xfce-highlight, &.lxde-highlight, &.edu-highlight, &.studio-highlight {
+    background: @grey_light;
+    color: @black;
+  }
+}
+
+tr.kde-kopf {
+  font-weight: bold;
+  border-bottom: 0.25em solid @blue_moderate;
+}
+tr.xfce-kopf {
+  font-weight: bold;
+  border-bottom: 0.25em solid #B3DEFD;
+}
+tr.lxde-kopf {
+  font-weight: bold;
+  border-bottom: 0.25em solid @blue_dark;
+}
+tr.edu-kopf {
+  font-weight: bold;
+  border-bottom: 0.25em solid #d39528;
+}
+tr.studio-kopf {
+  font-weight: bold;
+  border-bottom: 0.25em solid @blue_pure;
+}
+
+td.befehl {
+  background: #464646;
+  color: @white;
+  font-family: monospace;
+}
+
+td.gruen {
+  background: #CCFF99;
+  color: @black;
+  font-weight: bold;
+  text-align: center;
+}
+td.grau {
+  background: @grey_light;
+  color: @black;
+  text-align: center;
+}
+td.gelb {
+  background: #FFFF99;
+  color: @black;
+  text-align: center;
+}
+td.rot {
+  background: #FFCC99;
+  color: @black;
+  text-align: center;
+}

@@ -8,17 +8,19 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import os
 import secrets
 import string
 from datetime import datetime
-from json import loads, dumps
+from json import dumps, loads
 
 from django.conf import settings
+from django.conf import settings as inyoka_settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
-    PermissionsMixin,
     Group,
+    PermissionsMixin,
     update_last_login,
 )
 from django.contrib.auth.signals import user_logged_in
@@ -35,16 +37,13 @@ from guardian.mixins import GuardianUserMixin
 from guardian.shortcuts import get_perms
 
 from inyoka.utils.cache import QueryCounter
-from inyoka.utils.database import InyokaMarkupField, JSONField, JabberField
+from inyoka.utils.database import InyokaMarkupField, JabberField, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
-
-from django.conf import settings as inyoka_settings
-import os
 
 
 class UserBanned(Exception):

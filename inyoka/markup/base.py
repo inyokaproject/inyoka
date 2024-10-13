@@ -5,17 +5,17 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unicodedata
 import re
-from urllib.parse import urlsplit
+import unicodedata
 from functools import partial
+from urllib.parse import urlsplit
 
 from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
 from inyoka.markup.constants import HTML_COLORS
 from inyoka.markup.lexer import Lexer, escape
-from inyoka.markup.machine import Renderer, RenderContext
+from inyoka.markup.machine import RenderContext, Renderer
 from inyoka.markup.transformers import DEFAULT_TRANSFORMERS
 from inyoka.markup.utils import filter_style
 from inyoka.utils.urls import href
@@ -279,8 +279,8 @@ class Parser:
         """
         Call this with a `TokenStream` to dispatch to the correct parser call.
         If the current token on the stream is not handleable it will raise a
-        `KeyError`.  However you should not relay on that behavior because the
-        beavior is undefined and may change.  It's your reposibility to make
+        `KeyError`.  However, you should not relay on that behavior because the
+        behavior is undefined and may change.  It's your responsibility to make
         sure the parser never calls `parse_node` on not existing nodes when
         extending the lexer / parser.
         """
@@ -486,7 +486,7 @@ class Parser:
 
     def parse_sup(self, stream):
         """
-        Parse text in supscript.
+        Parse text in superscript.
 
         Returns a `Sup` node.
         """
@@ -558,12 +558,17 @@ class Parser:
         Returns a `Font` node.
         """
         stream.expect('font_begin')
-        face = stream.expect('font_face').value.strip()
+        face = stream.expect('font_face').value.strip().lower()
+        allowed_font_faces = ('serif', 'sans-serif', 'arial', 'courier')
+        if face not in allowed_font_faces:
+            face = None
+
         children = []
         while stream.current.type != 'font_end':
             children.append(self.parse_node(stream))
         stream.expect('font_end')
-        return nodes.Font([face], children)
+
+        return nodes.Font(face, children)
 
     def parse_mod(self, stream):
         """
@@ -716,7 +721,7 @@ class Parser:
 
     def parse_free_link(self, stream):
         """
-        Parses an free link.
+        Parses a free link.
 
         Returns a `Link` node.
         """
@@ -725,7 +730,7 @@ class Parser:
             urlsplit(target)
         except ValueError:
             return nodes.Text(target)
-        return nodes.Link(target, shorten=True)
+        return nodes.Link(target)
 
     def parse_ruler(self, stream):
         """
@@ -745,8 +750,8 @@ class Parser:
         parsing (or after the transformers).
 
         If a macro is expanded at rendering time a `nodes.Macro` is returned
-        that holds the already instanciated macro.  Because the macro *is*
-        instanciate, dynamic macros have to ensure that they support pickle.
+        that holds the already instantiated macro.  Because the macro *is*
+        instantiate, dynamic macros have to ensure that they support pickle.
         """
         stream.expect('macro_begin')
         name = stream.expect('macro_name').value

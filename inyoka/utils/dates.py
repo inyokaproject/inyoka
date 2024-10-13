@@ -15,8 +15,7 @@ from datetime import timezone as py_timezone
 from functools import lru_cache
 from operator import attrgetter
 
-from django.contrib.humanize.templatetags.humanize import \
-    naturalday as djnaturalday
+from django.contrib.humanize.templatetags.humanize import naturalday as djnaturalday
 from django.template import defaultfilters
 from django.utils import timezone
 from django.utils.timezone import is_naive

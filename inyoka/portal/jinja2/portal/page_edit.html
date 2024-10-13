@@ -1,0 +1,37 @@
+{#
+    portal/pages_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    Formular for editing or writing a new page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+
+{% set tmp_crumb = [(_('Static pages'), href('portal', 'pages'))] %}
+{% if page %}
+  {% do tmp_crumb.extend([(page.title|e, page|url()), (_('Edit'), page|url('edit'))]) %}
+{% else %}
+  {% do tmp_crumb.append((_('Create new page'), href('portal', 'page', 'new'))) %}
+{% endif %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <h3>{{ page.title|e }}</h3>
+  <form action="" method="post">
+    {{ csrf_token() }}
+    {{ render_form(form, ('title', 'key', 'content')) }}
+    <p>
+      <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview">
+      <input type="submit" value="{% trans %}Submit{% endtrans %}" name="send">
+    </p>
+  </form>
+  {%- if preview %}
+    <div class="preview_wrapper">
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+      <div class="preview">{{ preview }}</div>
+    </div>
+  {%- endif %}
+{% endblock %}

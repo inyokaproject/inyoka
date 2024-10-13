@@ -1,0 +1,88 @@
+{#
+    forum/_forum.html
+    ~~~~~~~~~~~~~~~~~
+
+    Some macros for the forum.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{% macro render_forum(forum, subforums, last_posts) %}
+  <tr class="entry category-{{ forum.parent_id }}">
+
+    <td class="icon">
+      {%- if forum.get_read_status(REQUEST.user) %}
+      <img src="{{ href('static', 'img', 'forum/forum.png') }}" alt="{% trans %}Forum read{% endtrans %}">
+      {%- else %}
+      <img src="{{ href('static', 'img', 'forum/forum_unread.png') }}" alt="{% trans %}Unread posts{% endtrans %}">
+      {%- endif %}
+    </td>
+    <td class="forum" colspan="3">
+      <p class="name">
+        <a href="{{ forum|url }}" class="title">{{ forum.name|e }}</a>
+        {%- if REQUEST.user.has_perm('forum.change_forum') -%}
+          <a href="{{ href('forum', 'forum', forum.slug, 'edit') }}" class="admin_link"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
+        {%- endif -%}
+      </p>
+
+      {%- if forum.description %}
+        <p class="description">{{ forum.description|e }}</p>
+      {%- endif %}
+      {%- if subforums %}
+        <p class="subforums">{% trans %}Subforums:{% endtrans %}
+          {%- for subforum in subforums %}
+            {%- if not subforum.get_read_status(REQUEST.user) %}
+              <img src="{{ href('static', 'img/forum/subforum_unread.png') }}" alt="{% trans %}Unread posts{% endtrans %}">
+            {%- endif %}
+              <a href="{{ subforum|url }}">{{ subforum.name|e }}</a>{% if not loop.last %}, {% endif %}
+          {%- endfor %}
+        </p>
+      {%- endif %}
+    </td>
+    <td class="last_post">
+      {%- if forum.last_post_id in last_posts -%}
+        {% set last_post = last_posts[forum.last_post_id] %}
+        <a href="{{ last_post|url }}">{{ last_post.pub_date|datetime }}</a><br>
+        {%- trans link=last_post.author|url, name=last_post.author|e -%}
+          by <a href="{{ link }}">{{ name }}</a>
+        {%- endtrans -%}
+      {%- else -%}
+        ---
+      {%- endif %}
+    </td>
+  </tr>
+{% endmacro %}
+
+{% macro topic_icon(topic) -%}
+  {% set is_read = topic.get_read_status(USER) -%}
+  <div class="icon{% if topic.hidden %} hidden{% endif %}"
+      {%- if topic.hidden %} title="{% trans %}hidden topic{% endtrans %}"{% endif %}>
+  {%- if topic.sticky -%}
+    <div class="sticky" title="{% trans %}sticky topic{% endtrans %}"></div>
+  {%- endif -%}
+  {%- if not is_read -%}
+    <div class="new" title="{% trans %}unread topic{% endtrans %}"></div>
+  {%- endif -%}
+  {%- if topic.solved -%}
+    <div class="solved" title="{% trans %}solved topic{% endtrans %}"></div>
+  {%- endif -%}
+  {%- if topic.locked -%}
+    <div class="locked" title="{% trans %}locked topic{% endtrans %}"></div>
+  {%- endif -%}
+  {#%- if can_moderate(topic) and topic.reported -%#}
+  {%- if topic.reported -%}
+    <div class="reported" title="{% trans %}reported topic{% endtrans %}"></div>
+  {%- endif -%}
+  </div>
+{%- endmacro %}
+
+{% macro render_article_list(discussions) %}
+  {%- for article in discussions %}
+    <a class="article_discussion_list" href="{{ article|url }}">{{ article.name|e }}</a>
+  {%- if not loop.last %},{% endif %}
+  {%- endfor -%}
+{% endmacro %}
+
+{% macro generate_subscription_link(do='subscribe') %}
+  {{ href('forum', 'forum', forum.slug, do, next=CURRENT_URL)|e }}
+{% endmacro %}

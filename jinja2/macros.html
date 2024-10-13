@@ -1,0 +1,105 @@
+{#
+    macros.html
+    ~~~~~~~~~~~
+
+    This is a file that contains all template parts that are used more than
+    once in macros.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{#
+    render_form
+    ===========
+
+    This macro renders a bunch of form fields automatically.
+    Set the `inline` parameter to `true`, if you want to add a field manually
+    to the <dl> element.
+
+#}
+{% macro render_form(form, fields, inline=false) %}
+{% if not inline %}
+<dl>
+{% endif %}
+  {% for field in fields %}
+  {% if form[field] %}
+  <dt>
+    {{ form[field].label_tag() }}
+  </dt>
+  <dd>
+    {{ form[field] }} {{ form.errors[field] }}
+    {% if form[field].help_text %}
+    <p class="note">{{ form[field].help_text }}</p>
+    {% endif %}
+  </dd>
+  {% endif %}
+  {% endfor %}
+{% if not inline %}
+</dl>
+{% endif %}
+{% endmacro %}
+
+{# render a list entry of the mod nav #}
+{% macro render_modnavi_li(label, href, icon, count=False) %}
+  <a href="{{ href|e }}"{% if count %} class="highlight"{% endif %}>{#
+    #}<img src={{ icon|e }} alt="{{ label }}" title="{{ label }} ({{ count }})">{#
+    #}<span class="description">{{ count }}</span>{#
+  #}</a>
+{% endmacro %}
+
+{# Pagination macro #}
+{% macro render_pagination(pagination, show_prev=True, show_next=True, threshold=2) %}
+  {%- if show_prev -%}
+    {%- if pagination.prev -%}
+      <a href="{{ pagination.prev }}" class="prev">« {% trans %}Previous{% endtrans %}</a>
+    {%- else -%}
+      <span class="disabled prev">« {% trans %}Previous{% endtrans %}</span>
+    {%- endif -%}
+  {%- endif -%}
+  {% for link in pagination.list(threshold) -%}
+    {%- if link['type'] == 'spacer' -%}
+      <span class="ellipsis">…</span>
+    {%- elif link['type'] == 'current' -%}
+      <span class="pageselect active">{{ link['page'] }}</span>
+    {%- else -%}
+      <a href="{{ link['url'] }}" class="pageselect">{{ link['page'] }}</a>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if show_next -%}
+    {%- if pagination.next -%}
+      <a href="{{ pagination.next }}" class="next">{% trans %}Next{% endtrans %} »</a>
+    {%- else -%}
+      <span class="disabled next">{% trans %}Next{% endtrans %} »</span>
+    {%- endif -%}
+  {%- endif %}
+{% endmacro %}
+
+
+{# Pagination macro for small paginations in topic list views #}
+{% macro render_small_pagination(pagination, threshold=2) %}
+  {% for link in pagination.list() -%}
+    {%- if link['type'] == 'spacer' -%}
+      <span class="ellipsis">…</span>
+    {%- else -%}
+      <a href="{{ link['url'] }}" class="pageselect">{{ link['page'] }}</a>
+    {%- endif -%}
+    {% if not loop.last %}<span class="comma">, </span>{% endif %}
+  {%- endfor -%}
+{% endmacro %}
+
+
+{% macro add_user_avatar(user, css_classes='avatar') %}
+  <img class="{{ css_classes }}"
+    src="{{ user.avatar_url|default(href('static', 'img', 'portal', 'usercp-profile.svg'), true)|e }}"
+    alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}">
+{% endmacro %}
+
+{% macro create_title(breadcrumb_list) %}
+  {% set title_parts = [BASE_DOMAIN_NAME] %}
+  {% for breadcrumb in breadcrumb_list %}
+    {% do title_parts.append(breadcrumb[0]) %}
+  {% endfor %}
+
+  {{ title_parts|reverse|join(' › ') }}
+{% endmacro %}

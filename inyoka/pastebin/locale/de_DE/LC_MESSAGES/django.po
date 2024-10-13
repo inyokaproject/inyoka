@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-01 16:45+0200\n"
-"PO-Revision-Date: 2017-03-23 22:51+0000\n"
+"POT-Creation-Date: 2024-10-13 15:19+0200\n"
+"PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,7 +16,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.16.0\n"
+
+#, python-format
+msgid "<a href=\"%(entry_link)s\">%(title)s</a> by <a href=\"%(author_link)s\">%(author)s</a>"
+msgstr "<a href=\"%(entry_link)s\">%(title)s</a> von <a href=\"%(author_link)s\">%(author)s</a>"
+
+msgid "About:"
+msgstr "Funktion:"
 
 msgid "Apache Config (.htaccess)"
 msgstr "Apache Config (.htaccess)"
@@ -24,11 +31,17 @@ msgstr "Apache Config (.htaccess)"
 msgid "Author"
 msgstr "Autor"
 
+msgid "Author:"
+msgstr "Autor:"
+
 msgid "Bash"
 msgstr "Bash"
 
 msgid "Batch (.bat)"
 msgstr "Batch (.bat)"
+
+msgid "Browse pastes"
+msgstr "Einträge durchstöbern"
 
 msgid "C"
 msgstr "C"
@@ -42,14 +55,36 @@ msgstr "C++"
 msgid "CSS"
 msgstr "CSS"
 
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Code:"
+msgstr "Code:"
+
 msgid "D"
 msgstr "D"
 
 msgid "Date"
 msgstr "Datum"
 
+msgid "Date:"
+msgstr "Datum:"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Delete entry"
+msgstr "Eintrag löschen"
+
+msgid "Display entry as raw text"
+msgstr "Zeige Eintrag als Rohtext an"
+
 msgid "Django / Jinja Templates"
 msgstr "Django / Jinja Templates"
+
+#, python-format
+msgid "Do you really want to delete the entry <a href=\"%(link)s\">%(entry)s</a>?"
+msgstr "Möchtest du den Eintrag <a href=\"%(link)s\">%(entry)s</a> wirklich löschen?"
 
 msgid "Entries"
 msgstr "Einträge"
@@ -93,11 +128,20 @@ msgstr "MiniD"
 msgid "Myghty Templates"
 msgstr "Myghty Templates"
 
+msgid "New paste"
+msgstr "Neuer Eintrag"
+
+msgid "No pastes were created yet."
+msgstr "Es wurden noch keine Einträge erstellt."
+
 msgid "OCaml"
 msgstr "OCaml"
 
 msgid "PHP"
 msgstr "PHP"
+
+msgid "Pastebin"
+msgstr "Ablage"
 
 msgid "Perl"
 msgstr "Perl"
@@ -129,6 +173,9 @@ msgstr "Smarty"
 msgid "SquidConf"
 msgstr "SquidConf"
 
+msgid "Submit"
+msgstr "Speichern"
+
 msgid "TeX / LaTeX"
 msgstr "TeX / LaTeX"
 
@@ -137,6 +184,9 @@ msgstr "Das Löschen wurde abgebrochen."
 
 msgid "The entry in the pastebin was deleted."
 msgstr "Der Eintrag in der Ablage wurde gelöscht."
+
+msgid "This is a pastebin where you can save error messages, logs, configuration files or source codes to keep threads or IRC channels clean. To do this, just copy the text in the box below and choose the appropriate language. After that, you copy the URL into the topic or the channel."
+msgstr "Dies ist eine Ablage, in der du Fehlermeldungen, Logs, Konfigurationsdateien oder Quelltexte speichern kannst, um Forenthemen oder IRC-Kanäle nicht unnötig unleserlich zu machen. Dazu kopierst du den Text in das Textfeld und wählst die passende Sprache aus. Dann kopierst du die URL in das Thema bzw. den Kanal."
 
 msgid "Title"
 msgstr "Titel"

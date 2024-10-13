@@ -18,7 +18,6 @@
 """
 from werkzeug.local import Local, LocalManager
 
-
 local = Local()
 local_manager = LocalManager(local)
 current_request = local('request')

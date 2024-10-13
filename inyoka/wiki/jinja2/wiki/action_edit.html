@@ -1,0 +1,77 @@
+{#
+    wiki/action_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used if a user edits a page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set title = page.title %}
+{% set BREADCRUMBS = [(_('Edit'), page|url('edit'))] + BREADCRUMBS|d([]) %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor'] %}
+{% set action = 'edit' %}
+{% block wiki_content %}
+  <form enctype="multipart/form-data" action="" method="post">
+    {{ csrf_token() }}
+
+    {{ wiki_edit_note_rendered|default('', True) }}
+
+    {{ form.non_field_errors() }}
+    <div class="editor">{{ form.text }}</div>
+    {{ form.errors.text }}
+    {%- if license_note_rendered is not none %}
+      <div class="license_note">{{ license_note_rendered }}</div>
+    {%- endif %}
+    <div class="actions">
+      {% trans %}Edit summary:{% endtrans %} {{ form.note }}
+      {{ form.edit_time }}
+      {{ form.revision }}
+      <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}">
+      <input type="submit" value="{% trans %}Save{% endtrans %}">
+      <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}">
+    </div>
+    {{ form.errors.note }}
+  </form>
+  {%- if preview %}
+    <h2>{% trans %}Preview{% endtrans %}</h2>
+    <div class="preview">{{ preview }}</div>
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /*<![CDATA[*/
+      new WikiEditor('textarea[name="text"]', 'wiki');
+
+      (function() {
+        var
+          editor = $('textarea[name="text"]'),
+          output = $('<div class="preview"></div>');
+        var preview = $('<div></div>')
+          .hide()
+          .append('<h2>{% trans %}Preview{% endtrans %}</h2>')
+          .append(output);
+
+        $('form input[name="preview"]').click(function() {
+        $('body, input, textarea').css('cursor', 'progress');
+          preview.hide();
+          $.post('/?__service__=wiki.render_preview', {
+            page: {{ name|jsonencode }},
+            text: editor.val()
+          }, function(data) {
+            output.html(data);
+            preview.slideDown('fast');
+            $('body, input, textarea').css('cursor', 'auto');
+          });
+          return false;
+        }).parent().parent().append(preview);
+      })();
+    /*]]>*/
+  </script>
+{% endblock %}

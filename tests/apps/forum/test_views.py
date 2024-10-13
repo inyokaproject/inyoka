@@ -7,30 +7,29 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import shutil
 import datetime
+import shutil
 import zoneinfo
 from os import makedirs, path
 from random import randint
+from unittest.mock import patch
 
 import feedparser
 import responses
 from django.conf import settings
-from django.core.cache import cache
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.http import Http404
 from django.test import RequestFactory
 from django.test.utils import override_settings
-from django.utils import translation, timezone
+from django.utils import timezone, translation
 from django.utils.dateparse import parse_datetime
 from django.utils.translation import gettext as _
-from unittest.mock import patch
-
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum import constants, views
-from inyoka.forum.constants import get_version_choices, get_distro_choices
+from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import (
     Attachment,
     Forum,
@@ -262,7 +261,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             'topic_to_move': t1.slug})
         # The order in Topic 1 should now be
         # p11 p22 p23 p12 p13
-        # Previously is was
+        # Previously it was
         # for Topic 1 p11 p22 p23 and for Topic 2 p21 p12 p13
         self.assertEqual(Post.objects.filter(topic_id=t1.pk).count(), 5)
         self.assertEqual(Post.objects.filter(topic_id=t2.pk).count(), 1)
@@ -573,6 +572,25 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(
             Topic.objects.get(slug='newpost-title').last_post.text,
             'newpost text',
+        )
+
+    def test_newtopic__text_whitespace_not_stripped(self):
+        self.client.login(username='admin', password='admin')
+
+        text = ' * a \n * b\n'
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': text,
+        }
+
+        # Test send
+        self.post_request(f'/forum/{self.forum.slug}/newtopic/', postdata, 1, 1, submit=True)
+
+        # Check that the content is in the database
+        self.assertEqual(
+            Topic.objects.get(slug='newpost-title').last_post.text,
+            text,
         )
 
     def test_newtopic_user(self):
@@ -925,6 +943,26 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(
             Topic.objects.get(pk=topic.pk).last_post.text,
             'newpost text',
+        )
+
+    def test_new_post__text_whitespace_not_stripped(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text='first post', author=self.admin, topic=topic)
+
+        self.client.login(username='admin', password='admin')
+        text = ' * a \n * b\n'
+        postdata = {
+            'text': text,
+        }
+
+        # Test send
+        self.post_request(f'/topic/{topic.slug}/reply/', postdata, 1, 2, submit=True)
+
+        # Test that the data is in the database
+        topic.refresh_from_db()
+        self.assertEqual(
+            topic.last_post.text,
+            text,
         )
 
     def test_new_post_user(self):
@@ -1749,7 +1787,7 @@ class TestPostForumFeed(TestCase):
         self.assertEqual(len(feed.entries), 0)
 
     def test_invalid_forum_slug(self):
-        response = self.client.get(f'/feeds/forum/fooBarBAZ/short/10/', follow=True)
+        response = self.client.get('/feeds/forum/fooBarBAZ/short/10/', follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_multiple_topics(self):
@@ -1904,6 +1942,59 @@ class TestTopicFeed(TestCase):
 
         response = self.client.get(f'/feeds/topic/{topic.slug}/short/10/', follow=True)
         self.assertEqual(response.status_code, 403)
+
+    def test_submitted_post_with_control_characters(self):
+        """
+        Test that control characters
+          - get stripped from a post and
+          - don't raise an exception upon visiting a feed
+        """
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        for privilege in ('forum.view_forum', 'forum.add_topic_forum', 'forum.add_reply_forum'):
+            assign_perm(privilege, registered_group, self.forum)
+
+        self.client.login(username='user', password='user')
+        postdata = {
+            'text': 'control characters \x08 \x0f in text',
+            'send': True
+        }
+        self.client.post(f'/topic/{self.topic.slug}/reply/', postdata)
+
+        self.topic.refresh_from_db()
+        # \x08 and x0f should be stripped from the text
+        self.assertEqual(self.topic.last_post.text, 'control characters   in text')
+
+        self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')
+        self.assertEqual(int(self.topic.post_count()), 2)
+
+    def test_topic_title_control_characters(self):
+        """
+        Test that control characters
+          - get stripped from a topic title and
+          - don't raise an exception upon visiting a feed
+        """
+        self.subforum = Forum.objects.create(name='sub', parent=self.forum)
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        for privilege in ('forum.view_forum', 'forum.add_topic_forum', 'forum.add_reply_forum'):
+            assign_perm(privilege, registered_group, self.forum)
+            assign_perm(privilege, registered_group, self.subforum)
+
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        assign_perm('forum.view_forum', anonymous_group, self.subforum)
+
+        self.client.login(username='user', password='user')
+
+        postdata = {
+           'title': 'control characters \x08 \x0f',
+           'ubuntu_distro': constants.get_distro_choices()[2][0],
+           'text': 'newpost text',
+           'send': True
+        }
+        self.client.post('/forum/%s/newtopic/' % self.subforum.slug, postdata)
+
+        response = self.client.get(f'/feeds/forum/{self.subforum.slug}/full/10/')
+        self.assertContains(response, postdata['text'])
 
     def test_content_exact(self):
         response = self.client.get(f'/feeds/topic/{self.topic.slug}/full/50/')

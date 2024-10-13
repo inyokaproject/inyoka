@@ -1,5 +1,6 @@
-import allure
 import os
+
+import allure
 
 
 def take_screenshot(context, name):

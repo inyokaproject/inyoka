@@ -1,0 +1,6 @@
+Hallo {{ user.username }},
+
+du hast von {{ sender.username }} eine neue private Nachricht mit dem Titel „{{ subject }}“ bekommen.
+Du kannst sie dir hier ansehen: {{ entry|url }}
+
+Falls du bei neuen Privatnachrichten in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ href('portal', 'usercp', 'settings') }}

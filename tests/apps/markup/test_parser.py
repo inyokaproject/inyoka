@@ -12,8 +12,8 @@ import unittest
 
 from inyoka.markup import nodes
 from inyoka.markup.base import Parser
-from inyoka.portal.models import Linkmap
 from inyoka.markup.nodes import InterWikiLink
+from inyoka.portal.models import Linkmap
 from inyoka.utils.urls import href
 
 
@@ -227,3 +227,14 @@ class TestParser(unittest.TestCase):
         iwl = InterWikiLink('page', 'foo')
         self.assertEqual(iwl.resolve_interwiki_link(), 'https://foo.test/')
 
+    def test_control_characters_stripped__code(self):
+        tree = parse('{{{ \x00\x07 t }}}')
+
+        self.assertEqual(tree, nodes.Document(children=[
+            nodes.Preformatted(children=[
+                nodes.Text(text=' '),
+                nodes.Text(text=' t ')
+            ],
+                class_='notranslate', id=None, style=None
+            )
+        ]))

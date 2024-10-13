@@ -1,0 +1,38 @@
+{#
+    planet/suggest.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    On this page the user can suggest a new blog for the planet.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'planet/page.html' %}
+{% from 'macros.html' import render_form %}
+{% set BREADCRUMBS = [(_('Suggest blog'), href('planet', 'suggest'))] + BREADCRUMBS|d([]) %}
+
+{% block planet_content %}
+  {# TODO: Text should be changeable via interface #}
+  <p>{% trans %}With this form you can suggest a new blog for the planet.{% endtrans %}</p>
+  <p>Die wichtigsten Kriterien sind (siehe <a href="{{ href('wiki', 'ubuntuusers',
+    'Ikhayateam', 'Planetenregeln') }}">vollständigen Planetenregeln</a>):</p>
+  <ul>
+    <li>Ubuntu/Linux-bezogener Inhalt, bei gemischtem Inhalt muss ein separater Feed zur Verfügung gestellt werden.</li>
+    <li>Der Feed muss den gesamten Beitrag enthalten.</li>
+    <li>Der Blog sollte mindestens 2 Monate alt sein und in dieser Zeit regelmäßig und passend zum Thema berichtet haben.</li>
+    <li>Die Beiträge dürfen keine Werbung enthalten.</li>
+    <li>Die Beiträge müssen in deutscher Sprache verfasst sein.</li>
+  </ul>
+  <p>{% trans %}Please be patient. It could take a while, until we approve your suggestion.{% endtrans %}</p>
+  <form action="{{ href('planet', 'suggest') }}" method="post">
+    {{ csrf_token() }}
+    <dl>
+      {{ render_form(form, ['name', 'url', 'feed_url', 'description', 'contact_email'], inline=True) }}
+      <dd>{{ form.mine }} <label for="id_mine">{{ form.mine.label|e }}</label></dd>
+    </dl>
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+      <input type="submit" name="abort" value="{% trans %}Cancel{% endtrans %}">
+    </p>
+  </form>
+{% endblock %}

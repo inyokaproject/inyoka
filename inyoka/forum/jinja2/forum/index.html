@@ -1,0 +1,67 @@
+{#
+    forum/index.html
+    ~~~~~~~~~~~~~~~~
+
+    This is the forum's index page that shows all root-forums and their
+    first-level subforums. It also displays some information about the
+    forums like the last post and the overall topic / post count.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'forum/page.html' %}
+{% set scripts = ['jquery.cookie'] %}
+
+{% from 'forum/_forum.html' import render_forum %}
+{% if not is_index and categories %}
+  {% set BREADCRUMBS = [(categories[0].name, categories[0]|url)] + BREADCRUMBS|d([]) %}
+
+  {% set name = 'Forum „%s“ - ' % categories[0].name|e %}
+  {% set feeds = [
+    (name + _('Captions'), href('forum', 'feeds/forum', categories[0].slug, 'title/20')),
+    (name + _('Teaser'), href('forum', 'feeds/forum', categories[0].slug, 'short/20')),
+    (name + _('Full post'), href('forum', 'feeds/forum', categories[0].slug, 'full/20'))
+  ] %}
+{% else %}
+  {% set feeds = [
+    (_('Forum - Captions'), href('forum', 'feeds/title/20')),
+    (_('Forum - Teaser'), href('forum', 'feeds/short/20')),
+    (_('Forum - Full post'), href('forum', 'feeds/full/20'))
+  ] %}
+{% endif %}
+
+{% block forum_content %}
+  {%- if categories %}
+    <table class="forum{% if is_index %} category_box{% endif %} admin_link_hover">
+      {%- for category, forums in forum_hierarchy %}
+        <tr class="head" id="category-{{ category.id }}">
+          <th colspan="5"><a href="{{ category|url
+            }}">{{ category.name|e }}</a>
+            {%- if USER.has_perm('forum.change_forum') -%}
+              <a href="{{ href('forum', 'forum', category.slug, 'edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" class="admin_link right"></a>
+            {%- endif -%}
+          </th>
+        </tr>
+        {%- for forum, subforums in forums -%}
+          {{ render_forum(forum, subforums, last_posts) }}
+        {%- else %}
+          <tr class="empty category-{{ category.id }}">
+            <td colspan="5">{% trans %}This category does not contain any forum.{% endtrans %}</td>
+          </tr>
+        {%- endfor %}
+      {%- endfor %}
+    </table>
+  {%- else %}
+    <p>{% trans %}No categories{% endtrans %}</p>
+  {%- endif %}
+{% endblock %}
+
+{% if hidden_categories %}
+  {% block additional_scripts %}
+    <script>
+      $(function() {
+        hideForumCategories({{ hidden_categories|jsonencode }});
+      });
+    </script>
+  {% endblock %}
+{% endif %}

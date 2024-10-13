@@ -1,0 +1,10 @@
+.header {
+    background-image: url(../../img/head/easter.svg);
+    background-size: cover; /* prevent stretching the background on width > 2000px */
+}
+
+/* as logo and menu icons sometimes overlap with background items, add an
+   background filter to increase the contrast */
+.header h1 a, .tabbar li a::after {
+    filter: drop-shadow(0 0 1px rgb(255, 255, 255));
+}

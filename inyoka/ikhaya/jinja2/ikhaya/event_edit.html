@@ -1,0 +1,74 @@
+{#
+    ikhaya/event_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Template for editing or creating an event.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% set styles = ['editor', 'datetimefield'] %}
+{% set scripts = ['WikiEditor', 'DateTime'] %}
+
+{% set tmp_crumb = [(_('Events'), href('ikhaya', 'events'))] %}
+{% if not event %}
+  {% do tmp_crumb.append((_('Add'), href('ikhaya', 'event', 'new'))) %}
+{% else %}
+  {% set tmp_crumb = tmp_crumb + [(event.name, event|url), (_('Edit'), event|url('edit'))] %}
+{% endif %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% block content %}
+<form action="" method="post" enctype="multipart/form-data">
+  {{ csrf_token() }}
+  {%- if form.errors %}
+    <ul>{{ form.errors }}</ul>
+  {%- endif %}
+  {% if event.author %}
+    <dt>
+      {% trans %}Suggested by:{% endtrans %}
+      <a href="{{ event.author|url }}">{{ event.author|e }}</a>
+    </dt>
+  {% endif %}
+  <dt><label for="id_name">{% trans %}Name:{% endtrans %}</label></dt>
+  <dd>{{ form.name }}</dd>
+  <dt>{% trans %}Time:{% endtrans %}</dt>
+  <dd><label for="id_date">{% trans %}Date (from):{% endtrans %}</label> {{ form.date }}</dd>
+  <dd><label for="id_time">{% trans %}Time (from):{% endtrans %}</label> {{ form.time }}</dd>
+  <dd><label for="id_enddate">{% trans %}Date (to):{% endtrans %}</label> {{ form.enddate }}</dd>
+  <dd><label for="id_endtime">{% trans %}Time (to):{% endtrans %}</label> {{ form.endtime }}</dd>
+  <dt><label for="id_description">{% trans %}Description:{% endtrans %}</label></dt>
+  <dd>{{ form.description }}</dd>
+  <dt>{% trans %}Venue:{% endtrans %}</dt>
+  <dd><label for="id_location_town">{% trans %}Town:{% endtrans %}</label> {{ form.location_town }}</dd>
+  <dd><label for="id_location">{% trans %}Venue:{% endtrans %}</label> {{ form.location }}</dd>
+
+  <dt>{% trans %}Coordinates:{% endtrans %}</dt>
+  <dd><label for="id_location_long">{% trans %}Longitude:{% endtrans %}</label> {{ form.location_long }}</dd>
+  <dd><label for="id_location_lat">{% trans %}Latitude:{% endtrans %}</label> {{ form.location_lat }}</dd>
+  <dt>{% trans %}General{% endtrans %}</dt>
+  <dd><label for="id_visible">{{ form.visible.label }}</label> {{ form.visible }}</dd>
+
+  <p>
+    <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    {%- if event %}
+      <span class="linklist">|
+        <a href="{{ event|url() }}">{% trans %}Show event{% endtrans %}</a> |
+    {%- if USER.has_perm('portal.delete_event') %}
+        <a href="{{ event|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
+    {%- endif %}
+      </span>
+    {%- endif %}
+  </p>
+</form>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    var text = new WikiEditor('#id_description');
+    /* ]]> */
+  </script>
+{% endblock %}

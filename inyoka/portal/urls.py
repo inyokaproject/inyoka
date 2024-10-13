@@ -10,8 +10,8 @@
 from django.conf import settings
 from django.urls import include, path, re_path
 
-from . import views
 from ..utils.http import global_not_found, server_error
+from . import views
 
 urlpatterns = [
     path('', views.index),
@@ -41,7 +41,7 @@ urlpatterns = [
     path('usercp/', views.usercp),
     path('usercp/settings/', views.usercp_settings),
     path('usercp/profile/', views.usercp_profile),
-    path('usercp/password/', views.usercp_password),
+    path('usercp/password/', views.InyokaPasswordChangeView.as_view()),
     path('usercp/subscriptions/', views.usercp_subscriptions),
     path('usercp/subscriptions/<int:page>/', views.usercp_subscriptions),
     path('usercp/deactivate/', views.usercp_deactivate),

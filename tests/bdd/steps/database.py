@@ -1,4 +1,5 @@
 import datetime
+
 from behave import given, step
 from django.conf import settings
 from django.core.cache import cache
@@ -109,6 +110,7 @@ def step_impl(context, username):
     """
 
     from django.contrib.auth.models import Group
+
     from inyoka.portal.user import User
 
     if username == "anonymous":

@@ -11,15 +11,14 @@
 from urllib.parse import unquote
 
 from django.http import HttpResponse
-from django.views.decorators.http import require_POST, require_GET
 from django.utils.datastructures import MultiValueDictKeyError
+from django.views.decorators.http import require_GET, require_POST
 
-from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
-from inyoka.forum.models import Post, Topic, Forum
+from inyoka.forum.models import Forum, Post, Topic
 from inyoka.portal.models import Subscription
-from inyoka.utils.services import never_cache, SimpleDispatcher
+from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
+from inyoka.utils.services import SimpleDispatcher, never_cache
 from inyoka.utils.templating import render_template
-
 
 dispatcher = SimpleDispatcher(
     subscribe=lambda r: subscription_action(r, 'subscribe'),

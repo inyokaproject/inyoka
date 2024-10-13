@@ -1,0 +1,9 @@
+Icon Sets
+----------------------------
+Suru Icons
+https://github.com/ubuntu/yaru/tree/master/icons
+Licence: Creative Commons Attribution-ShareAlike 4.0 License
+---------------------------
+Material design icons
+https://google.github.io/material-design-icons/
+Licence: Apache License Version 2.0, January 2004

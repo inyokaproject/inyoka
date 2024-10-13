@@ -56,4 +56,3 @@ source_file            = inyoka/wiki/locale/django.pot
 source_lang            = en
 replace_edited_strings = false
 keep_translations      = false
-

@@ -52,7 +52,7 @@ LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
 LC_ALL = 'en_US.UTF-8'
 
 # the base url (without subdomain)
-BASE_DOMAIN_NAME = 'ubuntuusers.de'
+BASE_DOMAIN_NAME = 'inyokaproject.org'
 INYOKA_URI_SCHEME = 'http'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
@@ -79,9 +79,12 @@ MEDIA_URL = '//media.%s/' % BASE_DOMAIN_NAME
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = '//static.%s/' % BASE_DOMAIN_NAME
+STATICFILES_DIRS = [
+    join(BASE_PATH, 'static'),
+]
 
 # system user and group related settings
-INYOKA_SYSTEM_USER = 'ubuntuusers.de'
+INYOKA_SYSTEM_USER = 'inyokaproject.de'
 INYOKA_IKHAYA_GROUP_NAME = 'ikhayateam'
 INYOKA_REGISTERED_GROUP_NAME = 'registered'
 INYOKA_TEAM_GROUP_NAME = 'team'
@@ -421,7 +424,9 @@ TEMPLATES = [
     {
         'NAME': 'jinja',
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [],
+        'DIRS': [
+            join(BASE_PATH, '..', 'jinja2'),  # global files of inyoka
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'inyoka.utils.templating.environment',

@@ -1,0 +1,43 @@
+{#
+    templates/portal/about_inyoka
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    A template about the inyoka software.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+
+{% set BREADCRUMBS = [(_('Inyoka'), href('portal', 'inyoka'))] + BREADCRUMBS|d([]) %}
+
+{% macro badge(link, alt, img) -%}
+  <a href="{{ link|e }}"><img src="{{ href('static',
+    'img/badges/' + img)|e }}" alt="{{ alt|e }}"></a>
+{%- endmacro %}
+
+{% block portal_content %}
+  <h3>Was treibt ubuntuusers an?</h3>
+  <p>
+    Seit Juli 2008 läuft das gesamte ubuntuusers-Portal auf einer
+    einzigen <a href="https://www.python.org/">Python</a>-Anwendung mit dem
+    Namen „Inyoka“ (zulu für „Schlange“).
+  </p>
+  <p>
+    Inyoka selbst baut dabei auf eine Vielzahl von OpenSource-Programmen,
+    -Bibliotheken und -Technologien auf:
+  </p>
+  <p class="badges">
+    {{ badge('https://www.ubuntu.com/', 'ubuntu', 'ubuntu.gif') }}
+    {{ badge('https://www.python.org/', 'Python', 'python.png') }}
+    {{ badge('https://djangoproject.com/', 'Django', 'django.gif') }}
+    {{ badge('https://www.palletsprojects.com/p/jinja/', 'Jinja', 'jinja.png') }}
+    {{ badge('https://www.postgresql.org/', 'PostgreSQL', 'postgresql.png') }}
+    {{ badge('https://pygments.org/', 'Pygments', 'pygments.png') }}
+    {{ badge('https://redis.io/', 'redis', 'redis.png') }}
+    {{ badge('https://jquery.com/', 'jquery', 'jquery.png') }}
+    {{ badge('https://github.com/kurtmckee/feedparser', 'Universal Feed Parser', 'feedparser.png') }}
+    {{ badge('https://www.palletsprojects.com/p/werkzeug/', 'Werkzeug', 'werkzeug.png') }}
+  </p>
+{% endblock %}

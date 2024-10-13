@@ -1,0 +1,111 @@
+{#
+    ikhaya/article_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Template for editing or creating an Ikhaya article
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% from 'macros.html' import render_form %}
+{% set styles = ['editor', 'datetimefield'] %}
+{% set scripts = ['WikiEditor', 'DateTime'] %}
+
+{% if not article %}
+  {% set BREADCRUMBS = [(_('New Article'), href('ikhaya', 'new'))] + BREADCRUMBS|d([]) %}
+{% else %}
+  {% set BREADCRUMBS = [(article.subject, article|url),
+                        (_('Edit'), article|url('edit'))] + BREADCRUMBS|d([]) %}
+{% endif %}
+
+{% block content %}
+  {%- if article %}
+    <h3>
+      {%- trans link=article|url, article=article.subject|e -%}
+        Edit article “<a href="{{ link }}" title="Show article">{{ article }}</a>”
+      {%- endtrans -%}
+    </h3>
+  {%- else %}
+    <h3>{% trans %}New Article{% endtrans %}</h3>
+  {% endif %}
+
+  <form action="" method="post" class="ikhaya">
+    {{ csrf_token() }}
+    {{ form.errors.__all__ }}
+    {%- if article.article_icon %}
+      <div class="icon"><img src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}"></div>
+    {%- endif %}
+    <dl>
+      {{ render_form(form, ['subject', 'intro', 'text', 'author', 'category', 'icon', 'public', 'comments_enabled'], inline=true) }}
+      {%- if article != none %}
+        {{ render_form(form, ['updated'], inline=true) }}
+      {%- endif %}
+      {{ render_form(form, ['pub_date', 'pub_time', 'slug'], inline=true) }}
+      </dl>
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}" name="send">
+      <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview">
+      {%- if article %}
+        <span class="linklist">|
+          <a href="{{ article|url() }}">{% trans %}Show article{% endtrans %}</a> |
+          <a href="{{ article|url('id') }}">{% trans %}Short URL{% endtrans %}</a> |
+          {%- if USER.has_perm('ikhaya.delete_article') %}
+          <a href="{{ article|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
+          {%- endif %}
+        </span>
+      {%- endif %}
+    </p>
+  </form>
+  {%- if preview_intro %}
+    <div class="preview_wrapper">
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+      <div class="preview">{{ preview_intro }}</div>
+      <div class="preview">{{ preview_text }}</div>
+    </div>
+  {%- endif %}
+{%- endblock %}
+
+{% block additional_scripts %}
+  <script>
+    /* <![CDATA[ */
+    var text = new WikiEditor('textarea[name="text"]', 'forum');
+    var intro = new WikiEditor('textarea[name="intro"]', 'forum');
+
+    var intro_skipped = false;
+    $('#id_intro').keyup(function () {
+      var value = intro.textarea.val();
+      if ((value.substr(-2) == '\n\n' || value.substr(-4) == '\r\n\r\n')
+          && (! intro_skipped)) {
+        $('#id_text').focus();
+        intro.textarea.val(value.substr(0, value.length - 2));
+        intro_skipped = true;
+      }
+    });
+
+    /* Preview implementation */
+    (function() {
+      var
+        ieditor = $('textarea[name="intro"]'),
+        teditor = $('textarea[name="text"]'),
+        output = $('<div class="preview"></div>');
+      var preview = $('<div class="preview_wrapper"></div>')
+        .hide()
+        .append('<h2 class="title">{% trans %}Preview{% endtrans %}</h2>')
+        .append(output);
+
+      $('form input[name="preview"]').click(function() {
+        preview.hide();
+        $.post('/?__service__=wiki.render_preview', {
+          text: ieditor.val() + '\n----\n\n' + teditor.val()
+        }, function(data) {
+          output.html(data);
+          preview.slideDown('fast');
+        });
+        return false;
+      }).parent().parent().parent().append(preview);
+    })();
+
+    /* ]]> */
+  </script>
+{% endblock %}

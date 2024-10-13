@@ -1,0 +1,57 @@
+{#
+    portal/index.html
+    ~~~~~~~~~~~~~~~~~
+
+    This is ubuntuusers' main page that provides links to quite many pages.
+
+    It also displays some of the latest ikhaya messages.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+
+{% block pre_navigation %}
+  <div class="container calendar">
+    <div class="calendar link">
+      <h3><a href="{{ href('portal', 'calendar') }}">{% trans %}Upcoming events{% endtrans %}</a></h3>
+    </div>
+    {{ calendar_events|safe }}
+  </div>
+{% endblock %}
+
+{% block portal_content %}
+  <img src="{{ href('static', 'img', 'circle-of-friends-2022.svg') }}" width="56" height="56" alt="Ubuntu Logo" class="cat">
+  {{ welcome_message_rendered|default('', True) }}
+
+  {%- if ikhaya_latest %}
+  <h3>Neuigkeiten rund um Ubuntu, Linux und Open Source {{ feed_button(href('portal', 'feeds', _anchor='ikhaya')) }}</h3>
+  <div class="articles">
+    {%- for article in ikhaya_latest %}
+    <div class="article">
+      <h4><a href="{{ article|url }}">{{ article.subject|e }}</a></h4>
+
+      <div class="meta">
+        {%- if article.pub_datetime == article.updated %}
+          <a href="{{ article|url }}">{{ article.updated|datetime }}</a>
+        {%- else %}
+          <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|datetime
+             }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetime }}">{{ article.updated|datetime }}</a>
+        {%- endif %}
+        {%- if article.comments_enabled %}
+          <a href="{{ article|url('comments') }}" class="comments">
+            {%- trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize -%}
+              {{ count }} comment
+            {%- pluralize pluralindicator -%}
+              {{ count }} comments
+            {%- endtrans -%}
+          </a>
+        {%- endif %}
+      </div>
+      {{ article.intro_rendered }}
+    </div>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+{% endblock %}
+

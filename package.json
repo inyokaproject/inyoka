@@ -1,0 +1,44 @@
+{
+  "name": "inyoka",
+  "title": "Inyoka theme",
+  "version": "1.00.0",
+  "description": "Inyoka Theme",
+  "main": "index.js",
+  "scripts": {
+    "gzip": "find inyoka/static \\( -name *.ttf -o -name *.js -o -name *.css -o -name *.ico -o -name *.svg \\) -exec gzip -9kf {} \\;",
+    "build-css": "find inyoka/static -iname '*.less' -print -exec sh -c 'f={}; lessc --compress ${f} ${f%less}css' \\;",
+    "jshint": "find inyoka/static -iname '*.js' -and -not -iname '*.min.js' -exec jshint {} +",
+    "all": "npm run build-css && npm run gzip",
+    "watch": "while true; do npm run all; inotifywait --quiet --recursive --event modify inyoka/static; done"
+  },
+  "jshintConfig": {
+    "curly": true,
+    "eqeqeq": true,
+    "latedef": true,
+    "noarg": true,
+    "undef": true,
+    "unused": true,
+    "boss": true,
+    "eqnull": true,
+    "esversion": "6",
+    "browser": true,
+    "jquery": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inyokaproject/inyoka"
+  },
+  "author": "Inyoka Team",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/inyokaproject/inyoka/issues"
+  },
+  "homepage": "https://inyokaproject.org",
+  "engines": {
+    "node": ">= 4.0"
+  },
+  "dependencies": {
+    "jshint": "^2.12.0",
+    "less": "^4.1.1"
+  }
+}

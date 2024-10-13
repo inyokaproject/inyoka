@@ -1,3 +1,4 @@
+import os
 from uuid import uuid1
 
 from inyoka.default_settings import *
@@ -12,9 +13,16 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS = INSTALLED_APPS + (
-    'inyoka_theme_ubuntuusers',
-)
+if os.environ.get('INYOKA_THEME') == 'theme-ubuntuusers':
+    INSTALLED_APPS = INSTALLED_APPS + (
+        'inyoka_theme_ubuntuusers',
+    )
+
+    from os.path import join
+    THEME_PATH = join(BASE_PATH, '..', 'theme-ubuntuusers', 'inyoka_theme_ubuntuusers')
+    STATICFILES_DIRS = [join(THEME_PATH, 'static'),  # let own theme take precedence, so files can be overwritten
+                       ] + STATICFILES_DIRS
+    TEMPLATES[1]['DIRS'].insert(0, join(THEME_PATH, 'jinja2'))
 
 # debug settings
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = False

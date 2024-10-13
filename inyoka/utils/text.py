@@ -14,8 +14,8 @@ from unicodedata import normalize
 
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
-from django.utils.translation import gettext as _
 from django.utils.translation import get_language, pgettext
+from django.utils.translation import gettext as _
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')

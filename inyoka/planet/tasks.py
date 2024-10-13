@@ -13,10 +13,10 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+import socket
 import ssl
 import urllib
 
-import socket
 # And further patch it so feedparser works :/
 import xml.sax
 from datetime import datetime

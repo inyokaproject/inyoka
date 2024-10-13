@@ -1,0 +1,41 @@
+{#
+    portal/privmsg/overall.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% set BREADCRUMBS = [(_('Private message'), href('portal', 'privmsg'))] + BREADCRUMBS|d([]) %}
+{% set navi_type = 'both' %}
+
+{% block tabbar %}
+  <ul>
+    <li>
+      <a href="{{ href('portal', 'privmsg', 'inbox') }}"{{ selected == 'inbox' and ' class="active"' or '' }}>
+        {%- trans %}Inbox{% endtrans -%}
+      </a>
+    </li>
+    <li>
+      <a href="{{ href('portal', 'privmsg', 'sent') }}"{{ selected == 'sent' and ' class="active"' or '' }}>
+        {%- trans %}Sent mail{% endtrans -%}
+      </a>
+    </li>
+    <li>
+      <a href="{{ href('portal', 'privmsg', 'archive') }}"{{ selected == 'archive' and ' class="active"' or '' }}>
+        {%- trans %}Archive{% endtrans -%}
+      </a>
+    </li>
+    <li>
+      <a href="{{ href('portal', 'privmsg', 'trash') }}"{{ selected == 'trash' and ' class="active"' or '' }}>
+        {%- trans %}Trash{% endtrans -%}
+      </a>
+    </li>
+    <li>
+      <a href="{{ href('portal', 'privmsg', 'new') }}"{{ selected == 'new' and ' class="active"' or '' }}>
+        {%- trans %}Compose message{% endtrans -%}
+      </a>
+    </li>
+  </ul>
+{% endblock %}

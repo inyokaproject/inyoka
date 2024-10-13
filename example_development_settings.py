@@ -35,12 +35,23 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SECRET_KEY = None
 
+# adapt for your custom theme
+# remove comment
+"""
 INSTALLED_APPS = INSTALLED_APPS + (
-    'inyoka_theme_default',
+#    'inyoka_theme_ubuntuusers',
 )
 
+from os.path import join
+THEME_PATH = join(BASE_PATH, '..', '..', 'theme-ubuntuusers', 'inyoka_theme_ubuntuusers')
+STATICFILES_DIRS = [
+    join(THEME_PATH, 'static'),  # let own theme take precedence, so files can be overwritten
+] + STATICFILES_DIRS
+TEMPLATES[1]['DIRS'].insert(0, join(THEME_PATH, 'jinja2'))
+"""
+
 # Sentry integration
-# remove commment to enable sentry integration
+# remove comment to enable sentry integration
 # insert DSN for used sentry instance
 """
 import sentry_sdk

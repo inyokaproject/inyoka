@@ -1,0 +1,92 @@
+{#
+    wiki/action_attachments.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to show a list of attached files and for
+    uploading new attachments.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+
+{% set BREADCRUMBS = [('Dateianhang hinzufügen', page|url('attach'))] + BREADCRUMBS|d([]) %}
+{% set action = 'manage' %}
+{% set styles = ['editor'] %}
+{% set scripts = ['WikiEditor'] %}
+
+{% block wiki_content %}
+  <h1 class="pagetitle">{% trans %}Add attachment{% endtrans %}</h1>
+
+  <div id="page">
+    <form action="{{ page|url('attachments') }}" method="post"
+      enctype="multipart/form-data" id="form_addattachment">
+      {{ csrf_token() }}
+      <p>
+        {{ form.attachment.errors }}
+        <label for="id_attachment">{% trans %}Attachment:{% endtrans %}</label>
+        {{ form.attachment }}</p>
+      <p><label for="id_filename">{% trans %}Rename to:{% endtrans %}</label>
+        {{ form.filename }}</p>
+      <p><label for="id_text">{% trans %}Description:{% endtrans %}</label><br></p>
+        <p>{{ form.text }}</p>
+      <p><label for="id_note">{% trans %}Edit summary:{% endtrans %}</label>
+        {{ form.note }}</p>
+      <p>
+        {{ form.override }}
+        <label for="id_override">
+          {% trans %}Overwrite existing attachments with same name:{% endtrans %}
+        </label>
+      </p>
+      <p><input type="submit" value="{% trans %}Upload attachments{% endtrans %}">
+         <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}"></p>
+    </form>
+
+    <h2>{% trans %}Existing attachments{% endtrans %}</h2>
+    {%- if attachments %}
+      <p>
+        {%- trans count=attachments|count -%}
+          There is currently one attachment assigned to this page.
+        {%- pluralize -%}
+          There are currently {{ count }} attachments assigned to this page.
+        {%- endtrans %}
+        {% trans -%}
+          To refer to an attachment you can either link to the corresponding wiki page or include it with the <code>[[Bild()]]</code> macro.
+        {%- endtrans -%}
+      </p>
+      <ul class="attachments">
+        {%- for attachment in attachments %}
+          <li>
+            <a href="{{ attachment|url }}">{{ attachment.title|e }}</a>
+            {{ attachment.rev.attachment.file.size|filesizeformat(true) }}
+            {% if attachment.rev.user %}
+              {% trans date=attachment.rev.change_date|datetime,
+                       author=attachment.rev.user.username|e,
+                       link=attachment.rev.user|url -%}
+                (last modified on {{ date }} by <a href="{{ link }}">{{ author }}</a>)
+              {%- endtrans %}
+            {% else %}
+              {% trans date=attachment.rev.change_date|datetime,
+                       author=attachment.rev.remote_addr|e -%}
+                (last modified on {{ date }} by {{ author }})
+              {%- endtrans %}
+            {% endif %}
+          </li>
+        {%- endfor %}
+      </ul>
+    {%- else %}
+      <p>{% trans %}There are no attachments yet for this site.{% endtrans %}</p>
+    {%- endif %}
+  </div>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    var text = new WikiEditor('textarea[name="text"]');
+    /* ]]> */
+  </script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{#
+    portal/usercp/profile.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows the user control panel settings page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/usercp/overall.html' %}
+{% import 'macros.html' as macros %}
+{% set BREADCRUMBS = [(_('Profile'), href('portal', 'usercp', 'profile'))] + BREADCRUMBS|d([]) %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor'] %}
+{% set selected = 'profile' %}
+
+{% block portal_content %}
+  <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
+    <h3>{% trans %}Avatar settings{% endtrans %}</h3>
+    <dl>
+      <dt>{{ form.avatar.label_tag() }}</dt>
+      <dd>
+        {{ macros.add_user_avatar(user, 'usercp_avatar') }}
+      </dd>
+      <dd>{{ form.avatar }}</dd>
+      {%- if max_avatar_height >= 0 and max_avatar_width >= 0 %}
+      <dd class="note">
+        {%- trans width=max_avatar_width, height=max_avatar_height,
+                 size=max_avatar_size -%}
+          Please note that the maximum size for the avatar is {{ width }}x{{ height }} pixels and {{ size }} KiB. Everything that exceeds this limit will automatically be resized.
+        {%- endtrans -%}
+      </dd>
+      {%- endif %}
+      {%- if form.errors.avatar %}<dd>{{ form.errors.avatar }}</dd>{% endif %}
+      <dt>{% trans %}Gravatar:{% endtrans %}</dt>
+      {% if user.settings.use_gravatar %}
+      <dd><img class="usercp_avatar" src="{{ user.gravatar_url }}" alt="Gravatar"></dd>
+      {% endif %}
+      <dd>{{ form.use_gravatar }} <label for="id_use_gravatar">{{ form.use_gravatar.label }}</label>
+        <dd class="note">{{ form.use_gravatar.help_text|safe }}</dd>
+      </dd>
+    </dl>
+    <h3>{% trans %}Contact addresses{% endtrans %}</h3>
+    <dl>
+      <dd>
+        <p class="note">{% trans -%}
+          By default, the email address is not displayed in your public profile. To publish it, you need to check the “show in profile” box.
+        {%- endtrans %}</p>
+      </dd>
+      {% for item in ['email', 'gpgkey', 'jabber', 'website', 'launchpad', 'location'] %}
+        <dt>
+          {{ form[item].label_tag() }}
+        </dt>
+        <dd>{{ form[item] }}
+          {%- if item in ['email',] %}
+            <span class="note">{{ form['show_' + item] }}
+              <label for="id_show_{{ item }}">{% trans %}Show in profile{% endtrans %}</label>
+            </span>
+          {%- endif -%}
+        </dd>
+        {%- if form.errors[item] %}<dd>{{ form.errors[item] }}</dd>{% endif %}
+      {% endfor %}
+    </dl>
+    <h3>{% trans %}Signature{% endtrans %}</h3>
+    <p class="note">{% trans n=max_sig_length, link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') -%}
+      The signature will be appended to every post. It cannot contain more than {{ n }} characters. Please follow the <a href="{{ link }}">signature rules</a>.
+    {%- endtrans %}</p>
+    {{ form.errors.signature }}
+    <p>
+      {{ form.signature }}
+    </p>
+    <h3>{% trans %}User page{% endtrans %}</h3>
+    <p>
+      {{ form.userpage }}
+    </p>
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    </p>
+    <p>
+      <a href="{{ href('portal', 'user', user.username ) }}">{% trans %}Show my profile{% endtrans %}</a>
+    </p>
+  </form>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+
+  <script>
+    /*<![CDATA[*/
+    var signatureeditor = new WikiEditor('textarea[name="signature"]');
+
+    var userpageeditor = new WikiEditor('textarea[name="userpage"]');
+
+    /*]]>*/
+  </script>
+{% endblock %}

@@ -29,7 +29,7 @@ from datetime import datetime
 from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
-from inyoka.markup.utils import debug_repr, filter_style, ArgumentCollector
+from inyoka.markup.utils import ArgumentCollector, debug_repr, filter_style
 from inyoka.utils.dates import format_datetime
 
 ALL_MACROS = {}
@@ -37,10 +37,10 @@ ALL_MACROS = {}
 
 def get_macro(name, args, kwargs):
     """
-    Instanciate a new macro or return `None` if it doesn't exist.  This is
+    Instantiate a new macro or return `None` if it doesn't exist.  This is
     used by the parser when it encounters a `macro_begin` token.  Usually
     there is no need to call this function from outside the parser.  There
-    may however be macros that want to extend the functionallity of an
+    may however be macros that want to extend the functionality of an
     already existing macro.
     """
     cls = ALL_MACROS.get(name)
@@ -249,10 +249,7 @@ class TableOfContents(TreeMacro):
 
             # in all cases we need to add the current headline to the children
             # of recent stack element
-            ml = 42 - (headline.level - 1) * 2
-            text = len(headline.text) > ml and headline.text[:ml] + '...' or \
-                   headline.text
-            caption = [nodes.Text(text)]
+            caption = [nodes.Text(headline.text)]
             link = nodes.Link('#' + headline.id, caption)
             stack[-1].children.append(nodes.ListItem([link]))
 

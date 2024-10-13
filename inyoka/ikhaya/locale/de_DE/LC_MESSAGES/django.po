@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-01 16:45+0200\n"
-"PO-Revision-Date: 2017-03-23 22:51+0000\n"
+"POT-Creation-Date: 2024-10-13 15:19+0200\n"
+"PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,7 +16,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.16.0\n"
+
+#, python-format
+msgid " Comments (%(count)s)"
+msgstr " Kommentare (%(count)s)"
+
+#, python-format
+msgid "%(count)s <a href=\"%(link)s\">comment</a>"
+msgid_plural "%(count)s <a href=\"%(link)s\">comments</a>"
+msgstr[0] "%(count)s <a href=\"%(link)s\">Kommentar</a>"
+msgstr[1] "%(count)s <a href=\"%(link)s\">Kommentare</a>"
 
 #, python-format
 msgid "%(domain)s Ikhaya comments"
@@ -26,11 +36,33 @@ msgstr "%(domain)s Ikhaya Kommentare"
 msgid "%(domain)s Ikhaya comments – %(title)s"
 msgstr "%(domain)s Ikhaya Kommentare – %(title)s"
 
+msgid "About Ikhaya"
+msgstr "Über Ikhaya"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid "Add category"
+msgstr "Kategorie hinzufügen"
+
+msgid "Add event"
+msgstr "Veranstaltung hinzufügen"
+
 msgid "Allow comments"
 msgstr "Kommentare erlauben"
 
 msgid "Annotations to the team"
 msgstr "Anmerkungen an das Ikhayateam"
+
+msgid "Archive"
+msgstr "Archiv"
+
+#, python-format
+msgid "Are you sure you want to delete the article <a href=\"%(link)s\">%(article)s</a>?"
+msgstr "Bist du sicher, dass du den Artikel <a href=\"%(link)s\">%(article)s</a> löschen möchtest?"
 
 msgid "Article"
 msgstr "Artikel"
@@ -47,11 +79,24 @@ msgstr "Artikelvorschläge"
 msgid "Articles"
 msgstr "Artikel"
 
+msgid "Assign to me"
+msgstr "Mir zuweisen"
+
+msgid "Assigned to:"
+msgstr "Zugewiesen an:"
+
 msgid "Author"
 msgstr "Autor"
 
+#, python-format
+msgid "By using this form you can suggest a new entry for the <a href=\"%(link_calendar)s\">calendar</a>. A team member will review your suggestion as soon as possible. If you want to change an existing calendar entry please contact the <a href=\"%(link_newsteam)s\">news team</a>."
+msgstr "Mit diesem Formular kannst du einen neuen Eintrag in unseren <a href=\"%(link_calendar)s\">Kalender</a> eintragen. Ein Ikhayateammitglied wird sich deinen Vorschlag so schnell wie möglich ansehen. Wenn du Änderungen an einem bestehenden Kalendereintrag hast, wende dich bitte an ein Mitglied des <a href=\"%(link_newsteam)s\">Ikhayateams</a>."
+
 msgid "Cancel"
 msgstr "Abbrechen"
+
+msgid "Captions"
+msgstr "Überschriften"
 
 msgid "Categories"
 msgstr "Kategorien"
@@ -59,8 +104,45 @@ msgstr "Kategorien"
 msgid "Category"
 msgstr "Kategorie"
 
+msgid "Category:"
+msgstr "Kategorie:"
+
+msgid "Comments"
+msgstr "Kommentare"
+
+msgid "Comments - Captions"
+msgstr "Kommentare - Überschriften"
+
+msgid "Comments - Full"
+msgstr "Kommentare - Vollständig"
+
+msgid "Comments - Teaser"
+msgstr "Kommentare - Einleitung"
+
+#, python-format
+msgid "Concerns article “<a href=\"%(link)s\">%(article)s</a>”"
+msgstr "Betrifft Artikel „<a href=\"%(link)s\">%(article)s</a>“"
+
+msgid "Coordinates:"
+msgstr "Koordinaten:"
+
+msgid "Copy"
+msgstr "Kopieren"
+
+msgid "Create category"
+msgstr "Kategorie erstellen"
+
+msgid "Current articles"
+msgstr "Aktuelle Artikel"
+
 msgid "Date"
 msgstr "Datum"
+
+msgid "Date (from):"
+msgstr "Datum (von):"
+
+msgid "Date (to):"
+msgstr "Datum (bis):"
 
 msgid "Degree of latitude"
 msgstr "Breitengrad"
@@ -68,12 +150,38 @@ msgstr "Breitengrad"
 msgid "Degree of longitude"
 msgstr "Längengrad"
 
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Delete assignment"
+msgstr "Zuweisung löschen"
+
 #, python-format
 msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>” was canceled."
 msgstr "Löschen des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde abgebrochen."
 
+#, python-format
+msgid "Describe here briefly the discovered mistake. Please make sure that the mistake was not <a href=\"%(link)s\">already reported</a>."
+msgstr "Bitte beschreibe hier kurz die im Artikel gefundenen Fehler. Bitte achte darauf, dass der Fehler nicht bereits <a href=\"%(link)s\">gemeldet wurde</a>."
+
+msgid "Description:"
+msgstr "Beschreibung"
+
 msgid "Display event?"
 msgstr "Kalendereintrag sichtbar?"
+
+msgid "Display options"
+msgstr "Anzeigeoptionen"
+
+msgid "Display past events"
+msgstr "Zeige vergangene Veranstaltungen an"
+
+msgid "Do not notify me anymore about new article suggestions"
+msgstr "Benachrichtige mich nicht mehr bei neuen Artikelvorschlägen"
+
+#, python-format
+msgid "Do you really want to delete the event <a href=\"%(link)s\">%(event)s</a>?"
+msgstr "Möchtest du die Veranstaltung <a href=\"%(link)s\">%(event)s</a> wirklich löschen?"
 
 msgid "Do you want to hide this comment?"
 msgstr "Möchtest du den Kommentar verbergen?"
@@ -93,11 +201,53 @@ msgstr "Möchtest du den Kommentar wiederherstellen?"
 msgid "Do you want to restore this report?"
 msgstr "Möchtest du die Meldung wiederherstellen?"
 
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Edit article"
+msgstr "Artikel bearbeiten"
+
+#, python-format
+msgid "Edit article “<a href=\"%(link)s\" title=\"Show article\">%(article)s</a>”"
+msgstr "Bearbeite Artikel „<a href=\"%(link)s\" title=\"Artikel anzeigen\">%(article)s</a>“"
+
+msgid "Edit comment"
+msgstr "Kommentar bearbeiten"
+
+msgid "Entire archive"
+msgstr "Ganzes Archiv"
+
+msgid "Events"
+msgstr "Veranstaltungen"
+
+msgid "Explanation for the author of the suggestion:"
+msgstr "Erläuterung für den Autor des Vorschlages:"
+
+msgid "Full"
+msgstr "Komplett"
+
+msgid "General"
+msgstr "Allgemein"
+
 msgid "Headline"
 msgstr "Überschrift"
 
+#, python-format
+msgid "Here are all published articles in chronological order. You can find the most recent articles on <a href=\"%(link)s\">the front page</a>."
+msgstr "Hier finden sich alle Artikel in chronologischer Reihenfolge. Die aktuellsten Artikel sind auf der <a href=\"%(link)s\">Startseite</a> zu sehen."
+
+#, python-format
+msgid "Here is one article suggestion which was not yet reviewed."
+msgid_plural "Here are %(count)s article suggestions which were not yet reviewed."
+msgstr[0] "Es gibt noch einen Artikelvorschlag zum Bearbeiten."
+msgstr[1] "Es gibt noch %(count)s Artikelvorschläge zum Bearbeiten."
+
 msgid "Hide"
 msgstr "Verbergen"
+
+#, python-format
+msgid "I assure that my submission does not violate any other legal rights and it does not violate the <a href=\"%(link_rules)s\">platform rules</a>. Additionally I accept that my submission is published under the <a href=\"%(link_license)s\">license</a> of the platform."
+msgstr "Ich versichere hiermit, dass der Beitrag weder fremde Rechte noch die <a href=\"%(link_rules)s\">Portalregeln</a> verletzt. Ich willige ein, diesen Beitrag unter der von ubuntuusers.de vorgegebenen <a href=\"%(link_license)s\">Lizenz</a> zu veröffentlichen."
 
 msgid "Icon"
 msgstr "Icon"
@@ -105,8 +255,17 @@ msgstr "Icon"
 msgid "If you keep this field empty, the publication date will be used."
 msgstr "Wenn du dieses Feld leer lässt, wird automatisch das Veröffentlichungsdatum verwendet."
 
+msgid "If you want to suggest a new article please submit your article below."
+msgstr "Du willst, dass wir etwas Bestimmtes im Ikhaya veröffentlichen? Eine wichtige Nachricht ist noch nicht online? Du hast einen Erfahrungsbericht, den Du anderen zugänglich machen willst? Du möchtest eine Software vorstellen? Dann schreibe Deinen Beitrag hier!"
+
+msgid "Ikhaya"
+msgstr "Ikhaya"
+
 msgid "Introduction"
 msgstr "Einleitung"
+
+msgid "It is not possible to submit images along with the article. If you want to use images please upload them elsewhere and insert the links in the article."
+msgstr "Bilder können in dem Artikelvorschlag leider nicht direkt eingebunden werden. Soll Dein Artikel Bilder enthalten, lade diese bitte irgendwo hoch und füge die Bildlinks an die von Dir gewünschte Stelle des Artikelvorschlags."
 
 msgid "Last change"
 msgstr "Letzte Änderung"
@@ -114,11 +273,35 @@ msgstr "Letzte Änderung"
 msgid "Last update"
 msgstr "Letzte Aktualisierung"
 
+msgid "Last update:"
+msgstr "Letzte Aktualisierung:"
+
+msgid "Latitude:"
+msgstr "Breitengrad:"
+
+msgid "Leave this field empty if the suggestion should be deleted without an explanation."
+msgstr "Lasse dieses Feld leer, wenn du den Vorschlag ohne eine Erläuterung löschen möchtest."
+
+msgid "Longitude:"
+msgstr "Längengrad:"
+
 msgid "Mark as solved"
 msgstr "Als gelöst markieren"
 
 msgid "Mark as unsolved"
 msgstr "Als ungelöst markieren"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Name:"
+msgstr "Name:"
+
+msgid "New Article"
+msgstr "Neuer Artikel"
+
+msgid "New article"
+msgstr "Neuer Artikel"
 
 #, python-format
 msgid "New article suggestion “%(suggestion)s”"
@@ -132,8 +315,22 @@ msgstr "Neuer Kommentar zum Artikel „%(article)s“"
 msgid "New private message from %(user)s: %(subject)s"
 msgstr "Neue private Nachricht von %(user)s: %(subject)s"
 
+#, python-format
+msgid "New report for the article “<a href=\"%(link)s\">%(article)s</a>”"
+msgstr "Neue Meldung zum Artikel „<a href=\"%(link)s\">%(article)s</a>“"
+
+msgid "News"
+msgstr "Nachrichten"
+
+#, python-format
+msgid "No event was added yet, <a href=\"%(link)s\">create</a> the first one now!"
+msgstr "Es wurde noch keine Veranstaltung hinzugefügt, <a href=\"%(link)s\">erstelle</a> jetzt die erste!"
+
 msgid "No notifications on suggestions will be sent to you any more."
 msgstr "Du wirst über neue Vorschläge nicht mehr benachrichtigt."
+
+msgid "Nobody"
+msgstr "Niemanden"
 
 msgid "Notifications on new comments to this article will be sent to you."
 msgstr "Du wirst über neue Kommentare zu diesem Artikel benachrichtigt."
@@ -141,17 +338,98 @@ msgstr "Du wirst über neue Kommentare zu diesem Artikel benachrichtigt."
 msgid "Notifications on new suggestions will be sent to you."
 msgstr "Du wirst über neue Vorschläge benachrichtigt."
 
+msgid "Notify me about new article suggestions"
+msgstr "Benachrichtige mich bei neuen Artikelvorschlägen"
+
+msgid "Preview"
+msgstr "Vorschau"
+
 msgid "Public"
 msgstr "Veröffentlicht"
+
+#, python-format
+msgid "Published by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Veröffentlicht von <a href=\"%(link)s\">%(author)s</a>"
+
+msgid "Reply"
+msgstr "Antworten"
+
+msgid "Report an error in this article"
+msgstr "Fehler im Artikel melden"
+
+#, python-format
+msgid "Reported by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Gemeldet von <a href=\"%(link)s\">%(author)s</a>"
+
+msgid "Reports"
+msgstr "Meldungen"
 
 msgid "Restore"
 msgstr "Wiederherstellen"
 
+msgid "Short URL"
+msgstr "Kurz-URL"
+
+msgid "Show article"
+msgstr "Artikel anzeigen"
+
+msgid "Show event"
+msgstr "Veranstaltung anzeigen"
+
+msgid "Show full article"
+msgstr "Gesamten Artikel anzeigen"
+
+msgid "Show only invisible events"
+msgstr "Zeige nur unsichtbare Veranstaltungen an"
+
+msgid "Show only teaser"
+msgstr "Nur Einleitung anzeigen"
+
+msgid "Show only upcoming events"
+msgstr "Zeige nur kommende Veranstaltungen an"
+
 msgid "Slug"
 msgstr "Slug"
 
+msgid "Solved"
+msgstr "Gelöst"
+
 msgid "Sorry, editing comments is disabled for now."
 msgstr "Entschuldigung. Das Editieren von Kommentaren ist derzeit deaktiviert."
+
+msgid "Submit"
+msgstr "Speichern"
+
+msgid "Subscribe"
+msgstr "Abonnieren"
+
+msgid "Subscribe comments"
+msgstr "Kommentare abonnieren"
+
+msgid "Suggest"
+msgstr "Vorschlagen"
+
+msgid "Suggest article"
+msgstr "Artikel vorschlagen"
+
+msgid "Suggest event"
+msgstr "Veranstaltung vorschlagen"
+
+msgid "Suggest new article"
+msgstr "Artikel vorschlagen"
+
+#, python-format
+msgid "Suggested by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Vorgeschlagen von <a href=\"%(link)s\">%(author)s</a>"
+
+msgid "Suggested by:"
+msgstr "Vorgeschlagen von:"
+
+msgid "Team icon"
+msgstr "Team-Icon"
+
+msgid "Teaser"
+msgstr "Einleitung"
 
 msgid "Text"
 msgstr "Text"
@@ -236,6 +514,15 @@ msgstr "Der Vorschlag „%(title)s“ existiert nicht."
 msgid "There already exists an article with this slug!"
 msgstr "Es existiert schon ein Artikel mit diesem Slug!"
 
+msgid "There are currently no article suggestions."
+msgstr "Es gibt momentan keine Artikelvorschläge."
+
+msgid "There are no reports yet."
+msgstr "Es existieren noch keine Fehlermeldungen."
+
+msgid "There is no article."
+msgstr "Es gibt keinen Artikel."
+
 #, python-format
 msgid "This article is currently being edited by “%(user)s”!"
 msgstr "Dieser Artikel wird momentan von „%(user)s“ bearbeitet!"
@@ -249,14 +536,44 @@ msgstr "Dieser Vorschlag existiert nicht."
 msgid "Time"
 msgstr "Zeit"
 
+msgid "Time (from):"
+msgstr "Zeit (von):"
+
+msgid "Time (to):"
+msgstr "Zeit (bis):"
+
+msgid "Time:"
+msgstr "Zeit:"
+
 msgid "Title"
 msgstr "Titel"
 
 msgid "To refer to another comment, you can write <code>@commentnumber</code>.<br />Clicking on “reply” will automatically insert this code."
 msgstr "Um dich auf einen anderen Kommentar zu beziehen, kannst du <code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch eingefügt, wenn du bei einem Beitrag auf „Antworten“ klickst."
 
+msgid "Town:"
+msgstr "Stadt:"
+
 msgid "Unique URL-part for the article. If not given, the slug will be generated from title."
 msgstr "Eindeutiger URL-Teil für den Artikel. Wird automatisch anhand des Titels generiert, wenn nicht ausgefüllt."
+
+msgid "Unpublish"
+msgstr "Veröffentlichung aufheben"
+
+msgid "Unsolved"
+msgstr "Ungelöst"
+
+msgid "Unsubscribe"
+msgstr "Abbestellen"
+
+msgid "Unsubscribe comments"
+msgstr "Kommentare abbestellen"
+
+msgid "Venue:"
+msgstr "Veranstaltungsort:"
+
+msgid "Write comment"
+msgstr "Kommentar schreiben"
 
 msgid "XHTML Markup"
 msgstr "XHTML Auszeichnung"

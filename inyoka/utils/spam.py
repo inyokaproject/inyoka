@@ -11,6 +11,7 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
+
 from inyoka.utils.logger import logger
 
 

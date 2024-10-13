@@ -48,7 +48,8 @@ def update_page_by_slug():
     Updates the mapping between wiki slugs and the real page names, should run
     from time to time to avoid in-request processing for this mapping.
     """
-    from inyoka.wiki.models import Page, to_page_by_slug_key as to_key
+    from inyoka.wiki.models import Page
+    from inyoka.wiki.models import to_page_by_slug_key as to_key
 
     # This sets only the canary, so we don't run more than once at a time.
     cache.set('wiki/page_by_slug_created', True)

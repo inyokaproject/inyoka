@@ -1,0 +1,25 @@
+{#
+    confirm_action.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Template for "Are you sure?" confirmation forms.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{% extends 'overall.html' %}
+
+{% set BREADCRUMBS = [(_('Confirmation'), '')] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+  <div class="confirm_action box">
+    <form action="{{ action_url|e }}" method="post">
+      {{ csrf_token() }}
+      <p>{{ message|e }}</p>
+      <p>
+        <input type="submit" name="confirm" value="{{ confirm_label|e }}">
+        <input type="submit" name="cancel" value="{{ cancel_label|e }}">
+      </p>
+    </form>
+  </div>
+{% endblock %}

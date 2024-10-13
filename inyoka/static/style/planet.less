@@ -1,0 +1,122 @@
+/**
+ * style.planet
+ * ~~~~~~~~~~~~
+ *
+ * The styles for the planet.
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'layout.less';
+
+@icon-size: 96px;
+@link-color: #888;
+
+
+.navi_sidebar .navi_blogs {
+    background-image: url('../img/icons/blogs.svg');
+    background-size: 22px 22px;
+}
+
+.day > h2 {
+  font-size: 2.4em;
+}
+
+.article {
+  margin: 1.5em 0;
+
+  > .head {
+    display: block;
+    padding-right: 0.5em;
+    min-height: @icon-size;
+
+    img {
+      float: left;
+      max-width: @icon-size;
+      max-height: @icon-size;
+    }
+    > .title-column  {
+      display: inline-block;
+      width: ~"calc(100% - @{icon-size} - 10px)";
+      padding-left: 10px;
+    }
+    h3 {
+      font-size: 1.6em;
+      line-height: 1em;
+      clear: right;
+
+      a {
+        color: black;
+
+        &.headerlink {
+          color: @link-color;
+        }
+      }
+    }
+    .easy-navigation {
+      float: right;
+
+      > a:not(:first-child) {
+        padding-left: 1em;
+      }
+    }
+  }
+  > .post {
+    @media (min-width: @medium-width) {
+      @post-border: thin solid #BFBFBF;
+      border-right: @post-border;
+      border-bottom: @post-border;
+
+      padding-right: 1.5em;
+    }
+    padding-bottom: 1.5em;
+
+    &.hidden {
+      color: #ccc;
+    }
+    .text {
+      max-width: 100% !important;
+      overflow: auto;
+
+      h1 {
+        font-size: 1.8em;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+      h3 {
+        font-size: 1.3em;
+
+        .note {
+          font-size: 0.7em;
+          padding-left: 0;
+        }
+      }
+      h4 {
+        font-size: 1.1em;
+      }
+      img {
+        /* `!important` needed as width and height are sometimes inline
+          defined (→ wrong form-factor if scaled) */
+        width: auto !important;
+        height: auto !important;
+
+        max-width: 100% !important;
+        max-height: 250px;
+      }
+    }
+    .meta {
+      text-align: right;
+      font-size: 0.9em;
+    }
+  }
+}
+
+ul.newestarticles {
+  columns: 25ch 3; /* ideal width and maximum of columns */
+  column-gap: 2em; /* otherwise the numerations are hidden in Chrome */
+}
+table tbody tr.not_published, table tbody tr.not_published a {
+  color: #aaa;
+}

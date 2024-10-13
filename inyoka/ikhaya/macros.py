@@ -14,8 +14,8 @@ from django.dispatch import receiver
 
 from inyoka.markup import nodes
 from inyoka.portal.models import StaticFile
-from inyoka.utils.urls import url_for
 from inyoka.utils.imaging import get_thumbnail
+from inyoka.utils.urls import url_for
 from inyoka.wiki.signals import build_picture_node
 
 

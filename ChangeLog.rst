@@ -24,6 +24,52 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+
+Unreleased 1.0.0 (2024-10-12)
+=====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+🏗 Changes
+----------
+
+* Add default theme based on ubuntuusers theme to the inyoka repository
+* Migrate from ``setup.py`` to ``pyproject.toml``
+* Introduce ruff for code formatting
+* Render ``<mark>`` for highlighted text
+* Control characters are stripped from all HTTP-POST parameters
+* Documentation: Now possible to use Markdown
+* Documentation is now published at https://doc.inyokaproject.org/
+* Use Django's view and form for change password
+* Restrict user defineable font faces: Only ``[font=Arial]``, ``[font=serif]``, ``[font=sans-serif]`` and ``[font=Courier]`` are allowed
+* Disallow ``<color>`` and ``<font>`` in signatures
+* InyokaMarkup: Extend filtering of control characters
+* InyokaMarkup: Remove empty paragraphs in generated HTML
+* InyokaMarkup: Dont split up long links in HTML-markup (instead rely on CSS)
+* Table of contents: Dont strip long heading text
+
+🔥 Removals
+-----------
+
+* Remove unused javascript on register and for escaping
+
+🐛 Fixes
+--------
+
+* Splittopic form: Fix maximum length for title of new topic
+* Forum posts & Ikhaya comments can now start with a list (space is preserved)
+
+🔒 Security
+-----------
+
+* Add ``SECURITY.md``
+* Update requirements (at least the dependencies ``Django`` include known security fixes)
+* Markup, Edited-/Mod boxes: Escape parameters to prevent HTML injection
+* Templates: Escape more user-controllable variables to prevent HTML injections
+
 0.36.1 (2024-08-06)
 ===================
 

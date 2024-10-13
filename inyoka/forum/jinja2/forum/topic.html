@@ -1,0 +1,368 @@
+{#
+    forum/topic.html
+    ~~~~~~~~~~~~~~~~
+
+    This page shows a single topic.
+    It displays the posts and some informations about their authors.
+    It is "paginated".
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'forum/page.html' %}
+{% from 'macros.html' import render_pagination, add_user_avatar %}
+{% from 'forum/_forum.html' import render_article_list %}
+
+{% set name = topic.title|e %}
+{% set feeds = [
+  (name + ' - ' + _('Captions'), href('forum', 'feeds/topic', topic.slug, 'title/20')),
+  (name + ' - ' + _('Teaser'), href('forum', 'feeds/topic', topic.slug, 'short/20')),
+  (name + ' - ' + _('Full'), href('forum', 'feeds/topic', topic.slug, 'full/20'))
+] %}
+
+{% set tmp_crumb = [] %}
+{% for parent in forum.parents|reverse %}
+  {% do tmp_crumb.append((parent.name, parent|url)) %}
+{% endfor %}
+{% do tmp_crumb.extend([(forum.name, forum|url), (name, topic|url)]) %}
+{% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
+
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% macro generate_subscription_link(do='subscribe') %}
+  {{ href('forum', 'topic', topic.slug, do, next=CURRENT_URL)|e }}
+{% endmacro %}
+
+{% macro topic_actions() %}
+  <span class="linklist">
+    {%- if not USER.is_authenticated or can_reply and not topic.locked %}
+      <a href="{{ topic|url('reply') }}" class="action action_reply">{% trans %}Reply{% endtrans %}</a> |
+    {%- elif can_moderate and topic.locked %}
+      <span class="admin_link">
+        <a href="{{ topic|url('reply') }}" class="action action_reply">{% trans %}Reply{% endtrans %}</a> |
+      </span>
+    {%- endif %}
+    {% if USER.is_authenticated %}
+      {%- if is_subscribed %}
+        <a href="{{ generate_subscription_link(do='unsubscribe') }}"
+           class="action action_subscribe subscribe_topic"
+           id="{{ topic.slug }}">{% trans %}Unsubscribe{% endtrans %}</a>
+      {%- else %}
+        <a href="{{ generate_subscription_link() }}"
+           class="action action_subscribe subscribe_topic"
+           id="{{ topic.slug }}">{% trans %}Subscribe{% endtrans %}</a>
+      {%- endif %} |
+      {% if not topic.locked or can_moderate %}
+        {% if topic.solved %}
+          <a href="{{ topic|url('unsolve') }}"
+             class="action action_unsolve solve_topic"
+             id="{{ topic.slug }}">{% trans %}Mark as unsolved{% endtrans %}</a>
+        {% else %}
+          <a href="{{ topic|url('solve') }}"
+             class="action action_solve solve_topic"
+             id="{{ topic.slug }}">{% trans %}Mark as solved{% endtrans %}</a>
+        {% endif %} |
+      {% endif %}
+      {% if topic.reported %}
+        {%- if can_moderate %}
+            <a href="{{ href('forum', 'reported_topics') }}"
+               class="action action_report admin_link">{% trans %}reported topic{% endtrans %}</a>
+        {%- else %}
+            <span class="action action_report reported_topic">{% trans %}reported topic{% endtrans %}</span>
+        {%- endif %}
+      {% else %}
+        <a href="{{ topic|url('report') }}"
+           class="action action_report">{% trans %}Report{% endtrans %}</a>
+      {% endif %}
+    {% endif %}
+  </span>
+  {%- if can_moderate %}
+    <br>
+    <span class="linklist admin_link_hover">
+      <a href="{{ topic|url('split') }}"
+         class="action action_split admin_link">{% trans %}Split{% endtrans %}</a> |
+      <a href="{{ topic|url('move') }}"
+         class="action action_move admin_link">{% trans %}Move{% endtrans %}</a> |
+      {%- if topic.locked %}
+        <a href="{{ topic|url('unlock') }}"
+           class="action action_unlock admin_link">{% trans %}Unlock{% endtrans %}</a> |
+      {%- else %}
+        <a href="{{ topic|url('lock') }}"
+           class="action action_lock admin_link">{% trans %}Lock{% endtrans %}</a> |
+      {%- endif %}
+      {%- if topic.hidden %}
+        <a href="{{ topic|url('restore') }}"
+           class="action action_restore admin_link">{% trans %}Restore{% endtrans %}</a> |
+        {%- if USER.has_perm('forum.delete_topic_forum', forum) %}
+        <a href="{{ topic|url('delete') }}"
+           class="action action_delete admin_link">{% trans %}Delete{% endtrans %}</a> |
+        {%- endif %}
+        <a href="{{ topic.first_post|url('ham') }}"
+           class="action action_mark_ham admin_link">{% trans %}Mark ham{% endtrans %}</a>
+      {%- else %}
+        <a href="{{ topic|url('hide') }}"
+           class="action action_hide admin_link">{% trans %}Hide{% endtrans %}</a> |
+        <a href="{{ topic.first_post|url('spam') }}"
+           class="action action_mark_spam admin_link">{% trans %}Mark spam{% endtrans %}</a>
+      {%- endif %}
+    </span>
+  {%- endif %}
+{% endmacro %}
+
+{% block search_areas %}
+  <option value="topic" selected="selected">{% trans %}This topic{% endtrans %}</option>
+{% endblock %}
+
+{% block forum_content %}
+  <div class="topic_box admin_link_hover">
+    <h2>{{ topic.title|e }}</h2>
+    <div class="topic_box_content">
+      <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+      <strong>{% trans %}Status:{% endtrans %}</strong>
+      <span class="status_{{ 'solved' if topic.solved else 'unsolved' }}">
+        {{ _('Solved') if topic.solved else _('Unsolved') }}
+      </span>
+      <span class="linklist">|</span>
+      <span class="ubuntu_version{%- if topic.get_ubuntu_version().dev %} unstable{% endif %}">
+        <strong>Ubuntu-Version:</strong>
+        {{ topic.get_version_info() }}
+      </span>
+      <br>
+      {{ topic_actions() }}
+    </div>
+  </div>
+
+  {%- if discussions %}
+    <div class="topic_box discussion_info">
+      {%- trans count=discussions|count, article_list=render_article_list(discussions) -%}
+        This topic is the discussion of the article {{ article_list }}.
+      {%- pluralize -%}
+        This topic is the discussion of the articles {{ article_list }}.
+      {%- endtrans -%}
+    </div>
+  {%- endif %}
+
+  {%- if polls %}
+    <form action="" method="post" class="poll">
+      {{ csrf_token() }}
+      {%- for poll in polls %}
+        <table class="poll">
+          <caption>{{ poll.question|e }}</caption>
+          {%- for option in poll.options.order_by('id').all() %}
+            <tr>
+              <td>
+                {%- if poll.can_vote and can_vote and not show_vote_results %}
+                  <input type="{{ poll.multiple_votes and 'checkbox' or 'radio' }}"
+                         name="poll_{{ poll.id }}" id="option_{{ option.id }}"
+                         value="{{ option.id }}">
+                  <label for="option_{{ option.id }}">{{ option.name|e }}</label>
+                {%- else %}
+                  {{ option.name|e }}
+                {%- endif %}
+              </td>
+              {%- if not (poll.can_vote and can_vote) or show_vote_results %}
+                <td class="vote_bar">
+                  <meter min="0" max="100" value="{{ option.percentage }}"></meter>
+                </td>
+                {%- set bc, ac = (option.percentage|string).split('.') %}
+                <td class="percentage">
+                  {{ bc }}{% if ac|int %}.{{ ac[:2] }}{% endif %}%
+                </td>
+                <td class="votes">
+                  [ {{ option.votes }} ]
+                </td>
+              {%- endif %}
+            </tr>
+          {%- endfor %}
+        </table>
+        <p>
+          {%- if poll.ended -%}
+            {% trans start_date=poll.start_time|datetime, end_date=poll.end_time|datetime -%}
+              The poll was started on {{ start_date }} and it ended on {{ end_date }}.
+            {%- endtrans %}
+          {%- elif poll.end_time -%}
+            {% trans start_date=poll.start_time|datetime, end_date=poll.end_time|datetime -%}
+              The poll was started on {{ start_date }} and it will end on {{ end_date }}.
+            {%- endtrans %}
+          {%- endif -%}
+        </p>
+        <p>
+          {% trans count=poll.votes %}{{ count }} vote{% pluralize %}{{ count }} votes{% endtrans %}
+          {%- if poll.multiple_votes %},
+            {% trans count=poll.votings.count() %}{{ count }} voter{% pluralize %}{{ count }} voters{% endtrans %}
+          {%- endif %}
+        </p>
+      {%- endfor %}
+      {%- if can_vote and not voted_all %}
+        <p>
+          {%- if show_vote_results %}
+            <a href="?">{% trans %}Hide results{% endtrans %}</a>
+          {%- else %}
+            <input type="submit" name="vote" value="{% trans %}Vote{% endtrans %}">
+            <a href="?action=vote_results">{% trans %}Show results{% endtrans %}</a>
+          {%- endif %}
+        </p>
+      {%- endif %}
+    </form>
+  {%- endif %}
+
+  <table class="topic admin_link_hover">
+    <tbody>
+      {%- for post in posts if not (post.hidden and not can_moderate and not post.author == USER) %}
+        <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
+          <td class="author{% if post.author == USER %} -own{% endif %}">
+            <p class="username{% if not post.author.is_active %} inactive{% endif %}">
+              <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
+              {% if post.author.icon %}
+                <img class="teamicon" src="{{ post.author.icon_url }}"
+                     alt="{% trans %}Team icon{% endtrans %}">
+              {% endif %}
+            </p>
+            {%- if post.author.member_title %}
+              <div class="member_title">{{ post.author.member_title|e }}</div>
+            {%- endif %}
+            {%- if post.author_id == topic.author_id and not (pagination.page == 1 and loop.first) %}
+              <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
+            {%- endif %}
+            {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
+              {{ add_user_avatar(post.author) }}
+            {%- endif %}
+            <p>{% trans %}Member since:{% endtrans %}<br>{{ post.author.date_joined|naturalday }}</p>
+            <p class="posts">{% trans %}Posts:{% endtrans %} <a href="{{ href('forum', 'author', post.author.username) }}" rel="nofollow">{{ post.author.post_count }}</a></p>
+            {%- if post.author.location %}
+              <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
+            {%- endif %}
+          </td>
+          <td class="post{% if post.author == USER %} -own{% endif %}">
+            <div class="postinfo">
+              <div class="linklist">
+                {%- if can_delete(post) %}
+                  <a href="{{ post|url('hide') }}"
+                     class="action action_delete">{% trans %}Delete{% endtrans %}</a> |
+                {%- endif %}
+                {%- if can_moderate %}
+                  {%- if post.has_revision %}
+                    <span class="admin_link">
+                      <a href="{{ post|url('revisions') }}"
+                         class="action action_review">{% trans %}Show revisions{% endtrans %}</a> |
+                    </span>
+                  {%- endif %}
+                  {% if not post.topic.first_post == post %}
+                    {%- if post.hidden %}
+                      <span class="admin_link">
+                        <a href="{{ post|url('restore') }}"
+                           class="action action_restore">{% trans %}Restore{% endtrans %}</a> |
+                      </span>
+                      {%- if not can_delete(post) %}
+                        <span class="admin_link">
+                          <a href="{{ post|url('delete') }}" class="action action_delete">{% trans %}Delete{% endtrans %}</a> |
+                        </span>
+                      {%- endif %}
+                    {%- else %}
+                      <span class="admin_link">
+                        <a href="{{ post|url('hide') }}"
+                           class="action action_hide">{% trans %}Hide{% endtrans %}</a> |
+                      </span>
+                    {%- endif %}
+                    <span class="admin_link">
+                      {% if post.hidden %}
+                        <a href="{{ post|url('ham') }}"
+                           class="action action_mark_ham">{% trans %}Mark ham{% endtrans %}</a> |
+                      {% else %}
+                        <a href="{{ post|url('spam') }}"
+                           class="action action_mark_spam">{% trans %}Mark spam{% endtrans %}</a> |
+                      {% endif %}
+                    </span>
+                    {% endif %}
+                {%- endif %}
+                {%- if can_edit(post) %}
+                  <a href="{{ post|url('edit') }}"
+                     class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
+                {%- elif can_moderate %}
+                  <span class="admin_link">
+                    <a href="{{ post|url('edit') }}"
+                       class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
+                  </span>
+                {%- endif %}
+                {%- if not USER.is_authenticated or can_reply and not topic.locked %}
+                  <a href="{{ post|url('quote') }}"
+                     class="action action_quote">{% trans %}Quote{% endtrans %}</a>
+                {%- elif can_moderate and topic.locked %}
+                  <a href="{{ post|url('quote') }}"
+                     class="action action_quote admin_link">{% trans %}Quote{% endtrans %}</a>
+                {%- endif %}
+              </div>
+              <a href="{{ post|url }}" title="{% trans %}Link to this post{% endtrans %}">
+                {{ post.pub_date|datetime }}
+                {% if post.has_revision %}
+                ({% trans %}last edited:{% endtrans %} {{ post.revisions.latest('store_date').store_date|datetime }})
+                {% endif %}
+              </a>
+            </div>
+            {% if post.hidden and post.author == USER %}
+            <div class="postinfo">
+              {% trans %}This post is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators.{% endtrans %}
+            </div>
+            {% endif %}
+            {% if can_moderate %}
+              <div class="splitinfo admin_link">
+                {% trans %}Split:{% endtrans %}
+                <input type="checkbox" name="select" value="{{ post.id }}"{% if post.id|string in marked_split_posts %} checked="checked"{% endif %}>
+                <span class="right">
+                  {% trans %}From here:{% endtrans %}
+                  <input type="radio" name="start" value="{{ post.id }}"{% if "!" + post.id|string in marked_split_posts %} checked="checked"{% endif %}>
+                </span>
+              </div>
+            {% endif %}
+            <div class="text">
+              {{ post.get_text() }}
+            </div>
+            {%- set attachments = post.grouped_attachments if post.has_attachments else [] %}
+            {%- if attachments %}
+              <dl class="attachments">
+                {%- for group, list, class in attachments %}
+                  {%- if group %}
+                    <dt>{{ group }}</dt>
+                    <ul class="attr_list{% if class %} {{ class }}{% endif %}">
+                      {%- for att in list %}
+                        <li>{{ att.html_representation }}</li>
+                      {%- endfor %}
+                    </ul>
+                  {%- else %}
+                    {%- for att in list %}
+                      <dt>{{ att.name|e }} ({{ att.size|filesizeformat(true) }})</dt>
+                      {%- if att.comment %}
+                        <dd class="comment">{{ att.comment|e }}</dd>
+                      {%- endif %}
+                      <dd>{{ att.html_representation }}</dd>
+                    {%- endfor %}
+                  {%- endif %}
+                {%- endfor %}
+              </dl>
+            {%- endif %}
+            {%- if post.author.signature and not USER.settings['hide_signatures'] %}
+              <div class="signature">
+                {{ post.author.signature_rendered }}
+              </div>
+            {%- endif %}
+          </td>
+        </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+
+  <div class="topic_box admin_link_hover">
+    <div class="topic_box_content">
+      <div class="pagination pagination_right">{{ rendered_pagination }}</div>
+      {{ topic_actions() }}
+    </div>
+  </div>
+  <div class="pathbar">
+    <div class="pagination pagination_right">
+      <a href="{{ href('forum', 'topic', topic.slug, 'previous') }}"
+         rel="nofollow" class="prev">{% trans %}« Previous topic{% endtrans %}</a>
+      <a href="{{ href('forum', 'topic', topic.slug, 'next') }}"
+         rel="nofollow" class="next">{% trans %}Next topic »{% endtrans %}</a>
+    </div>
+  </div>{# .pathbar #}
+{% endblock %}

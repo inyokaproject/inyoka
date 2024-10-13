@@ -1,0 +1,47 @@
+{#
+    portal/register.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    This page displays a formular where the user can register a new account.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+
+{% set BREADCRUMBS = [('Registrierung', href('portal', 'register'))] + BREADCRUMBS|d([]) %}
+
+{% block portal_content %}
+  <h3>Registrierung</h3>
+  <form action="" method="post" class="-horizontal">
+    {{ csrf_token() }}
+    {{ form.non_field_errors() }}
+    <dl>
+      {{ render_form(form, ['username', 'password', 'confirm_password',
+                            'email'], inline=true)}}
+      <dt>Nutzungshinweise:</dt>
+      {# include the agreement letter #}
+      <dd>{{ form.terms_of_usage }} <label for="id_terms_of_usage">Ich bestätige den <a href="{{ href('portal', 'lizenz') }}">Lizenztext</a> gelesen zu haben und erkläre mich mit der Veröffentlichung unter dieser Lizenz einverstanden.<br>Durch das Abschließen der Registrierung stimme ich den <a href="{{ href('portal', 'nutzungsbedingungen') }}">Nutzungsbedingungen</a> und <a href="//wiki.{{ BASE_DOMAIN_NAME }}/ubuntuusers/Moderatoren/Portalregeln/">Portalregeln/</a> ebenfalls zu.</label><br>
+      {{ form.errors.terms_of_usage }}
+      <p>Um möglichst gute Hilfe erhalten, beachte bitte folgende Punkte:</p>
+      <ul>
+        <li><p>{{ BASE_DOMAIN_NAME }} unterliegt deutscher Rechtsprechung. Beiträge, die deutschem Recht widersprechen, sind nicht erlaubt.</p></li>
+        <li><p>Wenn bei einem Problem die eigene Recherche keine Lösung liefert, erstelle bitte für jedes Problem ein eigenes Thema mit aussagekräftigem Titel im richtigen Unterforum.</p></li>
+        <li><p>Beschreibe Dein Problem genau: Mit welchem Produkt/Programm tritt welches Problem mit welcher Fehlermeldung auf? Schreibe Deinen Beitrag gut leserlich.</p></li>
+        <li><p>Alle Helfenden sind freiwillig hier. Bleibe daher geduldig und behandle andere mit der Freundlichkeit und dem Respekt, den Du auch erwartest.</p></li>
+      </ul>
+      <p>Die <a href="//wiki.{{ BASE_DOMAIN_NAME }}/ubuntuusers/Moderatoren/Forenregeln">vollständigen Regeln</a> erläutern die einzelnen Punkte genauer. Bei Fragen kannst Du Dich an die entsprechenden <a href="{{ href('portal', 'groups') }}">Teams</a> wenden.</p>
+      <p>Wir wünschen Dir viel Spass und Erfolg auf {{ BASE_DOMAIN_NAME }}!</p>
+      </dd>
+      <dd style="display: none"><input type="submit"></dd><!-- at enter the first submit button is used -->
+      {{ render_form(form, ['captcha'], inline=true) }}
+    </dl>
+    <p>
+      <input type="submit" value="Registrieren">
+    </p>
+
+  </form>
+{% endblock %}
+

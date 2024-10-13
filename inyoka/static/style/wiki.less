@@ -1,0 +1,213 @@
+/**
+ * style.wiki
+ * ~~~~~~~~~~
+ *
+ * The style for the wiki. This does not include styles for wiki markup
+ * because that one can appear outside of the wiki.
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'fonts.less';
+@import 'layout.less';
+
+table:not([class]), table[class^="zebra"] {
+  max-width: 100%;
+  display: inline-block;
+  overflow-x: auto;
+  border: none;
+
+  /* show gradient on side, if table is too wide and thus scrollable
+     see https://codepen.io/smashing-magazine/embed/mvrVpB
+     https://www.smashingmagazine.com/2019/01/table-design-patterns-web/
+     http://www.the-haystack.com/2013/09/24/responsive-scrollable-tables/
+     http://lea.verou.me/2012/04/background-attachment-local/
+  */
+  background:
+    linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+    linear-gradient(to right, rgba(255, 255, 255, 0), white 70%) 0 100%,
+    radial-gradient(farthest-side at 0% 50%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)),
+    radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) 0 100%;
+  background-attachment: local, local, scroll, scroll;
+  background-position: 0 0, 100%, 0 0, 100%;
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%, 2.5rem 100%, 0.875rem 100%, 0.875rem 100%;
+}
+
+.navi_sidebar {
+  .navi_join {
+    background-image: url('../img/icons/code.svg');
+  }
+  .navi_overview {
+    background-image: url('../img/icons/search.svg');
+    background-size: 16px 16px;
+  }
+}
+
+h2, h3, h4, h5, h6 {
+  margin-top: 1.4em;
+}
+#page, .preview {
+  margin: 0;
+  a img {
+    vertical-align: middle;
+  }
+}
+div.preview {
+  .preview-border();
+}
+p.meta {
+  border-top: 1px solid #AAA;
+  margin: 1em 0 0 0;
+  padding: 0.4em;
+  text-align: right;
+  font-size: 0.85em;
+  clear: both;
+}
+#form_addattachment {
+  label {
+    float: left;
+    padding-right: 0.5em;
+  }
+  label[for="id_override"] {
+    float: none;
+  }
+}
+
+table.revisions {
+  margin-bottom: 0; /* remove space between compare-button and table */
+  .compare {
+    text-align: center;
+    white-space: nowrap;
+    input[name="rev"] {
+      margin-right: 0.5em;
+    }
+  }
+  span.time-elapsed {
+    color: #999;
+  }
+  .author {
+    a {
+      color: #000;
+      font-weight: bold;
+    }
+    img {
+      height: 1em;
+    }
+  }
+  .actions {
+    white-space: nowrap;
+    text-align: right;
+    a {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background-size: 22px 22px;
+      background-position: center center;
+      background-repeat: no-repeat;
+      span {
+        display: none;
+      }
+    }
+    a:hover {
+      background-color: #f2f2f2;
+    }
+    a.view {
+      background-image: url(../img/icons/search.svg);
+    }
+    a.revert {
+      background-image: url(../img/icons/revert.svg);
+    }
+    a.raw {
+      background-image: url(../img/icons/raw.svg);
+    }
+  }
+}
+
+table.diff {
+  empty-cells: show;
+  tr.ellipsis {
+    th {
+      border: 1px solid #ccc;
+      background-color: #dfdfdf;
+    }
+  }
+  tr.line {
+    td.code {
+      padding: 0.1em 0.4em 0.1em 0.4em;
+      font-family: @font-monospace;
+      font-size: @font-size;
+      border: 1px solid #ddd;
+      white-space: pre-wrap;
+    }
+  }
+  tr.add {
+    td.code {
+      background-color: #dfd;
+      ins {
+        background-color: #9e9;
+        text-decoration: none;
+      }
+    }
+  }
+  tr.del {
+    td.code {
+      background-color: #fcc;
+      del {
+        background-color: #e99;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+#page .recent_changes {
+  table-layout: fixed;
+  width: 100%;
+
+  .timestamp {
+    width: 100px;
+  }
+
+  .pagelink {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+table.diff th.old_rev,table.diff th.new_rev {
+  width: 3em;
+}
+table.diff tr.line th.old_rev,table.diff tr.line th.new_rev {
+  padding: 0.2em 0.5em 0.2em 0;
+  text-align: right;
+  font-weight: normal;
+  font-size: 0.8em;
+  background-color: #eee;
+  color: #444;
+  border: 1px solid #ccc;
+  vertical-align: top;
+}
+div.conflict {
+  border: 1px solid #ccc;
+  background-color: #eee;
+  color: #999;
+  font-size: 0.9em;
+  padding: 0 0.5em 0 0.5em;
+  line-height: 1.6em;
+  strong {
+    color: black;
+  }
+}
+
+.tagcloud {
+  text-align: center;
+}
+.tagclasses(@counter) when (@counter > 0) {
+  .tagclasses((@counter - 1));    // next iteration
+  .tag-@{counter} {
+    font-size: 140+@counter*10%;
+  }
+}
+.tagclasses(10);

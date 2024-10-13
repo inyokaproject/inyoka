@@ -7,9 +7,9 @@
 """
 from django.forms import forms
 
-from inyoka.forum.models import Topic, Forum
+from inyoka.forum.models import Forum, Topic
 from inyoka.portal.user import User
-from inyoka.utils.forms import TopicField, JabberFormField
+from inyoka.utils.forms import JabberFormField, TopicField
 from inyoka.utils.test import TestCase
 
 

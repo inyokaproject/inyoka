@@ -52,10 +52,7 @@ from inyoka.wiki.forms import (
 )
 from inyoka.wiki.models import Page
 from inyoka.wiki.notifications import send_edit_notifications
-from inyoka.wiki.utils import (
-    case_sensitive_redirect,
-    get_safe_redirect_target
-)
+from inyoka.wiki.utils import case_sensitive_redirect, get_safe_redirect_target
 
 
 def clean_article_name(view):

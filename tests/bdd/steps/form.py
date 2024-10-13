@@ -1,5 +1,4 @@
 from behave import when
-
 from selenium.webdriver.common.by import By
 
 

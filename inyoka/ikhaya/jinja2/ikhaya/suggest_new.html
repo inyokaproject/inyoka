@@ -1,0 +1,78 @@
+{#
+    ikhaya/suggest_new.html
+    ~~~~~~~~~~~~~~~~~
+
+    This page shows some of the latest ikhaya entries.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% from 'macros.html' import render_form %}
+{% set BREADCRUMBS = [('Artikel vorschlagen', href('ikhaya', 'suggest'))] + BREADCRUMBS|d([]) %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor'] %}
+{% block ikhaya_content %}
+<div class="content_sidebar_bk">
+  <h2>{% trans %}Suggest new article{% endtrans %}</h2>
+  <p>
+    {% trans %}If you want to suggest a new article please submit your article below.{% endtrans %}
+  </p>
+  <p>
+    {% trans %}It is not possible to submit images along with the article. If you want to use images please upload them elsewhere and insert the links in the article.{% endtrans %}
+  </p>
+  <p>
+    {% trans link_license=href('portal', 'lizenz'), link_rules=href('wiki', 'ubuntuusers/Moderatoren/Portalregeln') %}I assure that my submission does not violate any other legal rights and it does not violate the <a href="{{ link_rules }}">platform rules</a>. Additionally I accept that my submission is published under the <a href="{{ link_license }}">license</a> of the platform.{% endtrans %}
+  </p>
+  <form action="" method="post">
+    {{ csrf_token() }}
+    {{ render_form(form, ['title', 'intro', 'text', 'notes']) }}
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+      <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview">
+    </p>
+  </form>
+
+  {%- if preview %}
+  <div class="preview_wrapper">
+    <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+    <div class="preview">{{ preview }}</div>
+  </div>
+  {%- endif %}
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script>
+    /* <![CDATA[ */
+    var text = new WikiEditor('textarea[name="text"]');
+    var intro = new WikiEditor('textarea[name="intro"]');
+    var notes = new WikiEditor('textarea[name="notes"]');
+
+  /* Preview implementation */
+  (function() {
+    var
+      ieditor = $('textarea[name="intro"]'),
+      teditor = $('textarea[name="text"]'),
+      output = $('<div class="preview"></div>');
+    var preview = $('<div class="preview_wrapper"></div>')
+      .hide()
+      .append('<h2 class="title">{% trans %}Preview{% endtrans %}</h2>')
+      .append(output);
+
+    $('form input[name="preview"]').click(function() {
+      preview.hide();
+      $.post('/?__service__=wiki.render_preview', {
+        text: ieditor.val() + '\n----\n\n' + teditor.val()
+      }, function(data) {
+        output.html(data);
+        preview.slideDown('fast');
+      });
+      return false;
+    }).parent().parent().parent().append(preview);
+  })();
+
+    /* ]]> */
+  </script>
+{% endblock %}

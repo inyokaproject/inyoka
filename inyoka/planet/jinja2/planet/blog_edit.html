@@ -1,0 +1,30 @@
+{#
+    planet/blog_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    Formular for editing or creating a new blog.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'planet/page.html' %}
+{% from 'macros.html' import render_form %}
+{% set scripts = ['jquery.autocomplete'] %}
+
+{% if not blog %}
+  {% set BREADCRUMBS = [(_('Add blog'), href('planet', 'blog', 'new'))] + BREADCRUMBS|d([]) %}
+{% else %}
+  {% set BREADCRUMBS = [(blog.name|e, blog|url('edit'))] + BREADCRUMBS|d([]) %}
+{% endif %}
+
+{% block content %}
+  <form action="" method="post" enctype="multipart/form-data">
+    {{ csrf_token() }}
+    <dl>
+      {{ render_form(form, ['name', 'description', 'blog_url', 'feed_url', 'active', 'user', 'icon'], inline=True) }}
+    </dl>
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    </p>
+  </form>
+{% endblock %}

@@ -9,25 +9,27 @@
     :license: BSD, see LICENSE for more details.
 """
 import csv
-from functools import partial
-
 from datetime import date, datetime, timedelta
-from django.contrib.messages.views import SuccessMessageMixin
-from django.db import IntegrityError
-from icalendar import Calendar as iCal, Event as iEvent
+from functools import partial
 from time import time
 
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.auth.models import Group
+from django.contrib.auth.views import (
+    PasswordChangeView,
+    PasswordResetConfirmView,
+    PasswordResetView,
+)
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from django.db import IntegrityError
 from django.forms.models import model_to_dict
 from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.middleware.csrf import REASON_NO_REFERER, REASON_NO_CSRF_COOKIE
+from django.middleware.csrf import REASON_NO_CSRF_COOKIE, REASON_NO_REFERER
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
@@ -35,6 +37,8 @@ from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_POST
+from icalendar import Calendar as iCal
+from icalendar import Event as iEvent
 from PIL import Image
 
 from inyoka.forum.models import Forum
@@ -42,7 +46,6 @@ from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (
     NOTIFICATION_CHOICES,
-    ChangePasswordForm,
     ConfigurationForm,
     CreateUserForm,
     DeactivateUserForm,
@@ -52,10 +55,11 @@ from inyoka.portal.forms import (
     EditUserGroupsForm,
     EditUserProfileForm,
     EditUserStatusForm,
-    GroupGlobalPermissionForm,
-    GroupForumPermissionForm,
     ForumFeedSelectorForm,
+    GroupForumPermissionForm,
+    GroupGlobalPermissionForm,
     IkhayaFeedSelectorForm,
+    LinkMapFormset,
     LoginForm,
     LostPasswordForm,
     PlanetFeedSelectorForm,
@@ -69,16 +73,15 @@ from inyoka.portal.forms import (
     UserCPSettingsForm,
     UserMailForm,
     WikiFeedSelectorForm,
-    LinkMapFormset
 )
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
+    Linkmap,
     PrivateMessage,
     PrivateMessageEntry,
     StaticFile,
     StaticPage,
     Subscription,
-    Linkmap
 )
 from inyoka.portal.user import (
     User,
@@ -600,33 +603,11 @@ def usercp_settings(request):
     }
 
 
-@login_required
-@templated('portal/usercp/change_password.html')
-def usercp_password(request):
+class InyokaPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
     """User control panel view for changing the password."""
-    if request.method == 'POST':
-        form = ChangePasswordForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            user = request.user
-            if not user.check_password(data['old_password']):
-                form.errors['old_password'] = ErrorList(
-                    [_('The entered password did not match your old password.')])
-        if form.is_valid():
-            user.set_password(data['new_password'])
-            user.save()
-            messages.success(request, _('Your password was changed successfully.'))
-            auth.update_session_auth_hash(request, user)
-            return HttpResponseRedirect(href('portal', 'usercp', 'password'))
-        else:
-            generic.trigger_fix_errors_message(request)
-    else:
-        form = ChangePasswordForm()
-
-    return {
-        'form': form,
-        'user': request.user,
-    }
+    success_url = href('portal', 'usercp')
+    success_message = _('Your password was changed successfully.')
+    template_name = 'portal/usercp/change_password.html'
 
 
 class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):

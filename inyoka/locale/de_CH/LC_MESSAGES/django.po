@@ -137,3 +137,2339 @@ msgstr "{verbose_name} “{object_name}” isch erfougrych gänderet wordä!"
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} “{object_name}” isch erfougrych ersteut wordä."
 
+
+msgid " Activation link:"
+msgstr "Aktivierigslink:"
+
+#, python-format
+msgid " Comments (%(count)s)"
+msgstr " Kommentär (%(count)s)"
+
+#, python-format
+msgid " Revision %(new_rev)s "
+msgstr "Revision %(new_rev)s"
+
+msgid "#"
+msgstr "#"
+
+#, python-format
+msgid "%(count)s <a href=\"%(link)s\">comment</a>"
+msgid_plural "%(count)s <a href=\"%(link)s\">comments</a>"
+msgstr[0] "%(count)s <a href=\"%(link)s\">Kommentar</a>"
+msgstr[1] "%(count)s <a href=\"%(link)s\">Kommentär</a>"
+
+#, python-format
+msgid "%(count)s comment"
+msgid_plural "%(count)s comments"
+msgstr[0] "%(count)s Kommentar"
+msgstr[1] "%(count)s Kommentär"
+
+#, python-format
+msgid "%(count)s vote"
+msgid_plural "%(count)s votes"
+msgstr[0] "%(count)s Stimm"
+msgstr[1] "%(count)s Stimmä"
+
+#, python-format
+msgid "%(count)s voter"
+msgid_plural "%(count)s voters"
+msgstr[0] "%(count)s Wählr"
+msgstr[1] "%(count)s Wählr"
+
+#, python-format
+msgid "%(guests)s Guest"
+msgid_plural "%(guests)s Guests"
+msgstr[0] "%(guests)s Gaschd"
+msgstr[1] "%(guests)s Geschd"
+
+#, python-format
+msgid "%(n)s User online"
+msgid_plural "%(n)s Users online"
+msgstr[0] "%(n)s Benutzr aahgmäudet."
+msgstr[1] "%(n)s Benutzr aahgmäudet."
+
+#, python-format
+msgid "%(name)s is a system user."
+msgstr "%(name)s isch ä Syschtembenutz"
+
+#, python-format
+msgid "%(name)s is not available."
+msgstr "%(name)s isch nid verfüägbar."
+
+#, python-format
+msgid "%(registered)s Registered user"
+msgid_plural "%(registered)s Registered users"
+msgstr[0] "%(registered)s Regischtrierti Benutzr"
+msgstr[1] "%(registered)s Regischtrierti Benutzr"
+
+#, python-format
+msgid "%(subject)s from %(author)s"
+msgstr "%(subject)s von %(author)s"
+
+msgid "(De)select all"
+msgstr "Aui ah- / abwählä"
+
+msgid "(Topic starter)"
+msgstr "(Themästarter)"
+
+#, python-format
+msgid "(Will be scaled to %(width)sx%(height)s)"
+msgstr "(Wird uuf %(width)sx%(height)s skaliert)"
+
+#, python-format
+msgid "(last modified on %(date)s by %(author)s)"
+msgstr "(zletscht bearbeitet am %(date)s vom %(author)s)"
+
+#, python-format
+msgid "(last modified on %(date)s by <a href=\"%(link)s\">%(author)s</a>)"
+msgstr "(zletscht bearbeitet am %(date)s vom <a href=\"%(link)s\">%(author)s</a>)"
+
+#, python-format
+msgid "(rendered in %(seconds)s seconds)"
+msgstr "(i %(seconds)s Sekundä grenderet)"
+
+msgid "(undo)"
+msgstr "(rückgängig)"
+
+msgid "12 hours"
+msgstr "12 Stung"
+
+msgid "24 hours"
+msgstr "24 Stung"
+
+msgid "6 hours"
+msgstr "6 Stung"
+
+#, python-format
+msgid ""
+"<a href=\"%(entry_link)s\">%(title)s</a> by <a "
+"href=\"%(author_link)s\">%(author)s</a>"
+msgstr ""
+"<a href=\"%(entry_link)s\">%(title)s</a> von <a "
+"href=\"%(author_link)s\">%(author)s</a>"
+
+#, python-format
+msgid ""
+"<a href=\"%(link)s\">Posts</a> by <a href=\"%(userlink)s\">%(author)s</a> in"
+" this forum"
+msgstr ""
+"<a href=\"%(link)s\">Byträg</a> von <a href=\"%(userlink)s\">%(author)s</a> "
+"y däm Forum"
+
+#, python-format
+msgid ""
+"<a href=\"%(link)s\">Posts</a> by <a href=\"%(userlink)s\">%(author)s</a> in"
+" this topic"
+msgstr ""
+"<a href=\"%(link)s\">Byträg</a> von <a href=\"%(userlink)s\">%(author)s</a> "
+"y däm Thema"
+
+#, python-format
+msgid "<a href=\"%(link)s\">Send an email</a> to %(name)s"
+msgstr "<a href=\"%(link)s\">Än E-Mail</a> a %(name)s sändä"
+
+#, python-format
+msgid ""
+"<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by "
+"%(author)s."
+msgstr ""
+"<a href=\"%(rev_link)s\">Diä Revision</a> isch am %(date)s vom %(author)s "
+"ersteut wordä."
+
+#, python-format
+msgid ""
+"<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by <a "
+"href=\"%(author_link)s\">%(author)s</a>."
+msgstr ""
+"<a href=\"%(rev_link)s\">Diä Revision</a> isch am %(date)s vom <a "
+"href=\"%(author_link)s\">%(author)s</a> ersteut wordä."
+
+msgid "AST"
+msgstr "AST"
+
+msgid "About Ikhaya"
+msgstr "Übr Ikhaya"
+
+msgid "About:"
+msgstr "Funktion:"
+
+msgid "Action"
+msgstr "Aktionä"
+
+msgid "Actions"
+msgstr "Aktionä"
+
+msgid "Actions:"
+msgstr "Aktionä:"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Add"
+msgstr "Hinzuäfüägä"
+
+msgid "Add attachment"
+msgstr "Aahang drzuätuä"
+
+msgid "Add blog"
+msgstr "Blog drzuätuä"
+
+msgid "Add category"
+msgstr "Kategory drzuätuä"
+
+msgid "Add event"
+msgstr "Verahstautig drzuätuä"
+
+msgid "Add new blog"
+msgstr "Neuä Blog drzuätuä"
+
+msgid "Add poll"
+msgstr "Umfrag drzuätuä"
+
+msgid "Additional answer"
+msgstr "Zuäsätzlichi Antwort"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "All"
+msgstr "Aui"
+
+msgid "Allow multiple answers"
+msgstr "Mehreri Antwortä erloubä"
+
+msgid "An internal error occurred. The administration was already notified."
+msgstr ""
+"Än internä Fähler isch uufträtä. D Adminischratoren sy bereits "
+"benachrichtigt."
+
+msgid "Applications"
+msgstr "Ahwändigä"
+
+msgid "Archive"
+msgstr "Archiv"
+
+#, python-format
+msgid ""
+"Are you sure you want to delete the article <a "
+"href=\"%(link)s\">%(article)s</a>?"
+msgstr ""
+"Bisch Du sichär, dass Du dr Artiku <a href=\"%(link)s\">%(article)s</a> "
+"wetsch löschä?"
+
+msgid "Are you sure you want to delete this page?"
+msgstr "Bisch Du sichär, dass Du diä Sytä wetsch löschä?"
+
+msgid "Are you sure you want to hide the entry?"
+msgstr "Bisch Du sichär, dass Du dä Ytrag wetsch vrbärgä?"
+
+msgid "Are you sure you want to mark the page as “discontinued”?"
+msgstr "Bisch Du sichär, dass Du dä Artiku uus „Verlassen“ markiärä wetsch?"
+
+msgid "Are you sure you want to move the page into the wiki?"
+msgstr "Bisch Du sichär, dass Du diä Sytä i ds Wiki verschiäbä wetsch?"
+
+msgid "Are you sure you want to restore the entry?"
+msgstr "Bisch Du sichär, dass Du dä Ytrag widrhärschteuä wetsch?"
+
+msgid "Around the Wiki"
+msgstr "Rund ums Wiki"
+
+msgid "Article"
+msgstr "Artiku"
+
+msgid "Article Ideas"
+msgstr "Artikuideenä"
+
+msgid "Article suggestions"
+msgstr "Artikuvorschleg"
+
+msgid "Article:"
+msgstr "Artiku:"
+
+msgid "Assign to me"
+msgstr "Mir gäh"
+
+msgid "Assigned to"
+msgstr "Y Bearbeitig vom"
+
+msgid "Assigned to:"
+msgstr "Zuägwysä ah:"
+
+msgid "At this page the following tags have been assigned:"
+msgstr "Die fougändä Schlagwort sy däm Artiku zuägwysä wordä:"
+
+msgid "Attach to old topic"
+msgstr "Anes bestehends Thema aahängä"
+
+msgid "Attachment:"
+msgstr "Aahang:"
+
+msgid "Attachments"
+msgstr "Aahäng"
+
+msgid "Attachments:"
+msgstr "Aahäng:"
+
+#, python-format
+msgid "Attention: You are currently editing “%(name)s”."
+msgstr "Achtung: Du bearbeitisch grad „%(name)s“."
+
+msgid "Authentication:"
+msgstr "Authentifizierung:"
+
+msgid "Author"
+msgstr "Outor"
+
+msgid "Author:"
+msgstr "Outor:"
+
+#, python-format
+msgid "Avatar of %(user)s"
+msgstr "Avatar vom %(user)s"
+
+msgid "Avatar settings"
+msgstr "Avatar Ystelligä"
+
+msgid "Backlinks"
+msgstr "Backlinks"
+
+msgid "Bloglist"
+msgstr "Bloglischtä"
+
+msgid "Blogs"
+msgstr "Blogs"
+
+msgid "Browse pastes"
+msgstr "Y dä Yyträg stöbärä"
+
+msgid ""
+"But the article itself is not listed as an attachment, perhaps these pages "
+"are using the article mistakenly or an old revision was an attachment."
+msgstr ""
+"Abr dr Artiku säuber isch nid uus Aahang uufgfüehrt; villech verwändä diä "
+"Sytä dä Artiku versehentlich odr än auti Revision isch ä Aahang gsy."
+
+#, python-format
+msgid ""
+"But you can display <a href=\"%(link)s\">a list of changes</a> of this page "
+"and compare individual revisions."
+msgstr ""
+"Abr Du chasch Dir ä <a href=\"%(link)s\">Lischtä vo Änderigä</a> vo drä Sytä"
+" aahzeigä u einzelne Revisionä vrglychä."
+
+msgid ""
+"By default, the email and jabber addresses are not displayed in your public "
+"profile. To publish them, you need to check the “show in profile” box."
+msgstr ""
+"Standardmässig wärdä dyny E-Mail- u Jabber-Adrässä nid öffentlich aazeigt. "
+"Um sä z veröffentlichä, aktiviär d \"Im Profiu aahzeigä\"-Box."
+
+#, python-format
+msgid ""
+"By using this form you can suggest a new entry for the <a "
+"href=\"%(link_calendar)s\">calendar</a>. A team member will review your "
+"suggestion as soon as possible. If you want to change an existing calendar "
+"entry please contact the <a href=\"%(link_newsteam)s\">news team</a>."
+msgstr ""
+"Mit däm Formular chasch Du ä nöiä Ytrag y üsä <a "
+"href=\"%(link_calendar)s\">Kaländer</a> ytragä. Äs Ikhayateammitglied wird "
+"sich Dy Vorschlag so schnäu wiä müglich aluägä. Wenn Du Änderigä amänä "
+"bestehendä Kaländerytrag hesch, wänd di bitte ah äs Mitglid vom <a "
+"href=\"%(link_newsteam)s\">Ikhayateam</a>."
+
+msgid ""
+"CAUTION: A change of the file destroys all links from articles to this file!"
+msgstr ""
+"ACHTUNG: Än Änderig ar Datei zerstört aui Links vo Artiklä wo uuf diä Datei "
+"vrwysä!"
+
+msgid "CSRF verification failed. Request aborted."
+msgstr "Ds CSRF-Token isch ungültig. D Aahfrag isch vrworfä wordä"
+
+msgid "Calendar"
+msgstr "Kaländer"
+
+msgid "Cancel"
+msgstr "Abbrächä"
+
+msgid "Captions"
+msgstr "Übrschriftä"
+
+msgid "Categories"
+msgstr "Kategoriä"
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Category:"
+msgstr "Kategorie:"
+
+msgid "Change password"
+msgstr "Passwort ändärä"
+
+msgid "Changes since last visit"
+msgstr "Änderigä syt mim letschtä Bsuäch"
+
+msgid "Check if you have a typo in the URL."
+msgstr "Bitte überprüäf, öb Du ä Tippfählr i dr URL hesch."
+
+msgid "Choose the user you want to edit:"
+msgstr "Wäu dä Benutzr uus, wo Du bearbeitä wetsch:"
+
+msgid "Close selected tickets"
+msgstr "Mach gwäuti Mäudigä zuä"
+
+msgid "Code:"
+msgstr "Code:"
+
+msgid "Comments"
+msgstr "Kommentär"
+
+msgid "Comments - Captions"
+msgstr "Kommentär - Übrschriftä"
+
+msgid "Comments - Full"
+msgstr "Kommentär - Vouständig"
+
+msgid "Comments - Teaser"
+msgstr "Kommentär - Yleitig"
+
+msgid "Compare"
+msgstr "Vrglychä"
+
+msgid "Compose mail"
+msgstr "E-Mail schrybä"
+
+msgid "Compose message"
+msgstr "Nachricht schrybä"
+
+#, python-format
+msgid "Concerns article “<a href=\"%(link)s\">%(article)s</a>”"
+msgstr "Betrifft Artiku „<a href=\"%(link)s\">%(article)s</a>“"
+
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "Confirmation"
+msgstr "Beschtätigung"
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Contact addresses"
+msgstr "Kontaktadrässä"
+
+msgid "Control panel"
+msgstr "Kontrouzäntrum"
+
+msgid "Coordinates:"
+msgstr "Koordinatä:"
+
+msgid "Copy"
+msgstr "Kopiärä"
+
+msgid "Create"
+msgstr "Erschteuä"
+
+msgid "Create a Howto"
+msgstr "Howto aahleggä"
+
+msgid "Create a new user"
+msgstr "Ä nöiä Benutzr ersteuä."
+
+msgid "Create a wiki article"
+msgstr "Wikiartikel aahleggä"
+
+msgid "Create category"
+msgstr "Kategorie ersteuä"
+
+msgid "Create forum"
+msgstr "Forum ersteuä"
+
+msgid "Create new forum"
+msgstr "Nöis Forum ersteuä"
+
+msgid "Create new group"
+msgstr "Nöii Gruppä ersteuä"
+
+msgid "Create new page"
+msgstr "Nöii Sytä ersteuä"
+
+msgid "Create new static file"
+msgstr "Nöii statischi Datei ersteuä"
+
+msgid "Create new topic"
+msgstr "Nöis Thema ersteuä"
+
+msgid "Create page"
+msgstr "Sytä ersteuä"
+
+msgid "Create user"
+msgstr "Nutzer ersteuä"
+
+msgid "Created topics"
+msgstr "Ersteuti Themä"
+
+msgid "Created:"
+msgstr "Erschteut:"
+
+msgid "Current articles"
+msgstr "Aktuellä Artiku"
+
+msgid "Current forum"
+msgstr "Aktuells Forum"
+
+msgid "Current revision"
+msgstr "Aktuelli Revision"
+
+msgid "Currently there are no events listed."
+msgstr "Momentan stöh keini Verahstautigä ah."
+
+msgid "Currently there are no messages in this folder."
+msgstr "Momentan befindä sich keini Nachrichtä y däm Ordner."
+
+msgid "Currently there are no reported topics."
+msgstr "Äs het aktuell keini gmäudeti Themä."
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Date (from):"
+msgstr "Datum (vo):"
+
+msgid "Date (to):"
+msgstr "Datum (bis):"
+
+msgid "Date:"
+msgstr "Datum:"
+
+msgid "Deactivate account"
+msgstr "Konto deaktiviärä"
+
+#, python-format
+msgid "Deactivate my account “%(name)s”"
+msgstr "Deaktivier mys Konto „%(name)s“"
+
+msgid "Delete"
+msgstr "Löschä"
+
+msgid "Delete assignment"
+msgstr "Zuewysig löschä"
+
+msgid "Delete entry"
+msgstr "Ytrag löschä"
+
+msgid "Delete marked messages"
+msgstr "Markierti Nachrichtä löschä"
+
+msgid "Delete message"
+msgstr "Nachricht löschä"
+
+msgid "Delete page"
+msgstr "Sytä löschä"
+
+msgid "Delete selected subscriptions"
+msgstr "Lösch diä gwäutä Abonnements"
+
+#, python-format
+msgid ""
+"Describe here briefly the discovered mistake. Please make sure that the "
+"mistake was not <a href=\"%(link)s\">already reported</a>."
+msgstr ""
+"Bitte beschryb hiä churz diä im Artiku gfungnigä Fähler. Bitte lueg druuf, "
+"dass dr Fähler nid bereits <a href=\"%(link)s\">gmäudet isch wordä</a>."
+
+msgid "Description"
+msgstr "Beschrybig"
+
+msgid "Description:"
+msgstr "Beschrybig"
+
+msgid "Details"
+msgstr "Detail"
+
+msgid "Difference"
+msgstr "Ungerschyd"
+
+msgid "Discussion"
+msgstr "Diskussion"
+
+msgid "Display all messages on one page"
+msgstr "Aui Nachrichtä uuf eirä Sytä aahzeigä"
+
+msgid "Display entry as raw text"
+msgstr "Zeig dr Ytrag aus Rohtext ah"
+
+msgid "Display options"
+msgstr "Ahzeigeoptionä"
+
+msgid "Display past events"
+msgstr "Zeig vergangeni Verahstautigä ah"
+
+msgid "Do not notify me anymore about new article suggestions"
+msgstr "Tuä my Nümm by nöiä Artikuvorschleg benachrichtigä"
+
+#, python-format
+msgid "Do you really want to delete the entry <a href=\"%(link)s\">%(entry)s</a>?"
+msgstr "Möchtisch Du dä Ytrag <a href=\"%(link)s\">%(entry)s</a> würkli löschä?"
+
+#, python-format
+msgid "Do you really want to delete the event <a href=\"%(link)s\">%(event)s</a>?"
+msgstr ""
+"Möchtisch Du d Verahstautig <a href=\"%(link)s\">%(event)s</a> würkli "
+"löschä?"
+
+#, python-format
+msgid "Do you really want to delete the file “%(file)s”?"
+msgstr "Möchtisch Du d Datei „%(file)s“ würkli löschä?"
+
+#, python-format
+msgid "Do you really want to delete the page “%(title)s”?"
+msgstr "Möchtisch Du d Sytä „%(title)s“ würkli löschä?"
+
+#, python-format
+msgid ""
+"Do you really want to delete the topic “%(title)s”? This action cannot be "
+"undone!"
+msgstr ""
+"Möchtisch Du ds Thema „%(title)s“ würkli löschä? Diä Aktion cha nid "
+"rückgängig gmacht wärdä!"
+
+#, python-format
+msgid "Do you really want to hide the topic “%(title)s”?"
+msgstr "Möchtisch Du ds Thema „%(title)s“ würkli vrbärgä?"
+
+#, python-format
+msgid "Do you want to delete the <a href=\"%(link)s\">post from %(author)s</a>?"
+msgstr "Möchtisch Du dä <a href=\"%(link)s\">Bytrag vo %(author)s</a> löschä?"
+
+#, python-format
+msgid "Do you want to hide the <a href=\"%(link)s\">post from %(author)s</a>?"
+msgstr "Möchtisch Du dä <a href=\"%(link)s\">Bytrag vo %(author)s</a> vrbärgä?"
+
+msgid ""
+"Don’t choose this option if you are using a public computer. Otherwise, "
+"unauthorized persons may enter your account."
+msgstr ""
+"Wäu diä Option nid uus, wenn Du dy ah ämänä öffentlichä Computer befindisch,"
+" wöu süsch frömdi Personä müglecherwys Zuägang zu Dym Konto bechömä."
+
+msgid "Don’t watch anymore"
+msgstr "Nümm beobachtä"
+
+msgid "Download iCal"
+msgstr "iCal aabäladä"
+
+msgid "Downloads"
+msgstr "Downloads"
+
+msgid "Duplicate attachments on the target page will be overwritten!"
+msgstr "Doppleti Aahäng vo dr Zieusytä wärdä überschrybä!"
+
+#, python-format
+msgid "Duration of the poll: %(duration)s days"
+msgstr "Duur vor Umfrag: %(duration)s Dääg"
+
+msgid "Edit"
+msgstr "Bearbeitä"
+
+msgid "Edit article"
+msgstr "Artiku bearbeitä"
+
+#, python-format
+msgid "Edit article “<a href=\"%(link)s\" title=\"Show article\">%(article)s</a>”"
+msgstr ""
+"Bearbeitä Artiku „<a href=\"%(link)s\" title=\"Artiku "
+"aahzeigä\">%(article)s</a>“"
+
+msgid "Edit attachment"
+msgstr "Aahang bearbeitä"
+
+msgid "Edit comment"
+msgstr "Kommentar bearbeitä"
+
+msgid "Edit post"
+msgstr "Bytrag bearbeitä"
+
+msgid "Edit summary:"
+msgstr "Änderigskommentar:"
+
+msgid "Edit user"
+msgstr "Benutzr bearbeitä"
+
+msgid "Edit your subscriptions"
+msgstr "Pass dyny Abonnements ah."
+
+#, python-format
+msgid "Edited: %(date)s"
+msgstr "Bearbeitet am: %(date)s"
+
+msgid "Email address"
+msgstr "E-Mail-Adrässä"
+
+msgid "Enter in Google Calendar"
+msgstr "Im Google Kaländer ytragä"
+
+msgid "Entire archive"
+msgstr "Ganzäs Archiv"
+
+msgid "Entries"
+msgstr "Yträg"
+
+msgid "Event suggestions"
+msgstr "Verahstautigsvorschleg"
+
+#, python-format
+msgid "Event “%(title)s”"
+msgstr "Verahstautig „%(title)s“"
+
+msgid "Events"
+msgstr "Verahstautigä"
+
+msgid "Existing attachments"
+msgstr "Bestehendi Aahäng"
+
+msgid "Existing polls:"
+msgstr "Bestehendi Umfragen:"
+
+msgid "Expandable Articles"
+msgstr "Uusboufähigi Artiklä"
+
+msgid "Explanation for the author of the suggestion:"
+msgstr "Erlöiterygä für ä Outor vom Vorschlag:"
+
+msgid "Export"
+msgstr "Exportiärä"
+
+msgid "Export blogs"
+msgstr "Blogs exportiärä"
+
+msgid "FAQ"
+msgstr "FAQ"
+
+msgid "Feeds"
+msgstr "Feeds"
+
+msgid "Filter"
+msgstr "Fiuter"
+
+msgid "For a topic"
+msgstr "Für äs Thema:"
+
+msgid "For the following forum:"
+msgstr "Für ds fougändä Forum:"
+
+msgid "Forbidden (403)"
+msgstr "Unzuälässig (403)"
+
+msgid "Forum"
+msgstr "Forum"
+
+msgid "Forum - Captions"
+msgstr "Forum - Übrschriftä"
+
+msgid "Forum - Full post"
+msgstr "Forum - Dr ganz Bytrag"
+
+msgid "Forum - Teaser"
+msgstr "Forum - Yleitig"
+
+msgid "Forum Permissions"
+msgstr "Forum Berächtigungä"
+
+msgid "Forum of the new topic:"
+msgstr "Forum vom nöiä Thema:"
+
+msgid "Forum read"
+msgstr "Forum gläsä"
+
+msgid "Forum:"
+msgstr "Forum:"
+
+msgid "Forward"
+msgstr "Wyterleitä"
+
+msgid "From"
+msgstr "Vo"
+
+msgid "From here:"
+msgstr "Ab hiä:"
+
+msgid "From:"
+msgstr "Vo:"
+
+msgid "Full"
+msgstr "Ganz"
+
+msgid "Full post"
+msgstr "Dr ganz Bytrag"
+
+msgid "GPG key"
+msgstr "GPG-Schlüssu"
+
+msgid "General"
+msgstr "Augemein"
+
+msgid "General settings"
+msgstr "Augemeini Ystelligä"
+
+msgid "Generate a new one"
+msgstr "Än nöis generieren"
+
+msgid "Generate a random password"
+msgstr "Generiär ä zuäfäuigs Passwort"
+
+msgid "Generated password:"
+msgstr "Generiärts Passwort:"
+
+msgid "Global Permissions"
+msgstr "Globali Berächtigungä"
+
+msgid "Go to last comment"
+msgstr "Zum letschtä Kommentar gumpä"
+
+msgid "Go to page"
+msgstr "Gang zur Sytä"
+
+msgid "Go to post"
+msgstr "Gang zum Bytrag"
+
+msgid "Gravatar:"
+msgstr "Gravatar:"
+
+msgid "Group memberships"
+msgstr "Gruppämitglydschaftä"
+
+msgid "Groups"
+msgstr "Gruppä"
+
+msgid "HTML"
+msgstr "HTML"
+
+#, python-format
+msgid ""
+"Here are all published articles in chronological order. You can find the "
+"most recent articles on <a href=\"%(link)s\">the front page</a>."
+msgstr ""
+"Hiä gfingsch aui Artiku i chronologischer Reiäfoug. Diä aktuellschtä Artiku "
+"sy uuf dr <a href=\"%(link)s\">Startsytä</a> z gseh."
+
+#, python-format
+msgid "Here is one article suggestion which was not yet reviewed."
+msgid_plural ""
+"Here are %(count)s article suggestions which were not yet reviewed."
+msgstr[0] "Äs gyt no ä Artikuvorschlag zum Bearbeitä."
+msgstr[1] "Äs gyt no %(count)s Artikuvorschleg zum Bearbeitä."
+
+msgid "Here you can move a topic into another forum."
+msgstr "Hiä chasch Du äs Thema in äs angeres Forum verschiäbä."
+
+#, python-format
+msgid ""
+"Here you can report a topic to the moderators if it is against our <a "
+"href=\"%(link)s\">rules</a>. Please add a short explanation:"
+msgstr ""
+"Hiä chasch Du äs Thema dä Moderatorä mäudä, faus es gägä üsi <a "
+"href=\"%(link)s\">Portaureglä</a> verstosst. Bitte füäg ä churzy Beschrybig "
+"drzuä:"
+
+msgid "Hide"
+msgstr "Vrbärgä"
+
+msgid "Hide results"
+msgstr "Ergäbniss vrbärgä"
+
+msgid "How"
+msgstr "Wiä"
+
+msgid "However, you are missing the permissions to create this article."
+msgstr "Aber Dir fählä d Berächtigungä, um dä Artiku z ersteuä."
+
+#, python-format
+msgid ""
+"I assure that my submission does not violate any other legal rights and it "
+"does not violate the <a href=\"%(link_rules)s\">platform rules</a>. "
+"Additionally I accept that my submission is published under the <a "
+"href=\"%(link_license)s\">license</a> of the platform."
+msgstr ""
+"Ig vrsicherä hiämit, dass dr Bytrag weder frömdi Rächt no d<a "
+"href=\"%(link_rules)s\">Portaureglä</a> verletzt. Ig wiuigä y, dä Bytrag "
+"unter dr von inyokaproject.org vorgäbnä <a href=\"%(link_license)s\">Lizenz</a>"
+" zu veröffentlichä."
+
+msgid "Identifier"
+msgstr "Bezeichnr"
+
+msgid ""
+"If you have configured your browser to disable 'Referer' headers,\n"
+"      please re-enable them, at least for this site, or for HTTPS\n"
+"      connections, or for 'same-origin' requests."
+msgstr ""
+"Wenn Du Referrer i Dym Browser deaktiviert hesch, aktivier sä bitte widr. Es"
+" längt, wenn Referrer nur für diä Domain, HTTPS-Verbindungen odr ah d "
+"Ursprungsdomain („same-origin“) z sändä."
+
+msgid ""
+"If you have configured your browser to disable cookies, please\n"
+"      re-enable them, at least for this site, or for 'same-origin'\n"
+"      requests."
+msgstr ""
+"Wenn Du Cookies i Dym Browser deaktiviert hesch, aktivier sä bitte widr. Es "
+"längt, Cookies nur für diä Domain odr d Ursprungsdomain („same-origin“) z "
+"aktivieren."
+
+#, python-format
+msgid ""
+"If you received a spam message, please forward it to a <a "
+"href=\"%(moderators)s\">moderator</a>."
+msgstr ""
+"Wenn Du ä Spam-Nachricht becho hesch, leit sä bitte ah ä <a "
+"href=\"%(moderators)s\">Moderator</a> wyter."
+
+msgid ""
+"If you rename this page, all revisions will be renamed. The old page will "
+"redirect to the new one."
+msgstr ""
+"Bim Umbenennä vo derä Sytä wärdä ou aui ihri Revisionä umbenannt. Ungr dr "
+"alten Sytä wird denn ä Weiterleitung zum nöiä Namä eingerichtet."
+
+msgid "If you want to suggest a new article please submit your article below."
+msgstr ""
+"Du wettsch, dass mir öppis bstimmts im Ikhaya veröffentlichä? Ä wichtig "
+"Nachricht isch no nid online? Du hesch än Erfahrigsbrycht, wo Du angernä "
+"wotsch zuägänglich machä? Du wetsch ä Software vorschteuä? De schryb Dy "
+"Bytrag hiä!"
+
+msgid "Ikhaya"
+msgstr "Ikhaya"
+
+#, python-format
+msgid "In total there are %(global_registered_users)s users registered."
+msgstr "Insgsamt sy  %(global_registered_users)s regischriert."
+
+#, python-format
+msgid "In total there is %(count)s group, you are in %(usercount)s group."
+msgid_plural ""
+"In total there are %(count)s groups, you are in %(usercount)s of them "
+"(printed bold)."
+msgstr[0] "Insgsamt gits %(count)s Gruppä, Du bisch i %(usercount)s Gruppä."
+msgstr[1] ""
+"Insgsamt gits %(count)s Gruppä, Du bisch i %(usercount)s drvo (fett druckt)."
+
+msgid "Inbox"
+msgstr "Poschtygang"
+
+msgid "Incorrect Articles"
+msgstr "Fählerhafti Artiklä"
+
+msgid "Index"
+msgstr "Index"
+
+msgid "Interface"
+msgstr "Oberflächi"
+
+msgid "Involved topics"
+msgstr "Beteiligty Themä"
+
+msgid "Inyoka"
+msgstr "Inyoka"
+
+msgid ""
+"It is not possible to submit images along with the article. If you want to "
+"use images please upload them elsewhere and insert the links in the article."
+msgstr ""
+"Biudr chöi y däm Artikuvorschlag leider nid diräkt ybundä wärdä. Wenn Di "
+"Artiku söu Biudr ha, lad sä bitte irgendwo ufä u füäg d Biudlinks i Artiku "
+"y."
+
+msgid "Jabber"
+msgstr "Jabber"
+
+#, python-format
+msgid ""
+"Keep in mind that deactivating your account cannot be undone. After that, "
+"you will never be able to log in with the account “%(name)s” again."
+msgstr ""
+"Bitte bis dr bewusst, dass äs Deaktiviärä vom Account nid cha rückgängig "
+"gmacht wärdä. Du wirsch di nie meh mit em Account “%(name)s” chönnä yloggä"
+
+msgid "Key"
+msgstr "Schlüssu"
+
+msgid "KiB (0 = unlimited)"
+msgstr "KiB (0 = unbegränzt)"
+
+#, python-format
+msgid "Last login: %(date)s"
+msgstr "Letschti Anmeldung: %(date)s"
+
+msgid "Last post"
+msgstr "Letschtä Bytrag"
+
+msgid "Last reply"
+msgstr "Letschti Antwort"
+
+msgid "Last update:"
+msgstr "Letschti Aktualisiärig:"
+
+msgid "Latest update"
+msgstr "Letschti Aktualisiärig"
+
+msgid "Latitude:"
+msgstr "Breitägrad:"
+
+msgid "Launchpad username"
+msgstr "Launchpad-Namä"
+
+msgid "Leave that feel empty for an endless duration"
+msgstr "Lo das Fäud frei, um d Umfrag zytlich unbegränzt offä z lah."
+
+msgid ""
+"Leave this field empty if the suggestion should be deleted without an "
+"explanation."
+msgstr ""
+"Lo das Fäud läär, wenn Du dä Vorschlag ohno ä Grundagab löschä wetsch."
+
+msgid "Legend:"
+msgstr "Legändä:"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "Link discussion"
+msgstr "Diskussion verlinkä"
+
+msgid "Link to this post"
+msgstr "Permalink zu däm Bytrag"
+
+msgid "List of new articles"
+msgstr "Lischtä vo nöiä Artiklä"
+
+msgid "Lock"
+msgstr "Sperrä"
+
+msgid "Log"
+msgstr "Vrlouf"
+
+msgid "Login"
+msgstr "Ahmäudä"
+
+#, python-format
+msgid ""
+"Login failed because the password for the user “%(name)s” was wrong or the "
+"user does not exist."
+msgstr ""
+"Ahmäudig nid erfougrych, entwedr isch z Passwort fausch odr dä Benutzr "
+"“%(name)s” gits nid."
+
+#, python-format
+msgid ""
+"Login failed because the user “%(name)s” is currently banned. You were "
+"informed about that. If you don’t agree with the ban or if it is a mistake, "
+"please contact <a href=\"%(mailto)s\">%(mail)s</a>."
+msgstr ""
+"Du chasch Dy nid amäudä, wöu dr Benutzr „%(name)s“ aktuell gsperrt isch. Du "
+"söttsch drüber informiärt wordä sy. Wenn Du nid iiverstangä bisch odr än "
+"Irrtum vorligt, de schryb bitte ä Nachricht a <a "
+"href=\"%(mailto)s\">%(mail)s</a>."
+
+#, python-format
+msgid ""
+"Login failed because the user “%(name)s” is inactive. You probably didn’t "
+"click on the link in the activation mail which was sent to you after your "
+"registration. If it is still not working, contact us: <a "
+"href=\"%(mailto)s\">%(mail)s</a>"
+msgstr ""
+"Du hesch nid chönnä agmäudet wärdä wöu dr Benutzr “%(name)s”  inaktiv isch. "
+"Das ligt villech dran, dass d Regischtriegig nonid mit em Link us der E-Mail"
+" aktiviert wordä isch. Wenns immer noni geit, schryb bitte ä Nachricht a <a "
+"href=\\\"%(mailto)s\\\">%(mail)s</a>"
+
+#, python-format
+msgid ""
+"Login failed because the user “%(name)s” is inactive. You probably didn’t "
+"click on the link in the activation mail which was sent to you after your "
+"registration. If you didn’t received that mail, you can <a "
+"href=\"%(resend)s\">request a new one</a>. If it is still not working, "
+"contact us: <a href=\"%(mailto)s\">%(mail)s</a>"
+msgstr ""
+"Du hesch nid chönnä agmäudet wärdä wöu dr Benutzr “%(name)s” inaktiv isch. "
+"Das ligt villech dran, dass d Regischtriegig nonid mit em Link us der E-Mail"
+" aktiviert wordä isch. Wenn d E-Mail nid hesch, de chasch sä <a "
+"href=\\\"%(resend)s\\\">no einisch afordärä</a>. Wenns immer noni geit, "
+"schryb bitte ä Nachricht a <a href=\\\"%(mailto)s\\\">%(mail)s</a>"
+
+msgid "Logout"
+msgstr "Abmäudä"
+
+#, python-format
+msgid "Logout [%(user)s]"
+msgstr "Abmäudä [%(user)s]"
+
+msgid "Longitude:"
+msgstr "Längägrad:"
+
+msgid "Lost password"
+msgstr "Passwort vrgässä"
+
+msgid "Manage attachments"
+msgstr "Aahäng vrwautä"
+
+msgid "Mark"
+msgstr "Vrschiäbä"
+
+msgid "Mark all forums as read"
+msgstr "Aui Forä uus gläsä markiärä"
+
+msgid "Mark as discontinued"
+msgstr "Als Vrlah markiärä"
+
+msgid "Mark as read"
+msgstr "Als gläsä markiärä"
+
+msgid "Mark as solved"
+msgstr "Als glöst markiärä"
+
+msgid "Mark as unsolved"
+msgstr "Als unglöst markiärä"
+
+msgid "Mark ham"
+msgstr "Kei Spam"
+
+msgid "Mark page as “under construction”"
+msgstr "Sytä aus Bousteu markiärä"
+
+#, python-format
+msgid "Mark page “%(page)s” as “under construction”"
+msgstr "Verschieb „%(page)s“ y d Bousteu"
+
+msgid "Mark selected subscriptions as read"
+msgstr "Markiär gwäuti Abonnements uus gläsä"
+
+msgid "Mark spam"
+msgstr "Spam"
+
+msgid "Mark topic as “Important:”"
+msgstr "Thema uus „Wichtig:“ markiärä"
+
+msgid "Maximum avatar size"
+msgstr "Maximali Avatargrössi"
+
+msgid "Maximum team icon size"
+msgstr "Maximali Teamicon Grössi"
+
+msgid "Member since"
+msgstr "Mitglid syt"
+
+msgid "Member since:"
+msgstr "Ahmäudedatum:"
+
+#, python-format
+msgid "Member since: %(date)s"
+msgstr "Mitglid syt: %(date)s"
+
+msgid "Members"
+msgstr "Mitglidr"
+
+msgid "Members with green usernames belong to the team."
+msgstr "Benutzr mit grüänäm Benutzrnamä ghörä zum Team."
+
+#, python-format
+msgid "Message from %(name)s"
+msgstr "Nachricht vo %(name)s"
+
+msgid "Messages"
+msgstr "Privati Nachrichtä"
+
+msgid "Metadata"
+msgstr "Metadatä"
+
+msgid "Missing Pages"
+msgstr "Fählendi Artiku"
+
+msgid "Missing article"
+msgstr "Fählendä Artiku"
+
+msgid "More"
+msgstr "Meh"
+
+#, python-format
+msgid "Most users ever online was %(record)s on %(time)s."
+msgstr "Dr Rekord lygt bi %(record)s am %(time)s."
+
+msgid "Move"
+msgstr "Vrschiäbä"
+
+msgid "Move page back to the wiki"
+msgstr "Sytä zrügg ins Wiki verschiäbä"
+
+msgid "Move page to “discontinued”"
+msgstr "Sytä nach Bousteu/Verlah/“ verschiäbä"
+
+#, python-format
+msgid "Move “%(topic)s”"
+msgstr "Vrschiäbä „%(topic)s“"
+
+msgid "My posts"
+msgstr "Eigeni Byträg"
+
+msgid "Name"
+msgstr "Namä"
+
+msgid "Name:"
+msgstr "Namä:"
+
+msgid "New Article"
+msgstr "Nöiä Artiku"
+
+msgid "New article"
+msgstr "Nöiä Artiku"
+
+msgid "New attachment:"
+msgstr "Nöiä Aahang:"
+
+msgid "New comment"
+msgstr "Nöiä Kommentar"
+
+msgid "New forum of the topic:"
+msgstr "Nöis Forum mit Thema:"
+
+msgid "New group"
+msgstr "Nöii Gruppä"
+
+msgid "New page name:"
+msgstr "Nöiä Seitenname:"
+
+msgid "New paste"
+msgstr "Nöiä Ytrag"
+
+msgid "New posts"
+msgstr "Nöii Byträg"
+
+msgid "New reply"
+msgstr "Nöii Antwort"
+
+#, python-format
+msgid "New reply in “%(topic)s”"
+msgstr "Nöii Antwort in „%(topic)s“"
+
+#, python-format
+msgid "New report for the article “<a href=\"%(link)s\">%(article)s</a>”"
+msgstr "Nöii Mäudig zum Artiku „<a href=\"%(link)s\">%(article)s</a>“"
+
+msgid "New topic"
+msgstr "Nöis Thema"
+
+#, python-format
+msgid "New topic in “%(forum)s”"
+msgstr "Nöis Thema in „%(forum)s“"
+
+msgid "News"
+msgstr "Nachrichtä"
+
+msgid "Next"
+msgstr "Nächschti"
+
+msgid "Next topic »"
+msgstr "Nächschts Thema »"
+
+msgid "Next »"
+msgstr "Wyter »"
+
+msgid "No articles were aggregated"
+msgstr "Äs si keini Artiku aggregiert wordä."
+
+msgid "No categories"
+msgstr "Keini Kategoriä"
+
+msgid "No entry"
+msgstr "Kei Ytrag"
+
+#, python-format
+msgid "No event was added yet, <a href=\"%(link)s\">create</a> the first one now!"
+msgstr ""
+"Äs isch no kei Verahstautig hinzuägfüägt, <a href=\"%(link)s\">erstelle</a> "
+"jetzt die erste!"
+
+msgid "No pastes were created yet."
+msgstr "Es isch no kei Yträg ersteut."
+
+msgid "No topics were found."
+msgstr "Es sy keini Themä gfungä wordä"
+
+msgid "No users were found."
+msgstr "Es sy keini Benutzr gfungä wordä."
+
+msgid "Nobody"
+msgstr "Niemär"
+
+msgid "None"
+msgstr "Keini"
+
+msgid "Note: More settings will be available after creating the user."
+msgstr ""
+"Hiiwys: Nach dr Erstellig vom Benutzr wärdä meh Ystelligä verfüägbar sy."
+
+msgid "Notify me about new article suggestions"
+msgstr "Tuä mi bi nöiä Artikuvorschleg benachrichtigä"
+
+msgid "Old revisions"
+msgstr "Auti Revisionä"
+
+msgid "Overview"
+msgstr "Übrsicht"
+
+msgid "Overwrite existing attachment with the same name."
+msgstr "Übrschryb Aahäng mit äm glych Namä."
+
+msgid "Overwrite existing attachments with same name:"
+msgstr "Aahang mit glychem Namä übrschrybä:"
+
+msgid "Page"
+msgstr "Sytä"
+
+msgid "Page not found"
+msgstr "Sytä nid gfungä"
+
+msgid "Page revisions"
+msgstr "Sytärevisionä"
+
+msgid "Participation"
+msgstr "Mitmachä"
+
+msgid "Paste"
+msgstr "Ablag (Pastebin)"
+
+msgid "Pastebin"
+msgstr "Ablag"
+
+msgid "Permanent link"
+msgstr "Permalink"
+
+msgid "Permissions"
+msgstr "Berächtigungä"
+
+msgid "Pixel"
+msgstr "Pixu"
+
+msgid "Planet"
+msgstr "Planet"
+
+msgid "Planet - Captions"
+msgstr "Planet - Nur Übrschriftä"
+
+msgid "Planet - Full article"
+msgstr "Planet - Ganzä Artiku"
+
+msgid "Planet - Teaser"
+msgstr "Planet - Nur Yleitig"
+
+msgid ""
+"Please be patient. It could take a while, until we approve your suggestion."
+msgstr ""
+"Bitte häb ä chly Geduld mit dr Bearbeitig. Es cha e chly duurä, bis dr Blog "
+"von üs isch prüeft wordä."
+
+msgid ""
+"Please click on the link in the topic, there are too much topics to list all"
+" of them here."
+msgstr ""
+"Bitte im Thema uuf dä Link klickä, äs gyt z viu Themä um si aui hiä "
+"uufzlischtä."
+
+msgid "Please enter the string which was sent to you by email below:"
+msgstr ""
+"Bitte gib d Zeichächötti, wo Dir isch per E-Mail gschickt wordä, hiä ä:"
+
+msgid "Please install at least Internet Explorer 8."
+msgstr "Bitte inschtalliär dä Internet Explorer 8 odr nöier."
+
+#, python-format
+msgid ""
+"Please note that the maximum size for the avatar is %(width)sx%(height)s "
+"pixels and %(size)s KiB. Everything that exceeds this limit will "
+"automatically be resized."
+msgstr ""
+"Bis dr bewusst, dass die maximali Grössi für Avatär %(width)sx%(height)s "
+"Pixu u %(size)s KiB isch. Aues angerä wird outomatisch aapasst."
+
+msgid ""
+"Please save long code snippets or program outputs in our paste service and "
+"link to the respective entry."
+msgstr ""
+"Bitte tuä längi Code-Uuschnitt odr Programmuusgab i üsi Ablag (Pastebin) u "
+"verlinke dä entsprächend Bytrag."
+
+msgid "Please turn on JavaScript!"
+msgstr "Bitte aktiviär JavaScript!"
+
+msgid "Poll:"
+msgstr "Umfrag:"
+
+msgid "Portal"
+msgstr "Portau"
+
+msgid "Post"
+msgstr "Bytrag"
+
+#, python-format
+msgid "Posted on %(date)s</a>"
+msgstr "Gschrybä am %(date)s</a>"
+
+msgid "Posts"
+msgstr "Byträg"
+
+msgid "Posts:"
+msgstr "Byträg:"
+
+#, python-format
+msgid "Posts: <strong>%(n)s</strong>"
+msgstr "Byträg: <strong>%(n)s</strong>"
+
+#, python-format
+msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
+msgstr "S louft <a href=\"%(link)s\">Inyoka</a> ungr dr Hubä"
+
+msgid "Preview"
+msgstr "Vorschou"
+
+msgid "Previous"
+msgstr "Vorhärigi"
+
+msgid "Private message"
+msgstr "Privati Nachricht"
+
+msgid "Private messages"
+msgstr "Privati Nachrichtä"
+
+#, python-format
+msgid "Private messages (%(count)s)"
+msgstr "Privati Nachrichtä (%(count)s)"
+
+msgid "Profile"
+msgstr "Profiu"
+
+msgid "Publish"
+msgstr "Veröffentlichä"
+
+#, python-format
+msgid "Published by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Veröffentlicht vo <a href=\"%(link)s\">%(author)s</a>"
+
+msgid "Question:"
+msgstr "Frag:"
+
+msgid "Quote"
+msgstr "Zitiärä"
+
+msgid "Random Pages"
+msgstr "Zuäfaussytä"
+
+msgid "Raw"
+msgstr "Rohformat"
+
+msgid "Read"
+msgstr "Läsä"
+
+msgid "Read and accepted"
+msgstr "Gläsä u akzeptiärt"
+
+msgid "Reason:"
+msgstr "Begründig:"
+
+msgid "Recent Changes"
+msgstr "Letschti Änderigä"
+
+msgid "Recent Changes are currently unavailable."
+msgstr "Letschti Änderigä sy aktuell no nid verfüägbar."
+
+msgid "Recent articles"
+msgstr "Nöiä Artiklä"
+
+msgid "Recent changes"
+msgstr "Letschti Änderigä"
+
+msgid "Recent posts"
+msgstr "Nöii Byträg"
+
+msgid "Register"
+msgstr "Regischriärä"
+
+msgid "Registered users:"
+msgstr "Regischtrierti Benutzr:"
+
+msgid "Reject"
+msgstr "Ablehnä"
+
+msgid "Rename"
+msgstr "Umbenennä"
+
+msgid "Rename page"
+msgstr "Sytä umbenennä"
+
+msgid "Rename to:"
+msgstr "Umbenennä zu:"
+
+msgid "Replies"
+msgstr "Antwortä"
+
+msgid "Reply"
+msgstr "Antwortä"
+
+msgid "Reply to all"
+msgstr "A aui antwortä"
+
+msgid "Report"
+msgstr "Mäudä"
+
+msgid "Report an error in this article"
+msgstr "Fähler im Artiku mäudä"
+
+msgid "Report topic"
+msgstr "Thema mäudä"
+
+#, python-format
+msgid "Report topic “%(topic)s”"
+msgstr "Thema „%(topic)s“ mäudä"
+
+msgid "Reported by"
+msgstr "Gmäudet vo"
+
+#, python-format
+msgid "Reported by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Gmäudet vo <a href=\"%(link)s\">%(author)s</a>"
+
+msgid "Reported topics"
+msgstr "Gmäudeti Themä"
+
+msgid "Reports"
+msgstr "Mäudigä"
+
+msgid "Request new password"
+msgstr "Nöis Passwort aaforderä"
+
+msgid "Resend activation mail"
+msgstr "Aktivierungsmail no mau sändä"
+
+msgid "Residence"
+msgstr "Wohnort"
+
+msgid "Residence:"
+msgstr "Wohnort:"
+
+msgid "Restore"
+msgstr "widrhärschteuä"
+
+msgid "Revisions"
+msgstr "Revisionä"
+
+msgid "Rules"
+msgstr "Reglä"
+
+msgid "Save"
+msgstr "Spychärä"
+
+msgid "Search"
+msgstr "Suächä"
+
+msgid "Select"
+msgstr "Uuswählä"
+
+msgid "Send"
+msgstr "Sändä"
+
+msgid "Send mail"
+msgstr "E-Mail absändä"
+
+msgid "Send message"
+msgstr "Nachricht absändä"
+
+msgid "Sent mail"
+msgstr "Gsändet"
+
+msgid "Servererror"
+msgstr "Serverfähler"
+
+msgid "Set new password"
+msgstr "Nöis Passwort ersteuä"
+
+msgid "Set redirect to new page"
+msgstr "Umleitig uuf nöii Sytä setzä"
+
+msgid "Settings"
+msgstr "Ystelligä"
+
+msgid "Short URL"
+msgstr "Churz-URL"
+
+msgid "Show article"
+msgstr "Artiku aahzeigä"
+
+msgid "Show backlinks"
+msgstr "Backlinks aahzeigä"
+
+msgid "Show event"
+msgstr "Verahstautig aahzeigä"
+
+msgid "Show full article"
+msgstr "Gsammtä Artiku aahzeigä"
+
+msgid "Show in profile"
+msgstr "Im Profiu aahzeigä"
+
+msgid "Show my profile"
+msgstr "Mein Profiu aahzeigä"
+
+msgid "Show only invisible events"
+msgstr "Zeig numä unsichtbari Verahstautigä ah"
+
+msgid "Show only teaser"
+msgstr "Nur Yleitig aahzeigä"
+
+msgid "Show only upcoming events"
+msgstr "Zeig nur zuekünftigi Verahstautigä ah"
+
+msgid "Show results"
+msgstr "Ergäbniss aahzeigä"
+
+msgid "Show revisions"
+msgstr "Revisionä aahzeigä"
+
+msgid "Show unread posts"
+msgstr "Zeig ungläsnigi Byträg"
+
+msgid "Signature"
+msgstr "Signatur"
+
+msgid "Sites under construction"
+msgstr "Bousteuä"
+
+msgid "URL of the topic:"
+msgstr "URL vom Thema"
+
+msgid "Slug of the topic:"
+msgstr "Slug vom Thema"
+
+msgid "Solved"
+msgstr "Glöst"
+
+msgid "Spelling mistakes"
+msgstr "Rächtschrybefähler"
+
+msgid "Split"
+msgstr "Uufteilä"
+
+msgid "Split messages into multiple pages"
+msgstr "Nachricht uuf mehreri Sytä uufteilä"
+
+msgid "Split posts"
+msgstr "Byträg abtrennen"
+
+msgid "Split topic"
+msgstr "Thema uufteilä"
+
+#, python-format
+msgid "Split topic “%(topic)s”"
+msgstr "Thema „%(topic)s“ uufteilä"
+
+msgid "Split:"
+msgstr "Uufteilä:"
+
+msgid "State"
+msgstr "Status"
+
+msgid "Static files"
+msgstr "Statischi Dateiä"
+
+msgid "Static pages"
+msgstr "Statischi Sytä"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Status:"
+msgstr "Status:"
+
+msgid "Sticky:"
+msgstr "Wichtig:"
+
+msgid "Stylesheets"
+msgstr "Stylesheets"
+
+msgid "Subforums"
+msgstr "Ungerforä"
+
+msgid "Subforums:"
+msgstr "Ungerforä:"
+
+msgid "Subject"
+msgstr "Beträff"
+
+msgid "Subject:"
+msgstr "Beträff:"
+
+msgid "Submit"
+msgstr "Spycherä"
+
+msgid "Subscribe"
+msgstr "Abonniärä"
+
+msgid "Subscribe comments"
+msgstr "Kommentär abonniärä"
+
+msgid "Subscribe to topic reports"
+msgstr "Themenmeldungen abonniärä"
+
+msgid "Subscriptions"
+msgstr "Abonnements"
+
+msgid "Suggest"
+msgstr "Vorschlah"
+
+msgid "Suggest a blog"
+msgstr "Ä Blog vorschlah"
+
+msgid "Suggest an article"
+msgstr "Ä Artiku vorschlah"
+
+msgid "Suggest an event"
+msgstr "Än Verahstautig vorschlah"
+
+msgid "Suggest article"
+msgstr "Artiku vorschlah"
+
+msgid "Suggest blog"
+msgstr "Än Blog vorschlah"
+
+msgid "Suggest event"
+msgstr "Verahstautig vorschlah"
+
+msgid "Suggest new article"
+msgstr "Artiku vorschlah"
+
+msgid "Suggest new event"
+msgstr "Ä nöii Verahstautig vorschlah"
+
+#, python-format
+msgid "Suggested by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Vorgschlagä vo <a href=\"%(link)s\">%(author)s</a>"
+
+msgid "Suggested by:"
+msgstr "Vorgschlagä vo:"
+
+msgid "Supporter:"
+msgid_plural "Supporters:"
+msgstr[0] "Supporter:"
+msgstr[1] "Supporter:"
+
+msgid "Tag Cloud"
+msgstr "Wortwuächä"
+
+msgid "Tag List"
+msgstr "Taglischtä"
+
+msgid "Team icon"
+msgstr "Team-Biudli"
+
+msgid "Teaser"
+msgstr "Yleitig"
+
+msgid "Text:"
+msgstr "Text:"
+
+#, python-format
+msgid ""
+"The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
+"created by %(author)s."
+msgstr ""
+"Diä <a href=\"%(rev_link)s\">aktuelli Revision</a> isch %(rev)s u isch vo "
+"%(author)s ersteut wordä."
+
+#, python-format
+msgid ""
+"The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
+"created by <a href=\"%(author_link)s\">%(author)s</a>."
+msgstr ""
+"Diä <a href=\"%(rev_link)s\">aktuelli Revision</a> isch %(rev)s u u isch vo "
+"<a href=\"%(author_link)s\">%(author)s</a> ersteut wordä."
+
+msgid ""
+"The article is already under construction, help improving and finishing it!"
+msgstr ""
+"Dä Artiku exischiert bereits i dr Baustelle; hiuf doch nä z verbessärä u "
+"fertigzmachä!"
+
+#, python-format
+msgid "The article “%(title)s” does not exist yet."
+msgstr "Dr Artiku „%(title)s“ exischiert no nid."
+
+#, python-format
+msgid ""
+"The article “%(title)s” was deleted. You can restore it or create a new one "
+"in the action menu."
+msgstr ""
+"Dr Artiku „%(title)s” isch glöscht wordä. Du chasch nä widrhärschteuä odr "
+"über ds Aktionsmenü ä nöiä ersteuä."
+
+#, python-format
+msgid ""
+"The article “<a href=\"%(link)s\">%(article)s</a>” has currently %(count)s "
+"revision."
+msgid_plural ""
+"The article “<a href=\"%(link)s\">%(article)s</a>” has currently %(count)s "
+"revisions."
+msgstr[0] "Dr Artiku “<a href=\"%(link)s\">%(article)s</a>“ hett ä Revision."
+msgstr[1] ""
+"Dr Artiku „<a href=\"%(link)s\">%(article)s</a>“ hett %(count)s Revisionä."
+
+msgid ""
+"The chosen posts can form a new topic or be attached to an existing topic."
+msgstr ""
+"Diä gwäutä Byträg chöi hiä in äs eignigs Thema abtrennt wärdä odr ah näs "
+"bestehends Thema ahghängt wärdä."
+
+msgid ""
+"The following list consists of 10 randomly selected wiki articles. <a "
+"href=\"/wiki/randompages\">Reload</a> to see more pages."
+msgstr ""
+"Diä nachfougendi Lischtä besteit uus 10 zuäfäuig uusgwäutä Wiki-Artiklä. Um "
+"meh Zuefaussytä ahzszeigä eifach d <a href=\"/wiki/randompages\">Sytä "
+"neuladen</a>."
+
+msgid "The following pages are embedding this articles as attachment."
+msgstr "Diä fougändä Sytä bindä dä Artiku uus Aahang y:"
+
+msgid "The following pages are referring this article:"
+msgstr "Diä fougändä Sytä vrwysä uuf dä Artiku:"
+
+#, python-format
+msgid ""
+"The following pages are referring to the article “%(title)s” by manual "
+"linking:"
+msgstr ""
+"Diä fougändä Sytä beziäh sich uuf dä Artiku „%(title)s“ dür manuelli "
+"Vrlinkig:"
+
+msgid "The following pages have similar names:"
+msgstr "Diä fougändä Sytä hei än ähnlichä Namä:"
+
+msgid "The following posts will be split off:"
+msgstr "Diä fougändä Byträg würdä abtrennt wärdä:"
+
+#, python-format
+msgid ""
+"The following table shows the difference of the article “<a "
+"href=\"%(article_link)s\">%(article)s</a>” between <a "
+"href=\"%(old_rev_link)s\">revision %(old_rev)s</a> (%(old_rev_note)s) and <a"
+" href=\"%(new_rev_link)s\">revision %(new_rev)s</a> (%(new_rev_note)s)."
+msgstr ""
+"Diä fougändi Tabäuä zeigt d Änderigä im Artiku „<a "
+"href=\"%(article_link)s\">%(article)s</a>“ zwüschä <a "
+"href=\"%(old_rev_link)s\">Revision %(old_rev)s</a> (%(old_rev_note)s) u <a "
+"href=\"%(new_rev_link)s\">Revision %(new_rev)s</a> (%(new_rev_note)s) ah."
+
+#, python-format
+msgid "The following wiki articles have been tagged with \"%(tag)s\":"
+msgstr "Die fougändä Wikiartiklä hai dr Tag \"%(tag)s\":"
+
+#, python-format
+msgid "The group “%(name)s” has %(count)s member:"
+msgid_plural "The group “%(name)s” has %(count)s members:"
+msgstr[0] "D Gruppä „%(name)s“ hett %(count)s Mitglid:"
+msgstr[1] "D Gruppä „%(name)s“ gett %(count)s Mitglidr:"
+
+#, python-format
+msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
+msgstr ""
+"D Umfrag isch am %(start_date)s gstartet wordä u am %(end_date)s gändet."
+
+#, python-format
+msgid ""
+"The poll was started on %(start_date)s and it will end on %(end_date)s."
+msgstr ""
+"D Umfrag isch am %(start_date)s gstartet wordä wird am %(end_date)s ändä."
+
+#, python-format
+msgid ""
+"The signature will be appended to every post. It cannot contain more than "
+"%(n)s characters. Please follow the <a href=\"%(link)s\">signature "
+"rules</a>."
+msgstr ""
+"D Signatur wird ah jedä Bytrag aghängt. Sie cha nid länger uus %(n)s Zeichä "
+"sy. Bitte beacht ou d <a href=\"%(link)s\">Signaturreglä</a>."
+
+msgid "The two revisions are identical."
+msgstr "Diä beidä Revisionä sy identisch."
+
+msgid "There are currently no article suggestions."
+msgstr "Äs git momentan kei Artikuvorschleg."
+
+msgid "There are no attachments yet for this site."
+msgstr "Äs git no kei Aahäng für diä Sytä"
+
+msgid "There are no reports yet."
+msgstr "Äs git no kei Fählermäudigä."
+
+msgid "There are no static files, create the first one now!"
+msgstr "Äs git keini statischi Dateiä, mach jetz die erschti!"
+
+msgid "There are no static pages, create the first one now!"
+msgstr "Äs git keini statischen Sytä, mach jetz die erschti!"
+
+msgid "There are no tags in the wiki, yet."
+msgstr "Äs sy bishär no keini Wikiartiklä mit Tags markiert."
+
+#, python-format
+msgid "There are no topics. <a href=\"%(link)s\">Create</a> the first one now!"
+msgstr "Äs git keini Themänä. <a href=\"%(link)s\">Erstelle</a> jetz ds erschtä!"
+
+msgid "There are no upcoming events."
+msgstr "Äs stöh keini Verahstautigä bevor."
+
+msgid "There are no wiki articles that could be shown, yet."
+msgstr "Äs git no kei Wikiartiklä wö chöntä zeigt wärdä"
+
+msgid "There aren't any links to missing pages in the wiki. Congratulations!"
+msgstr "Es git keini verwaisti Links im Wiki. Gratuliärä!"
+
+#, python-format
+msgid "There is currently one attachment assigned to this page."
+msgid_plural ""
+"There are currently %(count)s attachments assigned to this page."
+msgstr[0] "Diä Sytä hat aktuell ä Aahang."
+msgstr[1] "Diä Sytä hat aktuell %(count)s Aahäng."
+
+msgid "There is no article."
+msgstr "Es git kei Artiku."
+
+msgid "This article is an orphan and not referenced by any site."
+msgstr "Dä Artiku isch verwaist u von kenerä Sytä referänziert."
+
+msgid "This attachment is an orphan and not referenced by any site."
+msgstr "Dä Aahang isch verwaisch u von kenerä Sytä referänziert."
+
+msgid "This category does not contain any forum."
+msgstr "Diä Kategorie enthautet keini Forä"
+
+msgid ""
+"This is a pastebin where you can save error messages, logs, configuration "
+"files or source codes to keep threads or IRC channels clean. To do this, "
+"just copy the text in the box below and choose the appropriate language. "
+"After that, you copy the URL into the topic or the channel."
+msgstr ""
+"Das isch än Ablag wo Du chasch lengeri Texscht wie Fählermäudigä oder "
+"Konfigurationsdatei u Sourcecode chasch ableggä um z Forum und IRC Kanäu "
+"suuber z hautä. Schryb oder kopier de Tescht eifach is Texschtfäud u kopier "
+"die resultierende URL."
+
+msgid "This may be because you are not logged in."
+msgstr "Das chönnt dran ligä, dass Du nid aahgmäudet bisch."
+
+msgid "This topic"
+msgstr "Das Thema"
+
+#, python-format
+msgid "This topic is the discussion of the article %(article_list)s."
+msgid_plural "This topic is the discussion of the articles %(article_list)s."
+msgstr[0] "Das Thema isch d Diskussion vom Artikels %(article_list)s."
+msgstr[1] "Das Thema isch d Diskussion vo dä Artiklä %(article_list)s."
+
+msgid "Time (from):"
+msgstr "Zyt (vo):"
+
+msgid "Time (to):"
+msgstr "Zyt (bis):"
+
+msgid "Time:"
+msgstr "Zyt:"
+
+msgid "Title"
+msgstr "Titu"
+
+msgid "Title of the new topic:"
+msgstr "Titu vom nöiä Thema:"
+
+msgid "Title:"
+msgstr "Titu:"
+
+msgid "To"
+msgstr "A"
+
+#, python-format
+msgid ""
+"To be always up to date you can read the <a href=\"%(feed_link)s\">atom "
+"feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>."
+msgstr ""
+"Um immer uuf em aktuell Stand z sy, chasch Du dä <a "
+"href=\"%(feed_link)s\">Atom Feed</a> läsä odr <a "
+"href=\"%(subscribe_link)s\">abonniärä</a>."
+
+msgid "To classic version"
+msgstr "Zur klassischä Version"
+
+msgid "To deactivate your account, you need to enter your password."
+msgstr "Bitte gib dis Passwort a, um Dys Konto z deaktivierä."
+
+msgid "To mobile version"
+msgstr "Zur mobilä Version"
+
+msgid ""
+"To refer to an attachment you can either link to the corresponding wiki page"
+" or include it with the <code>[[Bild()]]</code> macro."
+msgstr ""
+"Um uuf ä Aahang z vrwysä, chasch Du entweder zu dr entsprächendä Wikiseite "
+"vrlinkä odr diä mit däm <code>[[Bild()]]</code> Makro ybindä."
+
+msgid "To:"
+msgstr "A:"
+
+msgid "Topic"
+msgstr "Thema"
+
+msgid "Topic:"
+msgstr "Thema:"
+
+msgid "Topics"
+msgstr "Themä"
+
+#, python-format
+msgid "Topics: <strong>%(n)s</strong>"
+msgstr "Themä: <strong>%(n)s</strong>"
+
+msgid "Town:"
+msgstr "Stadt:"
+
+msgid "Trash"
+msgstr "Küdrchübu"
+
+msgid "Turn admin links on/off"
+msgstr "Adminlinks a/uus"
+
+msgid "URL:"
+msgstr "URL:"
+
+msgid "Unanswered topics"
+msgstr "Unbeantworteti Themä"
+
+msgid "Unlock"
+msgstr "Entsperrä"
+
+msgid "Unpublish"
+msgstr "Veröffentlichig uufhebä"
+
+msgid "Unread posts"
+msgstr "ungläsnigi Byträg"
+
+msgid "Unsolved"
+msgstr "Unglöst"
+
+msgid "Unsolved topics"
+msgstr "Unglösti Themä"
+
+msgid "Unsubscribe"
+msgstr "Abbsteuä"
+
+msgid "Unsubscribe comments"
+msgstr "Kommentär abbsteuä"
+
+msgid "Unsubscribe from topic reports"
+msgstr "Themämäudigä abbsteuä"
+
+msgid "Untested Articles"
+msgstr "Unteschteti Artiku"
+
+msgid "Upcoming events"
+msgstr "Ahstehendi Verahstautigä"
+
+msgid "Upload attachments"
+msgstr "Aahäng ufäladä"
+
+msgid "Usage"
+msgstr "Ahwändig"
+
+msgid "Usage:"
+msgstr "Vrwändig:"
+
+msgid "User"
+msgstr "Benutzr"
+
+msgid "User page"
+msgstr "Benutzrsytä"
+
+msgid "User:"
+msgstr "Benutzr:"
+
+msgid "Username"
+msgstr "Benutzrnamä"
+
+msgid "Various limits"
+msgstr "Diversi Limits"
+
+msgid "Venue"
+msgstr "Vrastautigsort"
+
+msgid "Venue:"
+msgstr "Vrastautigsort:"
+
+msgid "View"
+msgstr "Aluägä"
+
+msgid "View public profile"
+msgstr "Offentlichs Profiu aluägä"
+
+msgid "Views"
+msgstr "Uufrüäf"
+
+msgid "Vote"
+msgstr "Abstimmä"
+
+msgid "Watch"
+msgstr "Beobachtä"
+
+msgid "Website"
+msgstr "Websytä"
+
+msgid "Welcome message"
+msgstr "Wiukommensnachricht"
+
+msgid "What"
+msgstr "Was"
+
+msgid "Who is online?"
+msgstr "Wär isch grad aahgmäudet?"
+
+msgid "Wiki"
+msgstr "Wiki"
+
+msgid "Wiki Reference"
+msgstr "Wiki-Referänz"
+
+msgid "Wiki Syntax"
+msgstr "Wiki-Syntax"
+
+msgid ""
+"Wiki articles can be tagged by key words. The following alphabetical tag "
+"list shows all of them. This is useful to find more articles to a specified "
+"topic, etc. There is also a <a href=\"/wiki/tagcloud\">tag cloud</a> "
+"overviewing the most used tags of the wiki."
+msgstr ""
+"Dür Tags cha man ämänä Wiki-Artiku Schlagwort drzuätuä. So cha mä schnäu än "
+"Überblick gwinnä, was  zumämänä Stichwort bzw. Thema süsch no interessant "
+"chönnt sy. Uuf derä Sytä wärdä aui Tags vom Wiki alphabetisch sortiert "
+"uufglischtet. Äs gitt usserdäm no d <a "
+"href=\"/wiki/tagcloud\">Wortwuächä</a> wo ä Überblick über diä "
+"meischgenutzten Tags gyt."
+
+msgid ""
+"Wiki articles can be tagged by key words. The following tag list overviews "
+"them. This is useful to find more articles to a specified topic, etc. There "
+"is also a complete <a href=\"/wiki/tags\">alphabetical list</a> of all tags "
+"in the wiki."
+msgstr ""
+"Dür Tags cha man ämänä Wiki-Artiku Schlagwort drzuätuä. Die fougendi Ahsicht"
+" steut än Übrsicht vo dä verfüägbarä Tags dar. Zuäsätzlich gits ou än <a "
+"href=\"/wiki/tags\">alphabetisch sortierti Lischtä</a> mit aunä Tags."
+
+#, python-format
+msgid "Wiki articles tagged with \"%(tag)s\""
+msgstr "Wikiartikel mit däm Tag \"%(tag)s\""
+
+msgid "Wiki page:"
+msgstr "Wikisytä:"
+
+msgid "With this form you can suggest a new blog for the planet."
+msgstr "Hiä chasch Du ä Blog für ä Planet vorschlah."
+
+msgid "Write comment"
+msgstr "Kommentar schrybä"
+
+msgid ""
+"You are seeing this message because this HTTPS site requires a\n"
+"      'Referer header' to be sent by your Web browser, but none was\n"
+"      sent. This header is required for security reasons, to ensure\n"
+"      that your browser is not being hijacked by third parties."
+msgstr ""
+"Du gsesch diä Nachricht, weil diä Sytä ä 'Referrer-header' bruucht. Dä hett "
+"Dy Browser nid gsändet. Dä Header schützt Di vorä Accountübernahm."
+
+msgid ""
+"You are seeing this message because this site requires a CSRF\n"
+"      cookie when submitting forms. This cookie is required for\n"
+"      security reasons, to ensure that your browser is not being\n"
+"      hijacked by third parties."
+msgstr ""
+"Du gsesch diä Nachricht, weil diä Sytä ä 'CSRF Cookie' bruucht. Dä hett Dy "
+"Browser nid gsändet. Das Güetzi schützt Di vorä Accountübernahm."
+
+#, python-format
+msgid ""
+"You are trying to compare two equal revision of the article “<a "
+"href=\"%(link)s\">%(article)s</a>”. For this reason no change is displayed."
+msgstr ""
+"Du verglychsch zwöi idäntischi Revisionä vom Ariku „<a "
+"href=\"%(link)s\">%(article)s</a>. Darum wärdä keini Änderigä aazeigt."
+
+#, python-format
+msgid "You can also <a href=\"%(link)s\">create</a> this article."
+msgstr "Du chasch dä Artiku ou <a href=\"%(link)s\">ersteuä</a>"
+
+#, python-format
+msgid ""
+"You can also download the changes as <a href=\"%(link_diff)s\">unified "
+"diff</a> or display a <a href=\"%(link_list)s\">list of the last changes</a>"
+" and compare individual revisions."
+msgstr ""
+"Du chasch Dir die Änderigä aus <a href=\"%(link_diff)s\">unified diff</a> "
+"aabäladä odr Dir ä <a href=\"%(link_list)s\">Lischtä mit Änderigä</a> la "
+"aahzeigä u einzelni Revisionä vrglychä."
+
+msgid "You can also enter an e-mail address instead of a user name."
+msgstr "Du chasch ou än E-Mail Adrässä ansteu vomänä Benutzrnamä ahgäh."
+
+msgid ""
+"You can change your password with this form. For security reasons, you need "
+"to enter your old password."
+msgstr ""
+"Du chasch mit däm Formular dys Passwort ändärä. Uus Sicherheitsgründ muesch "
+"z autä ou ygäh"
+
+msgid "You can choose a topic as the discussion topic of this article."
+msgstr "Du chasch äs Thema us Diskussionsthema vo däm Artiku wählen."
+
+#, python-format
+msgid ""
+"You can deactivate your account “%(name)s” here. By doing this, we will "
+"remove all your personal data. All your forum posts and wiki articles will "
+"remain."
+msgstr ""
+"Du chasch hiä dys Konto „%(name)s“ deaktiviärä. Wenn Du das machsch, wärdä "
+"mir aui dyny persönlichä Datä löschä. Foräbyträg u Wikiartiku wärdä "
+"auerdings blybä."
+
+msgid ""
+"You can edit here the stylesheet which is responsibly for formatting the "
+"syntax elements. It is included on all pages. Please do only add already "
+"tested stylesheets, otherwise all users will get a corrupt stylesheet."
+msgstr ""
+"Hiä chasch Du ds Stylesheet bearbeitä, wo fü d Formatierig vo Syntax-Elemänt"
+" zueständig isch. Äs wird uuf allnä Sytä ybundä. Bitte trag hiä nur Styles "
+"y, wo Du scho hesch teschtet, wöu süsch aui Nutzer äs müglecherwys "
+"fählerhafts Stylesheet gseh."
+
+#, python-format
+msgid ""
+"You can login here if you are already <a "
+"href=\"%(register)s\">registered</a>. If you lost your password, you can <a "
+"href=\"%(lost_password)s\">request a new one</a>."
+msgstr ""
+"Du chasch dy hiä ahmäudä, wenn Du scho <a "
+"href=\\\"%(register)s\\\">regischriert bisch</a>. Faus Du Dys Passwort "
+"vergässä hesch, chasch Du Dir <a href=\\\"%(lost_password)s\\\">äs nöis lah "
+"sändä</a>. "
+
+msgid "You can reset your email address here if you changed it accidently."
+msgstr ""
+"Du chasch hiä dyny E-Mail Adrässä zrüggsetzä, faus Du sä versehentlich "
+"gändert hesch."
+
+msgid ""
+"You can restore your account here if you deleted it. Please note that this "
+"is only possible one month after the deletion."
+msgstr ""
+"Du chasch hiä Dys Konto widrhärschteuä, faus Dus glöscht hesch. Bitte "
+"beacht, dass das bis maximau ei Monet nach dr Löschig müglich isch."
+
+msgid "You can set a new password for your account here."
+msgstr "Du chasch hiä äs nöis Passwort für dys Konto setzä."
+
+msgid "You did not yet subscribed to any topics or articles."
+msgstr "Du hesch bishär keini Themä odr Artiku abonniert."
+
+msgid "You do not have permissions to access this page."
+msgstr "Du bisch nid berächtigt, diä Sytä uufzrüäfä."
+
+msgid "You have forgotten your password? You can obtain a new one here."
+msgstr "Du hesch Dys Passwort vrgässä? Hiä chasch dr äs nöis la schickä."
+
+msgid "[Hidden]"
+msgstr "[Vrborgä]"
+
+msgid "[Reported]"
+msgstr "[Gmäudet]"
+
+#, python-format
+msgid "by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "vo <a href=\"%(link)s\">%(author)s</a>"
+
+#, python-format
+msgid "by <a href=\"%(link)s\">%(name)s</a>"
+msgstr "vo <a href=\"%(link)s\">%(name)s</a>"
+
+msgid "create"
+msgstr "Erschteuä"
+
+msgid "dead link"
+msgstr "Verwaister Link"
+
+msgid "edit"
+msgstr "Bearbeitä"
+
+msgid "found in"
+msgstr "Gfungä in"
+
+msgid "from"
+msgstr "vo"
+
+msgid "hidden topic"
+msgstr "Vrsteckts Thema"
+
+msgid "last edited:"
+msgstr "zletscht bearbeitet:"
+
+msgid "locked topic"
+msgstr "Gsperrts Thema"
+
+msgid "only here"
+msgstr "nur hiä"
+
+msgid "pages"
+msgstr "Sytä"
+
+msgid "reported topic"
+msgstr "Gmäudets Thema"
+
+msgid "show"
+msgstr "aahzeigä"
+
+msgid "solved topic"
+msgstr "Glösts Thema"
+
+msgid "sticky topic"
+msgstr "Wichtigs Thema"
+
+msgid "to"
+msgstr "bis"
+
+msgid "unread topic"
+msgstr "Ungläsnigs Thema"
+
+msgid "upload attachment"
+msgstr "Aahang uufäladä"
+
+#, python-format
+msgid "| Hidden by: <a href=\"%(link)s\">%(name)s</a>"
+msgstr "| Vrborgä vo: <a href=\"%(link)s\">%(name)s</a>"
+
+msgid "« Back"
+msgstr "« Zrügg"
+
+msgid "« Previous"
+msgstr "« Zrügg"
+
+msgid "« Previous topic"
+msgstr "« Vorhärigs Thema"
+
+#, python-format
+msgid "“%(name)s” is no member of any group."
+msgstr "„%(name)s“ isch keis Mitglid vonärä Gruppä."

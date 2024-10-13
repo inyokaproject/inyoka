@@ -7,13 +7,12 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import io
 import datetime
 import functools
+import io
 import json
 import os
 
-from PIL import Image
 from django import forms
 from django.conf import settings
 from django.contrib import messages
@@ -32,36 +31,36 @@ from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
 from django.forms import HiddenInput, modelformset_factory
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
-from guardian.shortcuts import assign_perm, remove_perm, get_perms
+from guardian.shortcuts import assign_perm, get_perms, remove_perm
+from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.models import Forum
-from inyoka.portal.models import StaticFile, StaticPage, Linkmap
+from inyoka.portal.models import Linkmap, StaticFile, StaticPage
 from inyoka.portal.user import (
     User,
+    UserBanned,
     UserPage,
+    reactivate_user,
+    reset_email,
     send_new_email_confirmation,
     set_new_email,
-    reactivate_user,
-    reset_email, UserBanned
 )
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
     CaptchaField,
     DateWidget,
     EmailField,
+    ForumMulitpleChoiceField,
     validate_gpgkey,
     validate_signature,
-    ForumMulitpleChoiceField)
-from inyoka.utils.local import current_request
+)
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
-
 
 UserModel = get_user_model()
 
@@ -209,10 +208,10 @@ class RegisterForm(forms.Form):
         exists = User.objects.filter(email__iexact=self.cleaned_data['email'])\
                              .exists()
         if exists:
-            raise forms.ValidationError(mark_safe(
+            raise forms.ValidationError(format_html(
                 _('The given email address is already in use. If you forgot '
-                  'your password, you can <a href="%(link)s">restore it</a>.')
-                % {'link': href('portal', 'lost_password')}))
+                  'your password, you can <a href="{link}">restore it</a>.'),
+                link=href('portal', 'lost_password')))
         return self.cleaned_data['email']
 
 
@@ -236,17 +235,6 @@ class LostPasswordForm(auth_forms.PasswordResetForm):
                u.is_active and
             _unicode_ci_compare(email, getattr(u, email_field_name))
         )
-
-
-class ChangePasswordForm(forms.Form):
-    """Simple form for changing the password."""
-    old_password = forms.CharField(label=gettext_lazy('Old password'),
-                                   widget=forms.PasswordInput)
-    new_password = forms.CharField(label=gettext_lazy('New password'),
-                                   widget=forms.PasswordInput)
-    new_password_confirm = forms.CharField(
-        label=gettext_lazy('Confirm new password'),
-        widget=forms.PasswordInput)
 
 
 class UserCPSettingsForm(forms.Form):
@@ -644,7 +632,7 @@ def get_permissions_for_app(application, filtered=None):
         return [
             perm
             for perm in permissions
-            if not perm[0] in filtered
+            if perm[0] not in filtered
         ]
     return permissions
 

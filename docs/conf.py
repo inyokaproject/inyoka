@@ -1,13 +1,14 @@
-import sys
 import datetime
-import django
-from os import environ
-from os.path import join, dirname
+import os
+import sys
+from os.path import dirname, join
 from subprocess import PIPE, Popen
+
+import django
 
 sys.path.insert(0, join(dirname(__file__), '..'))
 
-environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "development_settings")
 
 django.setup()
 
@@ -17,24 +18,49 @@ django.setup()
 
 # Fix FileField
 from django.db.models.fields.files import FileDescriptor
+
 FileDescriptor.__get__ = lambda self, *args, **kwargs: self
 
-#Fix JSONField
+# Fix JSONField
 from inyoka.utils.database import SimpleDescriptor
+
 SimpleDescriptor.__get__ = lambda self, *args, **kwargs: self
 
 # Remove Redis dependency
 from inyoka.utils.storage import CachedStorage
+
 CachedStorage.get = lambda self, key, *args, **kwargs: key
 
-extensions = ['sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
-    'sphinx.ext.coverage', 'sphinx.ext.extlinks', 'sphinx.ext.autodoc']
+extensions = [
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.autodoc',
+    'myst_parser',
+]
+
+myst_enable_extensions = [
+    # https://myst-parser.readthedocs.io/en/latest/syntax/optional.html
+    "amsmath",
+    "attrs_inline",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "fieldlist",
+    "html_admonition",
+    "html_image",
+    "linkify",
+    "replacements",
+    "smartquotes",
+    "strikethrough",
+    "substitution",
+    "tasklist",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
-
-# The suffix of source filenames.
-source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'
@@ -68,10 +94,9 @@ add_function_parentheses = True
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-# Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'django': ('https://docs.djangoproject.com/en/4.2',
-               'https://docs.djangoproject.com/en/4.2/_objects'),
+               'https://docs.djangoproject.com/en/4.2/_objects/'),
     'python': ('https://docs.python.org/3', None),
     'sphinx': ('https://www.sphinx-doc.org', None),
 }

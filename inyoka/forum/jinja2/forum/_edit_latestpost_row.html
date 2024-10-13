@@ -1,0 +1,33 @@
+{#
+    forum/_edit_latestpost_row.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Used for updating the latest posts view on the edit page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+
+#}
+{%- macro post_row(post) %}
+  <tr id="post-{{ post.id }}">
+    <td class="author">
+      <p class="username"><a href="{{ post.author|url }}">{{ post.author|e }}</a></p>
+      <p>{% trans %}Member since:{% endtrans %} <br>{{ post.author.date_joined|naturalday }}</p>
+      <p class="posts">{% trans %}Posts:{% endtrans %} <a href="{{ href('forum', 'author', post.author.username) }}" rel="nofollow">{{ post.author.post_count }}</a></p>
+    </td>
+    <td class="post">
+      <div class="postinfo">
+        <a href="{{ post|url }}">
+          {{ post.pub_date|datetime }}
+        </a>
+      </div>
+      {{ post.get_text() }}
+    </td>
+  </tr>
+{% endmacro -%}
+
+{% if __main__ %}
+  {%- for post in posts -%}
+    {{ post_row(post) }}
+  {%- endfor -%}
+{% endif %}

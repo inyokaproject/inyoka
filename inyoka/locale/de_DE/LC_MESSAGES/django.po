@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-01 16:45+0200\n"
-"PO-Revision-Date: 2020-11-07 18:24+0100\n"
+"POT-Creation-Date: 2024-10-13 15:55+0200\n"
+"PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,23 +16,83 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.16.0\n"
 
 #, python-format
 msgid "\"%(fingerprint)s\" is not a valid GPG Fingerprint."
 msgstr "\"%(fingerprint)s\" ist kein valider GPG-Fingerprint."
 
+#, python-format
+msgid "(rendered in %(seconds)s seconds)"
+msgstr "(in %(seconds)s Sekunden gerendert)"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "An internal error occurred. The administration was already notified."
+msgstr "Ein interner Fehler ist aufgetreten. Die Administratoren wurden bereits benachrichtigt."
+
 msgid "Are you sure?"
 msgstr "Bist du sicher?"
+
+msgid "Article suggestions"
+msgstr "Artikelvorschläge"
+
+#, python-format
+msgid "Avatar of %(user)s"
+msgstr "Avatar von %(user)s"
+
+msgid "Breadcrumb bottom"
+msgstr "Brotkrumennavigation unten"
+
+msgid "Breadcrumb top"
+msgstr "Brotkrumennavigation oben"
+
+msgid "CSRF verification failed. Request aborted."
+msgstr "Der CSRF-Token ist ungültig. Die Anfrage wurde daher verworfen."
 
 msgid "Canceled."
 msgstr "Abgebrochen."
 
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+msgid "Control panel"
+msgstr "Kontrollzentrum"
+
 msgid "Errors occurred, please fix them."
 msgstr "Bitte die aufgetretenen Fehler beheben."
 
+msgid "Event suggestions"
+msgstr "Veranstaltungsvorschläge"
+
+msgid "Forbidden (403)"
+msgstr "Unzulässig (403)"
+
+msgid ""
+"If you have configured your browser to disable 'Referer' headers,\n"
+"      please re-enable them, at least for this site, or for HTTPS\n"
+"      connections, or for 'same-origin' requests."
+msgstr "Wenn du Referrer in deinem Browser deaktiviert hast, aktivierte dies bitte wieder. Es ist dabei ausreichend, Referrer nur für diese Domain, HTTPS-Verbindungen oder an die Ursprungsdomain („same-origin“) zu senden."
+
+msgid ""
+"If you have configured your browser to disable cookies, please\n"
+"      re-enable them, at least for this site, or for 'same-origin'\n"
+"      requests."
+msgstr "Wenn du Cookies in deinem Browser deaktiviert hast, aktivierte dies bitte wieder. Es ist dabei ausreichend, Cookies nur für diese Domain oder die Ursprungsdomain („same-origin“) zu aktivieren."
+
+msgid "Login"
+msgstr "Anmelden"
+
+#, python-format
+msgid "Logout [%(user)s]"
+msgstr "Abmelden [%(user)s]"
+
 msgid "New"
 msgstr "Neu"
+
+msgid "Next"
+msgstr "Nächste"
 
 msgid "No"
 msgstr "Nein"
@@ -43,6 +103,50 @@ msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
 msgid "Old"
 msgstr "Alt"
+
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+msgid "Please turn on JavaScript!"
+msgstr "Bitte aktiviere JavaScript!"
+
+msgid "Portal"
+msgstr "Portal"
+
+#, python-format
+msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
+msgstr "Powered by <a href=\"%(link)s\">Inyoka</a>"
+
+msgid "Previous"
+msgstr "Vorherige"
+
+msgid "Private messages"
+msgstr "Private Nachrichten"
+
+#, python-format
+msgid "Private messages (%(count)s)"
+msgstr "Private Nachrichten (%(count)s)"
+
+msgid "Register"
+msgstr "Registrieren"
+
+msgid "Reported topics"
+msgstr "Gemeldete Themen"
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "Servererror"
+msgstr "Serverfehler"
+
+msgid "Skip to main content"
+msgstr "Zum Hauptinhalt springen"
+
+msgid "Skip to sidebar"
+msgstr "Zur Seitenleiste springen"
+
+msgid "Spelling mistakes"
+msgstr "Rechtschreibfehler"
 
 msgid "Text must not be empty"
 msgstr "Text darf nicht leer sein"
@@ -58,11 +162,14 @@ msgstr "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wi
 
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
-msgstr "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum abgemelet."
+msgstr "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum abgemeldet."
 
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung beendet."
+
+msgid "This may be because you are not logged in."
+msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
 
 msgid "This topic does not exist."
 msgstr "Dieses Thema existiert nicht."
@@ -70,14 +177,34 @@ msgstr "Dieses Thema existiert nicht."
 msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
+msgid "Turn admin links on/off"
+msgstr "Adminlinks ein/aus"
+
 msgid "URL of the topic"
 msgstr "URL des Themas"
 
 msgid "Yes"
 msgstr "Ja"
 
+msgid ""
+"You are seeing this message because this HTTPS site requires a\n"
+"      'Referer header' to be sent by your Web browser, but none was\n"
+"      sent. This header is required for security reasons, to ensure\n"
+"      that your browser is not being hijacked by third parties."
+msgstr "Du siehst diese Nachricht, weil diese Seite einen 'Referrer-header' benötigt. Letzterer wurde aber nicht von deinem Browser gesendet. Der Header schützt dabei vor einer Accountübernahme durch Dritte."
+
+msgid ""
+"You are seeing this message because this site requires a CSRF\n"
+"      cookie when submitting forms. This cookie is required for\n"
+"      security reasons, to ensure that your browser is not being\n"
+"      hijacked by third parties."
+msgstr "Du siehst diese Nachricht, weil diese Seite beim Absenden von Daten einen CSRF-Cookie benötigt. Letzterer wurde aber nicht von deinem Browser gesendet. Der Cookie schützt dabei vor einer Übernahme durch Dritte."
+
 msgid "You cannot send data that fast in a row. Please wait a bit until you submit the form again."
 msgstr "Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte noch einige Zeit, bevor du das Formular erneut absendest."
+
+msgid "You do not have permissions to access this page."
+msgstr "Du bist nicht berechtigt, diese Seite aufzurufen."
 
 msgid "You have entered an invisible field and were therefore classified as a bot."
 msgstr "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot identifiziert."
@@ -134,4 +261,3 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
-

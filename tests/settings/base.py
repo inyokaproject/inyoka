@@ -1,3 +1,4 @@
+import os
 from uuid import uuid1
 
 from inyoka.default_settings import *  # NOQA
@@ -36,8 +37,19 @@ INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 # explicitly add tests.utils to apps to run unittests here
 INSTALLED_APPS = INSTALLED_APPS + (
     'tests.utils',
-    'inyoka_theme_ubuntuusers',
 )
+
+if os.environ.get('INYOKA_THEME') == 'theme-ubuntuusers':
+    INSTALLED_APPS = INSTALLED_APPS + (
+        'inyoka_theme_ubuntuusers',
+    )
+
+    from os.path import join
+    THEME_PATH = join(BASE_PATH, '..', 'theme-ubuntuusers', 'inyoka_theme_ubuntuusers')
+    STATICFILES_DIRS = [join(THEME_PATH, 'static'),  # let own theme take precedence, so files can be overwritten
+                       ] + STATICFILES_DIRS
+    TEMPLATES[1]['DIRS'].insert(0, join(THEME_PATH, 'jinja2'))
+
 
 SECRET_KEY = 'test-secret-key'
 

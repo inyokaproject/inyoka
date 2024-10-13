@@ -4,9 +4,9 @@ on: [push, pull_request]
 
 
 jobs:
-  test:
 
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-24.04
     env:
       DEFAULT_BRANCH: 'refs/heads/staging'
       REQUIREMENTS_FILE: extra/requirements/linux-py${{ matrix.python-version }}-development.txt
@@ -14,10 +14,12 @@ jobs:
       matrix:
         python-version: ['3.12']
         database: ['postgresql', 'sqlite']
+        theme: ['', 'theme-ubuntuusers']
 
         include:
           - python-version: 3.12
             database: 'postgresql'
+            theme: ''
             build_docs: true
 
     steps:
@@ -33,77 +35,70 @@ jobs:
     - name: Checkout theme from repo branch # (e.g. staging)
       id: checkout-branch
       continue-on-error: true
-      if: ${{ !github.event.pull_request }}
+      if: ${{ !github.event.pull_request && matrix.theme != '' }}
       uses: actions/checkout@v4
       with:
-        repository: inyokaproject/theme-ubuntuusers
-        ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }} # ssh key of inyokatestci, read only, see https://docs.github.com/en/actions/reference/encrypted-secrets
+        repository: inyokaproject/${{ matrix.theme }}
         ref: ${{ github.ref }}
-        path: theme-ubuntuusers
+        path: ${{ matrix.theme }}
         persist-credentials: false
     - name: Checkout theme in PR
       id: checkout-pr
       continue-on-error: true
-      if: ${{ github.event.pull_request }}
+      if: ${{ github.event.pull_request && matrix.theme != '' }}
       uses: actions/checkout@v4
       with:
-        repository: ${{ github.event.pull_request.head.repo.owner.login }}/theme-ubuntuusers
-        ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
+        repository: ${{ github.event.pull_request.head.repo.owner.login }}/${{ matrix.theme }}
         ref: ${{ github.head_ref }}
-        path: theme-ubuntuusers
+        path: ${{ matrix.theme }}
         persist-credentials: false
     - name: "Checkout fallback theme: repo theme-ubuntuusers, staging branch"
-      if: steps.checkout-branch.outcome == 'failure' || steps.checkout-pr.outcome == 'failure'
+      if: ${{ matrix.theme != '' && (steps.checkout-branch.outcome == 'failure' || steps.checkout-pr.outcome == 'failure') }}
       uses: actions/checkout@v4
       with:
-        repository: inyokaproject/theme-ubuntuusers
-        ssh-key: ${{ secrets.SSH_KEY_THEME_UBUNTUUSERS }}
+        repository: inyokaproject/${{ matrix.theme }}
         ref: staging
-        path: theme-ubuntuusers
+        path: ${{ matrix.theme }}
         persist-credentials: false
+    # if theme == '', the default theme inside inyoka is used
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-
-    - name: Cache venv
-      id: cache-venv
-      uses: actions/cache@v4
-      with:
-        path: ~/venv/
-        key: ${{ runner.os }}-venv-py${{ matrix.python-version }}-${{ hashFiles(env.REQUIREMENTS_FILE) }}
+        cache: 'pip'
+        cache-dependency-path: 'extra/requirements/*.txt'
 
     - name: Build virtualenv
-      if: steps.cache-venv.outputs.cache-hit != 'true'
       run: |
         python -m venv ~/venv
         . ~/venv/bin/activate
         python -m pip install --upgrade pip
         pip install --no-deps --require-hashes -r ${{ env.REQUIREMENTS_FILE }}
 
-    - name: Link theme
-      working-directory: ./theme-ubuntuusers
-      run: |
-        . ~/venv/bin/activate
-        pip install -e .
-
     - name: Build static files
-      working-directory: ./theme-ubuntuusers
       run: |
         npm ci
         npm run all
 
-    - name: Create inyoka settings
+    - name: Link theme
+      working-directory: ./${{ matrix.theme }}
+      if: ${{ matrix.theme != '' }}
       run: |
-        cp example_development_settings.py development_settings.py
-        sed -i "s/None/'supersecreteTest'/g" development_settings.py
-        sed -i "s/inyoka_theme_default/inyoka_theme_ubuntuusers/g" development_settings.py
+        . ~/venv/bin/activate
+        pip install -e .
+
+    - name: Build static files theme
+      working-directory: ./${{ matrix.theme }}
+      if: ${{ matrix.theme != '' }}
+      run: |
+        npm ci
+        npm run all
 
     - name: Start postgres
       if: ${{ matrix.database == 'postgresql' }}
       run: |
-        cat << '__EOF__' | sudo tee /etc/postgresql/14/main/pg_hba.conf > /dev/null
+        cat << '__EOF__' | sudo tee /etc/postgresql/16/main/pg_hba.conf > /dev/null
         # TYPE  DATABASE        USER            ADDRESS                 METHOD
         # "local" is for Unix domain socket connections only
         local   all             all                                     trust
@@ -133,24 +128,23 @@ jobs:
     - name: Run Tests
       env:
         PYTHONWARNINGS: 'always'
+        INYOKA_THEME: ${{ matrix.theme }}
       run: |
         . ~/venv/bin/activate
         coverage run manage.py test --settings tests.settings.${{ matrix.database }}
         coverage html
-    - name: Compress coverage report
-      run: zip htmlcov.zip -r htmlcov
     - name: Save coverage report for tests
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-py${{ matrix.python-version }}-${{ matrix.database }}
-        path: htmlcov.zip
+        name: coverage-py${{ matrix.python-version }}-${{ matrix.database }}-${{ matrix.theme }}
+        path: htmlcov
 
 
     - name: Run BDD tests
       if: ${{ matrix.database == 'postgresql' }}
       env:
         DJANGO_SETTINGS_MODULE: 'tests.bdd.settings.headless'
-        #PATH: '$PATH:/usr/lib/chromium-browser/'
+        INYOKA_THEME: ${{ matrix.theme }}
         COVERAGE_RCFILE: 'tests/bdd/settings/.coveragerc'
       run: |
         . ~/venv/bin/activate
@@ -160,39 +154,71 @@ jobs:
         python manage.py collectstatic --noinput
         coverage run -m behave --tags=-skip
         coverage html -d bdd_coverage
-    - name: Compress BDD results
-      if: ${{ matrix.database == 'postgresql' }}
-      run: zip bdd_coverage.zip -r bdd_coverage
     - name: Save BDD results
       if: ${{ matrix.database == 'postgresql' }}
       uses: actions/upload-artifact@v4
       with:
-        name: BDD-coverage-py${{ matrix.python-version }}-${{ matrix.database }}
-        path: bdd_coverage.zip
+        name: BDD-coverage-py${{ matrix.python-version }}-${{ matrix.database }}-${{ matrix.theme }}
+        path: bdd_coverage
 
 
     - name: Build documentation
       if: ${{ matrix.build_docs }}
+      env:
+        DJANGO_SETTINGS_MODULE: tests.settings.${{ matrix.database }}
+        INYOKA_THEME: ${{ matrix.theme }}
       run: |
         . ~/venv/bin/activate
         make -C docs html
-    - name: Compress documentation
-      if: ${{ matrix.build_docs }}
-      run: zip doc.zip -r docs/build/html
     - name: Save documentation
       if: ${{ matrix.build_docs }}
       uses: actions/upload-artifact@v4
       with:
         name: 'Inyoka_Documentation'
-        path: doc.zip
+        path: docs/build/html
 
+    - name: Lint
+      run: |
+        . ~/venv/bin/activate
+        ruff check
 
-    - name: Compress statics
-      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_docs }}
-      run: zip static-collected.zip -r inyoka/static-collected
     - name: Save statics
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_docs }}
       uses: actions/upload-artifact@v4
       with:
         name: 'Static_files'
-        path: static-collected.zip
+        path: inyoka/static-collected
+
+  # Deploy documentation to GitHub Pages
+  deploy_docu:
+    if: github.ref_name == 'staging'
+    needs: test
+    # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+    # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      pages: write
+      id-token: write
+      actions: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Download documentation artifact from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: 'Inyoka_Documentation'
+          path: 'docs'
+      - name: Upload artifact for GitHub pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

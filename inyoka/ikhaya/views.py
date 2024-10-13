@@ -7,21 +7,21 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import time as dt_time
 from datetime import date, datetime
+from datetime import time as dt_time
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.decorators import permission_required, login_required
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.dates import MONTHS
 from django.utils.html import escape
-from django.utils.text import Truncator
 from django.utils.timezone import get_current_timezone
-from django.utils.translation import gettext as _, gettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 
 from inyoka.ikhaya.forms import (
     EditArticleForm,

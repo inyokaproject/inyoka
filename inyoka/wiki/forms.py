@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy
 
 from inyoka.markup.base import StackExhaused, parse
 from inyoka.utils.diff3 import merge
-from inyoka.utils.forms import DateWidget, UserField, TopicField
+from inyoka.utils.forms import DateWidget, TopicField, UserField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.text import join_pagename, normalize_pagename

@@ -1,0 +1,261 @@
+/**
+ * style.ikhaya
+ * ~~~~~~~~~~~~
+ *
+ * The styles for Ikhaya.
+ *
+ * :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+@import 'layout.less';
+
+.navi_sidebar .navi_about_ikhaya {
+  background-image: url('../img/icons/ikhaya.svg');
+}
+.navi_sidebar {
+  background-size: 22px 22px;
+  .navi_new_article {
+    background-image: url('../img/icons/new_article.svg');
+  }
+  .navi_archive {
+    background-image: url('../img/icons/archive.svg');
+  }
+  .navi_categories {
+    background-image: url('../img/icons/categories.svg');
+  }
+  .navi_full_articles {
+    background-image: url('../img/icons/ikhaya.svg');
+  }
+}
+ul.articles {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.article {
+  margin-bottom: 1.2em;
+  hr {
+    clear: right;
+  }
+  .image-right {
+    float: right;
+    clear: none !important;
+  }
+  .image-left {
+    clear: none !important;
+    float: left;
+  }
+}
+h2, h3, h4 {
+  color: #444;
+}
+
+div.intro {
+  font-size: 1.1em;
+}
+p.meta {
+  color: #666;
+  font-size: 0.9em;
+  padding: 0.4em 0;
+  overflow: auto;
+  clear: right;
+}
+img.icon {
+  float: right;
+  clear: right;
+  max-width: 200px;
+  max-height: 120px;
+  margin:0px 0px 10px 10px;
+}
+
+.content table {
+  border: 0;
+}
+
+a.show_comments,a.hide_comments {
+  display: block;
+  padding: 1em;
+  text-align: center;
+  background-color: #eee;
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  color: #444;
+  border-top: 1px solid #ccc;
+  font-weight: bold;
+}
+a.show_comments:hover,a.hide_comments:hover {
+  text-decoration: underline;
+}
+
+#page table.comments {
+  width: 100%; /* overwrite `#page table` from markup.less */
+}
+table.comments {
+  table-layout: fixed;
+  margin: 0;
+  border: 0;
+
+  td.author {
+    vertical-align: top;
+    background: @grey_dark;
+    border-right: 1px solid #cccccc;
+    width: 8em;
+    @media (min-width: @medium-width) {
+      width: 150px;
+    }
+
+    &.-own {
+      border-right-color: @own-post-border;
+    }
+
+    p {
+      margin: 2px 0 5px 0;
+      text-align: left;
+
+      &.username {
+        position: relative;
+
+        a {
+          margin: 3px 0 10px 0;
+          color: black;
+          font-weight: bold;
+          text-decoration: none;
+        }
+        &.inactive {
+          a {
+            color: #444;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
+    div.member_title {
+      line-height: 1.2em;
+      font-size: 0.85em;
+      margin-bottom: 10px;
+    }
+  }
+  td.comment {
+    padding: 10px;
+    vertical-align: top;
+
+    .text {
+      overflow: auto;
+    }
+    .commentinfo {
+      background: @grey_dark;
+      font-size: 0.9em;
+      margin: -10px;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-bottom: 1px solid #CCC;
+    }
+    .linklist {
+      float: right;
+    }
+  }
+  tr:target td.comment div.commentinfo {
+    background-color: @target-background;
+  }
+}
+.action {
+  background-repeat: no-repeat;
+  padding-left: 20px;
+}
+.action_unsubscribe, .action_subscribe {
+  float: right;
+  margin-left: 10px;
+  background-image: url('../img/forum/subscribe.svg');
+}
+.action_unsubscribe:after, .action_subscribe:after {
+  clear: both;
+}
+.action_restore {
+  background-image: url('../img/forum/restore.svg');
+}
+.action_report {
+  float: right;
+  background-image: url('../img/forum/report.png');
+}
+.action_solve {
+  background-image: url('../img/forum/solve.png');
+}
+.action_unsolve {
+  background-image: url('../img/forum/unsolve.png');
+}
+.action_delete {
+  background-image: url('../img/forum/delete.png');
+}
+.action_hide {
+  background-image: url('../img/forum/hide.svg');
+}
+.action_edit {
+  background-size: 16px 16px;
+  background-image: url('../img/icons/edit.svg');
+}
+.action_comment_add {
+  background-image: url('../img/forum/comment_add.svg');
+}
+
+
+a.comment_link:hover {
+  background-color: #222;
+  color: #fff !important;
+}
+.tooltip {
+  background-color: #F9F9F9;
+  border: 1px solid #222;
+  padding: 0.5em;
+  margin: 0 4em 0 0;
+}
+div.box {
+  clear: none !important;
+}
+div.suggestionlist {
+  div.article {
+    border: 1px solid #ccc;
+    padding: 1em;
+  }
+}
+div.report {
+  border: 1px solid #CCC;
+  margin: 0 0 0.5em 0;
+  .report_header {
+    background-color: #EAECEE;
+    padding: 0.2em;
+  }
+  .text {
+    padding: 0 0.2em;
+  }
+}
+
+div.solved .report_header {
+  background-color: @green_d_light;
+}
+
+div.report:target .report_header {
+  background-color: @target-background;
+}
+table.events td.actions, table.events td.date, table.events td.author {
+  margin-top: .2em;
+  text-align: center;
+}
+a.event_edit, a.event_copy, a.event_delete {
+  padding-right: 20px;
+  margin-left: 5px;
+  background: no-repeat left center;
+  background-size: 22px 22px;
+}
+a.event_edit {
+  background-image: url(../img/icons/edit.svg);
+}
+a.event_copy {
+  background-image: url(../img/icons/copy.svg);
+}
+a.event_delete {
+  background-image: url(../img/icons/delete.svg);
+}
+div.preview_wrapper {
+  .preview-border();
+}

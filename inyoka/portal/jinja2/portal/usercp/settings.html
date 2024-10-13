@@ -1,0 +1,77 @@
+{#
+    portal/usercp/settings.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows the user control panel settings page.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/usercp/overall.html' %}
+{% from 'macros.html' import render_form %}
+{% set BREADCRUMBS = [(_('Settings'), href('portal', 'usercp', 'settings'))] + BREADCRUMBS|d([]) %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor'] %}
+{% set selected = 'settings' %}
+
+{% block portal_content %}
+  <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
+    <h3>{% trans %}Settings{% endtrans %}</h3>
+    <dl>
+      {{ render_form(form, ['notify', 'notifications', 'ubuntu_version'], inline=True) }}
+      <p class="note">
+        <a href="{{ href('portal', 'usercp', 'subscriptions') }}">{% trans %}Edit your subscriptions{% endtrans %}</a>
+      </p>
+      {{ render_form(form, ['timezone'], inline=true) }}
+      <dt>{% trans %}Interface{% endtrans %}</dt>
+      <dd>
+        {{ form.hide_avatars }}
+        <label for="id_hide_avatars">{{ form.hide_avatars.label }}</label>
+        {{ form.errors.hide_avatar }}
+      </dd>
+      <dd>
+        {{ form.hide_signatures }}
+        <label for="id_hide_signatures">{{ form.hide_signatures.label }}</label>
+        {{ form.errors.hide_signatures }}
+      </dd>
+      <dd>
+        {{ form.hide_profile }}
+        <label for="id_hide_profile">{{ form.hide_profile.label }}</label>
+        {{ form.errors.hide_profile }}
+      </dd>
+      <dd>
+        {{ form.reduce_motion }}
+        <label for="id_reduce_motion">{{ form.reduce_motion.label }}</label>
+        <span class="note">{{ form.reduce_motion.help_text }}</span>
+        {{ form.errors.reduce_motion }}
+      </dd>
+      <dt>Forum</dt>
+      <dd>
+        {{ form.mark_read_on_logout }}
+        <label for="id_mark_read_on_logout">{{ form.mark_read_on_logout.label }}</label>
+        {{ form.errors.mark_read_on_logout }}
+      </dd>
+      <dd>
+        {{ form.autosubscribe }}
+        <label for="id_autosubscribe">{{ form.autosubscribe.label }}</label>
+        {{ form.errors.autosubscribe }}
+      </dd>
+      <dd>
+        {{ form.show_preview }}
+        <label for="id_show_preview">{{ form.show_preview.label }}</label>
+        {{ form.errors.show_preview }}
+      </dd>
+      <dd>
+        {{ form.show_thumbnails }}
+        <label for="id_show_thumbnails">{{ form.show_thumbnails.label }}</label>
+        <span class="note">{{ form.show_thumbnails.help_text }}</span>
+        {{ form.errors.show_thumbnails }}
+      </dd>
+    </dl>
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    </p>
+  </form>
+{% endblock %}

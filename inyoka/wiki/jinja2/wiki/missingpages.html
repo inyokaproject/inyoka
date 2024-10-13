@@ -1,0 +1,44 @@
+{#
+    wiki/missingpages.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template shows links to missing pages in the wiki and where they are
+    located.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set BREADCRUMBS = [(_('Missing Pages'), '')] + BREADCRUMBS|d([]) %}
+
+{% block wiki_content %}
+  <div class="main_content">
+   <h1 class="pagetitle">{% trans %}Missing Pages{% endtrans %}</h1>
+   <div id="page">
+    {%- if missingpages %}
+    <table>
+      <tr>
+        <th>{% trans %}dead link{% endtrans %}</th>
+        <th>{% trans %}found in{% endtrans %}</th>
+      </tr>
+      {%- for deadlink in missingpages.keys() %}
+      <tr>
+        <td><a href="{{ href('wiki', deadlink|e) }}">{{ deadlink|e }}</a></td>
+        <td>
+          <ul>
+          {%- for page in missingpages[deadlink] %}
+            <li><a href="{{ href('wiki', page)|e }}">{{ page|e }}</a></li>
+          {%- endfor %}
+          </ul>
+        </td>
+      </tr>
+      {%- endfor %}
+    </table>
+    {% else %}
+    <p>{% trans %}There aren't any links to missing pages in the wiki. Congratulations!{% endtrans %}</p>
+    {% endif %}
+   </div>
+  </div>
+{% endblock %}

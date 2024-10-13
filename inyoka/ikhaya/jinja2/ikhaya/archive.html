@@ -1,0 +1,30 @@
+{#
+    ikhaya/archive.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    This page shows links to all months of ikhaya articles.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+
+{% set BREADCRUMBS = [(_('Archive'), href('ikhaya', 'archive'))] + BREADCRUMBS|d([]) %}
+
+{% block ikhaya_content %}
+  <p>
+    {%- trans link=href('ikhaya') -%}
+      Here are all published articles in chronological order. You can find the most recent articles on <a href="{{ link }}">the front page</a>.
+    {%- endtrans -%}
+  </p>
+  {% for year in months|groupby('year') %}
+    <h3>{{ year.grouper }}</h3>
+    <ul>
+      {%- for month in year.list %}
+        <li>
+          <a href="{{ href('ikhaya', month.strftime('%Y/%m')) }}">{{ MONTHS[month.month] }}</a>
+        </li>
+      {%- endfor %}
+    </ul>
+  {% endfor %}
+{% endblock %}

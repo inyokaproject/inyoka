@@ -17,16 +17,17 @@ from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
-
 from guardian.shortcuts import assign_perm
 
 from inyoka.forum.models import Forum
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
+    Linkmap,
     PrivateMessage,
     PrivateMessageEntry,
+    StaticPage,
     Subscription,
-    StaticPage, Linkmap)
+)
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
 from inyoka.utils.test import InyokaClient, TestCase
@@ -576,6 +577,37 @@ class TestRegister(TestCase):
                          ['Please do not enter an email address as username.'])
 
 
+class TestPasswordChangeView(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+
+        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+        self.client.login(username='user', password='user')
+
+    def test_invalid__new_password_does_not_match_confirm(self):
+        data = {'old_password': 'PASS123', 'new_password1': 'PASS456',
+                'new_password2': 'XYZ'}
+        response = self.client.post('/usercp/password/', data=data)
+        self.assertIn(
+            "The two password fields didn’t match.",
+            response.content.decode('utf-8'),
+        )
+
+    def test_success_url(self):
+        data = {"old_password": "user", "new_password1": "new", "new_password2": "new"}
+        response = self.client.post('/usercp/password/', data=data, follow=True)
+
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/usercp/')
+        self.assertIn(
+            'Your password was changed successfully.',
+            response.content.decode('utf-8'),
+        )
+
+
 class TestPrivMsgViews(TestCase):
 
     client_class = InyokaClient
@@ -702,7 +734,7 @@ class TestStaticPageEdit(TestCase):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         assign_perm('portal.change_staticpage', registered_group)
 
-        response = self.client.post(href('portal', 'page', 'new'),
+        self.client.post(href('portal', 'page', 'new'),
                                     {'send': 'Send', 'title': 'foo2',
                                      'content': 'My great content'})
 

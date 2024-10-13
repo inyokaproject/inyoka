@@ -6,8 +6,8 @@ from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from inyoka.utils.test import TestCase
-from inyoka.wiki.models import Page, Attachment, Revision
 from inyoka.wiki.exceptions import CaseSensitiveException
+from inyoka.wiki.models import Attachment, Page
 
 BASE_PATH = path.dirname(__file__)
 
@@ -188,7 +188,6 @@ class TestAttachment(TestCase):
                                        text='foo', note='create')
 
         page.edit(deleted=True)
-        print(Revision.objects.all().values('id', 'deleted'))
         attachment = Page.objects.attachment_for_page(page.name)
         self.assertIsNotNone(attachment)  # TODO should it be None?
 

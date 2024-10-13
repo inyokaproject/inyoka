@@ -1,0 +1,106 @@
+{#
+    forum/page.html
+    ~~~~~~~~~~~~~~~
+
+    This template is included by all forum templates and adds the elements
+    they all use (stylesheets etc).
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'overall.html' %}
+
+{% set BREADCRUMBS = [(_('Forum'), href('forum'))] + BREADCRUMBS|d([]) %}
+{% set active_app = 'forum' %}
+{% set styles = ['forum', 'highlight'] + styles|default([]) %}
+{% set scripts = ['forum'] + scripts|default([]) %}
+{% set navi_type = 'none' %}
+
+{% block pathbar_extensions %}
+  <div class="dropdown">
+    <ul class="dropdown">
+      <li>
+        <span>{% trans %}Filter{% endtrans %}</span>
+      </li>
+      <li>
+        <ul>
+          {%- if forum %}
+            {%- if USER.is_authenticated %}
+              <li>
+                <a href="{{ href('forum', 'egosearch') }}">{% trans %}Involved topics{% endtrans %}</a>
+                <a href="{{ href('forum', 'egosearch', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+              </li>
+
+              <li>
+                <a href="{{ href('forum', 'author', USER.username|e) }}">{% trans %}My posts{% endtrans %}</a>
+                <a href="{{ href('forum', 'author', USER.username|e, 'forum', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+              </li>
+              <li>
+                <a href="{{ href('forum', 'topic_author', USER.username|e) }}">{% trans %}Created topics{% endtrans %}</a>
+                <a href="{{ href('forum', 'topic_author', USER.username|e, forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+              </li>
+            {%- endif %}
+            <li>
+              <a href="{{ href('forum', 'newposts') }}">{% trans %}New posts{% endtrans %}</a>
+              <a href="{{ href('forum', 'newposts', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+            </li>
+            <li>
+              <a href="{{ href('forum', 'unanswered') }}">{% trans %}Unanswered topics{% endtrans %}</a>
+              <a href="{{ href('forum', 'unanswered', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+            </li>
+            <li>
+              <a href="{{ href('forum', 'unsolved') }}">{% trans %}Unsolved topics{% endtrans %}</a>
+              <a href="{{ href('forum', 'unsolved', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+            </li>
+            <li>
+              <a href="{{ href('forum', 'last24') }}">{% trans %}24 hours{% endtrans %}</a>
+              <a href="{{ href('forum', 'last24', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+            </li>
+            <li>
+              <a href="{{ href('forum', 'last12') }}">{% trans %}12 hours{% endtrans %}</a>
+              <a href="{{ href('forum', 'last12', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+            </li>
+            <li>
+              <a href="{{ href('forum', 'last6') }}">{% trans %}6 hours{% endtrans %}</a>
+              <a href="{{ href('forum', 'last6', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+            </li>
+          {% else %}
+            {%- if USER.is_authenticated %}
+              <li><a href="{{ href('forum', 'egosearch') }}">{% trans %}Involved topics{% endtrans %}</a></li>
+              <li><a href="{{ href('forum', 'author', USER.username|e) }}">{% trans %}My posts{% endtrans %}</a></li>
+              <li><a href="{{ href('forum', 'topic_author', USER.username)|e }}">{% trans %}Created topics{% endtrans %}</a></li>
+            {%- endif %}
+            <li><a href="{{ href('forum', 'newposts') }}">{% trans %}New posts{% endtrans %}</a></li>
+            <li><a href="{{ href('forum', 'unanswered') }}">{% trans %}Unanswered topics{% endtrans %}</a></li>
+            <li><a href="{{ href('forum', 'unsolved') }}">{% trans %}Unsolved topics{% endtrans %}</a></li>
+            <li><a href="{{ href('forum', 'last24') }}">{% trans %}24 hours{% endtrans %}</a></li>
+            <li><a href="{{ href('forum', 'last12') }}">{% trans %}12 hours{% endtrans %}</a></li>
+            <li><a href="{{ href('forum', 'last6') }}">{% trans %}6 hours{% endtrans %}</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="pathbar_extension">
+    {% if USER.has_perm('forum.change_forum') %}
+      <a class="admin_link" href="{{ href('forum', 'forum', 'new') }}">{% trans %}Create new forum{% endtrans %}</a>
+    {% endif %}
+    {% if not USER.is_anonymous %}
+      <a href="{{ href('forum', 'markread') }}">{% trans %}Mark all forums as read{% endtrans %}</a>
+    {% endif %}
+  </div>
+{% endblock %}
+
+
+{% block navigation %}
+  {%- block forum_navigation %}
+
+  {%- endblock %}
+{% endblock %}
+
+{% block content %}
+  {%- block forum_content %}
+
+  {%- endblock %}
+{%- endblock %}

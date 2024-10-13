@@ -6,31 +6,91 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.30.0\n"
+"Project-Id-Version: Inyoka Project v0.36.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-04 17:58+0100\n"
+"POT-Creation-Date: 2024-10-13 15:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #, python-format
 msgid "\"%(fingerprint)s\" is not a valid GPG Fingerprint."
 msgstr ""
 
+#, python-format
+msgid "(rendered in %(seconds)s seconds)"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "An internal error occurred. The administration was already notified."
+msgstr ""
+
 msgid "Are you sure?"
+msgstr ""
+
+msgid "Article suggestions"
+msgstr ""
+
+#, python-format
+msgid "Avatar of %(user)s"
+msgstr ""
+
+msgid "Breadcrumb bottom"
+msgstr ""
+
+msgid "Breadcrumb top"
+msgstr ""
+
+msgid "CSRF verification failed. Request aborted."
 msgstr ""
 
 msgid "Canceled."
 msgstr ""
 
+msgid "Confirmation"
+msgstr ""
+
+msgid "Control panel"
+msgstr ""
+
 msgid "Errors occurred, please fix them."
 msgstr ""
 
+msgid "Event suggestions"
+msgstr ""
+
+msgid "Forbidden (403)"
+msgstr ""
+
+msgid ""
+"If you have configured your browser to disable 'Referer' headers,\n"
+"      please re-enable them, at least for this site, or for HTTPS\n"
+"      connections, or for 'same-origin' requests."
+msgstr ""
+
+msgid ""
+"If you have configured your browser to disable cookies, please\n"
+"      re-enable them, at least for this site, or for 'same-origin'\n"
+"      requests."
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+#, python-format
+msgid "Logout [%(user)s]"
+msgstr ""
+
 msgid "New"
+msgstr ""
+
+msgid "Next"
 msgstr ""
 
 msgid "No"
@@ -41,6 +101,50 @@ msgid "No %(verbose_name)s found matching the query"
 msgstr ""
 
 msgid "Old"
+msgstr ""
+
+msgid "Page not found"
+msgstr ""
+
+msgid "Please turn on JavaScript!"
+msgstr ""
+
+msgid "Portal"
+msgstr ""
+
+#, python-format
+msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Private messages"
+msgstr ""
+
+#, python-format
+msgid "Private messages (%(count)s)"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Reported topics"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Servererror"
+msgstr ""
+
+msgid "Skip to main content"
+msgstr ""
+
+msgid "Skip to sidebar"
+msgstr ""
+
+msgid "Spelling mistakes"
 msgstr ""
 
 msgid "Text must not be empty"
@@ -63,10 +167,16 @@ msgstr ""
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr ""
 
+msgid "This may be because you are not logged in."
+msgstr ""
+
 msgid "This topic does not exist."
 msgstr ""
 
 msgid "This user does not exist"
+msgstr ""
+
+msgid "Turn admin links on/off"
 msgstr ""
 
 msgid "URL of the topic"
@@ -75,7 +185,24 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid ""
+"You are seeing this message because this HTTPS site requires a\n"
+"      'Referer header' to be sent by your Web browser, but none was\n"
+"      sent. This header is required for security reasons, to ensure\n"
+"      that your browser is not being hijacked by third parties."
+msgstr ""
+
+msgid ""
+"You are seeing this message because this site requires a CSRF\n"
+"      cookie when submitting forms. This cookie is required for\n"
+"      security reasons, to ensure that your browser is not being\n"
+"      hijacked by third parties."
+msgstr ""
+
 msgid "You cannot send data that fast in a row. Please wait a bit until you submit the form again."
+msgstr ""
+
+msgid "You do not have permissions to access this page."
 msgstr ""
 
 msgid "You have entered an invisible field and were therefore classified as a bot."
