@@ -6,16 +6,31 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.30.0\n"
+"Project-Id-Version: Inyoka Project v0.36.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-04 17:58+0100\n"
+"POT-Creation-Date: 2024-10-13 15:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
+
+msgid "#"
+msgstr ""
+
+#, python-format
+msgid "%(count)s vote"
+msgid_plural "%(count)s votes"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(count)s voter"
+msgid_plural "%(count)s voters"
+msgstr[0] ""
+msgstr[1] ""
 
 #, python-format
 msgid "%(site)s forum"
@@ -33,43 +48,142 @@ msgstr ""
 msgid "%(username)s has created a new topic"
 msgstr ""
 
+msgid "(Topic starter)"
+msgstr ""
+
 msgid "(Un)lock"
+msgstr ""
+
+msgid "(undo)"
+msgstr ""
+
+msgid "12 hours"
+msgstr ""
+
+msgid "24 hours"
+msgstr ""
+
+msgid "6 hours"
+msgstr ""
+
+#, python-format
+msgid "<a href=\"%(link)s\">Posts</a> by <a href=\"%(userlink)s\">%(author)s</a> in this forum"
+msgstr ""
+
+#, python-format
+msgid "<a href=\"%(link)s\">Posts</a> by <a href=\"%(userlink)s\">%(author)s</a> in this topic"
 msgstr ""
 
 msgid "A notification will be sent when a topic is reported."
 msgstr ""
 
+msgid "Action"
+msgstr ""
+
 msgid "Action canceled."
+msgstr ""
+
+msgid "Add poll"
+msgstr ""
+
+msgid "Additional answer"
 msgstr ""
 
 msgid "All forums were marked as read."
 msgstr ""
 
+msgid "Allow multiple answers"
+msgstr ""
+
 msgid "An old revision of the post was restored."
+msgstr ""
+
+msgid "Assign to me"
+msgstr ""
+
+msgid "Assigned to"
+msgstr ""
+
+msgid "Attach to old topic"
+msgstr ""
+
+msgid "Attachment:"
+msgstr ""
+
+msgid "Attachments:"
 msgstr ""
 
 msgid "Cancel"
 msgstr ""
 
+msgid "Captions"
+msgstr ""
+
+msgid "Close selected tickets"
+msgstr ""
+
 msgid "Count user posts"
+msgstr ""
+
+msgid "Create forum"
+msgstr ""
+
+msgid "Create new forum"
+msgstr ""
+
+msgid "Create new topic"
+msgstr ""
+
+msgid "Created topics"
+msgstr ""
+
+msgid "Current forum"
+msgstr ""
+
+msgid "Current revision"
+msgstr ""
+
+msgid "Currently there are no reported topics."
 msgstr ""
 
 msgid "Default text for new topics"
 msgstr ""
 
+msgid "Delete"
+msgstr ""
+
 msgid "Description"
+msgstr ""
+
+msgid "Description:"
 msgstr ""
 
 msgid "Distribution"
 msgstr ""
 
+#, python-format
+msgid "Do you really want to delete the topic “%(title)s”? This action cannot be undone!"
+msgstr ""
+
 msgid "Do you really want to hide / delete this post?"
+msgstr ""
+
+#, python-format
+msgid "Do you really want to hide the topic “%(title)s”?"
 msgstr ""
 
 msgid "Do you really want to mark this post as ham / spam?"
 msgstr ""
 
 msgid "Do you want to (un)lock the topic?"
+msgstr ""
+
+#, python-format
+msgid "Do you want to delete the <a href=\"%(link)s\">post from %(author)s</a>?"
+msgstr ""
+
+#, python-format
+msgid "Do you want to hide the <a href=\"%(link)s\">post from %(author)s</a>?"
 msgstr ""
 
 msgid "Do you want to restore the revision of the post?"
@@ -86,10 +200,27 @@ msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"
 msgstr ""
 
+#, python-format
+msgid "Duration of the poll: %(duration)s days"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
 msgid "Edit first post afterwards"
 msgstr ""
 
+msgid "Edit post"
+msgstr ""
+
+#, python-format
+msgid "Edited: %(date)s"
+msgstr ""
+
 msgid "Edubuntu"
+msgstr ""
+
+msgid "Existing polls:"
 msgstr ""
 
 #, python-format
@@ -103,16 +234,62 @@ msgstr ""
 msgid "Feed contains posts of the topic “%(topic)s”."
 msgstr ""
 
+msgid "Filter"
+msgstr ""
+
 msgid "Force version"
 msgstr ""
 
 msgid "Forum"
 msgstr ""
 
+msgid "Forum - Captions"
+msgstr ""
+
+msgid "Forum - Full post"
+msgstr ""
+
+msgid "Forum - Teaser"
+msgstr ""
+
+msgid "Forum of the new topic:"
+msgstr ""
+
+msgid "Forum read"
+msgstr ""
+
 msgid "Forums"
 msgstr ""
 
+msgid "From here:"
+msgstr ""
+
+msgid "Full"
+msgstr ""
+
+msgid "Full post"
+msgstr ""
+
+msgid "Go to page"
+msgstr ""
+
+msgid "Go to post"
+msgstr ""
+
+msgid "Here you can move a topic into another forum."
+msgstr ""
+
+#, python-format
+msgid "Here you can report a topic to the moderators if it is against our <a href=\"%(link)s\">rules</a>. Please add a short explanation:"
+msgstr ""
+
+msgid "Hide"
+msgstr ""
+
 msgid "Hide / Delete"
+msgstr ""
+
+msgid "Hide results"
 msgstr ""
 
 msgid "If not set then posts of users in this forum are ignored in the post counter of the user."
@@ -124,10 +301,59 @@ msgstr ""
 msgid "Kubuntu"
 msgstr ""
 
+msgid "Last post"
+msgstr ""
+
+msgid "Last reply"
+msgstr ""
+
+msgid "Leave that feel empty for an endless duration"
+msgstr ""
+
+msgid "Link to this post"
+msgstr ""
+
+msgid "Lock"
+msgstr ""
+
 msgid "Lubuntu"
 msgstr ""
 
+msgid "Mark all forums as read"
+msgstr ""
+
 msgid "Mark as ham / spam"
+msgstr ""
+
+msgid "Mark as read"
+msgstr ""
+
+msgid "Mark as solved"
+msgstr ""
+
+msgid "Mark as unsolved"
+msgstr ""
+
+msgid "Mark ham"
+msgstr ""
+
+msgid "Mark spam"
+msgstr ""
+
+msgid "Mark topic as “Important:”"
+msgstr ""
+
+msgid "Member since:"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+#, python-format
+msgid "Move “%(topic)s”"
+msgstr ""
+
+msgid "My posts"
 msgstr ""
 
 msgid "Name"
@@ -140,10 +366,33 @@ msgstr ""
 msgid "New discussion regarding the page “%(page)s” created"
 msgstr ""
 
+msgid "New forum of the topic:"
+msgstr ""
+
 msgid "New posts"
 msgstr ""
 
+msgid "New reply"
+msgstr ""
+
+#, python-format
+msgid "New reply in “%(topic)s”"
+msgstr ""
+
+msgid "New topic"
+msgstr ""
+
+#, python-format
+msgid "New topic in “%(forum)s”"
+msgstr ""
+
+msgid "Next topic »"
+msgstr ""
+
 msgid "No Ubuntu"
+msgstr ""
+
+msgid "No categories"
 msgstr ""
 
 #, python-format
@@ -168,6 +417,9 @@ msgstr ""
 msgid "No topics selected."
 msgstr ""
 
+msgid "No topics were found."
+msgstr ""
+
 msgid "Not specified"
 msgstr ""
 
@@ -177,16 +429,31 @@ msgstr ""
 msgid "Notifications on new topics within this forum will be sent to you."
 msgstr ""
 
+msgid "Old revisions"
+msgstr ""
+
 msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
 msgstr ""
 
+msgid "Overwrite existing attachment with the same name."
+msgstr ""
+
 msgid "Parent forum"
+msgstr ""
+
+msgid "Paste"
 msgstr ""
 
 msgid "Pictures"
 msgstr ""
 
 msgid "Please login to mark posts as read."
+msgstr ""
+
+msgid "Please save long code snippets or program outputs in our paste service and link to the respective entry."
+msgstr ""
+
+msgid "Poll:"
 msgstr ""
 
 msgid "Position"
@@ -196,6 +463,10 @@ msgid "Post"
 msgstr ""
 
 msgid "Post functionality is currently disabled."
+msgstr ""
+
+#, python-format
+msgid "Posted on %(date)s</a>"
 msgstr ""
 
 msgid "Posts"
@@ -218,7 +489,60 @@ msgstr ""
 msgid "Posts of the last %(n)d hours"
 msgstr ""
 
+msgid "Posts:"
+msgstr ""
+
+#, python-format
+msgid "Posts: <strong>%(n)s</strong>"
+msgstr ""
+
+msgid "Preview"
+msgstr ""
+
+msgid "Publish"
+msgstr ""
+
+msgid "Question:"
+msgstr ""
+
+msgid "Quote"
+msgstr ""
+
+msgid "Read and accepted"
+msgstr ""
+
 msgid "Reason"
+msgstr ""
+
+msgid "Reason:"
+msgstr ""
+
+msgid "Recent posts"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Rename to:"
+msgstr ""
+
+msgid "Replies"
+msgstr ""
+
+msgid "Reply"
+msgstr ""
+
+msgid "Report"
+msgstr ""
+
+msgid "Report topic"
+msgstr ""
+
+#, python-format
+msgid "Report topic “%(topic)s”"
+msgstr ""
+
+msgid "Reported by"
 msgstr ""
 
 #, python-format
@@ -229,16 +553,85 @@ msgstr ""
 msgid "Reported topic: “%(topic)s”"
 msgstr ""
 
+msgid "Reported topics"
+msgstr ""
+
+msgid "Residence:"
+msgstr ""
+
 msgid "Restore"
+msgstr ""
+
+msgid "Rules"
 msgstr ""
 
 msgid "Server"
 msgstr ""
 
+msgid "Show results"
+msgstr ""
+
+msgid "Show revisions"
+msgstr ""
+
+msgid "Show unread posts"
+msgstr ""
+
 msgid "Slug"
 msgstr ""
 
+msgid "Solved"
+msgstr ""
+
+msgid "Split"
+msgstr ""
+
+msgid "Split posts"
+msgstr ""
+
+msgid "Split topic"
+msgstr ""
+
+#, python-format
+msgid "Split topic “%(topic)s”"
+msgstr ""
+
+msgid "Split:"
+msgstr ""
+
+msgid "Status:"
+msgstr ""
+
+msgid "Sticky:"
+msgstr ""
+
+msgid "Subforums:"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
+
+msgid "Subscribe to topic reports"
+msgstr ""
+
 msgid "Support group"
+msgstr ""
+
+msgid "Supporter:"
+msgid_plural "Supporters:"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Team icon"
+msgstr ""
+
+msgid "Teaser"
+msgstr ""
+
+msgid "Text:"
 msgstr ""
 
 msgid "The First post of the new topic must not be hidden."
@@ -264,10 +657,16 @@ msgstr ""
 msgid "The attachment “%(attachment)s” was deleted."
 msgstr ""
 
+msgid "The chosen posts can form a new topic or be attached to an existing topic."
+msgstr ""
+
 msgid "The first post of a topic cannot be deleted."
 msgstr ""
 
 msgid "The first post of a topic cannot be hidden."
+msgstr ""
+
+msgid "The following posts will be split off:"
 msgstr ""
 
 #, python-format
@@ -275,6 +674,14 @@ msgid "The forum “%(forum)s” was marked as read."
 msgstr ""
 
 msgid "The poll already ended."
+msgstr ""
+
+#, python-format
+msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
+msgstr ""
+
+#, python-format
+msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
 msgstr ""
 
 #, python-format
@@ -346,14 +753,27 @@ msgid "The topic “%(topic)s” was split."
 msgstr ""
 
 #, python-format
+msgid "There are no topics. <a href=\"%(link)s\">Create</a> the first one now!"
+msgstr ""
+
+#, python-format
 msgid "There is no “%(slug)s” anymore."
+msgstr ""
+
+msgid "This category does not contain any forum."
 msgstr ""
 
 #, python-format
 msgid "This post is currently being edited by “%(user)s”!"
 msgstr ""
 
+msgid "This post is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators."
+msgstr ""
+
 msgid "This report has already been claimed."
+msgstr ""
+
+msgid "This topic"
 msgstr ""
 
 msgid "This topic is hidden due to possible spam."
@@ -365,10 +785,22 @@ msgstr ""
 msgid "This topic is not visible for regular users."
 msgstr ""
 
+#, python-format
+msgid "This topic is the discussion of the article %(article_list)s."
+msgid_plural "This topic is the discussion of the articles %(article_list)s."
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr ""
 
 msgid "This topic was already reported."
+msgstr ""
+
+msgid "Title of the new topic:"
+msgstr ""
+
+msgid "Title:"
 msgstr ""
 
 msgid "Topic"
@@ -379,6 +811,13 @@ msgstr ""
 
 #, python-format
 msgid "Topics by “%(user)s”"
+msgstr ""
+
+#, python-format
+msgid "Topics: <strong>%(n)s</strong>"
+msgstr ""
+
+msgid "URL of the topic:"
 msgstr ""
 
 msgid "Ubuntu"
@@ -402,7 +841,22 @@ msgstr ""
 msgid "Unanswered topics"
 msgstr ""
 
+msgid "Unlock"
+msgstr ""
+
+msgid "Unread posts"
+msgstr ""
+
+msgid "Unsolved"
+msgstr ""
+
 msgid "Unsolved topics"
+msgstr ""
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Unsubscribe from topic reports"
 msgstr ""
 
 msgid "Version"
@@ -411,6 +865,15 @@ msgstr ""
 #, python-format
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
+msgstr ""
+
+msgid "Views"
+msgstr ""
+
+msgid "Vote"
+msgstr ""
+
+msgid "Welcome message"
 msgstr ""
 
 msgid "Welcome text"
@@ -436,9 +899,6 @@ msgid "You can only display the last %(n)d pages."
 msgstr ""
 
 msgid "You cannot edit this post."
-msgstr ""
-
-msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr ""
 
 msgid "You cannot reply in this topic because it is hidden."
@@ -469,8 +929,52 @@ msgstr ""
 msgid "Your topic “%(topic)s” was moved."
 msgstr ""
 
+msgid "[Hidden]"
+msgstr ""
+
+msgid "[Reported]"
+msgstr ""
+
 #, python-format
 msgid "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible spam."
+msgstr ""
+
+#, python-format
+msgid "by <a href=\"%(link)s\">%(author)s</a>"
+msgstr ""
+
+#, python-format
+msgid "by <a href=\"%(link)s\">%(name)s</a>"
+msgstr ""
+
+msgid "hidden topic"
+msgstr ""
+
+msgid "last edited:"
+msgstr ""
+
+msgid "locked topic"
+msgstr ""
+
+msgid "only here"
+msgstr ""
+
+msgid "reported topic"
+msgstr ""
+
+msgid "solved topic"
+msgstr ""
+
+msgid "sticky topic"
+msgstr ""
+
+msgid "unread topic"
+msgstr ""
+
+msgid "upload attachment"
+msgstr ""
+
+msgid "« Previous topic"
 msgstr ""
 
 #, python-format

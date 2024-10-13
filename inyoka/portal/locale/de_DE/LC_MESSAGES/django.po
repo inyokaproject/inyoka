@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-04 17:58+0100\n"
-"PO-Revision-Date: 2023-11-12 16:30+0100\n"
+"POT-Creation-Date: 2024-10-13 15:19+0200\n"
+"PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,7 +16,42 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
+
+msgid " Activation link:"
+msgstr "Aktivierungslink:"
+
+#, python-format
+msgid "%(count)s comment"
+msgid_plural "%(count)s comments"
+msgstr[0] "%(count)s Kommentar"
+msgstr[1] "%(count)s Kommentare"
+
+#, python-format
+msgid "%(guests)s Guest"
+msgid_plural "%(guests)s Guests"
+msgstr[0] "%(guests)s Gast"
+msgstr[1] "%(guests)s Gäste"
+
+#, python-format
+msgid "%(n)s User online"
+msgid_plural "%(n)s Users online"
+msgstr[0] "%(n)s Benutzer angemeldet."
+msgstr[1] "%(n)s Benutzer angemeldet."
+
+#, python-format
+msgid "%(name)s is a system user."
+msgstr "%(name)s ist ein Systembenutzer"
+
+#, python-format
+msgid "%(name)s is not available."
+msgstr "%(name)s ist nicht verfügbar."
+
+#, python-format
+msgid "%(registered)s Registered user"
+msgid_plural "%(registered)s Registered users"
+msgstr[0] "%(registered)s Registrierte Benutzer"
+msgstr[1] "%(registered)s Registrierte Benutzer"
 
 #, python-format
 msgid "%(sitename)s - Message from %(username)s"
@@ -33,6 +68,17 @@ msgstr "%(sitename)s – E-Mail Adresse bestätigen"
 #, python-format
 msgid "%(sitename)s – Email address changed"
 msgstr "%(sitename)s – E-Mail Adresse geändert"
+
+msgid "(De)select all"
+msgstr "Alle an- / abwählen"
+
+#, python-format
+msgid "(Will be scaled to %(width)sx%(height)s)"
+msgstr "(Wird auf %(width)sx%(height)s skaliert)"
+
+#, python-format
+msgid "<a href=\"%(link)s\">Send an email</a> to %(name)s"
+msgstr "<a href=\"%(link)s\">Eine E-Mail</a> an %(name)s senden"
 
 #, python-format
 msgid "A message was deleted."
@@ -61,6 +107,12 @@ msgstr[1] "%(n)d Abonnements wurden als gelesen markiert."
 msgid "A user with this name already exists."
 msgstr "Ein Benutzer mit diesem Namen existiert bereits."
 
+msgid "About"
+msgstr "Über"
+
+msgid "Actions"
+msgstr "Aktionen"
+
 msgid "Activation status"
 msgstr "Aktivierungsstatus"
 
@@ -88,14 +140,24 @@ msgstr "Archivieren"
 msgid "Attachment preview"
 msgstr "Anhang-Vorschau"
 
+#, python-format
+msgid "Attention: You are currently editing “%(name)s”."
+msgstr "Achtung: Du bearbeitest gerade „%(name)s“."
+
 msgid "Auth"
 msgstr "Auth"
 
 msgid "Authenticate"
 msgstr "Authentifizieren"
 
+msgid "Authentication:"
+msgstr "Authentifizierung:"
+
 msgid "Avatar"
 msgstr "Avatar"
+
+msgid "Avatar settings"
+msgstr "Avatar Einstellungen"
 
 msgid "Banned until"
 msgstr "gesperrt bis"
@@ -103,8 +165,17 @@ msgstr "gesperrt bis"
 msgid "Blocked hosts for email addresses"
 msgstr "Verbotene Hosts für E-Mail-Adressen"
 
+msgid "By default, the email address is not displayed in your public profile. To publish it, you need to check the “show in profile” box."
+msgstr "Standardmäßig wird deine E-Mail-Adresse nicht öffentlich angezeigt. Um sie zu veröffentlichen, aktiviere die \"Im Profil anzeigen\"-Box."
+
 msgid "CAPTCHA"
 msgstr "CAPTCHA"
+
+msgid "CAUTION: A change of the file destroys all links from articles to this file!"
+msgstr "VORSICHT: Eine Änderung der Datei zerstört alle Links von Artikeln, die auf diese Datei verweisen!"
+
+msgid "Calendar"
+msgstr "Kalender"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -112,8 +183,26 @@ msgstr "Abbrechen"
 msgid "Category"
 msgstr "Kategorie"
 
+msgid "Change password"
+msgstr "Passwort ändern"
+
+msgid "Changes since last visit"
+msgstr "Änderungen seit meinem letzten Besuch"
+
+msgid "Choose the user you want to edit:"
+msgstr "Wähle den Benutzer aus, den du bearbeiten möchtest:"
+
 msgid "Choose this if the file should appear as a article or category icon possibility"
 msgstr "Wähle dieses Feld aus, wenn die Datei im Auswahlfeld für Artikel- und Kategorie-Icons erscheinen soll."
+
+msgid "Compose mail"
+msgstr "E-Mail verfassen"
+
+msgid "Compose message"
+msgstr "Nachricht verfassen"
+
+msgid "Configuration"
+msgstr "Konfiguration"
 
 msgid "Confirm new password"
 msgstr "Neues Passwort bestätigen"
@@ -121,14 +210,60 @@ msgstr "Neues Passwort bestätigen"
 msgid "Confirm password"
 msgstr "Passwort bestätigen"
 
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Contact addresses"
+msgstr "Kontaktadressen"
+
 msgid "Content"
 msgstr "Inhalt"
+
+msgid "Control panel"
+msgstr "Kontrollzentrum"
 
 msgid "Coordinates (latitude, longitude)"
 msgstr "Koordinaten (Breite, Länge)"
 
+msgid "Create"
+msgstr "Erstellen"
+
+msgid "Create a new user"
+msgstr "Einen neuen Benutzer erstellen."
+
+msgid "Create new group"
+msgstr "Neue Gruppe erstellen"
+
+msgid "Create new page"
+msgstr "Neue Seite erstellen"
+
+msgid "Create new static file"
+msgstr "Neue statische Datei erstellen"
+
+msgid "Create user"
+msgstr "Nutzer erstellen"
+
+msgid "Created:"
+msgstr "Erstellt:"
+
+msgid "Currently there are no events listed."
+msgstr "Momentan stehen keine Veranstaltungen an."
+
+msgid "Currently there are no messages in this folder."
+msgstr "Momentan befinden sich keine Nachrichten in diesem Ordner."
+
 msgid "Date"
 msgstr "Datum"
+
+msgid "Date:"
+msgstr "Datum:"
+
+msgid "Deactivate account"
+msgstr "Konto deaktivieren"
+
+#, python-format
+msgid "Deactivate my account “%(name)s”"
+msgstr "Deaktiviere mein Konto „%(name)s“"
 
 #, python-format
 msgid "Deactivation of your account “%(name)s” on %(sitename)s"
@@ -140,17 +275,46 @@ msgstr "Standardtext einer neuen Wiki-Seite"
 msgid "Delete"
 msgstr "Löschen"
 
+msgid "Delete marked messages"
+msgstr "Markierte Nachrichten löschen"
+
+msgid "Delete message"
+msgstr "Nachricht löschen"
+
+msgid "Delete selected subscriptions"
+msgstr "Lösche gewählte Abonnements"
+
+msgid "Description"
+msgstr "Beschreibung"
+
 msgid "Description about Ikhaya that will be used on the start page and in the feed aggregations."
 msgstr "Beschreibung zu Ikhaya, die auf der Startseite und in den Feeds verwendet wird."
 
 msgid "Description about the planet that will be used on the planet page and in the feed aggregations."
 msgstr "Beschreibung über den Planeten, welche auf er Startseite vom Planeten und in den Feeds angezeigt wird."
 
+msgid "Details"
+msgstr "Details"
+
+msgid "Display all messages on one page"
+msgstr "Alle Nachrichten auf einer Seite anzeigen"
+
 msgid "Display countdown"
 msgstr "Countdown anzeigen"
 
+msgid "Display feed"
+msgstr "Feed anzeigen"
+
+#, python-format
+msgid "Do you really want to delete the file “%(file)s”?"
+msgstr "Möchtest du die Datei „%(file)s“ wirklich löschen?"
+
 msgid "Do you really want to delete the message?"
 msgstr "Möchtest du die Nachricht wirklich löschen?"
+
+#, python-format
+msgid "Do you really want to delete the page “%(title)s”?"
+msgstr "Möchtest du die Seite „%(title)s“ wirklich löschen?"
 
 msgid "Do you want to archive the message?"
 msgstr "Möchtest du die Nachricht archivieren?"
@@ -165,8 +329,26 @@ msgstr "Möchtest du die Benachrichtigungen für den Nutzer „%(username)s“ a
 msgid "Don’t choose this option if you are using a public computer. Otherwise, unauthorized persons may enter your account."
 msgstr "Wähle diese Option nicht aus, wenn du dich an einem öffentlichen Computer befindest, da sonst fremde Personen möglicherweise Zugang zu deinem Konto erhalten."
 
+msgid "Don’t watch anymore"
+msgstr "Nicht mehr beobachten"
+
+msgid "Download iCal"
+msgstr "iCal herunterladen"
+
 msgid "E-mail"
 msgstr "E-Mail"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Edit group"
+msgstr "Gruppe bearbeiten"
+
+msgid "Edit user"
+msgstr "Benutzer bearbeiten"
+
+msgid "Edit your subscriptions"
+msgstr "Bearbeite deine Abonnements."
 
 msgid "Email"
 msgstr "E-Mail"
@@ -174,18 +356,52 @@ msgstr "E-Mail"
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
+msgid "Enter in Google Calendar"
+msgstr "In Google Kalender eintragen"
+
+#, python-format
+msgid "Event “%(title)s”"
+msgstr "Veranstaltung „%(title)s“"
+
+msgid "Events"
+msgstr "Veranstaltungen"
+
+msgid "Feeds"
+msgstr "Feeds"
+
 msgid "File"
 msgstr "Datei"
+
+msgid "Filter"
+msgstr "Filter"
 
 msgid "Folder"
 msgstr "Ordner"
 
+msgid "For a topic"
+msgstr "Für ein Thema:"
+
+msgid "For the following forum:"
+msgstr "Für das folgende Forum:"
+
 msgid "Forum"
 msgstr "Forum"
+
+msgid "Forum Permissions"
+msgstr "Forum Berechtigungen"
+
+msgid "Forward"
+msgstr "Weiterleiten"
+
+msgid "From"
+msgstr "Von"
 
 #, python-format
 msgid "From now on you won’t be notified anymore about activities of “%(username)s”."
 msgstr "Du wirst ab jetzt nicht mehr über Aktivitäten von „%(username)s“ benachrichtigt."
+
+msgid "From:"
+msgstr "Von:"
 
 msgid "Full article"
 msgstr "Ganzer Artikel"
@@ -196,17 +412,41 @@ msgstr "Vollständiger Link zur Zielseite"
 msgid "GPG fingerprint"
 msgstr "GPG-Fingerprint"
 
+msgid "GPG key"
+msgstr "GPG-Schlüssel"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "General settings"
+msgstr "Allgemeine Einstellungen"
+
+msgid "Generate feed"
+msgstr "Feed erstellen"
+
 msgid "Generate new code"
 msgstr "Neue Zeichenfolge generieren"
 
 msgid "Global Message"
 msgstr "Globale Nachricht"
 
+msgid "Global Permissions"
+msgstr "Globale Berechtigungen"
+
 msgid "Global team icon"
 msgstr "Globales Team-Icon"
 
+msgid "Go to last comment"
+msgstr "Zum letzten Kommentar springen"
+
+msgid "Gravatar:"
+msgstr "Gravatar:"
+
 msgid "Group icon"
 msgstr "Team-Icon"
+
+msgid "Group memberships"
+msgstr "Gruppenmitgliedschaften"
 
 msgid "Groupname"
 msgstr "Gruppenname"
@@ -226,8 +466,11 @@ msgstr "Signaturen ausblenden"
 msgid "Highlight search"
 msgstr "Suchwörter hervorheben"
 
+msgid "How"
+msgstr "Wie"
+
 msgid "I received a message"
-msgstr "Ich eine Nachricht erhalten habe"
+msgstr "Ich habe eine Nachricht erhalten"
 
 msgid "Icon"
 msgstr "Icon"
@@ -241,6 +484,10 @@ msgstr "Aktiviert werden weniger Animationen verwendet."
 msgid "If not given, the last changes will be displayed."
 msgstr "Wenn nicht angegeben, werden die letzten Änderungen angezeigt"
 
+#, python-format
+msgid "If you received a spam message, please forward it to a <a href=\"%(moderators)s\">moderator</a>."
+msgstr "Wenn du eine Spam-Nachricht erhalten hast, leite diese bitte an einen <a href=\"%(moderators)s\">Moderator</a> weiter."
+
 msgid "Ikhaya"
 msgstr "Ikhaya"
 
@@ -249,6 +496,16 @@ msgstr "Ikhaya Artikel"
 
 msgid "Image URL"
 msgstr "Bild URL"
+
+#, python-format
+msgid "In total there are %(global_registered_users)s users registered."
+msgstr "Insgesamt sind %(global_registered_users)s registriert."
+
+#, python-format
+msgid "In total there is %(count)s group, you are in %(usercount)s group."
+msgid_plural "In total there are %(count)s groups, you are in %(usercount)s of them (printed bold)."
+msgstr[0] "Insgesamt gibt es %(count)s Gruppe, du bist in %(usercount)s Gruppe."
+msgstr[1] "Insgesamt gibt es %(count)s Gruppen, du bist in %(usercount)s davon (fett gedruckt)."
 
 msgid "Inbox"
 msgstr "Posteingang"
@@ -259,6 +516,9 @@ msgstr "Infoseite für neue Wiki-Seiten"
 msgid "Information page to which a “create” link should redirect to."
 msgstr "Infoseite, auf die ein „erstellen“ Link verweisen soll."
 
+msgid "Interface"
+msgstr "Oberfläche"
+
 msgid "Invalid Permissions specified."
 msgstr "Ungültige Berechtigung spezifiziert."
 
@@ -267,6 +527,9 @@ msgstr "Ungültige Gruppe spezifiziert."
 
 msgid "Invalid substitution pattern."
 msgstr "Ungültiges Ersetzungsmuster."
+
+msgid "Inyoka"
+msgstr "Inyoka"
 
 msgid "Inyoka syntax required."
 msgstr "Muss Inyoka-Syntax sein."
@@ -286,8 +549,18 @@ msgstr "Angemeldet bleiben"
 msgid "Key"
 msgstr "Schlüssel"
 
+#, python-format
+msgid "Last login: %(date)s"
+msgstr "Letzte Anmeldung: %(date)s"
+
+msgid "Last update:"
+msgstr "Letzte Aktualisierung:"
+
 msgid "Launchpad username"
 msgstr "Launchpad-Benutzername"
+
+msgid "Legend:"
+msgstr "Legende:"
 
 msgid "License note"
 msgstr "Lizenzhinweis"
@@ -295,8 +568,17 @@ msgstr "Lizenzhinweis"
 msgid "Link"
 msgstr "Link"
 
+msgid "Link Map"
+msgstr "Link Map"
+
+msgid "Linkmap"
+msgstr "Linkmap"
+
 msgid "Location of new wiki pages"
 msgstr "Ort neuer Wiki-Seiten"
+
+msgid "Login"
+msgstr "Anmelden"
 
 msgid "Login failed because the user is currently banned. You were informed about that. If you don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
 msgstr "Du konntest nicht angemeldet werden, da der Benutzer derzeit gesperrt ist. Du wurdest darüber weitgehend informiert. Solltest du dem nicht zustimmen oder sollte ein Irrtum vorliegen, so schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>."
@@ -304,17 +586,43 @@ msgstr "Du konntest nicht angemeldet werden, da der Benutzer derzeit gesperrt is
 msgid "Login failed because the user is inactive. You probably didn’t click on the link in the activation mail which was sent to you after your registration. If it is still not working, contact us: <a href=\"{mailto}\">{mail}</a>"
 msgstr "Du konntest nicht angemeldet werden, da der Benutzer derzeit inaktiv ist. Das liegt wahrscheinlich daran, dass du den Aktivierungslink in der Bestätigungsmail, die dir nach der Registrierung zugeschickt wurde, nicht aufgerufen hast. Falls es weiterhin nicht funktioniert, schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>"
 
+msgid "Lost password"
+msgstr "Passwort vergessen"
+
 msgid "Mail"
 msgstr "Mail"
 
 msgid "Mark all forums as “read” on logout"
 msgstr "Alle Foren beim Abmelden als gelesen markieren."
 
+msgid "Mark selected subscriptions as read"
+msgstr "Markiere gewählte Abonnements als gelesen"
+
 msgid "Member since"
 msgstr "Mitglied seit"
 
+#, python-format
+msgid "Member since: %(date)s"
+msgstr "Mitglied seit: %(date)s"
+
+msgid "Members"
+msgstr "Mitglieder"
+
+msgid "Members with green usernames belong to the team."
+msgstr "Benutzer mit grünem Benutzernamen gehören zum Team."
+
 msgid "Message"
 msgstr "Nachricht"
+
+#, python-format
+msgid "Most users ever online was %(record)s on %(time)s."
+msgstr "Der Rekord liegt bei %(record)s am %(time)s."
+
+msgid "Name"
+msgstr "Name"
+
+msgid "New group"
+msgstr "Neue Gruppe"
 
 msgid "New password"
 msgstr "Neues Passwort"
@@ -332,6 +640,15 @@ msgstr "Keine json Datei angegeben. Breche ab..."
 msgid "No effect if “attachment preview” is disabled"
 msgstr "Automatisch deaktiviert wenn „Anhang-Vorschau“ deaktiviert ist"
 
+msgid "No users were found."
+msgstr "Es wurden keine Benutzer gefunden."
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Note: More settings will be available after creating the user."
+msgstr "Hinweis: Nach der Erstellung des Benutzers werden mehr Einstellungen verfügbar sein."
+
 msgid "Notifications on topics with a specific Ubuntu version"
 msgstr "Benachrichtigung bei neuen Topics mit bestimmter Ubuntu-Version"
 
@@ -344,9 +661,6 @@ msgstr "Benachrichtige mich per"
 msgid "Number of entries in the feed"
 msgstr "Anzahl der Einträge im Feed"
 
-msgid "Old password"
-msgstr "Altes Passwort"
-
 msgid "Only introduction"
 msgstr "Nur Einleitung"
 
@@ -355,6 +669,9 @@ msgstr "Nur Kleinbuchstaben, - und _ erlaubt. Nummern nur als Suffix."
 
 msgid "Only title"
 msgstr "Nur Titel"
+
+msgid "Overview"
+msgstr "Übersicht"
 
 msgid "Page name"
 msgstr "Seitenname"
@@ -365,14 +682,23 @@ msgstr "Passwort"
 msgid "Pastebin"
 msgstr "Ablage"
 
+msgid "Permissions"
+msgstr "Rechte"
+
 msgid "Picture preview"
 msgstr "Bilder-Vorschau"
 
 msgid "Planet"
 msgstr "Planet"
 
+msgid "Please check whether you received an email with the activation key. If not, try to register with another user name or email-address."
+msgstr "Bitte prüfe, ob du eine E-Mail mit Aktivierungsschlüssel bekommen hast. Falls nicht, probiere dich mit einem anderen Nutzernamen oder E-Mail-Adresse anzumelden."
+
 msgid "Please choose"
 msgstr "Bitte auswählen"
+
+msgid "Please click on the link in the topic, there are too much topics to list all of them here."
+msgstr "Bitte im Thema auf den Link klicken, es gibt zu viele Themen um sie alle hier aufzulisten."
 
 msgid "Please do not enter an email address as username."
 msgstr "Bitte gebe nicht eine E-Mail-Adresse als Benutzernamen ein."
@@ -382,6 +708,10 @@ msgstr "Bitte gib mindestens einen Empfänger an."
 
 msgid "Please enter the string which was sent to you by email"
 msgstr "Bitte gib hier die Zeichenkette ein, die per E-Mail zugeschickt wurde."
+
+#, python-format
+msgid "Please note that the maximum size for the avatar is %(width)sx%(height)s pixels and %(size)s KiB. Everything that exceeds this limit will automatically be resized."
+msgstr "Bitte beachte, dass die maximale Größe eines Avatars %(width)sx%(height)s Pixel und %(size)s KiB beträgt. Avatare, die dieses Limit überschreiten, werden automatisch verkleinert."
 
 msgid "Please note the details on the maximum size below."
 msgstr "Bitte beachte die untenstehenden Angaben zur Maximalgröße"
@@ -398,6 +728,18 @@ msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 msgid "Portal"
 msgstr "Portal"
 
+msgid "Posts"
+msgstr "Beiträge"
+
+msgid "Preview"
+msgstr "Vorschau"
+
+msgid "Private message"
+msgstr "Private Nachricht"
+
+msgid "Profile"
+msgstr "Profil"
+
 msgid "Read"
 msgstr "Lesen"
 
@@ -406,6 +748,9 @@ msgstr "Gelesene Beiträge"
 
 msgid "Reduced motion"
 msgstr "Weniger Animationen"
+
+msgid "Registered users:"
+msgstr "Registrierte Benutzer:"
 
 msgid "Release date"
 msgstr "Veröffentlichungsdatum"
@@ -416,13 +761,40 @@ msgstr "Umbennen der Benutzer abgeschlossen."
 msgid "Renaming {oldname} to {newname}..."
 msgstr "Benne „{oldname}“ to „{newname}“..."
 
+msgid "Reply"
+msgstr "Antworten"
+
+msgid "Reply to all"
+msgstr "An alle antworten"
+
+msgid "Request new password"
+msgstr "Neues Passwort anfordern"
+
+msgid "Resend activation mail"
+msgstr "Aktivierungsmail erneut zusenden"
+
 msgid "Residence"
 msgstr "Wohnort"
 
 msgid "Restore"
 msgstr "Wiederherstellen"
 
+msgid "Revisions"
+msgstr "Revisionen"
+
+msgid "Select"
+msgstr "Auswählen"
+
+msgid "Send mail"
+msgstr "E-Mail absenden"
+
+msgid "Send message"
+msgstr "Nachricht versenden"
+
 msgid "Sent"
+msgstr "Gesendet"
+
+msgid "Sent mail"
 msgstr "Gesendet"
 
 msgid "Separate multiple groups by semicolon"
@@ -431,11 +803,29 @@ msgstr "Mehrere Gruppen mit Semikolon getrennt eingeben"
 msgid "Separate multiple names by semicolon"
 msgstr "Mehrere Namen mit Semikolon getrennt eingeben"
 
+msgid "Set new password"
+msgstr "Neues Passwort erstellen"
+
 msgid "Settings"
 msgstr "Einstellungen"
 
+msgid "Show in profile"
+msgstr "Im Profil anzeigen"
+
+msgid "Show my profile"
+msgstr "Mein Profil anzeigen"
+
+msgid "Show unread posts"
+msgstr "Zeige ungelesene Beiträge"
+
 msgid "Signature"
 msgstr "Signatur"
+
+msgid "Split messages into multiple pages"
+msgstr "Nachricht auf mehrere Seiten aufteilen"
+
+msgid "State"
+msgstr "Status"
 
 msgid "Static file"
 msgstr "Statische Datei"
@@ -449,11 +839,35 @@ msgstr "Statische Seite"
 msgid "Static pages"
 msgstr "Statische Seiten"
 
+msgid "Status"
+msgstr "Status"
+
 msgid "Subject"
 msgstr "Betreff"
 
+msgid "Subject:"
+msgstr "Betreff:"
+
+msgid "Submit"
+msgstr "Speichern"
+
 msgid "Subscribe to a topic when replying"
 msgstr "Thema bei Antwort automatisch abonnieren"
+
+msgid "Subscriptions"
+msgstr "Abonnements"
+
+msgid "Suggest a blog"
+msgstr "Ein Blog vorschlagen"
+
+msgid "Suggest an article"
+msgstr "Einen Artikel vorschlagen"
+
+msgid "Suggest an event"
+msgstr "Eine Veranstaltung vorschlagen"
+
+msgid "Suggest new event"
+msgstr "Eine neue Veranstaltung vorschlagen"
 
 msgid "Team affiliation / Member title"
 msgstr "Teamzugehörigkeit / Benutzertitel"
@@ -484,18 +898,14 @@ msgstr "Die E-Mail an „%(username)s“ wurde erfolgreich versendet."
 msgid "The email with the activation key was resent."
 msgstr "Die Aktivierungsmail wurde erneut versendet."
 
-msgid "The entered password did not match your old password."
-msgstr "Das eingegebene Passwort stimmt nicht mit deinem alten Passwort überein"
-
 msgid "The entered password is wrong."
 msgstr "Das eingegebene Passwort ist falsch"
 
 msgid "The entered token is invalid or has expired."
 msgstr "Das eingegebene Einmalpasswort ist ungültig oder abgelaufen."
 
-#, python-format
-msgid "The given email address is already in use. If you forgot your password, you can <a href=\"%(link)s\">restore it</a>."
-msgstr "Die angegebene E-Mail-Adresse wird bereits benutzt. Falls du dein Passwort vergessen hast, kannst du es <a href=\"%(link)s\">wiederherstellen lassen</a>."
+msgid "The given email address is already in use. If you forgot your password, you can <a href=\"{link}\">restore it</a>."
+msgstr "Diese E-Mail-Adresse wird bereits verwendet. Falls du dein Passwort vergessen hast, kannst du es <a href=\"{link}\">wiederherstellen</a>."
 
 msgid "The group name contains invalid chars"
 msgstr "Der Gruppenname enthält ungültige Zeichen"
@@ -503,6 +913,12 @@ msgstr "Der Gruppenname enthält ungültige Zeichen"
 #, python-format
 msgid "The group “%(group)s” does not exist."
 msgstr "Die Gruppe „%(group)s“ existiert nicht."
+
+#, python-format
+msgid "The group “%(name)s” has %(count)s member:"
+msgid_plural "The group “%(name)s” has %(count)s members:"
+msgstr[0] "Die Gruppe „%(name)s“ hat %(count)s Mitglied:"
+msgstr[1] "Die Gruppe „%(name)s“ hat %(count)s Mitglieder:"
 
 #, python-format
 msgid "The group “%s” was changed successfully."
@@ -518,6 +934,9 @@ msgstr "Dieser Gruppenname wird bereits verwendet. Bitte wähle einen anderen."
 #, python-format
 msgid "The groups of “%(username)s” were successfully changed."
 msgstr "Die Gruppen von „%(username)s“ wurden erfolgreich aktualisiert."
+
+msgid "The keyword <code>PAGE</code> in a link will be replaced by the user defined value. Otherwise the user value will be appended."
+msgstr "<code>PAGE</code> in einem Link wird durch die Nutzereingabe ersetzt. Ansonsten wird diese an den Link hinten angehängt."
 
 msgid "The message was deleted."
 msgstr "Die Nachricht wurde gelöscht."
@@ -563,8 +982,15 @@ msgid "The setting of “%(username)s” were successfully changed."
 msgstr "Die Einstellungen von „%(username)s“ wurden erfolgreich aktualisiert."
 
 #, python-format
+msgid "The signature will be appended to every post. It cannot contain more than %(n)s characters. Please follow the <a href=\"%(link)s\">signature rules</a>."
+msgstr "Die Signatur wird an jeden Beitrag angehängt. Sie kann nicht länger als %(n)s Zeichen sein. Bitte beachte die <a href=\"%(link)s\">Signaturregeln</a>."
+
+#, python-format
 msgid "The state of “%(username)s” was successfully changed."
 msgstr "Der Status von „%(username)s“ wurde erfolgreich aktualisiert."
+
+msgid "The tokens <code>attachment</code> and <code>user</code> are hardcoded into Inyoka."
+msgstr "Die Kürzel <code>attachment</code> und <code>user</code> sind fest in Inyoka integriert."
 
 msgid "The user is not banned"
 msgstr "Der Benutzer ist nicht gesperrt"
@@ -589,6 +1015,18 @@ msgstr "Der Benutzername ist bereits vergeben, bitte wähle einen anderen."
 #, python-format
 msgid "The username “%(username)s” was successfully registered. An email with the activation key was sent to “%(email)s”."
 msgstr "Der Benutzername „%(username)s“ wurde erfolgreich registriert. Eine E-Mail mit dem Aktivierungsschlüssel wurde an „%(email)s“ gesendet."
+
+msgid "There are no static files, create the first one now!"
+msgstr "Es gibt keine statischen Dateien, erstelle jetzt die erste!"
+
+msgid "There are no static pages, create the first one now!"
+msgstr "Es gibt keine statischen Seiten, erstelle jetzt die erste!"
+
+msgid "There are no upcoming events."
+msgstr "Es stehen keine Veranstaltungen bevor."
+
+msgid "This Page lets you edit, delete and add external link shortcuts. The icons should be of the size 14px x 14px."
+msgstr "Über diese Seite können Interwikilinks bearbeitet, hinzugefügt und gelöscht werden. Icons sollten die Größe 14px x 14px haben."
 
 msgid "This e-mail address is used by another user."
 msgstr "Diese E-Mail-Adresse wird bereits verwendet."
@@ -620,6 +1058,12 @@ msgstr "Titel"
 msgid "To"
 msgstr "An"
 
+msgid "To deactivate your account, you need to enter your password."
+msgstr "Bitte gib dein Passwort ein, um dein Konto zu deaktivieren."
+
+msgid "To:"
+msgstr "An:"
+
 msgid "Token"
 msgstr "Kürzel"
 
@@ -629,8 +1073,17 @@ msgstr "Thema"
 msgid "Trash"
 msgstr "Papierkorb"
 
+msgid "URL:"
+msgstr "URL:"
+
 msgid "Unsubscribe"
 msgstr "Abbestellen"
+
+msgid "Upcoming events"
+msgstr "Anstehende Veranstaltungen"
+
+msgid "Usage:"
+msgstr "Verwendung:"
 
 msgid "Use Gravatar"
 msgstr "Gravatar benutzen"
@@ -640,6 +1093,9 @@ msgstr "Den Benutzer „{username}“ gibt es nicht. Überspringe..."
 
 msgid "User name '{newname}' already exists. Skipping..."
 msgstr "Der Benutzer „{newname}“ existiert bereits. Überspringe..."
+
+msgid "User page"
+msgstr "Benutzerseite"
 
 msgid "User registration is currently disabled."
 msgstr "Die Registrierung ist aktuell deaktiviert."
@@ -656,6 +1112,15 @@ msgstr "Benutzername oder Mailadresse"
 msgid "Users cannot use email addresses from these hosts to register an account."
 msgstr "Benutzer können keine E-Mail-Adressen dieser Hosts zur Registrierung verwenden."
 
+msgid "Venue"
+msgstr "Veranstaltungsort"
+
+msgid "View public profile"
+msgstr "Öffentliches Profil ansehen"
+
+msgid "Watch"
+msgstr "Beobachten"
+
 #, python-format
 msgid "We need your email address to send you a new password if you forgot it. It is not visible to other users. For more information, check out our <a href=\"%(link)s\">privacy policy</a>."
 msgstr "Wir benötigen deine E-Mailadresse, um dir ein neues Passwort zu senden, falls du dein Passwort mal vergessen solltest. Sie ist für andere Nutzer nicht sichtbar. Mehr Informationen findest du in unseren <a href=\"%(link)s\">Datenschutzbestimmungen</a>."
@@ -665,6 +1130,15 @@ msgstr "Website"
 
 msgid "Welcome Message"
 msgstr "Willkommensnachricht"
+
+msgid "What"
+msgstr "Was"
+
+msgid "Who is online?"
+msgstr "Wer ist gerade angemeldet?"
+
+msgid "Wiki"
+msgstr "Wiki"
 
 msgid "Wiki helptext"
 msgstr "Wiki Hilfetext"
@@ -677,6 +1151,33 @@ msgstr "Wird für die URL verwendet. Kann nicht verändert werden."
 
 msgid "You are already logged in."
 msgstr "Du bist bereits angemeldet."
+
+msgid "You can also enter an e-mail address instead of a user name."
+msgstr "Du kannst auch eine E-Mail Adresse anstelle eines Benutzernamens angeben."
+
+msgid "You can change your password with this form. For security reasons, you need to enter your old password."
+msgstr "Du kannst mit diesem Formular dein Passwort ändern. Aus Sicherheitsgründen musst du dein altes Passwort eingeben."
+
+#, python-format
+msgid "You can deactivate your account “%(name)s” here. By doing this, we will remove all your personal data. All your forum posts and wiki articles will remain."
+msgstr "Du kannst hier dein Konto „%(name)s“ deaktivieren. Wenn du das tust, werden wir alle deine persönlichen Daten löschen. Forenbeiträge und Wikiartikel werden allerdings erhalten bleiben."
+
+#, python-format
+msgid "You can login here if you are already <a href=\"%(register)s\">registered</a>. If you lost your password, you can <a href=\"%(lost_password)s\">request a new one</a>."
+msgstr "Du kannst dich hier anmelden, wenn du bereits <a href=\"%(register)s\">registriert bist</a>. Falls du dein Passwort vergessen hast, kannst du dir <a href=\"%(lost_password)s\">ein neues zusenden lassen</a>."
+
+#, python-format
+msgid "You can reactivate your user account “%(name)s” up to one month with the link sent to you via e-mail. After this period you will never be able to gain access to your account again."
+msgstr "Du kannst dein Benutzerkonto „%(name)s“ bis zu einem Monat lang mit einem dir zugesandten Link wieder aktivieren. Danach wirst du nicht mehr in der Lage sein, Zugriff auf dein Benutzerkonto zu erlangen."
+
+msgid "You can reset your email address here if you changed it accidentally."
+msgstr "Du kannst hier deine E-Mail-Adresse zurücksetzen, falls du sie aus Versehen geändert hast."
+
+msgid "You can restore your account here if you deleted it. Please note that this is only possible one month after the deletion."
+msgstr "Du kannst hier dein Konto wiedeherstellen, falls du es gelöscht hast. Bitte beachte, dass dies maximal einen Monat nach der Löschung möglich ist."
+
+msgid "You can set a new password for your account here."
+msgstr "Du kannst hier ein neues Passwort für dein Konto setzen."
 
 msgid "You cannot enter an activation key when you are logged in."
 msgstr "Du kannst keinen Aktivierungsschlüssel eingeben, wenn du angemeldet bist."
@@ -695,6 +1196,12 @@ msgstr "Du kannst diesem Benutzer keine Nachrichten senden."
 
 msgid "You cannot send messages to yourself."
 msgstr "Du kannst dir selbst keine Nachrichten senden."
+
+msgid "You did not yet subscribed to any topics or articles."
+msgstr "Du hast bisher keine Themen oder Artikel abonniert."
+
+msgid "You have forgotten your password? You can obtain a new one here."
+msgstr "Du hast dein Passwort vergessen? Lasse dir hier ein neues zusenden."
 
 msgid "You have successfully logged in."
 msgstr "Du hast dich erfolgreich angemeldet."
@@ -776,8 +1283,25 @@ msgstr "gesperrt"
 msgid "deleted himself"
 msgstr "hat sich selbst gelöscht"
 
+msgid "edit"
+msgstr "Bearbeiten"
+
+msgid "from"
+msgstr "von"
+
 msgid "leave empty to ban permanent"
 msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)"
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
+
+msgid "show"
+msgstr "anzeigen"
+
+msgid "to"
+msgstr "bis"
+
+#, python-format
+msgid "“%(name)s” is no member of any group."
+msgstr "„%(name)s“ ist kein Mitglied einer Gruppe."
+

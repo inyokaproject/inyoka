@@ -6,16 +6,16 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.30.0\n"
+"Project-Id-Version: Inyoka Project v0.36.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-04 17:58+0100\n"
+"POT-Creation-Date: 2024-10-13 15:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #, python-format
 msgid "%(sitename)s planet"
@@ -24,7 +24,31 @@ msgstr ""
 msgid "A new blog was suggested."
 msgstr ""
 
+msgid "Active"
+msgstr ""
+
+msgid "Add blog"
+msgstr ""
+
+msgid "Are you sure you want to hide the entry?"
+msgstr ""
+
+msgid "Are you sure you want to restore the entry?"
+msgstr ""
+
+msgid "Bloglist"
+msgstr ""
+
+msgid "Blogs"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
 msgid "Canceled"
+msgstr ""
+
+msgid "Configuration"
 msgstr ""
 
 msgid "Description"
@@ -39,7 +63,13 @@ msgstr ""
 msgid "Entry"
 msgstr ""
 
+msgid "Export blogs"
+msgstr ""
+
 msgid "Feed URL"
+msgstr ""
+
+msgid "Hide"
 msgstr ""
 
 msgid "Icon"
@@ -48,13 +78,58 @@ msgstr ""
 msgid "Index the blog"
 msgstr ""
 
+msgid "Latest update"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
 msgid "Name of the blog"
+msgstr ""
+
+msgid "Next »"
+msgstr ""
+
+msgid "No articles were aggregated"
+msgstr ""
+
+msgid "No entry"
 msgstr ""
 
 msgid "No title given"
 msgstr ""
 
 msgid "No user is registered as a planet administrator."
+msgstr ""
+
+msgid "Permanent link"
+msgstr ""
+
+msgid "Planet"
+msgstr ""
+
+msgid "Planet - Captions"
+msgstr ""
+
+msgid "Planet - Full article"
+msgstr ""
+
+msgid "Planet - Teaser"
+msgstr ""
+
+msgid "Please be patient. It could take a while, until we approve your suggestion."
+msgstr ""
+
+msgid "Recent articles"
+msgstr ""
+
+msgid "Restore"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Suggest blog"
 msgstr ""
 
 #, python-format
@@ -82,5 +157,15 @@ msgid "URL of the feed"
 msgstr ""
 
 msgid "User"
+msgstr ""
+
+msgid "With this form you can suggest a new blog for the planet."
+msgstr ""
+
+#, python-format
+msgid "| Hidden by: <a href=\"%(link)s\">%(name)s</a>"
+msgstr ""
+
+msgid "« Previous"
 msgstr ""
 

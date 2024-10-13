@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-04 17:58+0100\n"
-"PO-Revision-Date: 2020-11-07 18:23+0100\n"
+"POT-Creation-Date: 2024-10-13 15:19+0200\n"
+"PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,7 +16,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
+
+msgid "#"
+msgstr "#"
+
+#, python-format
+msgid "%(count)s vote"
+msgid_plural "%(count)s votes"
+msgstr[0] "%(count)s Stimme"
+msgstr[1] "%(count)s Stimmen"
+
+#, python-format
+msgid "%(count)s voter"
+msgid_plural "%(count)s voters"
+msgstr[0] "%(count)s Wähler"
+msgstr[1] "%(count)s Wähler"
 
 #, python-format
 msgid "%(site)s forum"
@@ -34,44 +49,143 @@ msgstr "%(site)s Thema – „%(topic)s“"
 msgid "%(username)s has created a new topic"
 msgstr "Neues Thema vom Benutzer %(username)s"
 
+msgid "(Topic starter)"
+msgstr "(Themenstarter)"
+
 msgid "(Un)lock"
 msgstr "(Ent)sperren"
+
+msgid "(undo)"
+msgstr "(rückgängig)"
+
+msgid "12 hours"
+msgstr "12 Stunden"
+
+msgid "24 hours"
+msgstr "24 Stunden"
+
+msgid "6 hours"
+msgstr "6 Stunden"
+
+#, python-format
+msgid "<a href=\"%(link)s\">Posts</a> by <a href=\"%(userlink)s\">%(author)s</a> in this forum"
+msgstr "<a href=\"%(link)s\">Beiträge</a> von <a href=\"%(userlink)s\">%(author)s</a> in diesem Forum"
+
+#, python-format
+msgid "<a href=\"%(link)s\">Posts</a> by <a href=\"%(userlink)s\">%(author)s</a> in this topic"
+msgstr "<a href=\"%(link)s\">Beiträge</a> von <a href=\"%(userlink)s\">%(author)s</a> in diesem Thema"
 
 msgid "A notification will be sent when a topic is reported."
 msgstr "Du erhältst eine Benachrichtigung, wenn ein Thema gemeldet wurde."
 
+msgid "Action"
+msgstr "Aktionen"
+
 msgid "Action canceled."
 msgstr "Aktion abgebrochen."
+
+msgid "Add poll"
+msgstr "Umfrage hinzufügen"
+
+msgid "Additional answer"
+msgstr "Zusätzliche Antwort"
 
 msgid "All forums were marked as read."
 msgstr "Alle Foren wurden als gelesen markiert."
 
+msgid "Allow multiple answers"
+msgstr "Mehrere Antworten erlauben"
+
 msgid "An old revision of the post was restored."
 msgstr "Eine ältere Revision des Beitrages wurde wiederhergestellt."
+
+msgid "Assign to me"
+msgstr "Mir zuweisen"
+
+msgid "Assigned to"
+msgstr "In Bearbeitung von"
+
+msgid "Attach to old topic"
+msgstr "An bestehendes Thema anhängen"
+
+msgid "Attachment:"
+msgstr "Anhang:"
+
+msgid "Attachments:"
+msgstr "Anhänge:"
 
 msgid "Cancel"
 msgstr "Abbrechen"
 
+msgid "Captions"
+msgstr "Überschriften"
+
+msgid "Close selected tickets"
+msgstr "Schließe gewählte Meldungen"
+
 msgid "Count user posts"
 msgstr "Zähle Beiträge der Benutzer"
+
+msgid "Create forum"
+msgstr "Forum erstellen"
+
+msgid "Create new forum"
+msgstr "Neues Forum erstellen"
+
+msgid "Create new topic"
+msgstr "Neues Thema erstellen"
+
+msgid "Created topics"
+msgstr "Erstellte Themen"
+
+msgid "Current forum"
+msgstr "Aktuelles Forum"
+
+msgid "Current revision"
+msgstr "Aktuelle Revision"
+
+msgid "Currently there are no reported topics."
+msgstr "Es gibt zurzeit keine gemeldeten Themen."
 
 msgid "Default text for new topics"
 msgstr "Standard Text für neue Beiträge"
 
+msgid "Delete"
+msgstr "Löschen"
+
 msgid "Description"
 msgstr "Beschreibung"
+
+msgid "Description:"
+msgstr "Beschreibung:"
 
 msgid "Distribution"
 msgstr "Distribution"
 
+#, python-format
+msgid "Do you really want to delete the topic “%(title)s”? This action cannot be undone!"
+msgstr "Möchtest du das Thema „%(title)s“ wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
+
 msgid "Do you really want to hide / delete this post?"
 msgstr "Möchtest du diesen Beitrag wirklich verbergen / löschen?"
+
+#, python-format
+msgid "Do you really want to hide the topic “%(title)s”?"
+msgstr "Möchtest du das Thema „%(title)s“ wirklich verbergen?"
 
 msgid "Do you really want to mark this post as ham / spam?"
 msgstr "Möchtest du diesen Beitrag wirklich als Ham / Spam markieren?"
 
 msgid "Do you want to (un)lock the topic?"
 msgstr "Möchtest du das Thema (ent)sperren?"
+
+#, python-format
+msgid "Do you want to delete the <a href=\"%(link)s\">post from %(author)s</a>?"
+msgstr "Möchtest du den <a href=\"%(link)s\">Beitrag von %(author)s</a> löschen?"
+
+#, python-format
+msgid "Do you want to hide the <a href=\"%(link)s\">post from %(author)s</a>?"
+msgstr "Möchtest du den <a href=\"%(link)s\">Beitrag von %(author)s</a> verbergen?"
 
 msgid "Do you want to restore the revision of the post?"
 msgstr "Möchtest du diese Revision des Beitrages wiederherstellen?"
@@ -87,11 +201,28 @@ msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"
 msgstr "Download %(name)s"
 
+#, python-format
+msgid "Duration of the poll: %(duration)s days"
+msgstr "Dauer der Umfrage: %(duration)s Tage"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
 msgid "Edit first post afterwards"
 msgstr "Danach ersten Beitrag bearbeiten"
 
+msgid "Edit post"
+msgstr "Beitrag bearbeiten"
+
+#, python-format
+msgid "Edited: %(date)s"
+msgstr "Bearbeitet am: %(date)s"
+
 msgid "Edubuntu"
 msgstr "Edubuntu"
+
+msgid "Existing polls:"
+msgstr "Bestehende Umfragen:"
 
 #, python-format
 msgid "Feed contains new topics of the forum “%(forum)s”."
@@ -104,17 +235,63 @@ msgstr "Feed enthält neue Themen aus dem kompletten Forum."
 msgid "Feed contains posts of the topic “%(topic)s”."
 msgstr "Feed enthält Beiträge aus dem Thema „%(topic)s“."
 
+msgid "Filter"
+msgstr "Filter"
+
 msgid "Force version"
 msgstr "Erzwinge Version"
 
 msgid "Forum"
 msgstr "Forum"
 
+msgid "Forum - Captions"
+msgstr "Forum - Überschriften"
+
+msgid "Forum - Full post"
+msgstr "Forum - Ganzer Beitrag"
+
+msgid "Forum - Teaser"
+msgstr "Forum - Einleitung"
+
+msgid "Forum of the new topic:"
+msgstr "Forum des neuen Themas:"
+
+msgid "Forum read"
+msgstr "Forum gelesen"
+
 msgid "Forums"
 msgstr "Foren"
 
+msgid "From here:"
+msgstr "Ab hier:"
+
+msgid "Full"
+msgstr "Komplett"
+
+msgid "Full post"
+msgstr "Ganzer Beitrag"
+
+msgid "Go to page"
+msgstr "Gehe zu Seite"
+
+msgid "Go to post"
+msgstr "Gehe zu Beitrag"
+
+msgid "Here you can move a topic into another forum."
+msgstr "Hier kannst du ein Thema in ein anderes Forum verschieben."
+
+#, python-format
+msgid "Here you can report a topic to the moderators if it is against our <a href=\"%(link)s\">rules</a>. Please add a short explanation:"
+msgstr "Hier kannst du ein Thema den Moderatoren melden, falls es gegen unsere <a href=\"%(link)s\">Portalregeln</a> verstößt. Bitte füge eine kurze Beschreibung hinzu:"
+
+msgid "Hide"
+msgstr "Verbergen"
+
 msgid "Hide / Delete"
 msgstr "Verbergen / Löschen"
+
+msgid "Hide results"
+msgstr "Ergebnisse verbergen"
 
 msgid "If not set then posts of users in this forum are ignored in the post counter of the user."
 msgstr "Wenn dies nicht gesetzt ist werden Beiträge der Nutzer in diesem Forum für den post counter der Nutzer nicht gezählt."
@@ -125,11 +302,60 @@ msgstr "Beteiligte Themen"
 msgid "Kubuntu"
 msgstr "Kubuntu"
 
+msgid "Last post"
+msgstr "Letzter Beitrag"
+
+msgid "Last reply"
+msgstr "Letzte Antwort"
+
+msgid "Leave that feel empty for an endless duration"
+msgstr "Lasse dieses Feld frei, um die Umfrage zeitlich unbegrenzt offen zu lassen."
+
+msgid "Link to this post"
+msgstr "Permalink zu diesem Beitrag"
+
+msgid "Lock"
+msgstr "Sperren"
+
 msgid "Lubuntu"
 msgstr "Lubuntu"
 
+msgid "Mark all forums as read"
+msgstr "Alle Foren als gelesen markieren"
+
 msgid "Mark as ham / spam"
 msgstr "Als Ham / Spam markieren"
+
+msgid "Mark as read"
+msgstr "Als gelesen markieren"
+
+msgid "Mark as solved"
+msgstr "Als gelöst markieren"
+
+msgid "Mark as unsolved"
+msgstr "Als ungelöst markieren"
+
+msgid "Mark ham"
+msgstr "Kein Spam"
+
+msgid "Mark spam"
+msgstr "Spam"
+
+msgid "Mark topic as “Important:”"
+msgstr "Thema als „Wichtig:“ markieren"
+
+msgid "Member since:"
+msgstr "Anmeldungsdatum:"
+
+msgid "Move"
+msgstr "Verschieben"
+
+#, python-format
+msgid "Move “%(topic)s”"
+msgstr "Verschiebe „%(topic)s“"
+
+msgid "My posts"
+msgstr "Eigene Beiträge"
 
 msgid "Name"
 msgstr "Name"
@@ -141,11 +367,34 @@ msgstr "Neue Antwort von Benutzer „{username}”"
 msgid "New discussion regarding the page “%(page)s” created"
 msgstr "Neue Diskussion für die Seite „%(page)s“ wurde eröffnet"
 
+msgid "New forum of the topic:"
+msgstr "Neues Forum des Themas:"
+
 msgid "New posts"
 msgstr "Neue Beiträge"
 
+msgid "New reply"
+msgstr "Neue Antwort"
+
+#, python-format
+msgid "New reply in “%(topic)s”"
+msgstr "Neue Antwort in „%(topic)s“"
+
+msgid "New topic"
+msgstr "Neues Thema"
+
+#, python-format
+msgid "New topic in “%(forum)s”"
+msgstr "Neues Thema in „%(forum)s“"
+
+msgid "Next topic »"
+msgstr "Nächstes Thema »"
+
 msgid "No Ubuntu"
 msgstr "Kein Ubuntu"
+
+msgid "No categories"
+msgstr "Keine Kategorien"
 
 #, python-format
 msgid "No discussion is linked yet to the article “%(article)s”. You can create a discussion now or <a href=\"%(link)s\">link an existing topic</a> to the article."
@@ -169,6 +418,9 @@ msgstr "Es existieren keine neueren Themen in diesem Forum."
 msgid "No topics selected."
 msgstr "Keine Themen ausgewählt."
 
+msgid "No topics were found."
+msgstr "Es wurden keine Themen gefunden"
+
 msgid "Not specified"
 msgstr "Nicht spezifiziert"
 
@@ -178,17 +430,32 @@ msgstr "Du wirst ab nun über neue Beiträge in diesem Thema benachrichtigt."
 msgid "Notifications on new topics within this forum will be sent to you."
 msgstr "Du erhältst ab nun Benachrichtigungen zu neuen Themen in diesem Forum."
 
+msgid "Old revisions"
+msgstr "Alte Revisionen"
+
 msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
 msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
 
+msgid "Overwrite existing attachment with the same name."
+msgstr "Überschreibe Anhänge mit dem gleichen Namen."
+
 msgid "Parent forum"
 msgstr "Eltern Forum"
+
+msgid "Paste"
+msgstr "Ablage"
 
 msgid "Pictures"
 msgstr "Bilder"
 
 msgid "Please login to mark posts as read."
 msgstr "Bitte melde dich an, um Beiträge als gelesen zu markieren."
+
+msgid "Please save long code snippets or program outputs in our paste service and link to the respective entry."
+msgstr "Bitte speichere lange Code-Ausschnitte oder Programmausgaben in unserer Ablage und verlinke den entsprechenden Beitrag."
+
+msgid "Poll:"
+msgstr "Umfrage:"
 
 msgid "Position"
 msgstr "Position"
@@ -198,6 +465,10 @@ msgstr "Beitrag"
 
 msgid "Post functionality is currently disabled."
 msgstr "Das Schreiben von Beiträgen ist aktuell deaktiviert."
+
+#, python-format
+msgid "Posted on %(date)s</a>"
+msgstr "Geschrieben am %(date)s</a>"
 
 msgid "Posts"
 msgstr "Beiträge"
@@ -219,8 +490,61 @@ msgstr "Beiträge von “{user}” im Thema “{topic}”"
 msgid "Posts of the last %(n)d hours"
 msgstr "Beiträge der letzten %(n)d Stunden"
 
+msgid "Posts:"
+msgstr "Beiträge:"
+
+#, python-format
+msgid "Posts: <strong>%(n)s</strong>"
+msgstr "Beiträge: <strong>%(n)s</strong>"
+
+msgid "Preview"
+msgstr "Vorschau"
+
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+msgid "Question:"
+msgstr "Frage:"
+
+msgid "Quote"
+msgstr "Zitieren"
+
+msgid "Read and accepted"
+msgstr "Gelesen und akzeptiert"
+
 msgid "Reason"
 msgstr "Grund"
+
+msgid "Reason:"
+msgstr "Begründung:"
+
+msgid "Recent posts"
+msgstr "Neue Beiträge"
+
+msgid "Reject"
+msgstr "Ablehnen"
+
+msgid "Rename to:"
+msgstr "Umbenennen zu:"
+
+msgid "Replies"
+msgstr "Antworten"
+
+msgid "Reply"
+msgstr "Antworten"
+
+msgid "Report"
+msgstr "Melden"
+
+msgid "Report topic"
+msgstr "Thema melden"
+
+#, python-format
+msgid "Report topic “%(topic)s”"
+msgstr "Thema „%(topic)s“ melden"
+
+msgid "Reported by"
+msgstr "Gemeldet von"
 
 #, python-format
 msgid "Reported post: “%(post)s”"
@@ -230,17 +554,86 @@ msgstr "Gemeldeter Beitrag: „%(post)s“"
 msgid "Reported topic: “%(topic)s”"
 msgstr "Gemeldetes Thema: „%(topic)s“"
 
+msgid "Reported topics"
+msgstr "Gemeldete Themen"
+
+msgid "Residence:"
+msgstr "Wohnort:"
+
 msgid "Restore"
 msgstr "Wiederherstellen"
+
+msgid "Rules"
+msgstr "Regeln"
 
 msgid "Server"
 msgstr "Server"
 
+msgid "Show results"
+msgstr "Ergebnisse anzeigen"
+
+msgid "Show revisions"
+msgstr "Revisionen anzeigen"
+
+msgid "Show unread posts"
+msgstr "Zeige ungelesene Beiträge"
+
 msgid "Slug"
 msgstr "Slug"
 
+msgid "Solved"
+msgstr "Gelöst"
+
+msgid "Split"
+msgstr "Aufteilen"
+
+msgid "Split posts"
+msgstr "Beiträge abtrennen"
+
+msgid "Split topic"
+msgstr "Thema aufteilen"
+
+#, python-format
+msgid "Split topic “%(topic)s”"
+msgstr "Thema „%(topic)s“ aufteilen"
+
+msgid "Split:"
+msgstr "Aufteilen:"
+
+msgid "Status:"
+msgstr "Status:"
+
+msgid "Sticky:"
+msgstr "Wichtig:"
+
+msgid "Subforums:"
+msgstr "Unterforen:"
+
+msgid "Submit"
+msgstr "Speichern"
+
+msgid "Subscribe"
+msgstr "Abonnieren"
+
+msgid "Subscribe to topic reports"
+msgstr "Themenmeldungen abonnieren"
+
 msgid "Support group"
 msgstr "Gruppe der Supporter"
+
+msgid "Supporter:"
+msgid_plural "Supporters:"
+msgstr[0] "Supporter:"
+msgstr[1] "Supporter:"
+
+msgid "Team icon"
+msgstr "Team-Icon"
+
+msgid "Teaser"
+msgstr "Einleitung"
+
+msgid "Text:"
+msgstr "Text:"
 
 msgid "The First post of the new topic must not be hidden."
 msgstr "Der erste Beitrag des neuen Themas darf nicht versteckt sein."
@@ -265,11 +658,17 @@ msgstr "Der Anhang „%(attachment)s“ wurde erfolgreich hinzugefügt."
 msgid "The attachment “%(attachment)s” was deleted."
 msgstr "Der Anhang „%(attachment)s“ wurde gelöscht."
 
+msgid "The chosen posts can form a new topic or be attached to an existing topic."
+msgstr "Die gewählten Beiträge können hier in ein eigenes Thema abgetrennt werden oder an ein bestehendes Thema angehängt werden."
+
 msgid "The first post of a topic cannot be deleted."
 msgstr "Der erste Beitrag eines Themas kann nicht gelöscht werden."
 
 msgid "The first post of a topic cannot be hidden."
 msgstr "Der erste Beitrag eines Themas kann nicht verborgen werden"
+
+msgid "The following posts will be split off:"
+msgstr "Die folgenden Beiträge werden abgetrennt werden:"
 
 #, python-format
 msgid "The forum “%(forum)s” was marked as read."
@@ -277,6 +676,14 @@ msgstr "Das Forum „%(forum)s“ wurde als gelesen markiert."
 
 msgid "The poll already ended."
 msgstr "Die Umfrage endete bereits."
+
+#, python-format
+msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
+msgstr "Die Umfrage wurde am %(start_date)s gestartet und endete am %(end_date)s."
+
+#, python-format
+msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
+msgstr "Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s enden."
 
 #, python-format
 msgid "The poll “%(poll)s” was added."
@@ -347,15 +754,28 @@ msgid "The topic “%(topic)s” was split."
 msgstr "Das Thema „%(topic)s“ wurde aufgeteilt."
 
 #, python-format
+msgid "There are no topics. <a href=\"%(link)s\">Create</a> the first one now!"
+msgstr "Es gibt keine Themen. <a href=\"%(link)s\">Erstelle</a> jetzt das Erste!"
+
+#, python-format
 msgid "There is no “%(slug)s” anymore."
 msgstr "Es gibt kein „%(slug)s“ mehr."
+
+msgid "This category does not contain any forum."
+msgstr "Diese Kategorie enthält keine Foren"
 
 #, python-format
 msgid "This post is currently being edited by “%(user)s”!"
 msgstr "Diese Beitrag wird momentan von „%(user)s“ bearbeitet!"
 
+msgid "This post is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators."
+msgstr "Dieser Beitrag ist verborgen. Entweder muss er von Moderatoren aktiviert werden oder er wurde explizit von Moderatoren verborgen."
+
 msgid "This report has already been claimed."
 msgstr "Diese Meldung wird bereits bearbeitet."
+
+msgid "This topic"
+msgstr "Dieses Thema"
 
 msgid "This topic is hidden due to possible spam."
 msgstr "Dieses Thema wurde aufgrund möglichen Spams verborgen"
@@ -366,11 +786,23 @@ msgstr "Dieses Thema ist verborgen. Entweder muss es von Moderatoren aktiviert w
 msgid "This topic is not visible for regular users."
 msgstr "Dieses Thema ist für normale Benutzer unsichtbar."
 
+#, python-format
+msgid "This topic is the discussion of the article %(article_list)s."
+msgid_plural "This topic is the discussion of the articles %(article_list)s."
+msgstr[0] "Dieses Thema ist die Diskussion des Artikels %(article_list)s."
+msgstr[1] "Dieses Thema ist die Diskussion der Artikel %(article_list)s."
+
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
 
 msgid "This topic was already reported."
 msgstr "Dieses Thema wurde bereits gemeldet."
+
+msgid "Title of the new topic:"
+msgstr "Titel des neuen Themas:"
+
+msgid "Title:"
+msgstr "Titel:"
 
 msgid "Topic"
 msgstr "Thema"
@@ -381,6 +813,13 @@ msgstr "Themen"
 #, python-format
 msgid "Topics by “%(user)s”"
 msgstr "Themen von „%(user)s“"
+
+#, python-format
+msgid "Topics: <strong>%(n)s</strong>"
+msgstr "Themen: <strong>%(n)s</strong>"
+
+msgid "URL of the topic:"
+msgstr "URL des Themas:"
 
 msgid "Ubuntu"
 msgstr "Ubuntu"
@@ -403,8 +842,23 @@ msgstr "Ubuntu Unity"
 msgid "Unanswered topics"
 msgstr "Unbeantwortete Themen"
 
+msgid "Unlock"
+msgstr "Entsperren"
+
+msgid "Unread posts"
+msgstr "Ungelesene Beiträge"
+
+msgid "Unsolved"
+msgstr "Ungelöst"
+
 msgid "Unsolved topics"
 msgstr "Ungelöste Themen"
+
+msgid "Unsubscribe"
+msgstr "Abbestellen"
+
+msgid "Unsubscribe from topic reports"
+msgstr "Themenmeldungen abbestellen"
 
 msgid "Version"
 msgstr "Version"
@@ -413,6 +867,15 @@ msgstr "Version"
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
 msgstr "%(name)s ansehen"
+
+msgid "Views"
+msgstr "Aufrufe"
+
+msgid "Vote"
+msgstr "Abstimmen"
+
+msgid "Welcome message"
+msgstr "Willkommensnachricht"
 
 msgid "Welcome text"
 msgstr "Willkommens Text"
@@ -438,9 +901,6 @@ msgstr "Du kannst dir nur die letzten %(n)d Seiten anzeigen lassen."
 
 msgid "You cannot edit this post."
 msgstr "Du kannst diesen Beitrag nicht bearbeiten."
-
-msgid "You cannot move a topic into a category. Please choose a forum."
-msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
 
 msgid "You cannot reply in this topic because it is hidden."
 msgstr "Du kannst in diesem Thema nicht antworten, da es nicht sichtbar ist."
@@ -470,9 +930,53 @@ msgstr "Du wirst ab sofort nicht mehr bei gemeldeten Themen benachrichtigt."
 msgid "Your topic “%(topic)s” was moved."
 msgstr "Dein Thema „%(topic)s“ wurde verschoben."
 
+msgid "[Hidden]"
+msgstr "[Verborgen]"
+
+msgid "[Reported]"
+msgstr "[Gemeldet]"
+
 #, python-format
 msgid "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible spam."
 msgstr "[user:%(username)s:]: Der Beitrag [post:%(post)s:] wurde aufgrund möglichen Spams verborgen."
+
+#, python-format
+msgid "by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "von <a href=\"%(link)s\">%(author)s</a>"
+
+#, python-format
+msgid "by <a href=\"%(link)s\">%(name)s</a>"
+msgstr "von <a href=\"%(link)s\">%(name)s</a>"
+
+msgid "hidden topic"
+msgstr "Verstecktes Thema"
+
+msgid "last edited:"
+msgstr "zuletzt bearbeitet:"
+
+msgid "locked topic"
+msgstr "Gesperrtes Thema"
+
+msgid "only here"
+msgstr "nur hier"
+
+msgid "reported topic"
+msgstr "Gemeldetes Thema"
+
+msgid "solved topic"
+msgstr "Gelöstes Thema"
+
+msgid "sticky topic"
+msgstr "Wichtiges Thema"
+
+msgid "unread topic"
+msgstr "Ungelesenes Thema"
+
+msgid "upload attachment"
+msgstr "Anhang hochladen"
+
+msgid "« Previous topic"
+msgstr "« Vorheriges Thema"
 
 #, python-format
 msgid "“%(topic)s” – Reply from “%(username)s“"
