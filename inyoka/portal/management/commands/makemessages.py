@@ -50,7 +50,9 @@ class Command(BaseCommand):
         # global files
         args = args_extract + [
             '-o', 'inyoka/locale/django.pot',
-            'inyoka/utils', 'inyoka/middlewares'
+            'inyoka/utils',
+            'inyoka/middlewares',
+            'jinja2',
         ]
         call(args)
         args = args_update + [
