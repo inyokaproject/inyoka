@@ -66,7 +66,7 @@ Deployment notes
 -----------
 
 * Add ``SECURITY.md``
-* Update requirements (at least the dependencies ``Django`` include known security fixes)
+* Update requirements (at least the dependency ``Django`` includes known security fixes)
 * Markup, Edited-/Mod boxes: Escape parameters to prevent HTML injection
 * Templates: Escape more user-controllable variables to prevent HTML injections
 
