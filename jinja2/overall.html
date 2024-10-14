@@ -218,7 +218,7 @@
       <ul>
         <li class="poweredby">
           {% trans link=href('portal', 'inyoka') %}Powered by <a href="{{ link }}">Inyoka</a>{% endtrans %}
-          {% if SETTINGS.DEBUG %}
+          {% if debug %}
             {% trans seconds=request.watch.duration|round(2) -%}
               (rendered in {{ seconds }} seconds)
             {%- endtrans %}
@@ -227,7 +227,7 @@
           {% if INYOKA_VERSION %}
           Inyoka {{ INYOKA_VERSION }}
           {% endif %}
-          {% if SETTINGS.DEBUG %}
+          {% if debug %}
             <br>
             {{ sql_queries_count }} SQL queries in {{ sql_queries_time }}s
           {% endif %}
@@ -250,7 +250,7 @@
       var
         $STATIC_URL = {{ href('static')|jsonencode }},
         $MEDIA_URL = {{ href('media')|jsonencode }},
-        $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
+        $BASE_DOMAIN_NAME = {{ BASE_DOMAIN_NAME|jsonencode }},
         $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated else 'null' }},
         $IS_LOGGED_IN = {{ USER.is_authenticated and 'true' or 'false' }},
         $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};

@@ -130,7 +130,7 @@ class Command(BaseCommand):
             'page': page,
             'linkmap_css': Linkmap.objects.get_css_basename(),
             'USER': kwargs.get('user', None),
-            'SETTINGS': settings
+            'WIKI_MAIN_PAGE': settings.WIKI_MAIN_PAGE,
         }
 
     @templated('portal/static_page.html')
@@ -146,7 +146,7 @@ class Command(BaseCommand):
             'page': q,
             'linkmap_css': Linkmap.objects.get_css_basename(),
             'USER': kwargs.get('user', None),
-            'SETTINGS': settings
+            'WIKI_MAIN_PAGE': settings.WIKI_MAIN_PAGE,
         }
 
     def _write_file(self, pth, content):

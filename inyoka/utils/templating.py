@@ -191,7 +191,7 @@ def environment(**options):
 
     env.globals.update(BASE_DOMAIN_NAME=settings.BASE_DOMAIN_NAME,
                        INYOKA_VERSION=INYOKA_VERSION,
-                       SETTINGS=settings,
+                       WIKI_MAIN_PAGE=settings.WIKI_MAIN_PAGE,
                        href=href)
     env.filters.update(FILTERS)
 

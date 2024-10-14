@@ -12,7 +12,7 @@
 {%- extends 'forum/page.html' %}
 {% set scripts = ['jquery.cookie'] %}
 
-{% from 'forum/_forum.html' import render_forum %}
+{% from 'forum/_forum.html' import render_forum with context %}
 {% if not is_index and categories %}
   {% set BREADCRUMBS = [(categories[0].name, categories[0]|url)] + BREADCRUMBS|d([]) %}
 
