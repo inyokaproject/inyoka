@@ -100,7 +100,7 @@ Build docker images
 ===================
 
 Start the `action
-<https://github.com/inyokaproject/docker-setup/actions/workflows/build-docker-images.yml>`_
+<https://github.com/inyokaproject/docker-setup/actions/workflows/build-ubuntuusers-docker-images.yml>`_
 on the Inyoka branches
 
  * (optional) staging
