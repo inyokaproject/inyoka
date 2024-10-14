@@ -219,7 +219,7 @@
         <li class="poweredby">
           {% trans link=href('portal', 'inyoka') %}Powered by <a href="{{ link }}">Inyoka</a>{% endtrans %}
           {% if SETTINGS.DEBUG %}
-            {% trans seconds=REQUEST.watch.duration|round(2) -%}
+            {% trans seconds=request.watch.duration|round(2) -%}
               (rendered in {{ seconds }} seconds)
             {%- endtrans %}
           {% endif %}

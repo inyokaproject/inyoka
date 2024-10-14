@@ -20,7 +20,6 @@ def mkenv(root):
     env.globals.update(
         INYOKA_VERSION=None,
         SETTINGS=None,
-        REQUEST=None,
         href=mkdummy('href-link'),
         csrf_token=lambda: 'csrf_token-content'
     )

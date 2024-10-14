@@ -192,8 +192,6 @@ def environment(**options):
     env.globals.update(BASE_DOMAIN_NAME=settings.BASE_DOMAIN_NAME,
                        INYOKA_VERSION=INYOKA_VERSION,
                        SETTINGS=settings,
-                       # TODO: Django already passes the request as request, sed over all templates
-                       REQUEST=current_request,
                        href=href)
     env.filters.update(FILTERS)
 
