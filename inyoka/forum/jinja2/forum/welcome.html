@@ -15,7 +15,7 @@
   <h1>{{ forum.welcome_title|e }}</h1>
   {{ forum.welcome_text_rendered }}
   <form method="post" action="{{ forum|url('welcome') }}">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <input type="submit" name="accept" value="{% trans %}Read and accepted{% endtrans %}">
     <input type="submit" name="cancel" value="{% trans %}Reject{% endtrans %}">
   </form>

@@ -30,7 +30,7 @@
 {% block portal_content %}
   <h3>{% trans %}Subscriptions{% endtrans %}</h3>
   <form class="usercp_form" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <table class="usercp_subscriptions">
      <colgroup>
         <col width="1%">

@@ -17,7 +17,6 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.forms.widgets import CheckboxInput
 from django.template import loader
-from django.template.backends.utils import csrf_input
 from django.utils import translation
 from django.utils.encoding import force_str
 from django.utils.functional import Promise
@@ -128,9 +127,6 @@ def context_data(request):
         'suggestion_count': suggestions,
         'event_count': events,
     }
-
-    # TODO: Replace with django builtins
-    context['csrf_token'] = lambda: csrf_input(request)
 
     if settings.DEBUG:
         from django.db import connection

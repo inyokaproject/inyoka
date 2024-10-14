@@ -20,7 +20,7 @@
   {% if USER.has_perm('portal.change_user') %}
     <p>{% trans %}Choose the user you want to edit:{% endtrans %}</p>
     <form action="" method="post">
-      {{ csrf_token() }}
+      {{ csrf_input }}
       <p>
         <input type="text" id="user_query" name="user">
         <input type="submit" value="{% trans %}Select{% endtrans %}">

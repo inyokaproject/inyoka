@@ -21,7 +21,7 @@
     You can reactivate your user account “{{ name }}” up to one month with the link sent to you via e-mail. After this period you will never be able to gain access to your account again.
   {%- endtrans %}</p>
   <form autocomplete="off" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <p>{% trans %}To deactivate your account, you need to enter your password.{% endtrans %}</p>
     <p>
       {{ form.password_confirmation }}

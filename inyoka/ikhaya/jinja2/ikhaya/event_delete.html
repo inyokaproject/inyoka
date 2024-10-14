@@ -9,7 +9,7 @@
 #}
 
 <form action="{{ object|url('delete')|e }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <p>
     {%- trans link=object|url('show'), event=object.name|e -%}
       Do you really want to delete the event <a href="{{ link }}">{{ event }}</a>?

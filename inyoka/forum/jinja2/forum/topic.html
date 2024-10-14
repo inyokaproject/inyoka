@@ -144,7 +144,7 @@
 
   {%- if polls %}
     <form action="" method="post" class="poll">
-      {{ csrf_token() }}
+      {{ csrf_input }}
       {%- for poll in polls %}
         <table class="poll">
           <caption>{{ poll.question|e }}</caption>

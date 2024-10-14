@@ -31,7 +31,7 @@
   {% endif %}
 
   <form action="" method="post" class="ikhaya">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ form.errors.__all__ }}
     {%- if article.article_icon %}
       <div class="icon"><img src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}"></div>

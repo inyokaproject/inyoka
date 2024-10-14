@@ -27,7 +27,7 @@
     {%- endif -%}
   </p>
   <form action="" method="post">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <div class="suggestionlist">
         {%- for suggestion in suggestions %}
           <div class="article" id="{{ suggestion.id }}">

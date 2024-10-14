@@ -16,7 +16,7 @@
 
 {% block portal_content %}
   <form action="{{ href('portal', 'privmsg', 'new') }}" method="post">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ form.non_field_errors() }}
     {% if USER.has_perm('portal.send_group_privatemessage') %}
     {{ render_form(form, ['recipient', 'group_recipient','subject', 'text']) }}

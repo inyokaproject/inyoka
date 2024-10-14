@@ -10,7 +10,7 @@
 
 
 <form action="{{ post|url(action)|e }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <p>
     {%- if action=='delete' -%}
       {% trans link=post|url('show')|e, author=post.author.username|e -%}

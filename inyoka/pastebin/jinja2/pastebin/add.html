@@ -15,7 +15,7 @@
 
 {% block paste_content %}
   <form action="" method="post">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <dl>
       <dt>{% trans %}About:{% endtrans %}</dt>
       <dd>{% trans -%}

@@ -24,7 +24,7 @@
   </p>
 
   <form enctype="multipart/form-data" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ formset.management_form }}
     {{ formset.non_form_errors() }}
 

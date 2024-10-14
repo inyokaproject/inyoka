@@ -35,7 +35,7 @@
     {%- if is_subscribed %}
       <form action="{{ href('portal', 'user', user.username, 'unsubscribe')|e }}"
             method="post">
-        {{ csrf_token() }}
+        {{ csrf_input }}
         <input type="image"
                class="action action_subscribe subscribe_user admin link"
                src="{{ href('static', 'img/forum/subscribe.svg') }}"
@@ -47,7 +47,7 @@
       <form action="{{ href('portal', 'user', user.username, 'subscribe')|e }}"
             method="post"
             class="subscribe_user_form">
-          {{ csrf_token() }}
+          {{ csrf_input }}
         <input type="image"
                class="action action_subscribe subscribe_user admin_link"
                src="{{ href('static', 'img/forum/subscribe.svg') }}"

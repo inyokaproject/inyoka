@@ -22,7 +22,7 @@
 
   <form action="" method="post" class="loginform">
     {{ form.non_field_errors() }}
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <dl>
       {{ render_form(form, ['username', 'password', 'permanent'], inline=true) }}
     </dl>

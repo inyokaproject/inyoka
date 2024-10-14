@@ -15,7 +15,7 @@
 
 {% block forum_content %}
   <form action="" method="post" class="new_topic">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <h2>{% trans topic=topic.title|e %}Split topic “{{ topic }}”{% endtrans %}</h2>
     <p>
       {% trans %}The chosen posts can form a new topic or be attached to an existing topic.{% endtrans %}
