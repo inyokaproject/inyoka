@@ -14,7 +14,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
 from django.db.models import Max
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.utils.html import escape, smart_urlquote
 from django.utils.translation import gettext as _
 
@@ -27,7 +29,7 @@ from inyoka.utils.http import does_not_exist_is_404, templated
 from inyoka.utils.mail import send_mail
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href
 
 
@@ -89,15 +91,17 @@ def suggest(request):
         form = SuggestBlogForm(request.POST)
         if form.is_valid():
             users = Group.objects.get(name__iexact=settings.INYOKA_IKHAYA_GROUP_NAME).user_set.all()
-            text = render_template('mails/planet_suggest.txt',
-                                   form.cleaned_data)
+            if not users:
+                messages.error(request, _('No user is registered as a planet administrator.'))
+                return HttpResponseRedirect(href('planet'))
+
+            text = render_to_string('mails/planet_suggest.txt',
+                                    form.cleaned_data)
             for user in users:
                 send_mail(_('A new blog was suggested.'), text,
                           settings.INYOKA_SYSTEM_USER_EMAIL,
                           [user.email])
-            if not users:
-                messages.error(request, _('No user is registered as a planet administrator.'))
-                return HttpResponseRedirect(href('planet'))
+
             messages.success(request, _('The blog “%(title)s” was suggested.')
                              % {'title': escape(form.cleaned_data['name'])})
             return HttpResponseRedirect(href('planet'))
@@ -174,8 +178,7 @@ def hide_entry(request, id):
                 msg = _('The entry “%(title)s” was successfully restored.')
             messages.success(request, msg % {'title': entry.title})
     else:
-        messages.info(request, render_template('planet/hide_entry.html',
-                                               {'entry': entry}))
+        flash_message(request, 'planet/hide_entry.html', {'entry': entry})
     return HttpResponseRedirect(href('planet'))
 
 
@@ -185,9 +188,8 @@ def export(request, export_type):
     assert export_type in ('foaf', 'opml')
     ext = {'foaf': 'rdf', 'opml': 'xml'}
 
-    data = render_template('planet/%s.xml' % export_type,
-                           {'blogs': blogs})
-    response = HttpResponse(data, content_type='text/xml; charset=utf-8')
+    response = render('planet/%s.xml' % export_type, {'blogs': blogs},
+                      content_type='text/xml; charset=utf-8')
     response['Content-Disposition'] = ('attachment; filename=ubuntuusers_%s.%s'
                                        % (export_type, ext[export_type]))
     return response

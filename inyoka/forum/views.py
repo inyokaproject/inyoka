@@ -75,7 +75,7 @@ from inyoka.utils.http import (
 from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.models import Page
@@ -1430,7 +1430,7 @@ def delete_topic(request, topic_slug, action='hide'):
             topic.forum.invalidate_topic_cache()
             return HttpResponseRedirect(redirect)
     else:
-        messages.info(request, render_template('forum/delete_topic.html', {'topic': topic, 'action': action}))
+        flash_message(request, 'forum/delete_topic.html', {'topic': topic, 'action': action})
 
     return HttpResponseRedirect(url_for(topic))
 

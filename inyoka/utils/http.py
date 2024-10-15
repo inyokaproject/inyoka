@@ -12,9 +12,9 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
+from django.template.loader import render_to_string
 
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.templating import render_template
 
 
 def templated(template_name, status=None, modifier=None,
@@ -79,7 +79,7 @@ class TemplateResponse(HttpResponse):
                  content_type='text/html; charset=utf-8'):
         if settings.DEBUG or settings.PROPAGATE_TEMPLATE_CONTEXT:
             self.tmpl_context = context
-        tmpl = render_template(template_name, context)
+        tmpl = render_to_string(template_name, context) # TODO more refactor?
         HttpResponse.__init__(self, tmpl, status=status,
                               content_type=content_type)
 

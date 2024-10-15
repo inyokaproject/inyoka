@@ -37,7 +37,7 @@ from inyoka.utils.http import (
 )
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
@@ -263,9 +263,8 @@ def do_revert(request, name, rev=None):
                                  'title': escape(page.rev.title)})
             url = url_for(page)
     else:
-        messages.info(request,
-                      render_template('wiki/action_revert.html',
-                                      {'page': page}))
+        flash_message(request, 'wiki/action_revert.html', {'page': page})
+
     return HttpResponseRedirect(url)
 
 
@@ -357,8 +356,10 @@ def _rename(request, page, new_name, force=False, new_text=None):
 def do_rename(request, name, new_name=None, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
+
     if new_name is None:
         new_name = name
+
     if request.method == 'POST':
         new_name = normalize_pagename(request.POST.get('new_name', ''))
         if not new_name:
@@ -376,11 +377,12 @@ def do_rename(request, name, new_name=None, force=False):
                 return HttpResponseRedirect(href('wiki', name))
 
         return HttpResponseRedirect(url_for(page))
-    messages.info(request, render_template('wiki/action_rename.html', {
+
+    flash_message(request, 'wiki/action_rename.html', {
         'page': page,
         'new_name': new_name,
         'force': force
-    }))
+    })
     return HttpResponseRedirect(url_for(page, 'show'))
 
 
@@ -395,7 +397,6 @@ def _get_wiki_article_templates():
 
 def _get_wiki_reserved_names():
     """Return a list of words that should not be used as article names."""
-    # TODO: this is a hack, do not have these hardcoded here!
     return ['wiki', 'a']
 
 
@@ -552,8 +553,8 @@ def do_delete(request, name):
                       note=request.POST.get('note', '') or 'Page deleted.')
             messages.success(request, 'Page deleted successfully.')
     else:
-        messages.info(request,
-            render_template('wiki/action_delete.html', {'page': page}))
+        flash_message(request,'wiki/action_delete.html', {'page': page})
+
     return HttpResponseRedirect(url_for(page))
 
 
@@ -671,8 +672,7 @@ def do_mv_discontinued(request, name):
             messages.success(request,
                 'Seite wurde erfolgreich verschoben.')
     else:
-        messages.info(request,
-            render_template('wiki/action_mv_discontinued.html', {'page': page}))
+        flash_message(request, 'wiki/action_mv_discontinued.html', {'page': page})
     return HttpResponseRedirect(url_for(page))
 
 
@@ -741,8 +741,7 @@ def do_mv_back(request, name):
             )
             return HttpResponseRedirect(url_for(page))
     else:
-        messages.info(request,
-            render_template('wiki/action_mv_back.html', {'page': page}))
+        flash_message(request, 'wiki/action_mv_back.html', {'page': page})
     return HttpResponseRedirect(url_for(page))
 
 

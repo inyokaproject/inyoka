@@ -13,6 +13,7 @@ from django.views.static import serve
 
 from inyoka.utils.http import global_not_found, server_error
 
+
 def view(*args, **kwargs):
     response = serve(*args, **kwargs)
     if settings.DEBUG:

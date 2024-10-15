@@ -16,7 +16,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.forms.widgets import CheckboxInput
-from django.template import loader
+from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.encoding import force_str
 from django.utils.functional import Promise
@@ -32,7 +32,6 @@ from inyoka.utils.dates import (
     format_timetz,
     naturalday,
 )
-from inyoka.utils.local import current_request
 from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for
@@ -138,21 +137,9 @@ def context_data(request):
     return context
 
 
-# TODO: try to get rid of
-def render_template(template_name, context, flash=False,
-                    populate_defaults=True):
-    """Render a template.  You might want to set `req` to `None`."""
-    # BIG TODO: This currently return a raw Jinja template instead of a Django Template
-    # to support flash/populate_defaults. If we were to take flash from the context instead
-    # we could use context_processor and drop this function completly and use Django's render()
-    # function.
-
-    tmpl = loader.select_template([template_name])
-    try:
-        request = current_request._get_current_object()
-    except RuntimeError:
-        request = None
-    return tmpl.render(context, request)
+def flash_message(request, template_name: str, context: dict):
+    messages.info(request,
+                  render_to_string(template_name, context, request=request))
 
 
 def urlencode_filter(value):

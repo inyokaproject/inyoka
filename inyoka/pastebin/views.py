@@ -16,7 +16,7 @@ from django.utils.translation import gettext as _
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
 from inyoka.utils.http import templated
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href
 
 
@@ -68,8 +68,8 @@ def delete(request, entry_id):
             messages.success(request, _('The entry in the pastebin was deleted.'))
             return HttpResponseRedirect(href('pastebin'))
     else:
-        messages.info(request, render_template('pastebin/delete_entry.html',
-                      {'entry': entry}))
+        flash_message(request, 'pastebin/delete_entry.html', {'entry': entry})
+
     return HttpResponseRedirect(href('pastebin', entry.id))
 
 

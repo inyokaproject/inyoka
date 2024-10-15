@@ -23,7 +23,7 @@ from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.http import TemplateResponse
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 
 
 def trigger_fix_errors_message(request):
@@ -160,8 +160,7 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        messages.info(request,
-            render_template(self.template_name, {'object': self.object}))
+        flash_message(request, self.template_name, {'object': self.object})
         return HttpResponseRedirect(self.redirect_url)
 
     def post(self, request, *args, **kwargs):

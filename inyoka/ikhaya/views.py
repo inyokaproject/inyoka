@@ -16,7 +16,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
 from django.utils.dates import MONTHS
 from django.utils.html import escape
 from django.utils.timezone import get_current_timezone
@@ -62,7 +63,7 @@ from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href, is_safe_domain, url_for
 
 
@@ -271,9 +272,8 @@ def article_delete(request, year, month, day, slug):
                 _('The article “%(title)s” was deleted.')
                 % {'title': escape(article.subject)})
     else:
-        messages.info(request,
-            render_template('ikhaya/article_delete.html',
-            {'article': article}))
+        flash_message(request, 'ikhaya/article_delete.html',{'article': article})
+
     return HttpResponseRedirect(href('ikhaya'))
 
 
@@ -627,7 +627,7 @@ def suggest_delete(request, suggestion):
                 msg = PrivateMessage()
                 msg.author = request.user
                 msg.subject = _('Article suggestion deleted')
-                msg.text = render_template('mails/suggestion_rejected.txt', args)
+                msg.text = render_to_string('mails/suggestion_rejected.txt', args)
                 msg.pub_date = datetime.utcnow()
                 recipients = [s.author]
                 msg.send(recipients)
@@ -661,7 +661,7 @@ def suggest_delete(request, suggestion):
             messages.error(request, _('This suggestion does not exist.'))
             return HttpResponseRedirect(href('ikhaya', 'suggestions'))
         messages.info(request,
-            render_template('ikhaya/suggest_delete.html', {'s': s}))
+            render(request, 'ikhaya/suggest_delete.html', {'s': s}))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 

@@ -31,6 +31,7 @@ from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.middleware.csrf import REASON_NO_CSRF_COOKIE, REASON_NO_REFERER
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.html import escape
@@ -105,7 +106,7 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
@@ -199,7 +200,8 @@ def index(request):
         """
         Renders the Mini Calendar from the portal landing page.
         """
-        return render_template('portal/minicalendar.html', {'events': Event.objects.get_upcoming(4)}, populate_defaults=False)
+        # TODO: cache in template to not inject a string into a template?
+        return render_to_string('portal/minicalendar.html', {'events': Event.objects.get_upcoming(4)})
 
     return {
         'welcome_message_rendered': storage['welcome_message_rendered'],
@@ -436,11 +438,12 @@ def user_mail(request, username):
             user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         raise Http404
+
     if request.method == 'POST':
         form = UserMailForm(request.POST)
         if form.is_valid():
             text = form.cleaned_data['text']
-            message = render_template('mails/formmailer_template.txt', {
+            message = render_to_string('mails/formmailer_template.txt', {
                 'user': user,
                 'text': text,
                 'from': request.user.username,
@@ -460,6 +463,7 @@ def user_mail(request, username):
             generic.trigger_fix_errors_message(request)
     else:
         form = UserMailForm()
+
     return {
         'form': form,
         'user': user,
@@ -497,13 +501,13 @@ def unsubscribe_user(request, username):
                     '“%(username)s”.') % {'username': user.username})
         else:
             # ask for confirmation with form in case of GET (CSRF)
-            messages.info(request, render_template('confirm_action_flash.html', {
+            flash_message(request, 'confirm_action_flash.html', {
                     'message': _('Do you want to unsubscribe from the user '
                                  '“%(username)s”?') % {'username': user.username},
                     'confirm_label': _('Unsubscribe'),
                     'cancel_label': _('Cancel'),
                     'action_url': request.build_absolute_uri(),
-                }, flash=True))
+                })
 
     # redirect the user to the page he last watched
     if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
@@ -967,11 +971,11 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                 elif action == 'delete':
                     msg = _('Do you really want to delete the message?')
                     confirm_label = _('Delete')
-                messages.info(request, render_template('confirm_action_flash.html', {
+                flash_message(request, 'confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': _('Cancel'),
-                }, flash=True))
+                })
     else:
         message = None
     link = href('portal', 'privmsg', folder, 'page')

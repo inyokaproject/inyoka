@@ -10,7 +10,7 @@
 """
 from urllib.parse import unquote
 
-from django.http import HttpResponse
+from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_GET, require_POST
 
@@ -18,7 +18,6 @@ from inyoka.forum.models import Forum, Post, Topic
 from inyoka.portal.models import Subscription
 from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
 from inyoka.utils.services import SimpleDispatcher, never_cache
-from inyoka.utils.templating import render_template
 
 dispatcher = SimpleDispatcher(
     subscribe=lambda r: subscription_action(r, 'subscribe'),
@@ -171,12 +170,10 @@ def get_new_latest_posts(request):
     posts = Post.objects.filter(id__gt=post.id, topic__id=post.topic.id) \
                         .order_by('-position').all()
 
-    code = render_template('forum/_edit_latestpost_row.html', {
+    return render(request, 'forum/_edit_latestpost_row.html', {
         '__main__': True,
         'posts': posts,
     })
-
-    return HttpResponse(code)
 
 
 @never_cache
