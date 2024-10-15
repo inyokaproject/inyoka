@@ -62,9 +62,9 @@ def does_not_exist_is_404(f):
 
 
 def global_not_found(request, err_message=None, exception=None):
-    return TemplateResponse('errors/404.html', {
+    return render(request, 'errors/404.html', {
         'err_message': err_message,
-    }, 404)
+    }, status=404)
 
 
 def server_error(request, exception=None):
