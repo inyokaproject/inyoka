@@ -114,7 +114,6 @@ def context_data(request):
     context = {
         'CURRENT_URL': request.build_absolute_uri(),
         'current_year': date.today().year,
-        'USER': user,
         'special_day_css': check_special_day(),
         'LANGUAGE_CODE': settings.LANGUAGE_CODE,
         'linkmap_css': linkmap_model.objects.get_css_basename(),

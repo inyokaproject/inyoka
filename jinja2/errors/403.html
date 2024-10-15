@@ -17,7 +17,7 @@
     <p>
       {% trans %}You do not have permissions to access this page.{% endtrans %}
     </p>
-    {% if not USER.is_authenticated %}
+    {% if not request.user.is_authenticated %}
       <p>
         {% trans %}This may be because you are not logged in.{% endtrans %}
       </p>

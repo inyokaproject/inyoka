@@ -55,7 +55,7 @@
     {%- if event %}
       <span class="linklist">|
         <a href="{{ event|url() }}">{% trans %}Show event{% endtrans %}</a> |
-    {%- if USER.has_perm('portal.delete_event') %}
+    {%- if request.user.has_perm('portal.delete_event') %}
         <a href="{{ event|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
     {%- endif %}
       </span>

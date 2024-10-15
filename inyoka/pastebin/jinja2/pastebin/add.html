@@ -22,7 +22,7 @@
         This is a pastebin where you can save error messages, logs, configuration files or source codes to keep threads or IRC channels clean. To do this, just copy the text in the box below and choose the appropriate language. After that, you copy the URL into the topic or the channel.
       {%- endtrans %}</dd>
       {{ render_form(form, ['title', 'lang', 'code'], inline=True) }}
-      {%- if not USER.is_authenticated %}
+      {%- if not request.user.is_authenticated %}
       {{ render_form(form, ['captcha'], inline=True) }}
       {%- endif %}
       <dd>

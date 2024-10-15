@@ -16,7 +16,7 @@
 
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}"
-      {% if USER.settings.get('reduce_motion', False) %}class="reduce-motion"{% endif %}>
+      {% if request.user.settings.get('reduce_motion', False) %}class="reduce-motion"{% endif %}>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,13 +70,13 @@
             <strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong>
           </noscript>
         </li>
-        {% if USER.is_authenticated %}
+        {% if request.user.is_authenticated %}
           <li>
             <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
-              {% if USER.has_avatar %}
-                {{ macros.add_user_avatar(USER) }}
+              {% if request.user.has_avatar %}
+                {{ macros.add_user_avatar(request.user) }}
               {% endif %}
-              {% trans user=USER.username|e %}Logout [{{ user }}]{% endtrans %}
+              {% trans user=request.user.username|e %}Logout [{{ user }}]{% endtrans %}
             </a>
           </li>
           <li>
@@ -123,19 +123,19 @@
       </ul>{# .tabbar #}
     </header>{# .header #}
 
-        {% if USER.has_perm('forum.manage_reported_topic') or USER.has_perm('ikhaya.change_article') or USER.has_perm('portal.change_event') %}
+        {% if request.user.has_perm('forum.manage_reported_topic') or request.user.has_perm('ikhaya.change_article') or request.user.has_perm('portal.change_event') %}
           <div id="admin_menu">
             <div class="bar">
-              {% if USER.has_perm('forum.manage_reported_topic') %}
+              {% if request.user.has_perm('forum.manage_reported_topic') %}
                 {{ macros.render_modnavi_li(_('Reported topics'), href('forum', 'reported_topics'), href('static', 'img/admin/report.png'), report_count) }}
               {% endif %}
-              {% if USER.has_perm('ikhaya.change_article') %}
+              {% if request.user.has_perm('ikhaya.change_article') %}
                 {% set label = _('Article suggestions') %}
                 {{ macros.render_modnavi_li(label, href('ikhaya', 'suggestions'), href('static', 'img/admin/article.png'), suggestion_count) }}
                 {% set label = _('Spelling mistakes') %}
                 {{ macros.render_modnavi_li(label, href('ikhaya', 'reports'), href('static', 'img/admin/spelling.png'), article_report_count) }}
               {% endif %}
-              {% if USER.has_perm('portal.change_event') %}
+              {% if request.user.has_perm('portal.change_event') %}
                 {% set label = _('Event suggestions') %}
                 {{ macros.render_modnavi_li(label, href('ikhaya', 'events', 'invisible'), href('static', 'img/admin/event.png'), event_count) }}
               {% endif %}
@@ -251,9 +251,9 @@
         $STATIC_URL = {{ href('static')|jsonencode }},
         $MEDIA_URL = {{ href('media')|jsonencode }},
         $BASE_DOMAIN_NAME = {{ BASE_DOMAIN_NAME|jsonencode }},
-        $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated else 'null' }},
-        $IS_LOGGED_IN = {{ USER.is_authenticated and 'true' or 'false' }},
-        $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
+        $CURRENT_USER = {{ request.user.username|jsonencode if request.user.is_authenticated else 'null' }},
+        $IS_LOGGED_IN = {{ request.user.is_authenticated and 'true' or 'false' }},
+        $SIDEBAR_HIDDEN = {{ request.user.settings.portal_sidebar_hidden and 'true' or 'false' }};
     /*]]>*/
     </script>
 

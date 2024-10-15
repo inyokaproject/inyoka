@@ -35,14 +35,14 @@
 
 {% macro topic_actions() %}
   <span class="linklist">
-    {%- if not USER.is_authenticated or can_reply and not topic.locked %}
+    {%- if not request.user.is_authenticated or can_reply and not topic.locked %}
       <a href="{{ topic|url('reply') }}" class="action action_reply">{% trans %}Reply{% endtrans %}</a> |
     {%- elif can_moderate and topic.locked %}
       <span class="admin_link">
         <a href="{{ topic|url('reply') }}" class="action action_reply">{% trans %}Reply{% endtrans %}</a> |
       </span>
     {%- endif %}
-    {% if USER.is_authenticated %}
+    {% if request.user.is_authenticated %}
       {%- if is_subscribed %}
         <a href="{{ generate_subscription_link(do='unsubscribe') }}"
            class="action action_subscribe subscribe_topic"
@@ -93,7 +93,7 @@
       {%- if topic.hidden %}
         <a href="{{ topic|url('restore') }}"
            class="action action_restore admin_link">{% trans %}Restore{% endtrans %}</a> |
-        {%- if USER.has_perm('forum.delete_topic_forum', forum) %}
+        {%- if request.user.has_perm('forum.delete_topic_forum', forum) %}
         <a href="{{ topic|url('delete') }}"
            class="action action_delete admin_link">{% trans %}Delete{% endtrans %}</a> |
         {%- endif %}
@@ -208,9 +208,9 @@
 
   <table class="topic admin_link_hover">
     <tbody>
-      {%- for post in posts if not (post.hidden and not can_moderate and not post.author == USER) %}
+      {%- for post in posts if not (post.hidden and not can_moderate and not post.author == request.user) %}
         <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
-          <td class="author{% if post.author == USER %} -own{% endif %}">
+          <td class="author{% if post.author == request.user %} -own{% endif %}">
             <p class="username{% if not post.author.is_active %} inactive{% endif %}">
               <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
               {% if post.author.icon %}
@@ -224,7 +224,7 @@
             {%- if post.author_id == topic.author_id and not (pagination.page == 1 and loop.first) %}
               <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
             {%- endif %}
-            {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
+            {%- if post.author.has_avatar and not request.user.settings['hide_avatars'] %}
               {{ add_user_avatar(post.author) }}
             {%- endif %}
             <p>{% trans %}Member since:{% endtrans %}<br>{{ post.author.date_joined|naturalday }}</p>
@@ -233,7 +233,7 @@
               <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
             {%- endif %}
           </td>
-          <td class="post{% if post.author == USER %} -own{% endif %}">
+          <td class="post{% if post.author == request.user %} -own{% endif %}">
             <div class="postinfo">
               <div class="linklist">
                 {%- if can_delete(post) %}
@@ -284,7 +284,7 @@
                        class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
                   </span>
                 {%- endif %}
-                {%- if not USER.is_authenticated or can_reply and not topic.locked %}
+                {%- if not request.user.is_authenticated or can_reply and not topic.locked %}
                   <a href="{{ post|url('quote') }}"
                      class="action action_quote">{% trans %}Quote{% endtrans %}</a>
                 {%- elif can_moderate and topic.locked %}
@@ -299,7 +299,7 @@
                 {% endif %}
               </a>
             </div>
-            {% if post.hidden and post.author == USER %}
+            {% if post.hidden and post.author == request.user %}
             <div class="postinfo">
               {% trans %}This post is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators.{% endtrans %}
             </div>
@@ -340,7 +340,7 @@
                 {%- endfor %}
               </dl>
             {%- endif %}
-            {%- if post.author.signature and not USER.settings['hide_signatures'] %}
+            {%- if post.author.signature and not request.user.settings['hide_signatures'] %}
               <div class="signature">
                 {{ post.author.signature_rendered }}
               </div>

@@ -50,7 +50,7 @@
         <span class="linklist">|
           <a href="{{ article|url() }}">{% trans %}Show article{% endtrans %}</a> |
           <a href="{{ article|url('id') }}">{% trans %}Short URL{% endtrans %}</a> |
-          {%- if USER.has_perm('ikhaya.delete_article') %}
+          {%- if request.user.has_perm('ikhaya.delete_article') %}
           <a href="{{ article|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
           {%- endif %}
         </span>

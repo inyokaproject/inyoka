@@ -34,7 +34,7 @@
         {{ message.text_rendered }}
       </div>
       <div class="linklist pn_actions">
-        {%- if not message.author == USER %}
+        {%- if not message.author == request.user %}
           {% if message.author.is_active %}
           <a class="pn_reply" href="{{ message|url('reply') }}">{% trans %}Reply{% endtrans %}</a> |
           {%- endif %}

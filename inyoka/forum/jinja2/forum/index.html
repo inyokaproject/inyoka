@@ -37,7 +37,7 @@
         <tr class="head" id="category-{{ category.id }}">
           <th colspan="5"><a href="{{ category|url
             }}">{{ category.name|e }}</a>
-            {%- if USER.has_perm('forum.change_forum') -%}
+            {%- if request.user.has_perm('forum.change_forum') -%}
               <a href="{{ href('forum', 'forum', category.slug, 'edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" class="admin_link right"></a>
             {%- endif -%}
           </th>

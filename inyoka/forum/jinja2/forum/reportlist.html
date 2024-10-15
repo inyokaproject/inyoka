@@ -46,11 +46,11 @@
         <td>
           {% if topic.report_claimed_by %}
             <a href="{{ topic.report_claimed_by|url }}">{{ topic.report_claimed_by.username }}</a>
-            {% if topic.report_claimed_by.username == USER.username %}
-              <a href="{{ href('forum', 'reported_topics', unassign=USER, topic=topic.slug) }}">{% trans %}(undo){% endtrans %}</a>
+            {% if topic.report_claimed_by.username == request.user.username %}
+              <a href="{{ href('forum', 'reported_topics', unassign=request.user, topic=topic.slug) }}">{% trans %}(undo){% endtrans %}</a>
             {% endif %}
           {% else %}
-            <a href="{{ href('forum', 'reported_topics', assign=USER, topic=topic.slug) }}">{% trans %}Assign to me{% endtrans %}</a>
+            <a href="{{ href('forum', 'reported_topics', assign=request.user, topic=topic.slug) }}">{% trans %}Assign to me{% endtrans %}</a>
           {% endif %}
         </td>
         <td>

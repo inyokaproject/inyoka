@@ -19,7 +19,7 @@
   {{ super() }}
   <script>
     /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ USER.settings.planet_sidebar_hidden and 'true' or 'false' }};
+      var $SIDEBAR_HIDDEN = {{ request.user.settings.planet_sidebar_hidden and 'true' or 'false' }};
     /*]]>*/
   </script>
 {%- endblock %}
@@ -42,7 +42,7 @@
       <ul>
         {%- for blog in blogs %}
           <li class="admin_link_hover">
-            {%- if USER.has_perm('planet.change_blog') -%}
+            {%- if request.user.has_perm('planet.change_blog') -%}
               <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
             {%- endif -%}
             <a href="{{ blog|url|e }}">{{ blog.name|e }}</a>
@@ -50,7 +50,7 @@
         {%- endfor %}
       </ul>
     {%- endif %}
-    {%- if USER.has_perm('planet.add_blog') %}
+    {%- if request.user.has_perm('planet.add_blog') %}
       <h3 class="navi_blogs admin_link_hover">
         {% trans %}Configuration{% endtrans %}
       </h3>

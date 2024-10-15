@@ -14,10 +14,10 @@
 
 {% block portal_content %}
   <h3>{% trans %}Deactivate account{% endtrans %}</h3>
-  <p>{% trans name=USER.username|e -%}
+  <p>{% trans name=request.user.username|e -%}
     You can deactivate your account “{{ name }}” here. By doing this, we will remove all your personal data. All your forum posts and wiki articles will remain.
   {%- endtrans %}</p>
-  <p>{% trans name=USER.username|e -%}
+  <p>{% trans name=request.user.username|e -%}
     You can reactivate your user account “{{ name }}” up to one month with the link sent to you via e-mail. After this period you will never be able to gain access to your account again.
   {%- endtrans %}</p>
   <form autocomplete="off" method="post" action="">
@@ -25,7 +25,7 @@
     <p>{% trans %}To deactivate your account, you need to enter your password.{% endtrans %}</p>
     <p>
       {{ form.password_confirmation }}
-      <input type="submit" value="{% trans name=USER.username|e %}Deactivate my account “{{ name }}”{% endtrans %}">
+      <input type="submit" value="{% trans name=request.user.username|e %}Deactivate my account “{{ name }}”{% endtrans %}">
       {{- form.errors.password_confirmation }}
     </p>
   </form>

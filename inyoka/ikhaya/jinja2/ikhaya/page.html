@@ -18,7 +18,7 @@
   {{ super() }}
   <script>
     /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ USER.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
+      var $SIDEBAR_HIDDEN = {{ request.user.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
     /*]]>*/
   </script>
 {%- endblock %}
@@ -30,16 +30,16 @@
 
     <h3 class="navi_new_article admin_link_hover">{% trans %}Suggest{% endtrans %}</h3>
     <ul>
-      {% if USER.has_perm('ikhaya.suggest_article') %}
+      {% if request.user.has_perm('ikhaya.suggest_article') %}
         <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>
       {% endif %}
-      {% if USER.has_perm('portal.suggest_event') %}
+      {% if request.user.has_perm('portal.suggest_event') %}
         <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest event{% endtrans %}</a></li>
       {% endif %}
-      {%- if USER.has_perm('ikhaya.change_article') -%}
+      {%- if request.user.has_perm('ikhaya.change_article') -%}
         <li class="admin_link"><a href="{{ href('ikhaya', 'article', 'new') }}">{% trans %}New article{% endtrans %}</a></li>
       {%- endif -%}
-      {%- if USER.has_perm('ikhaya.change_event') -%}
+      {%- if request.user.has_perm('ikhaya.change_event') -%}
         <li class="admin_link"><a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a></li>
       {%- endif -%}
     </ul>
@@ -58,15 +58,15 @@
         </li>
       {% endif -%}
     </ul>
-    {% if categories or USER.has_perm('ikhaya.change_category') %}
+    {% if categories or request.user.has_perm('ikhaya.change_category') %}
       <h3 class="navi_categories admin_link_hover{% if not categories %} admin_link{% endif %}">{% trans %}Categories{% endtrans %}</h3>
       <ul>
-        {%- if USER.has_perm('ikhaya.change_category') -%}
+        {%- if request.user.has_perm('ikhaya.change_category') -%}
           <li class="admin_link"><a href="{{ href('ikhaya', 'category', 'new') }}">{% trans %}Add category{% endtrans %}</a></li>
         {%- endif -%}
         {%- for category in categories -%}
           <li class="admin_link_hover">
-            {%- if USER.has_perm('ikhaya.change_category') -%}
+            {%- if request.user.has_perm('ikhaya.change_category') -%}
               <a class="admin_link" href="{{ href('ikhaya', 'category', category.slug, 'edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
             {%- endif -%}
             <a href="{{ category|url }}">{{ category.name|e }}</a>

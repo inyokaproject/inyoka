@@ -22,7 +22,7 @@
 
 
 {% macro user_column(user) %}
-  <td class="author{% if user.id == USER.id %} -own{%- endif %}">
+  <td class="author{% if user.id == request.user.id %} -own{%- endif %}">
     <p class="username{% if not user.is_active %} inactive{% endif %}">
       <a href="{{ user|url }}">{{ user.username|e }}</a>
       {%- if user.primary_group_id and user.primary_group.icon %}
@@ -32,7 +32,7 @@
         <div class="member_title">{{ user.member_title|e }}</div>
       {%- endif %}
     </p>
-    {%- if user.has_avatar and not USER.settings['hide_avatars'] %}
+    {%- if user.has_avatar and not request.user.settings['hide_avatars'] %}
       {{ add_user_avatar(user) }}
     {%- endif %}
   </td>
@@ -80,16 +80,16 @@
           {%- else %}
             <tr id="comment_{{ loop.index }}" class="admin_link_hover{% if comment.deleted %} hidden{% endif %}">
               {{ user_column(comment.author) }}
-              <td class="comment{% if comment.author == USER %} -own{% endif %}">
+              <td class="comment{% if comment.author == request.user %} -own{% endif %}">
                 <div class="commentinfo">
                   <div class="linklist">
                     {# TODO: remove "can_admin_comment" if revision for comments is built in #}
-                    {%- if can_admin_comment and comment.author_id == USER.id %}
+                    {%- if can_admin_comment and comment.author_id == request.user.id %}
                       <a href="{{ comment|url('edit') }}" class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
                     {% endif %}
                     {%- if can_admin_comment %}
                       <span class="admin_link">
-                        {% if comment.author_id != USER.id %}
+                        {% if comment.author_id != request.user.id %}
                           <a href="{{ comment|url('edit') }}" class="admin_link action action_edit">{% trans %}Edit{% endtrans %}</a> |
                         {% endif %}
                         {% if comment.deleted %}
@@ -116,14 +116,14 @@
         {%- endfor %}
         {%- if can_post_comment %}
           <tr id="new_comment">
-            {{ user_column(USER) }}
+            {{ user_column(request.user) }}
             <td>
               {{ form.errors.text }}
               <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
                 {{ csrf_input }}
                 {{ form.text }}
                 <div class="note">{{ form.fields.text.help_text }}</div>
-                {% if form.data.comment_id and USER.has_perm('ikhaya.change_comment') %}
+                {% if form.data.comment_id and request.user.has_perm('ikhaya.change_comment') %}
                   {{ form.comment_id }}
                 {% endif %}
                 <p>

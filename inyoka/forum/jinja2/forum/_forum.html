@@ -54,7 +54,7 @@
 {% endmacro %}
 
 {% macro topic_icon(topic) -%}
-  {% set is_read = topic.get_read_status(USER) -%}
+  {% set is_read = topic.get_read_status(request.user) -%}
   <div class="icon{% if topic.hidden %} hidden{% endif %}"
       {%- if topic.hidden %} title="{% trans %}hidden topic{% endtrans %}"{% endif %}>
   {%- if topic.sticky -%}

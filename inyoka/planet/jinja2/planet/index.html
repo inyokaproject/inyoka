@@ -68,7 +68,7 @@
                 <div id="article_text_{{ current_article_id }}" class="text">{{ article.text }}</div>
                 <div class="meta">
                   <a href="{{ article|url|e }}">{% trans %}Permanent link{% endtrans %}</a>
-                  {% if USER.has_perm('planet.hide_entry') %}
+                  {% if request.user.has_perm('planet.hide_entry') %}
                     {% if article.hidden and article.hidden_by %}
                       {% trans link=article.hidden_by|url, name=article.hidden_by.username|e -%}
                         | Hidden by: <a href="{{ link }}">{{ name }}</a>

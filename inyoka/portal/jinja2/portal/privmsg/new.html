@@ -18,7 +18,7 @@
   <form action="{{ href('portal', 'privmsg', 'new') }}" method="post">
     {{ csrf_input }}
     {{ form.non_field_errors() }}
-    {% if USER.has_perm('portal.send_group_privatemessage') %}
+    {% if request.user.has_perm('portal.send_group_privatemessage') %}
     {{ render_form(form, ['recipient', 'group_recipient','subject', 'text']) }}
     {% else %}
     {{ render_form(form, ['recipient', 'subject', 'text']) }}
@@ -66,7 +66,7 @@
     $("#id_recipient").wrap($('<div class="tf_tokenfield"><div>')).token_field("/?__service__=portal.get_user_autocompletion", {
                 delay: 40, maxItemsToShow: 10, limit: 10, minChars: 3});
 	$("#id_recipient").parent().parent().parent().children("p.note").remove();
-	{% if USER.has_perm('portal.send_group_privatemessage') %}
+	{% if request.user.has_perm('portal.send_group_privatemessage') %}
     $("#id_group_recipient").wrap($('<div class="tf_tokenfield"><div>')).token_field("/?__service__=portal.get_group_autocompletion", {
                 delay: 40, maxItemsToShow: 10, limit: 10, minChars: 1});
 	$("#id_group_recipient").parent().parent().parent().children("p.note").remove();

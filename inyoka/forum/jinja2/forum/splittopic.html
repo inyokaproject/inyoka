@@ -54,7 +54,7 @@
       <tbody>
         {%- for post in posts %}
           <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
-            <td class="author{% if post.author_id == USER.id %} -own{% endif %}">
+            <td class="author{% if post.author_id == request.user.id %} -own{% endif %}">
               <p class="username{% if not post.author.is_active %} inactive{% endif %}">
                 <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
                 {%- if post.author.primary_group and post.author.primary_group.icon %}
@@ -67,13 +67,13 @@
               {%- if post.author == topic.author and not loop.first %}
                 <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
               {%- endif %}
-              {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
+              {%- if post.author.has_avatar and not request.user.settings['hide_avatars'] %}
                 {{ macros.add_user_avatar(post.author) }}
               {%- endif %}
               <p>{% trans %}Member since:{% endtrans %}<br>{{ post.author.date_joined|naturalday }}</p>
               <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
             </td>
-            <td class="post{% if post.author_id == USER.id %} -own{% endif %}">
+            <td class="post{% if post.author_id == request.user.id %} -own{% endif %}">
               <div class="postinfo">
                 <div class="linklist">
                 </div>
@@ -107,7 +107,7 @@
                   {%- endfor %}
                 </dl>
               {%- endif %}
-              {%- if post.author.signature and not USER.settings['hide_signatures'] %}
+              {%- if post.author.signature and not request.user.settings['hide_signatures'] %}
                 <div class="signature">
                   {{ post.author.signature_rendered }}
                 </div>

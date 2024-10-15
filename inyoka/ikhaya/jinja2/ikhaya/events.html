@@ -14,7 +14,7 @@
 {% block content %}
   <h3>{% trans %}Events{% endtrans %}</h3>
   <p class="linklist">
-  {%- if USER.has_perm('portal.add_event') %}
+  {%- if request.user.has_perm('portal.add_event') %}
   <a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a>
   {%- endif %}
   {%- if not show_all %}

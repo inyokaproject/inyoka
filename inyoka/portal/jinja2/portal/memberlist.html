@@ -17,7 +17,7 @@
 {% set styles = ['datetimefield'] %}
 {% block content %}
   <h3>{% trans %}Members{% endtrans %}</h3>
-  {% if USER.has_perm('portal.change_user') %}
+  {% if request.user.has_perm('portal.change_user') %}
     <p>{% trans %}Choose the user you want to edit:{% endtrans %}</p>
     <form action="" method="post">
       {{ csrf_input }}
@@ -30,7 +30,7 @@
       </p>
     </form>
   {% endif %}
-  {% if USER.has_perm('portal.add_user') %}
+  {% if request.user.has_perm('portal.add_user') %}
       <p>
         <a href="{{ href('portal', 'user', 'new') }}">
           {%- trans %}Create a new user{% endtrans -%}

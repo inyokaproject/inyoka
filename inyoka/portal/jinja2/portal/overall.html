@@ -35,7 +35,7 @@
       <li><a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Portalregeln') }}">Portalregeln</a></li>
       <li><a href="{{ href('portal', 'users') }}">{% trans %}Members{% endtrans %}</a></li>
 
-      {% if USER.is_team_member %}
+      {% if request.user.is_team_member %}
         <li><a href="{{ href('portal', 'groups') }}">{% trans %}Groups{% endtrans %}</a></li>
       {% else %}
         <li>
@@ -71,12 +71,12 @@
       <a href="{{ href('ikhaya') }}">Ikhaya</a>
       {{ feed_button(href('portal', 'feeds', 'ikhaya')) }}
     </h3>
-    {%- if USER.has_perm('ikhaya.suggest_article') or USER.has_perm('portal.suggest_event') %}
+    {%- if request.user.has_perm('ikhaya.suggest_article') or request.user.has_perm('portal.suggest_event') %}
     <ul>
-      {% if USER.has_perm('ikhaya.suggest_article') %}
+      {% if request.user.has_perm('ikhaya.suggest_article') %}
         <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest an article{% endtrans %}</a></li>
       {% endif %}
-      {%- if USER.has_perm('portal.suggest_event') %}
+      {%- if request.user.has_perm('portal.suggest_event') %}
         <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest an event{% endtrans %}</a></li>
       {%- endif %}
     </ul>
@@ -85,24 +85,24 @@
       <a href="{{ href('planet') }}">Planet</a>
       {{ feed_button(href('portal', 'feeds', 'planet')) }}
     </h3>
-    {%- if USER.has_perm('planet.suggest_blog') %}
+    {%- if request.user.has_perm('planet.suggest_blog') %}
     <ul>
       <li><a href="{{ href('planet', 'suggest') }}">{% trans %}Suggest a blog{% endtrans %}</a></li>
     </ul>
     {%- endif %}
-    {%- if USER.has_perm('portal.change_staticpage') or USER.has_perm('portal.change_staticfile') or USER.has_perm('portal.change_storage') or USER.has_perm('portal.change_linkmap') %}
+    {%- if request.user.has_perm('portal.change_staticpage') or request.user.has_perm('portal.change_staticfile') or request.user.has_perm('portal.change_storage') or request.user.has_perm('portal.change_linkmap') %}
     <h3 class="navi_config">{% trans %}Configuration{% endtrans %}</h3>
     <ul>
-    {%- if USER.has_perm('portal.change_storage') %}
+    {%- if request.user.has_perm('portal.change_storage') %}
       <li><a href="{{ href('portal', 'config') }}">{% trans %}General{% endtrans %}</a></li>
     {%- endif %}
-    {% if USER.has_perm('portal.change_linkmap') %}
+    {% if request.user.has_perm('portal.change_linkmap') %}
       <li><a href="{{ href('portal', 'linkmap') }}">{% trans %}Linkmap{% endtrans %}</a></li>
     {%- endif %}
-    {%- if USER.has_perm('portal.change_staticpage') %}
+    {%- if request.user.has_perm('portal.change_staticpage') %}
       <li><a href="{{ href('portal', 'pages') }}">{% trans %}Static pages{% endtrans %}</a></li>
     {% endif %}
-    {%- if USER.has_perm('portal.change_staticfile') %}
+    {%- if request.user.has_perm('portal.change_staticfile') %}
       <li><a href="{{ href('portal', 'files') }}">{% trans %}Static files{% endtrans %}</a></li>
     {% endif %}
     </ul>

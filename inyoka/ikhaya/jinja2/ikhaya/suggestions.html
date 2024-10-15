@@ -44,11 +44,11 @@
                   <a href="{{ suggestion.owner|url }}">{{ suggestion.owner.username|e }}</a>
                 {% endif %}
               </span>
-              (<a href="{{ href('ikhaya', 'suggest', suggestion.id, 'assign', USER.username) }}" class="assign admin_link" id="{{ suggestion.id }}">{% trans %}Assign to me{% endtrans %}</a>)<span>
+              (<a href="{{ href('ikhaya', 'suggest', suggestion.id, 'assign', request.user.username) }}" class="assign admin_link" id="{{ suggestion.id }}">{% trans %}Assign to me{% endtrans %}</a>)<span>
               <span class="linklist"> | </span>
               <a href="{{ href('ikhaya', 'suggest', suggestion.id, 'assign', '-') }}" class="unassign admin_link" id="{{ suggestion.id }}">{% trans %}Delete assignment{% endtrans %}</a>
               <span class="linklist"> | </span>
-              {%- if USER.has_perm('ikhaya.delete_suggestion') %}
+              {%- if request.user.has_perm('ikhaya.delete_suggestion') %}
               <a href="{{ href('ikhaya', 'suggest', suggestion.id, 'delete') }}" class="admin_link">{% trans %}Delete{% endtrans %}</a>
               <span class="linklist"> | </span>
               {%- endif %}
