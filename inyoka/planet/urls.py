@@ -11,7 +11,8 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_page
 
-from ..utils.http import global_not_found, server_error
+from ..utils.http import global_not_found, server_error, bad_request_view, \
+    permission_denied_view
 from . import views
 
 urlpatterns = [
@@ -33,5 +34,7 @@ if settings.DEBUG:
         path('__debug__/', include(debug_toolbar.urls)),
     )
 
+handler400 = bad_request_view
+handler403 = permission_denied_view
 handler404 = global_not_found
 handler500 = server_error

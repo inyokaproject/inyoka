@@ -68,3 +68,10 @@ def server_error(request, exception=None):
     return render(request, 'errors/500.html', {'request': request}, status=500)
 
 
+def permission_denied_view(request, exception=None):
+    return render(request, 'errors/403.html', {'request': request}, status=403)
+
+
+def bad_request_view(request, exception=None):
+    return render(request, 'errors/400.html', {'request': request}, status=400)
+
