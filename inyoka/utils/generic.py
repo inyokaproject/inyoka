@@ -20,7 +20,6 @@ from django.utils.translation import gettext_lazy
 from django.views.generic import base, edit, list
 
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.http import TemplateResponse
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import flash_message
@@ -28,23 +27,6 @@ from inyoka.utils.templating import flash_message
 
 def trigger_fix_errors_message(request):
     messages.error(request, _('Errors occurred, please fix them.'))
-
-
-class TemplateResponseMixin(base.TemplateResponseMixin):
-    """A mixin that can be used to render a template.
-
-    This mixin hooks in our own `Jinja <http://jinja.pocoo.org>`_
-    based :class:`TemplateResponse` class.
-    """
-    response_class = TemplateResponse
-
-    def render_to_response(self, context, **response_kwargs):
-        """
-        Returns a response with a template rendered with the given context.
-        """
-        template_name = self.get_template_names()[0]
-        return self.response_class(template_name=template_name,
-                                   context=context)
 
 
 class EditMixin:
@@ -78,7 +60,7 @@ class FilterMixin:
         req = self.request
         filters = [f(req.GET or None) for f in self.filtersets]
         context['filtersets'] = filters
-        return TemplateResponseMixin.render_to_response(self, context, **kwargs)
+        return base.TemplateResponseMixin.render_to_response(self, context, **kwargs)
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -101,12 +83,12 @@ class PermissionRequiredMixin(_PermissionRequiredMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class CreateView(PermissionRequiredMixin, TemplateResponseMixin, EditMixin,
+class CreateView(PermissionRequiredMixin, base.TemplateResponseMixin, EditMixin,
                  edit.BaseCreateView):
     create = True
 
 
-class UpdateView(PermissionRequiredMixin, TemplateResponseMixin, EditMixin,
+class UpdateView(PermissionRequiredMixin, base.TemplateResponseMixin, EditMixin,
                  edit.BaseUpdateView):
     create = False
 
@@ -185,7 +167,7 @@ class DeleteView(PermissionRequiredMixin, BaseDeleteView):
     pass
 
 
-class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
+class BaseListView(base.TemplateResponseMixin, list.MultipleObjectMixin, base.View):
     paginate_by = 25
     base_link = None
 

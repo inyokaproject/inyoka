@@ -544,7 +544,7 @@ class TestRegister(TestCase):
         User.objects.create(username=self.username)
 
         response = self.client.post(self.url, data={'username': form_username})
-        return response.tmpl_context['form']
+        return response.context['form']
 
     def test_username__invalid_characters(self):
         form = self.post_username(' ?')
@@ -688,7 +688,7 @@ class TestStaticPageView(TestCase):
         page = StaticPage.objects.create(key='foo', title='foo')
         response = self.client.get(page.get_absolute_url())
 
-        self.assertEqual(response.tmpl_context['title'], page.title)
+        self.assertEqual(response.context['title'], page.title)
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def test_title(self):
@@ -696,7 +696,7 @@ class TestStaticPageView(TestCase):
         page = StaticPage.objects.create(key='foo', title='foo', content=content)
         response = self.client.get(page.get_absolute_url())
 
-        self.assertIn(content, response.tmpl_context['content'])
+        self.assertIn(content, response.context['content'])
 
 
 class TestStaticPageEdit(TestCase):

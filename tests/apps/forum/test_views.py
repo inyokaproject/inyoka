@@ -169,11 +169,11 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     @patch('inyoka.forum.constants.TOPICS_PER_PAGE', 4)
     def test_topiclist(self):
         self._setup_pagination()
-        self.assertEqual(len(self.client.get("/last24/").tmpl_context['topics']),
+        self.assertEqual(len(self.client.get("/last24/").context['topics']),
                          constants.TOPICS_PER_PAGE)
-        self.assertEqual(len(self.client.get("/last24/3/").tmpl_context['topics']),
+        self.assertEqual(len(self.client.get("/last24/3/").context['topics']),
                          constants.TOPICS_PER_PAGE)
-        self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
+        self.assertEqual(len(self.client.get("/last24/5/").context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
 

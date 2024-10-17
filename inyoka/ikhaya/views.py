@@ -15,6 +15,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
@@ -56,7 +57,6 @@ from inyoka.utils.dates import _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.http import (
-    AccessDeniedResponse,
     templated,
 )
 from inyoka.utils.notification import send_notification
@@ -180,13 +180,13 @@ def detail(request, year, month, day, slug):
     preview = None
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            return AccessDeniedResponse()
+            raise PermissionDenied
         messages.info(request, _('This article is not visible for regular '
                                  'users.'))
 
     if request.method == 'POST' and (not article.comments_enabled or
                                      not request.user.is_authenticated):
-        return AccessDeniedResponse()
+        raise PermissionDenied
 
     # clear notification status
     subscribed = Subscription.objects.user_subscribed(request.user,
@@ -378,7 +378,7 @@ def article_subscribe(request, year, month, day, slug):
         raise Http404()
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            return AccessDeniedResponse()
+            raise PermissionDenied
     try:
         Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
@@ -547,7 +547,8 @@ def comment_edit(request, comment_id):
             'comment': comment,
             'form': form,
         }
-    return AccessDeniedResponse()
+
+    raise PermissionDenied
 
 
 @permission_required('ikhaya.change_comment', raise_exception=True)
@@ -781,7 +782,7 @@ def suggestions_unsubscribe(request):
 def event_edit(request, pk=None):
     new = not pk
     if new and not request.user.has_perm('portal.add_event'):
-        return AccessDeniedResponse()
+        raise PermissionDenied
     event = Event.objects.get(id=pk) if not new else None
 
     if request.GET.get('copy_from', None):

@@ -30,7 +30,7 @@ from django.forms.models import model_to_dict
 from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.middleware.csrf import REASON_NO_CSRF_COOKIE, REASON_NO_REFERER
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
@@ -97,7 +97,6 @@ from inyoka.portal.utils import (
 )
 from inyoka.utils import generic
 from inyoka.utils.http import (
-    TemplateResponse,
     templated,
 )
 from inyoka.utils.mail import send_mail
@@ -1621,7 +1620,7 @@ def csrf_failure(request, reason=None):
         'no_referer': reason == REASON_NO_REFERER,
     }
 
-    return TemplateResponse('errors/403_csrf.html', context, 403)
+    return render(request, 'errors/403_csrf.html', context, status=403)
 
 
 @login_required

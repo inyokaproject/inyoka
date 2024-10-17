@@ -22,16 +22,16 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
 from inyoka.markup.base import RenderContext, parse
 from inyoka.portal.models import Subscription
 from inyoka.utils.http import (
-    AccessDeniedResponse,
-    TemplateResponse,
     does_not_exist_is_404,
     templated,
 )
@@ -485,7 +485,7 @@ def do_edit(request, name, rev=None):
         return HttpResponseRedirect(url)
     else:
         if page.rev.deleted and not has_privilege(request.user, name, 'create'):
-            return AccessDeniedResponse()
+            raise PermissionDenied
 
     # attachments have a custom editor
     if page and page.rev.attachment:
@@ -841,7 +841,7 @@ def do_export(request, name, format='raw', rev=None):
     Format          Partial Full    Description
     =============== ======= ==================================================
     ``raw``         yes     no      The raw wiki markup exported.
-    ``HTML``        yes     yes     The wiki markup converted to HTML4.
+    ``HTML``        yes     yes     The wiki markup converted to HTML.
     =============== ======= ==================================================
 
 
@@ -866,8 +866,8 @@ def do_export(request, name, format='raw', rev=None):
         'page': page
     }
     if format == 'html':
-        response = TemplateResponse('wiki/export.html', ctx,
-                                    content_type='text/html; charset=utf-8')
+        response = render(request, 'wiki/export.html', ctx,
+                          content_type='text/html; charset=utf-8')
     else:
         response = HttpResponse(page.rev.text.value.encode('utf-8'),
                                 content_type='text/plain; charset=utf-8')

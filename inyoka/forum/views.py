@@ -68,7 +68,6 @@ from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.generic import PermissionRequiredMixin
 from inyoka.utils.http import (
-    AccessDeniedResponse,
     does_not_exist_is_404,
     templated,
 )
@@ -1018,7 +1017,7 @@ def reported_topics_subscription(request, mode):
 
     if mode == 'subscribe':
         if not request.user.has_perm('forum.manage_reported_topic'):
-            return AccessDeniedResponse()
+            raise PermissionDenied
         users.add(request.user.id)
         messages.success(request, _('A notification will be sent when a topic is reported.'))
     elif mode == 'unsubscribe':
