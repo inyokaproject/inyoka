@@ -23,12 +23,12 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
+from django.template.loader import render_to_string
 from django.utils.encoding import force_str
 from django.utils.translation import activate
 
 from inyoka.portal.models import Linkmap, StaticPage
 from inyoka.portal.user import User
-from inyoka.utils.http import templated
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
@@ -83,6 +83,12 @@ verbosity = 0
 BeautifulSoup = partial(BeautifulSoup, features='lxml')
 
 
+class DummyRequest:
+    """Small helper class to render pages without having a real request"""
+    def __init__(self, user):
+        self.user = user
+
+
 class Command(BaseCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
 
@@ -123,31 +129,30 @@ class Command(BaseCommand):
         if verbosity >= 1:
             print("Export complete")
 
-    @templated('wiki/action_show.html')
     def fetch_page(self, page, **kwargs):
         settings.DEBUG = False
-        return {
+
+        return render_to_string('wiki/action_show.html', {
+            'request': DummyRequest(kwargs.get('user', None)),
             'page': page,
             'linkmap_css': Linkmap.objects.get_css_basename(),
-            'USER': kwargs.get('user', None),
             'WIKI_MAIN_PAGE': settings.WIKI_MAIN_PAGE,
-        }
+        })
 
-    @templated('portal/static_page.html')
     def _static_page(self, page, **kwargs):
         """Renders static pages"""
         settings.DEBUG = False
 
         q = StaticPage.objects.get(key=page)
-        return {
+        return render_to_string('portal/static_page.html', {
+            'request': DummyRequest(kwargs.get('user', None)),
             'title': q.title,
             'content': q.content_rendered,
             'key': q.key,
             'page': q,
             'linkmap_css': Linkmap.objects.get_css_basename(),
-            'USER': kwargs.get('user', None),
             'WIKI_MAIN_PAGE': settings.WIKI_MAIN_PAGE,
-        }
+        })
 
     def _write_file(self, pth, content):
         with open(pth, 'w+') as fobj:
@@ -379,7 +384,7 @@ class Command(BaseCommand):
         attachment_folder = path.join(FOLDER, 'files', '_')
         mkdir(attachment_folder)
 
-        license_content = self._static_page('lizenz', user=user, settings=settings).content.decode('utf8')
+        license_content = self._static_page('lizenz', user=user, settings=settings)
         license_soup = BeautifulSoup(license_content)
         # Apply the handlers from above to modify the page content
         for handler in self.HANDLERS:
@@ -434,10 +439,9 @@ class Command(BaseCommand):
                         mkdir(pth)
                     parts += 1
 
-            content = self.fetch_page(page, user=user, settings=settings).content
+            content = self.fetch_page(page, user=user, settings=settings)
             if content is None:
                 return
-            content = content.decode('utf8')
             soup = BeautifulSoup(content)
 
             # Apply the handlers from above to modify the page content
