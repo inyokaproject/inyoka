@@ -11,8 +11,12 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.static import serve
 
-from inyoka.utils.http import global_not_found, server_error, bad_request_view, \
-    permission_denied_view
+from inyoka.utils.http import (
+    bad_request_view,
+    global_not_found,
+    permission_denied_view,
+    server_error,
+)
 
 
 def view(*args, **kwargs):
