@@ -539,7 +539,6 @@ class TestRegister(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def post_username(self, form_username):
         User.objects.create(username=self.username)
 
@@ -683,14 +682,12 @@ class TestStaticPageView(TestCase):
         with self.assertRaises(Http404):
             static_page(request, 'should_no_exist')
 
-    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def test_content(self):
         page = StaticPage.objects.create(key='foo', title='foo')
         response = self.client.get(page.get_absolute_url())
 
         self.assertEqual(response.context['title'], page.title)
 
-    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def test_title(self):
         content = 'some random text'
         page = StaticPage.objects.create(key='foo', title='foo', content=content)

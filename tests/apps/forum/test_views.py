@@ -164,7 +164,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         response = self.client.get("/topic/%s/" % self.topic.slug, follow=True)
         self.assertEqual(response.status_code, 403)
 
-    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     @patch('inyoka.forum.views.TOPICS_PER_PAGE', 4)
     @patch('inyoka.forum.constants.TOPICS_PER_PAGE', 4)
     def test_topiclist(self):
