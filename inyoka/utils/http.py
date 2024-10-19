@@ -28,7 +28,7 @@ def templated(template_name, status=None, modifier=None,
                 'foo': 'bar'
             }
 
-    `ObjectDoesNotExist` exceptions are catched and raised again as
+    `ObjectDoesNotExist` exceptions are caught and raised again as
     `PageNotFound`.
     """
     def decorator(f):
