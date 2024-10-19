@@ -164,16 +164,15 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         response = self.client.get("/topic/%s/" % self.topic.slug, follow=True)
         self.assertEqual(response.status_code, 403)
 
-    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     @patch('inyoka.forum.views.TOPICS_PER_PAGE', 4)
     @patch('inyoka.forum.constants.TOPICS_PER_PAGE', 4)
     def test_topiclist(self):
         self._setup_pagination()
-        self.assertEqual(len(self.client.get("/last24/").tmpl_context['topics']),
+        self.assertEqual(len(self.client.get("/last24/").context['topics']),
                          constants.TOPICS_PER_PAGE)
-        self.assertEqual(len(self.client.get("/last24/3/").tmpl_context['topics']),
+        self.assertEqual(len(self.client.get("/last24/3/").context['topics']),
                          constants.TOPICS_PER_PAGE)
-        self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
+        self.assertEqual(len(self.client.get("/last24/5/").context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
 
@@ -674,9 +673,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        content = response.content.decode()
-        self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
-                          content, count=1)
+        self.assertContains(response, 'You do not have permissions to access this page.', count=1, status_code=403)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)

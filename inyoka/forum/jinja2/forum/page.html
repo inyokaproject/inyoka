@@ -25,19 +25,19 @@
       <li>
         <ul>
           {%- if forum %}
-            {%- if USER.is_authenticated %}
+            {%- if request.user.is_authenticated %}
               <li>
                 <a href="{{ href('forum', 'egosearch') }}">{% trans %}Involved topics{% endtrans %}</a>
                 <a href="{{ href('forum', 'egosearch', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
               </li>
 
               <li>
-                <a href="{{ href('forum', 'author', USER.username|e) }}">{% trans %}My posts{% endtrans %}</a>
-                <a href="{{ href('forum', 'author', USER.username|e, 'forum', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+                <a href="{{ href('forum', 'author', request.user.username|e) }}">{% trans %}My posts{% endtrans %}</a>
+                <a href="{{ href('forum', 'author', request.user.username|e, 'forum', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
               </li>
               <li>
-                <a href="{{ href('forum', 'topic_author', USER.username|e) }}">{% trans %}Created topics{% endtrans %}</a>
-                <a href="{{ href('forum', 'topic_author', USER.username|e, forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
+                <a href="{{ href('forum', 'topic_author', request.user.username|e) }}">{% trans %}Created topics{% endtrans %}</a>
+                <a href="{{ href('forum', 'topic_author', request.user.username|e, forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
               </li>
             {%- endif %}
             <li>
@@ -65,10 +65,10 @@
               <a href="{{ href('forum', 'last6', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
             </li>
           {% else %}
-            {%- if USER.is_authenticated %}
+            {%- if request.user.is_authenticated %}
               <li><a href="{{ href('forum', 'egosearch') }}">{% trans %}Involved topics{% endtrans %}</a></li>
-              <li><a href="{{ href('forum', 'author', USER.username|e) }}">{% trans %}My posts{% endtrans %}</a></li>
-              <li><a href="{{ href('forum', 'topic_author', USER.username)|e }}">{% trans %}Created topics{% endtrans %}</a></li>
+              <li><a href="{{ href('forum', 'author', request.user.username|e) }}">{% trans %}My posts{% endtrans %}</a></li>
+              <li><a href="{{ href('forum', 'topic_author', request.user.username)|e }}">{% trans %}Created topics{% endtrans %}</a></li>
             {%- endif %}
             <li><a href="{{ href('forum', 'newposts') }}">{% trans %}New posts{% endtrans %}</a></li>
             <li><a href="{{ href('forum', 'unanswered') }}">{% trans %}Unanswered topics{% endtrans %}</a></li>
@@ -83,10 +83,10 @@
   </div>
 
   <div class="pathbar_extension">
-    {% if USER.has_perm('forum.change_forum') %}
+    {% if request.user.has_perm('forum.change_forum') %}
       <a class="admin_link" href="{{ href('forum', 'forum', 'new') }}">{% trans %}Create new forum{% endtrans %}</a>
     {% endif %}
-    {% if not USER.is_anonymous %}
+    {% if not request.user.is_anonymous %}
       <a href="{{ href('forum', 'markread') }}">{% trans %}Mark all forums as read{% endtrans %}</a>
     {% endif %}
   </div>

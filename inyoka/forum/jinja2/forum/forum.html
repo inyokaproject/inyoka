@@ -17,7 +17,7 @@
     {% if can_create %}
       <a href="{{ forum|url('newtopic') }}" class="action action_reply">{% trans %}New topic{% endtrans %}</a> |
     {%- endif %}
-    {% if USER.is_authenticated %}
+    {% if request.user.is_authenticated %}
       {%- if is_subscribed %}
         <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">{% trans %}Unsubscribe{% endtrans %}</a>
       {%- else %}
@@ -51,7 +51,7 @@
   <table class="forum admin_link_hover">
     <thead>
       <tr><th colspan="5" class="category">{{ forum.name|e }}
-        {%- if USER.has_perm('forum.change_forum') -%}
+        {%- if request.user.has_perm('forum.change_forum') -%}
           <a href="{{ href('forum', 'forum', forum.slug, 'edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" class="admin_link right"></a>
         {%- endif -%}
         </th></tr>
@@ -98,7 +98,7 @@
         {% if can_moderate and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
         {% if can_moderate and topic.reported %}{% do classes.append('reported') %}{% endif %}
         {% if topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
-        {% if topic.author == USER %}{% do classes.append('own') %}{% endif %}
+        {% if topic.author == request.user %}{% do classes.append('own') %}{% endif %}
         {% if topic.sticky %}{% do classes.append('sticky') %}{% endif %}
         <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
           <td class="icon">{{ topic_icon(topic) }}</td>
@@ -112,7 +112,7 @@
               {% if topic.get_version_info(False) %}
                 » <span class="ubuntu_version">{{ topic.get_version_info() }}</span>
               {%- endif %}
-              {%- if not topic.get_read_status(USER) %}
+              {%- if not topic.get_read_status(request.user) %}
                 <a href="{{ topic|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">{#
                   #}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}">{#
                 #}</a>

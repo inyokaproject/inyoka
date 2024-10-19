@@ -17,7 +17,7 @@
 
 {% block content %}
 <form id="user_mail_form" method="post" action="">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <h3>{% trans %}Compose mail{% endtrans %}</h3>
   <dl>
     {{ render_form(form, ['text'], inline=true) }}

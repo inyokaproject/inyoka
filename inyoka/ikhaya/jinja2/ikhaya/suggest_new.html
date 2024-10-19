@@ -25,7 +25,7 @@
     {% trans link_license=href('portal', 'lizenz'), link_rules=href('wiki', 'ubuntuusers/Moderatoren/Portalregeln') %}I assure that my submission does not violate any other legal rights and it does not violate the <a href="{{ link_rules }}">platform rules</a>. Additionally I accept that my submission is published under the <a href="{{ link_license }}">license</a> of the platform.{% endtrans %}
   </p>
   <form action="" method="post">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ render_form(form, ['title', 'intro', 'text', 'notes']) }}
     <p>
       <input type="submit" value="{% trans %}Submit{% endtrans %}">

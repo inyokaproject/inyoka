@@ -30,6 +30,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models.functions import Upper
 from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
@@ -41,7 +42,6 @@ from inyoka.utils.database import InyokaMarkupField, JabberField, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
-from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
 
@@ -102,7 +102,7 @@ def deactivate_user(user):
     subject = _('Deactivation of your account “%(name)s” on %(sitename)s') % {
         'name': escape(user.username),
         'sitename': settings.BASE_DOMAIN_NAME}
-    text = render_template('mails/account_deactivate.txt', {
+    text = render_to_string('mails/account_deactivate.txt', {
         'user': user,
         'token': signing.dumps(data, salt='inyoka.action.reactivate_user'),
     })
@@ -125,7 +125,7 @@ def send_new_email_confirmation(user, email):
         'email': email,
     }
 
-    text = render_template('mails/new_email_confirmation.txt', {
+    text = render_to_string('mails/new_email_confirmation.txt', {
         'user': user,
         'token': signing.dumps(data, salt='inyoka.action.set_new_email'),
     })
@@ -146,7 +146,7 @@ def set_new_email(id, email):
         'id': user.id,
         'email': user.email,
     }
-    text = render_template('mails/reset_email.txt', {
+    text = render_to_string('mails/reset_email.txt', {
         'user': user,
         'new_email': email,
         'token': signing.dumps(data, salt='inyoka.action.reset_email'),
@@ -171,7 +171,7 @@ def reset_email(id, email):
 
 def send_activation_mail(user):
     """send an activation mail"""
-    message = render_template('mails/activation_mail.txt', {
+    message = render_to_string('mails/activation_mail.txt', {
         'user': user,
         'email': user.email,
         'activation_key': gen_activation_key(user)
@@ -348,7 +348,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
             if send_mail:
                 subject = _('Your user name on {sitename} has been changed to “{name}”') \
                     .format(name=escape(self.username), sitename=settings.BASE_DOMAIN_NAME)
-                text = render_template('mails/account_rename.txt', {
+                text = render_to_string('mails/account_rename.txt', {
                     'user': self,
                     'oldname': old_name,
                 })

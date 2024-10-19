@@ -11,7 +11,12 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_page
 
-from ..utils.http import global_not_found, server_error
+from ..utils.http import (
+    bad_request_view,
+    global_not_found,
+    permission_denied_view,
+    server_error,
+)
 from . import actions, views
 
 urlpatterns = [
@@ -72,5 +77,7 @@ urlpatterns.extend([
     path('<path:name>/', actions.do_show),
 ])
 
+handler400 = bad_request_view
+handler403 = permission_denied_view
 handler404 = global_not_found
 handler500 = server_error

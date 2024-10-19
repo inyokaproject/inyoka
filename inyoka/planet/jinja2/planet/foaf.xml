@@ -8,7 +8,7 @@
 >
 <foaf:Group>
 
-  <foaf:name>{% trans sitename=SETTINGS.BASE_DOMAIN_NAME %}{{ sitename }} | Planet{% endtrans %}</foaf:name>
+  <foaf:name>{% trans sitename=BASE_DOMAIN_NAME %}{{ sitename }} | Planet{% endtrans %}</foaf:name>
   <foaf:homepage>{{ href('planet') }}</foaf:homepage>
   <rdfs:seeAlso rdf:resource="{{ href('planet', 'blogs', 'export', 'foaf') }}" />
 

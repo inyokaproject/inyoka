@@ -16,7 +16,7 @@
 {% block portal_content %}
   <h3>Registrierung</h3>
   <form action="" method="post" class="-horizontal">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ form.non_field_errors() }}
     <dl>
       {{ render_form(form, ['username', 'password', 'confirm_password',

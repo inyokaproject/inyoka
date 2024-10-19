@@ -18,7 +18,7 @@
 {% block content %}
   {{ super() }}
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <h3>{% trans %}Status{% endtrans %}</h3>
       {{ form.non_field_errors() }}
       <dt>{{ form.status.label_tag() }}</dt>

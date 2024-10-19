@@ -28,7 +28,7 @@
     {%- endtrans -%}
   </p>
   <form action="" method="post" id="new_report">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ form.text }}
     <p>
       <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}">

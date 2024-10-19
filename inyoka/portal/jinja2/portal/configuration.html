@@ -16,7 +16,7 @@
 
 {% block content %}
 <form enctype="multipart/form-data" action="" method="post" id="configuration">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <h3>{% trans %}General settings{% endtrans %}</h3>
   <dl>
     {{ render_form(form, ['global_message', 'welcome_message', 'blocked_hosts', 'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'wiki_edit_note', 'license_note', 'ikhaya_description', 'planet_description'], inline=true) }}

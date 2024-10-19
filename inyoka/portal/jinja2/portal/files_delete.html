@@ -9,7 +9,7 @@
 #}
 
 <form action="{{ object|url('delete')|e }}" method="post">
-	{{ csrf_token() }}
+	{{ csrf_input }}
   <p></p>{% trans file=object.identifier|e -%}
     Do you really want to delete the file “{{ file }}”?
   {%- endtrans %}</p>

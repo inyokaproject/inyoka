@@ -24,7 +24,7 @@
   {{ super() }}
 
   <form class="usercp_form" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
 
     {{ form.as_p() }}
     <input type="submit" value="{% trans %}Submit{% endtrans %}">

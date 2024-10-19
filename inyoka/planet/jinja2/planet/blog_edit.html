@@ -19,7 +19,7 @@
 
 {% block content %}
   <form action="" method="post" enctype="multipart/form-data">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <dl>
       {{ render_form(form, ['name', 'description', 'blog_url', 'feed_url', 'active', 'user', 'icon'], inline=True) }}
     </dl>

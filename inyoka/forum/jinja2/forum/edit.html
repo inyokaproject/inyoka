@@ -37,7 +37,7 @@
 
 {% block forum_content %}
   <form action="" method="post" enctype="multipart/form-data" class="post_editor">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <a href="{{ href('pastebin') }}" class="pastelink" title="{% trans %}Please save long code snippets or program outputs in our paste service and link to the respective entry.{% endtrans %}">
       {%- trans %}Paste{% endtrans -%}
     </a>

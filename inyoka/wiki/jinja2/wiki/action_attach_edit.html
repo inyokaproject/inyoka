@@ -22,7 +22,7 @@
   <div id="page">
     <form action="{{ page|url('edit') }}" method="post"
       enctype="multipart/form-data" id="form_addattachment">
-      {{ csrf_token() }}
+      {{ csrf_input }}
       <p>
         <label for="id_attachment">{% trans %}New attachment:{% endtrans %}</label>
         {{ form.attachment }}

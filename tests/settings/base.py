@@ -34,9 +34,12 @@ STATIC_URL = '//static.%s/' % BASE_DOMAIN_NAME
 ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 
-# explicitly add tests.utils to apps to run unittests here
+# debug toolbar adds details like template-context, django does not by default
+MIDDLEWARE += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+
 INSTALLED_APPS = INSTALLED_APPS + (
-    'tests.utils',
+    'tests.utils', # explicitly add tests.utils to apps to run unittests here
+    'debug_toolbar',
 )
 
 if os.environ.get('INYOKA_THEME') == 'theme-ubuntuusers':

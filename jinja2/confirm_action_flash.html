@@ -7,7 +7,7 @@
 #}
 <div>
   <form action="{{ action_url|e }}" method="post">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <p>{{ message|e }}</p>
     <p>
       <input type="submit" name="confirm" value="{{ confirm_label|e }}">

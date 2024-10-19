@@ -319,10 +319,6 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 
-# Make the template context available as tmpl_context in the TemplateResponse.
-# Useful for tests in combination with override_settings.
-PROPAGATE_TEMPLATE_CONTEXT = False
-
 INTERNAL_IPS = ('127.0.0.1',)
 
 LOGGING = {

@@ -23,7 +23,7 @@
   <div id="page">
     <form action="{{ page|url('attachments') }}" method="post"
       enctype="multipart/form-data" id="form_addattachment">
-      {{ csrf_token() }}
+      {{ csrf_input }}
       <p>
         {{ form.attachment.errors }}
         <label for="id_attachment">{% trans %}Attachment:{% endtrans %}</label>

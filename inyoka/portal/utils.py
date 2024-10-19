@@ -12,21 +12,22 @@ import json
 from datetime import date, datetime, time
 from urllib.parse import quote_plus
 
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 
-from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
 
 
 def abort_access_denied(request):
-    """Abort with an access denied message or go to login."""
+    """Abort with access denied message or redirect to login-page."""
     if request.user.is_anonymous:
         args = {'next': '//%s%s' % (request.get_host(), request.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
-    return AccessDeniedResponse()
+
+    raise PermissionDenied
 
 
 def calendar_entries_for_month(year, month):

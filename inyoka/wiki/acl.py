@@ -24,11 +24,11 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 
 from inyoka.portal.user import User
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
@@ -226,7 +226,7 @@ def require_privilege(privilege):
                     request.path
                 ))
                 return HttpResponseRedirect(url)
-            return AccessDeniedResponse()
+            raise PermissionDenied
         return patch_wrapper(oncall, f)
     return decorate
 

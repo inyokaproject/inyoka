@@ -8,11 +8,11 @@
 from celery import shared_task
 from celery.canvas import subtask
 from django.conf import settings
+from django.template.loader import render_to_string
 
 from inyoka.portal.models import Subscription
 from inyoka.utils.logger import logger
 from inyoka.utils.mail import send_mail
-from inyoka.utils.templating import render_template
 
 
 def send_notification(user, template_name=None, subject=None, args=None):
@@ -29,7 +29,7 @@ def send_notification(user, template_name=None, subject=None, args=None):
     methods = user.settings.get('notify', ['mail'])
 
     if 'mail' in methods:
-        message = render_template('mails/%s.txt' % template_name, args)
+        message = render_to_string(f'mails/{template_name}.txt', args)
         send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message,
                   settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 

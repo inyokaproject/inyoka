@@ -10,19 +10,14 @@
 """
 import time
 from hashlib import md5
-from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.functions import Length
-from django.http import Http404
-from django.utils.dates import MONTHS, WEEKDAYS
 
-from inyoka.ikhaya.models import Event
 from inyoka.portal.user import User
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.services import SimpleDispatcher
-from inyoka.utils.templating import render_template
 
 MIN_AUTOCOMPLETE_CHARS = 3
 MAX_AUTOCOMPLETE_ITEMS = 10
@@ -70,33 +65,6 @@ def get_captcha(request):
     # Save the solution for easier testing
     response._captcha_solution = captcha.solution
     return response
-
-
-@dispatcher.register()
-def get_calendar_entry(request):
-    if 'url' in request.GET:
-        url = request.GET['url']
-        slug = urlparse(url)[2][10:]
-        if slug.endswith('/'):
-            slug = slug[:-1]
-    else:
-        try:
-            slug = request.GET['slug']
-        except KeyError:
-            raise Http404()
-    try:
-        event = Event.objects.get(slug=slug)
-        if not (event.visible or request.user.has_perm('portal.change_event')):
-            raise Http404()
-    except Event.DoesNotExist:
-        raise Http404()
-
-    data = {
-        'event': event,
-        'MONTHS': MONTHS,
-        'WEEKDAYS': WEEKDAYS,
-    }
-    return render_template('portal/_calendar_detail.html', data)
 
 
 @dispatcher.register()

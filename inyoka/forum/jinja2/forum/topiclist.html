@@ -44,7 +44,7 @@
               {% if can_moderate(topic) and topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
               {% if can_moderate(topic) and topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
               <a href="{{ topic|url }}">{{ topic.title|e }}</a>
-              {%- if not topic.get_read_status(USER) %}
+              {%- if not topic.get_read_status(request.user) %}
                 <a href="{{ topic|url('first_unread') }}"
                    title="{% trans %}Show unread posts{% endtrans %}">{#
                   #}<img src="{{ href('static', 'img/forum/goto.png') }}"

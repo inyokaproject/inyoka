@@ -68,14 +68,13 @@ from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.generic import PermissionRequiredMixin
 from inyoka.utils.http import (
-    AccessDeniedResponse,
     does_not_exist_is_404,
     templated,
 )
 from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.models import Page
@@ -1018,7 +1017,7 @@ def reported_topics_subscription(request, mode):
 
     if mode == 'subscribe':
         if not request.user.has_perm('forum.manage_reported_topic'):
-            return AccessDeniedResponse()
+            raise PermissionDenied
         users.add(request.user.id)
         messages.success(request, _('A notification will be sent when a topic is reported.'))
     elif mode == 'unsubscribe':
@@ -1430,7 +1429,7 @@ def delete_topic(request, topic_slug, action='hide'):
             topic.forum.invalidate_topic_cache()
             return HttpResponseRedirect(redirect)
     else:
-        messages.info(request, render_template('forum/delete_topic.html', {'topic': topic, 'action': action}))
+        flash_message(request, 'forum/delete_topic.html', {'topic': topic, 'action': action})
 
     return HttpResponseRedirect(url_for(topic))
 

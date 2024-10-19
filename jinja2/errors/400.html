@@ -1,0 +1,19 @@
+{#
+    errors/400.html
+    ~~~~~~~~~~~~~~~
+
+    This template is shown if the user client request was an invalid.
+
+    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+
+{% block portal_content %}
+  <h1>{% trans %}Bad Request{% endtrans %}</h1>
+
+  <p>
+    {% trans %}The server cannot or will not process your request due to an apparent client error (e.g., malformed request syntax or too large size).{% endtrans %}
+  </p>
+{% endblock %}

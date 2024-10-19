@@ -24,7 +24,7 @@
   <div class="container">
     <ul class="paste_actions">
       <li><a href="{{ entry|url('raw') }}">{% trans %}Display entry as raw text{% endtrans %}</a></li>
-      {%- if USER.has_perm('pastebin.delete_entry') %}
+      {%- if request.user.has_perm('pastebin.delete_entry') %}
         <li><a href="{{ entry|url('delete') }}" class="admin_link">{% trans %}Delete entry{% endtrans %}</a></li>
       {%- endif %}
     </ul>

@@ -33,7 +33,6 @@ class TestViews(TestCase):
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
-    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     @override_settings(WIKI_REVISIONS_PER_PAGE=5)
     def test_log(self):
         p50 = Page.objects.create('Testpage50', 'rev 0', user=self.admin, note='rev 0')
