@@ -13,14 +13,12 @@
 {%- extends 'portal/overall.html' %}
 
 {% block portal_content %}
-  <div class="error">
+  <h1>
+    {% trans %}You do not have permissions to access this page. (HTTP 403){% endtrans %}
+  </h1>
+  {% if not request.user.is_authenticated %}
     <p>
-      {% trans %}You do not have permissions to access this page.{% endtrans %}
+      {% trans %}This may be because you are not logged in.{% endtrans %}
     </p>
-    {% if not request.user.is_authenticated %}
-      <p>
-        {% trans %}This may be because you are not logged in.{% endtrans %}
-      </p>
-    {% endif %}
-  </div>
+  {% endif %}
 {% endblock %}

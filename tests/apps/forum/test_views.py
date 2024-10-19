@@ -673,9 +673,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        content = response.content.decode()
-        self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
-                          content, count=1)
+        self.assertContains(response, 'You do not have permissions to access this page.', count=1, status_code=403)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
