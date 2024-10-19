@@ -195,20 +195,13 @@ def index(request):
                 'remaining': countdown_remaining
             }
 
-    def update_minicalendar():
-        """
-        Renders the Mini Calendar from the portal landing page.
-        """
-        # TODO: cache in template to not inject a string into a template?
-        return render_to_string('portal/minicalendar.html', {'events': Event.objects.get_upcoming(4)})
-
     return {
         'welcome_message_rendered': storage['welcome_message_rendered'],
         'ikhaya_latest': list(ikhaya_latest),
         'sessions': get_sessions(),
         'record': record,
         'record_time': record_time,
-        'calendar_events': cache.get_or_set('portal/calendar', update_minicalendar, 300),
+        'events': cache.get_or_set('portal/calendar', partial(Event.objects.get_upcoming, 4), 300),
         'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': countdown_image_url,
