@@ -25,26 +25,16 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 1.BB.CC (2024-MM-DD)
-===============================
-
-✨ New features
----------------
+1.0.1 (2024-10-20)
+==================
 
 🏗 Changes
 ----------
-
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
+* Add contribution guideline
 
 🐛 Fixes
 --------
-
-🔒 Security
------------
+* Fix domain for download-link to not point to inyokaproject.org
 
 
 1.0.0 (2024-10-13)
