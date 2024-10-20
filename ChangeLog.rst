@@ -25,6 +25,28 @@ Inyoka Changelog
    -----------
 
 
+Unreleased 1.BB.CC (2024-MM-DD)
+===============================
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+🔒 Security
+-----------
+
+
 1.0.0 (2024-10-13)
 ==================
 
@@ -66,7 +88,7 @@ Deployment notes
 -----------
 
 * Add ``SECURITY.md``
-* Update requirements (at least the dependencies ``Django`` include known security fixes)
+* Update requirements (at least the dependency ``Django`` includes known security fixes)
 * Markup, Edited-/Mod boxes: Escape parameters to prevent HTML injection
 * Templates: Escape more user-controllable variables to prevent HTML injections
 

@@ -207,8 +207,6 @@ def index(request):
         'sessions': get_sessions(),
         'record': record,
         'record_time': record_time,
-        'get_ubuntu_link': settings.INYOKA_GET_UBUNTU_LINK,
-        'get_ubuntu_description': settings.INYOKA_GET_UBUNTU_DESCRIPTION,
         'calendar_events': cache.get_or_set('portal/calendar', update_minicalendar, 300),
         'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),

@@ -114,11 +114,6 @@ INYOKA_AVATAR_MAXIMUM_FILE_SIZE = 15  # in KiB, 0 → unlimited
 INYOKA_SIGNATURE_MAXIMUM_CHARACTERS = 500  # <= -1 → no restriction
 INYOKA_SIGNATURE_MAXIMUM_LINES = 4  # <= -1 → no restriction
 
-# download link on the start page
-INYOKA_GET_UBUNTU_LINK = '%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
-                                                      BASE_DOMAIN_NAME)
-INYOKA_GET_UBUNTU_DESCRIPTION = 'Downloads'
-
 # path of the dynamically generated css for the linkmap. It gives each interwikilink an icon.
 # Normally, the path should be on MEDIA, so that the CSS is served from a webserver
 # and not a django worker
