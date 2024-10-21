@@ -12,6 +12,17 @@ Before a deployment starts, notify your users.
 This can be done for example via a global status message on your website or
 a maintenance incident on a special status web page.
 
+Pick a version
+==============
+
+If you want to tag a new version, take a moment to decide which version string to use.
+
+Inyoka uses `bump-my-version <https://github.com/callowayproject/bump-my-version>`_ to partly formalize the version schema described in :doc:`releases/index`.
+So, the following command shows the options you have to pick a new version:
+
+.. code-block:: console
+
+    bump-my-version show-bump
 
 Theme
 =====
@@ -31,7 +42,7 @@ And merge it back into staging.
     git checkout master
     git pull --rebase
     git merge staging --no-ff
-    bump2version -n --verbose minor # remove dry-run and verbose flags, if good
+    bump-my-version bump minor --dry-run -v # remove dry-run and verbose flags, if good
     git push
     git push -u origin v0.X.Y
 
@@ -68,7 +79,7 @@ Basically, the same as for the theme.
     git add ChangeLog.rst
     git commit -m 'Update date of Changelog'
 
-    bump2version -n --verbose minor # remove dry-run and verbose flags, if good
+    bump-my-version bump minor --dry-run -v # remove dry-run and verbose flags, if good
 
 
     git push
