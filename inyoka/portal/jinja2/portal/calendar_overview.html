@@ -50,7 +50,7 @@
   {% else %}
     <p>{% trans %}Currently there are no events listed.{% endtrans %}</p>
   {% endif %}
-  {% if USER.has_perm('portal.suggest_event') %}
+  {% if request.user.has_perm('portal.suggest_event') %}
     <p><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest new event{% endtrans %}</a></p>
   {% endif %}
 {% endblock %}

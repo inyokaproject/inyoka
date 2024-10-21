@@ -19,7 +19,7 @@
 {% block content %}
   {{ super() }}
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ render_form(form, ['username'], inline=true) }}
     <dt>{{ form.member_title.label_tag() }}</dt>
     <dd>{{ form.member_title }}

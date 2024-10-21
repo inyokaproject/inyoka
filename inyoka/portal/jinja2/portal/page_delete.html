@@ -10,7 +10,7 @@
 
 
 <form action="{{ object|url('delete')|e }}" method="post">
-	{{ csrf_token() }}
+	{{ csrf_input }}
   <p>
     {%- trans title=object.title|e -%}
       Do you really want to delete the page “{{ title }}”?

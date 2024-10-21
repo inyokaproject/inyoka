@@ -38,7 +38,7 @@
     <ul>
       <li><a href="{{ href('wiki', 'Wiki', 'Index') }}">{% trans %}Index{% endtrans %}</a></li>
       <li><a href="{{ href('wiki', 'wiki', 'recentchanges') }}">{% trans %}Recent changes{% endtrans %}</a></li>
-      {% if not USER.is_anonymous %}
+      {% if not request.user.is_anonymous %}
         <li><a href="{{ href('wiki', 'wiki', 'missingpages') }}">{% trans %}Missing Pages{% endtrans %}</a></li>
       {% endif %}
       <li><a href="{{ href('wiki', 'Wiki', 'Neue_Artikel') }}">{% trans %}List of new articles{% endtrans %}</a></li>
@@ -77,7 +77,7 @@
         ('edit', _('Edit')),
         ('log', _('Log')),
       ) %}
-        {% if action_ != 'edit' or (action_ == 'edit' and (can.edit or USER.is_anonymous)) %}
+        {% if action_ != 'edit' or (action_ == 'edit' and (can.edit or request.user.is_anonymous)) %}
         <li><a href="{{ page|url(action_) }}"{% if action == action_ %} class="active"{% endif %}>{{ title }}</a></li>
         {% endif %}
       {% endfor %}

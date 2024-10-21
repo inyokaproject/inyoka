@@ -15,7 +15,7 @@
 
 {% block content %}
   <form action="" method="post" id="user_edit_form">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <h3>{% trans %}Create user{% endtrans %}</h3>
     <dl>
       {{ render_form(form, ['username', 'password', 'confirm_password', 'email'], inline=true) }}

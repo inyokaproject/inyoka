@@ -21,6 +21,7 @@ from urllib.parse import urljoin
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.utils.encoding import force_str
 from django.utils.html import escape
@@ -28,7 +29,7 @@ from django.utils.translation import gettext as _
 
 from inyoka.utils.dates import _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
-from inyoka.utils.http import AccessDeniedResponse, templated
+from inyoka.utils.http import templated
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
@@ -81,7 +82,7 @@ def get_attachment(request):
 
     target = normalize_pagename(target)
     if not has_privilege(request.user, target, 'read'):
-        return AccessDeniedResponse()
+        raise PermissionDenied
 
     target = Page.objects.attachment_for_page(target)
     target = href('media', target)
@@ -133,7 +134,7 @@ def get_image_resource(request):
 
     target = normalize_pagename(target)
     if not has_privilege(request.user, target, 'read'):
-        return AccessDeniedResponse()
+        raise PermissionDenied
 
     try:
         width = int(request.GET['width'])

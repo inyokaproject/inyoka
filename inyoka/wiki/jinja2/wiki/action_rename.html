@@ -11,7 +11,7 @@
 
 
 <form action="{{ page|url('rename')|e }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <p><small>
     {%- trans -%}
       If you rename this page, all revisions will be renamed. The old page will redirect to the new one.

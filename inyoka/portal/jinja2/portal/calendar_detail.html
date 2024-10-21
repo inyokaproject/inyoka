@@ -60,7 +60,7 @@
   {%- endif %}
   <tr>
     <th colspan="2">{% trans %}Details{% endtrans %}
-      {%- if USER.has_perm('portal.change_event') %}
+      {%- if request.user.has_perm('portal.change_event') %}
         <small class="admin_link">
           (<a href="{{ event|url('edit') }}">{% trans %}edit{% endtrans %}</a>)
         </small>

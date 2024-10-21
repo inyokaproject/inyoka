@@ -15,8 +15,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
 from django.utils.dates import MONTHS
 from django.utils.html import escape
 from django.utils.timezone import get_current_timezone
@@ -55,14 +57,13 @@ from inyoka.utils.dates import _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.http import (
-    AccessDeniedResponse,
     templated,
 )
 from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href, is_safe_domain, url_for
 
 
@@ -179,13 +180,13 @@ def detail(request, year, month, day, slug):
     preview = None
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            return AccessDeniedResponse()
+            raise PermissionDenied
         messages.info(request, _('This article is not visible for regular '
                                  'users.'))
 
     if request.method == 'POST' and (not article.comments_enabled or
                                      not request.user.is_authenticated):
-        return AccessDeniedResponse()
+        raise PermissionDenied
 
     # clear notification status
     subscribed = Subscription.objects.user_subscribed(request.user,
@@ -271,9 +272,8 @@ def article_delete(request, year, month, day, slug):
                 _('The article “%(title)s” was deleted.')
                 % {'title': escape(article.subject)})
     else:
-        messages.info(request,
-            render_template('ikhaya/article_delete.html',
-            {'article': article}))
+        flash_message(request, 'ikhaya/article_delete.html',{'article': article})
+
     return HttpResponseRedirect(href('ikhaya'))
 
 
@@ -378,7 +378,7 @@ def article_subscribe(request, year, month, day, slug):
         raise Http404()
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            return AccessDeniedResponse()
+            raise PermissionDenied
     try:
         Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
@@ -547,7 +547,8 @@ def comment_edit(request, comment_id):
             'comment': comment,
             'form': form,
         }
-    return AccessDeniedResponse()
+
+    raise PermissionDenied
 
 
 @permission_required('ikhaya.change_comment', raise_exception=True)
@@ -627,7 +628,7 @@ def suggest_delete(request, suggestion):
                 msg = PrivateMessage()
                 msg.author = request.user
                 msg.subject = _('Article suggestion deleted')
-                msg.text = render_template('mails/suggestion_rejected.txt', args)
+                msg.text = render_to_string('mails/suggestion_rejected.txt', args)
                 msg.pub_date = datetime.utcnow()
                 recipients = [s.author]
                 msg.send(recipients)
@@ -661,7 +662,7 @@ def suggest_delete(request, suggestion):
             messages.error(request, _('This suggestion does not exist.'))
             return HttpResponseRedirect(href('ikhaya', 'suggestions'))
         messages.info(request,
-            render_template('ikhaya/suggest_delete.html', {'s': s}))
+            render(request, 'ikhaya/suggest_delete.html', {'s': s}))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
@@ -781,7 +782,7 @@ def suggestions_unsubscribe(request):
 def event_edit(request, pk=None):
     new = not pk
     if new and not request.user.has_perm('portal.add_event'):
-        return AccessDeniedResponse()
+        raise PermissionDenied
     event = Event.objects.get(id=pk) if not new else None
 
     if request.GET.get('copy_from', None):

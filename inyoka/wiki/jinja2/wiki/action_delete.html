@@ -11,7 +11,7 @@
 
 
 <form action="{{ page|url('delete')|e }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <p>{% trans %}Are you sure you want to delete this page?{% endtrans %}</p>
   <p>{% trans %}Reason:{% endtrans %}</p>
   <p><input type="text" name="note" size="30">

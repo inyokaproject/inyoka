@@ -29,7 +29,6 @@ from django.utils.translation import gettext_lazy
 from inyoka.markup.machine import NodeCompiler, NodeQueryInterface, NodeRenderer
 from inyoka.markup.utils import debug_repr
 from inyoka.utils.html import build_html_tag, striptags
-from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, normalize_pagename, slugify
 from inyoka.utils.urls import href
 
@@ -37,15 +36,6 @@ from inyoka.utils.urls import href
 def error_box(title, message):
     """Create an error node."""
     return Error([Strong([Text(title)]), Paragraph([Text(message)])])
-
-
-def html_partial(template_name, block_level=False, **context):
-    """
-    Return a `HTMLOnly` node with the rendered template and an empty
-    fallback for non HTML output.
-    """
-    rv = render_template(template_name, context)
-    return HTMLOnly(rv, Node(), block_level=block_level)
 
 
 class BaseNode:

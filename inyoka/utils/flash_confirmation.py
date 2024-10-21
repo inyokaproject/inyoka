@@ -9,11 +9,11 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.utils.translation import gettext as _
 
 from inyoka.forum.models import PostRevision
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.http import TemplateResponse
 from inyoka.utils.urls import href
 
 
@@ -48,11 +48,11 @@ def confirm_action(message=None, confirm=None, cancel=None):
                 confirm_label = confirm or _('Yes')
                 cancel_label = cancel or _('No')
 
-                return TemplateResponse('confirm_action.html', {
+                return render(request, 'confirm_action.html', {
                     'action_url': request.build_absolute_uri(),
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': cancel_label,
-                    }, content_type='text/html; charset=utf-8')
+                    })
         return patch_wrapper(decorator, func)
     return wrapper

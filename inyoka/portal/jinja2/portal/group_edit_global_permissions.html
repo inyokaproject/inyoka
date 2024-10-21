@@ -20,7 +20,7 @@
   {{ form.non_field_errors() }}
 
   <form class="usercp_form" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {% for field in form %}
       {{ field.errors }}
         <h2>{{ field.label }}</h2>

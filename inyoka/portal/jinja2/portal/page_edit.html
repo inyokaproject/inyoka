@@ -21,7 +21,7 @@
 {% block content %}
   <h3>{{ page.title|e }}</h3>
   <form action="" method="post">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ render_form(form, ('title', 'key', 'content')) }}
     <p>
       <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview">

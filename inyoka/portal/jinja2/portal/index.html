@@ -16,7 +16,17 @@
     <div class="calendar link">
       <h3><a href="{{ href('portal', 'calendar') }}">{% trans %}Upcoming events{% endtrans %}</a></h3>
     </div>
-    {{ calendar_events|safe }}
+    <div class="calendar overview">
+    {% if events %}
+      <ul class="events">
+      {% for event in events %}
+        <li>{{ event.friendly_title(with_html_link=true) }}</li>
+      {%- endfor %}
+      </ul>
+    {% else %}
+      <p>{% trans %}There are no upcoming events.{% endtrans %}</p>
+    {% endif %}
+    </div>
   </div>
 {% endblock %}
 

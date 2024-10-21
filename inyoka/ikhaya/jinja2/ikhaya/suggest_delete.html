@@ -12,7 +12,7 @@
 
 
 <form action="{{ href('ikhaya', 'suggest', s.id, 'delete') }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <p>{% trans %}Explanation for the author of the suggestion:{% endtrans %}</p>
   <p><textarea name="note"></textarea></p>
   <p class="note">

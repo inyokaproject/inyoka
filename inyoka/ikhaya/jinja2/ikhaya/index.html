@@ -71,14 +71,14 @@
               {%- pluralize pluralindicator -%}
                 {{ count }} <a href="{{ link }}">comments</a>
               {%- endtrans %}
-              {%- if article.id in subscription_ids and USER.is_authenticated %}
+              {%- if article.id in subscription_ids and request.user.is_authenticated %}
                 (<a href="{{ article|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>)
-              {%- elif article.id not in subscription_ids and USER.is_authenticated %}
+              {%- elif article.id not in subscription_ids and request.user.is_authenticated %}
                 (<a href="{{ article|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a>)
               {%- endif %}
             {%- endif %}
             | <a href="{{ article|url('id') }}">#</a>
-            {%- if USER.has_perm('ikhaya.change_article') -%}
+            {%- if request.user.has_perm('ikhaya.change_article') -%}
               <span class="admin_link"> |
                 <a href="{{ article|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
               </span>
