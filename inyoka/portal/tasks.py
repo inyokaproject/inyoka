@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
 
+from inyoka.portal.models import PrivateMessageEntry
 from inyoka.portal.user import User
 from inyoka.utils.logger import logger
 from inyoka.utils.storage import storage
@@ -78,3 +79,25 @@ def query_counter_task(cache_key, sql):
     cursor = connection.cursor()
     cursor.execute(sql)
     cache.set(cache_key, cursor.fetchone()[0])
+
+
+@shared_task
+def clean_privmsg_folders():
+    """
+    Remove all messages in private message folders (except 'archive')
+    after end of cache duration according to settings
+    has been reached.
+    """
+    privmsgs_trash = PrivateMessageEntry.objects.filter(
+        folder="2",
+        message__pub_date__lte=datetime.now() - timedelta(
+            days=settings.PRIVATE_MESSAGE_TRASH_DURATION),
+        )
+    privmsgs_inbox_sent = PrivateMessageEntry.objects.filter(
+        folder__in=["0", "1"],
+        message__pub_date__lte=datetime.now() - timedelta(
+            days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
+        )
+    logger.info("Deleting private messages after end of cache duration")
+    privmsgs_trash.delete()
+    privmsgs_inbox_sent.delete()
