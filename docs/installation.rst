@@ -33,7 +33,7 @@ For using Inyoka and its dependencies you need a lot of python and developer fil
 
 .. code-block:: console
 
-    $  sudo apt install git npm libxml2-dev libxslt1-dev libzmq3-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python3-dev python3-venv
+    $  sudo apt install git npm libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python3-dev python3-venv
 
 Inyoka installation
 *******************
