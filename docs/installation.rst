@@ -33,14 +33,7 @@ For using Inyoka and its dependencies you need a lot of python and developer fil
 
 .. code-block:: console
 
-    $  sudo apt-get install git nodejs-legacy libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python3-dev
-
-You also need the JavaScript package manager npm:
-
-.. code-block:: console
-
-    $ sudo apt-get install npm
-
+    $  sudo apt install git npm libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python3-dev python3-venv
 
 Inyoka installation
 *******************
@@ -129,7 +122,7 @@ supported by Django can have performance issues or less supported features! Inyo
 
 .. code-block:: console
 
-    $ sudo apt-get install postgresql redis-server
+    $ sudo apt install postgresql redis-server
 
 Next, you need a ``development_settings.py`` file which can be copied from
 the example file:
