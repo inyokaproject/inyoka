@@ -1,3 +1,14 @@
+"""
+    tests.apps.planet.test_views
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test planet views.
+
+    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+"""
+
+
 import datetime
 from time import mktime
 
