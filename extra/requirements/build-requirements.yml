@@ -1,0 +1,40 @@
+x-django:
+  &default-django
+  environment:
+    DJANGO_SETTINGS_MODULE: "tests.bdd.settings.headless"
+    PYTHONUNBUFFERED: "1"
+  command: >
+       bash -c "apt-get update --quiet &&
+                apt-get install --quiet -y --no-install-recommends build-essential libpq-dev libmagic1 &&
+                cd /inyoka &&
+                pip install --quiet --root-user-action=ignore --upgrade pip &&
+                pip install --quiet --root-user-action=ignore . &&
+                python manage.py generate_requirements"
+  volumes:
+    - type: bind
+      source: ../../
+      target: /inyoka
+      #read_only: true
+      read_only: false
+    - type: bind
+      source: .
+      target: /inyoka/extra/requirements
+      read_only: false
+
+services:
+
+  py39:
+    << : *default-django
+    image: docker.io/library/python:3.9-slim-bookworm
+
+  py310:
+    << : *default-django
+    image: docker.io/library/python:3.10-slim-bookworm
+
+  py311:
+    << : *default-django
+    image: docker.io/library/python:3.11-slim-bookworm
+
+  py312:
+    << : *default-django
+    image: docker.io/library/python:3.12-slim-bookworm
