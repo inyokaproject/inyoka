@@ -40,7 +40,13 @@ Generate for multiple python versions
 -------------------------------------
 
 A docker compose file exists to generate the requirements for all python versions
-Inyoka supports. To start the build procedure, run the following command:
+Inyoka supports.
+
+If needed adjust the variables ``INYOKA_GID`` and ``INYOKA_UID`` in ``build-requirements.yml``.
+These variables define the user and group id of the generated requirement files.
+Adjust to your needs, if your user uses different IDs.
+
+To start the build procedure, run the following command:
 
 ::
 

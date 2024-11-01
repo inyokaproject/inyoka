@@ -1,40 +1,72 @@
 x-django:
   &default-django
-  environment:
-    DJANGO_SETTINGS_MODULE: "tests.bdd.settings.headless"
-    PYTHONUNBUFFERED: "1"
   command: >
        bash -c "apt-get update --quiet &&
                 apt-get install --quiet -y --no-install-recommends build-essential libpq-dev libmagic1 &&
                 cd /inyoka &&
                 pip install --quiet --root-user-action=ignore --upgrade pip &&
-                pip install --quiet --root-user-action=ignore . &&
-                python manage.py generate_requirements"
+                pip install --root-user-action=ignore -r extra/requirements/linux-py$${PYTHON_VERSION}-production.txt  &&
+                export HOME=/tmp && # otherwise pip-tools tries to create /root/.cache
+                setpriv --reuid=$$INYOKA_UID --regid=$$INYOKA_GID --clear-groups python manage.py generate_requirements"
+  pull_policy: always # ensure we always use the latest patch release
   volumes:
     - type: bind
       source: ../../
       target: /inyoka
-      #read_only: true
-      read_only: false
+      read_only: true
     - type: bind
       source: .
       target: /inyoka/extra/requirements
       read_only: false
+    - type: bind
+      source: ../../celery.log
+      target: /inyoka/celery.log
+      read_only: false
+    - type: bind
+      source: ../../inyoka.log
+      target: /inyoka/inyoka.log
+      read_only: false
+    - type: tmpfs
+      target: /inyoka/inyoka.egg-info
+      tmpfs:
+        mode: 01777
+      read_only: false
+
+x-environment:
+  &default-environment
+  DJANGO_SETTINGS_MODULE: "tests.bdd.settings.headless"
+  PYTHONUNBUFFERED: "1"
+  # user and group id of the generated requirement files
+  # adjust to your needs, if your user has different IDs
+  INYOKA_GID: 100
+  INYOKA_UID: 1000
 
 services:
 
   py39:
     << : *default-django
     image: docker.io/library/python:3.9-slim-bookworm
+    environment:
+      << : *default-environment
+      PYTHON_VERSION: '3.9'
 
   py310:
     << : *default-django
     image: docker.io/library/python:3.10-slim-bookworm
+    environment:
+      << : *default-environment
+      PYTHON_VERSION: '3.10'
 
   py311:
     << : *default-django
     image: docker.io/library/python:3.11-slim-bookworm
+    environment:
+      << : *default-environment
+      PYTHON_VERSION: '3.11'
 
   py312:
     << : *default-django
     image: docker.io/library/python:3.12-slim-bookworm
+    environment:
+      << : *default-environment
+      PYTHON_VERSION: '3.12'
