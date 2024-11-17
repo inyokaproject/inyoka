@@ -237,7 +237,6 @@ class FilterByMetaData(macros.Macro):
             if ':' not in part:
                 continue
             key = part.split(':')[0].strip()
-            print(key)
             values = [x.strip() for x in part.split(':')[1].split(',')]
             mapping.extend([(key, x) for x in values])
         mapping = MultiMap(mapping)
