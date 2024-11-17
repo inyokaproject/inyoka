@@ -37,7 +37,7 @@ from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_safe
 from icalendar import Calendar as iCal
 from icalendar import Event as iEvent
 from PIL import Image
@@ -170,7 +170,6 @@ def index(request):
     countdown_date = storage_values.get('countdown_date', None)
     countdown_image_url = storage_values.get('countdown_image_url', None)
     if countdown_active and countdown_date:
-        release_date = None
         if isinstance(countdown_date, str):
             release_date = datetime.strptime(countdown_date, '%Y-%m-%d').date()
         else:
@@ -1424,6 +1423,7 @@ def calendar_detail(request, slug):
     }
 
 
+@require_safe
 def calendar_ical(request, slug):
 
     try:

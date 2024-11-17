@@ -8,18 +8,21 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+from datetime import datetime
 
 from django.conf import settings
 from django.core import mail
 from django.http import Http404
-from django.test import RequestFactory
+from django.test import RequestFactory, Client
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
+from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
-from inyoka.forum.models import Forum
+from inyoka.forum.models import Forum, Topic
+from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
     Linkmap,
@@ -32,6 +35,7 @@ from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
+from inyoka.utils.user import gen_activation_key
 
 
 class TestViews(TestCase):
@@ -48,6 +52,14 @@ class TestViews(TestCase):
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
+    def test_group_get_not_existing(self):
+        response = self.client.get('/group/Lorem_not_existing/edit/', follow=True)
+        self.assertContains(response, 'The group “Lorem_not_existing” does not exist')
+
+    def test_group_new_get(self):
+        response = self.client.get('/group/new/')
+        self.assertEqual(response.status_code, 200)
+
     def test_group(self):
         """Test the creation of groups and if they handle invalid groupnames
         correctly.
@@ -60,20 +72,18 @@ class TestViews(TestCase):
 
         postdata = {'name': 'LOr3m'}
         with translation.override('en-us'):
-            response = self.client.post('/group/Lorem/edit/', postdata)
-            self.assertNotIn(
-                '<ul class="errorlist"><li>%s</li></ul>'
-                % _('The group name contains invalid chars'),
-                response.content.decode('utf-8')
+            response = self.client.post('/group/Lorem/edit/', postdata, follow=True)
+            self.assertNotContains(
+                response,
+                'The group name contains invalid chars',
             )
 
         postdata = {'name': '£Ø®€m'}
         with translation.override('en-us'):
             response = self.client.post('/group/LOr3m/edit/', postdata)
-            self.assertIn(
-                '<ul class="errorlist"><li>%s</li></ul>'
-                % _('The group name contains invalid chars'),
-                response.content.decode('utf-8')
+            self.assertContains(
+                response,
+                'The group name contains invalid chars',
             )
 
     def test_linkmap__without_permission(self):
@@ -162,13 +172,54 @@ class TestViews(TestCase):
         Subscription(user=self.admin, content_object=self.user).save()
         with translation.override('en-us'):
             response = self.client.post('/user/user/unsubscribe/', follow=True)
-        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/user/user/')
-        self.assertIn(
-            'From now on you won’t be notified anymore about activities of “user”.',
-            response.content.decode('utf-8'),
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/user/user/')
+        self.assertContains(
+            response,
+            'From now on you won’t be notified anymore about activities of “user”.'
         )
         self.assertFalse(Subscription.objects.user_subscribed(self.admin, self.user))
 
+    def test_unsubscribe_user__get_request(self):
+        Subscription(user=self.admin, content_object=self.user).save()
+        with translation.override('en-us'):
+            response = self.client.get('/user/user/unsubscribe/', follow=True)
+
+        self.assertContains(
+            response,
+            'Do you want to unsubscribe from the user'
+        )
+
+    def test_ikhaya_redirect(self):
+        category = Category.objects.create(name="Categrory")
+        d = datetime(2024, 10, 10, 9, 30, 0)
+        a = Article.objects.create(author=self.admin, subject="Subject",
+                                   text="Text", pub_date=d.date(), pub_time=d.time(),
+                                   category=category)
+
+        response = self.client.get(f'/ikhaya/{a.id}/')
+
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/2024/10/10/subject/',
+                             fetch_redirect_response=False)
+
+
+    def test_csrf_failure(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+
+        self.page = StaticPage.objects.create(key='foo', title='foo')
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_staticpage', registered_group)
+
+        response = csrf_client.post(href('portal', 'page', 'new'),
+                         {'send': 'Send', 'title': 'con',
+                               'content': 'My content'})
+
+        self.assertContains(response, 'CSRF verification failed. Request aborted.', status_code=403)
+
+    def test_about_inyoka(self):
+        response = self.client.get('/inyoka/')
+        self.assertContains(response, 'Inyoka', status_code=200)
 
 class TestAuthViews(TestCase):
 
@@ -448,6 +499,13 @@ class TestAuthViews(TestCase):
             response = self.client.get('/confirm/set_new_email/?token=ThisIsAToken')
         self.assertContains(response, 'ThisIsAToken')
 
+    def test_user_deactivate__wrong_password(self):
+        self.client.login(username='user', password='user')
+
+        postdata = {'password_confirmation': 'wrong_password'}
+        response = self.client.post('/usercp/deactivate/', postdata, follow=True)
+        self.assertContains(response, 'The entered password is wrong.')
+
     def test_user_deactivate_and_recover(self):
         """Test the user deactivate and recover feature.
         """
@@ -696,6 +754,27 @@ class TestStaticPageView(TestCase):
         self.assertIn(content, response.context['content'])
 
 
+class TestStaticPageOverview(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+        self.page = StaticPage.objects.create(key='foo', title='foo55998')
+
+    def test_with_permissions(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_staticpage', registered_group)
+
+        response = self.client.get('/pages/')
+        self.assertContains(response, 'foo55998', status_code=200)
+
+    def test_status_code_without_permissions(self):
+        response = self.client.get('/pages/')
+        self.assertEqual(response.status_code, 403)
+
+
 class TestStaticPageEdit(TestCase):
     client_class = InyokaClient
 
@@ -838,6 +917,13 @@ class TestEditGlobalPermissions(TestCase):
         self.assertContains(response,
                             '<input type="checkbox" name="auth_permissions" value="auth.change_group"')
 
+    def test_post(self):
+        self._permissions_for_user()
+        response = self.client.post(self.url, {}, follow=True)
+
+        # 403 is OK, as we just removed all permissions  of the Registered group via the post request
+        self.assertContains(response, 'The group “registered” was changed successfully.', status_code=403)
+
 
 class TestEditForumPermissions(TestCase):
     client_class = InyokaClient
@@ -879,3 +965,649 @@ class TestEditForumPermissions(TestCase):
         response = self.client.get(self.url)
 
         self.assertContains(response, forum.name, html=True)
+
+    def test_post(self):
+        Forum.objects.create(name='Forum 1')
+        self._permissions_for_user()
+        response = self.client.post(self.url, {}, follow=True)
+
+        self.assertContains(response, 'The group “registered” was changed successfully.')
+
+
+class TestConfigView(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get_with_permissions(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_storage', registered_group)
+
+        response = self.client.get('/config/')
+        self.assertContains(response, 'General settings', status_code=200)
+        self.assertContains(response, 'Release-Countdown', status_code=200)
+
+
+    def test_post_with_permissions(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_storage', registered_group)
+
+        response = self.client.post('/config/', {})
+        self.assertContains(response, 'Your settings have been changed successfully.', status_code=200)
+
+    def test_status_code_without_permissions(self):
+        response = self.client.get('/config/')
+        self.assertEqual(response.status_code, 403)
+
+
+class TestCalendarIcal(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        self.event = Event.objects.create(name='Event 1',
+                                          date=d.date(),
+                                          time=d.time(),
+                                          author=self.user,
+                                          visible=True)
+
+    @freeze_time('2024-11-17 00:00:00')
+    def test_get(self):
+        response = self.client.get(f'/calendar/{self.event.slug}/ics/')
+        ical_content = '''BEGIN:VCALENDAR\r
+BEGIN:VEVENT\r
+SUMMARY:Event 1\r
+DTSTART:20241010T000000\r
+DTEND:20241010T000000\r
+DTSTAMP:20241117T000000Z\r
+UID:2024/10/10/event-1\r
+LOCATION:\r
+END:VEVENT\r
+END:VCALENDAR\r\n'''
+        self.assertEqual(response.status_code, 200)
+
+        self.maxDiff = None
+        self.assertEqual(response.content.decode(), ical_content)
+
+    def test_post(self):
+        response = self.client.post(f'/calendar/{self.event.slug}/ics/', {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_get_no_permission(self):
+        self.event.visible = False
+        self.event.save()
+
+        response = self.client.get(f'/calendar/{self.event.slug}/ics/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_existing(self):
+        response = self.client.get('/calendar/not_existing/ics/')
+        self.assertEqual(response.status_code, 404)
+
+
+class TestCalendarDetail(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        self.event = Event.objects.create(name='Event 1',
+                                          date=d.date(),
+                                          time=d.time(),
+                                          author=self.user,
+                                          visible=True)
+
+    def test_get(self):
+        response = self.client.get(f'/calendar/{self.event.slug}/')
+        self.assertContains(response, self.event.name)
+
+    def test_get_invisible_with_permission(self):
+        self.event.visible = False
+        self.event.save()
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_event', registered_group)
+
+        response = self.client.get(f'/calendar/{self.event.slug}/')
+        self.assertContains(response, self.event.name)
+        self.assertContains(response, 'This event is not visible for regular users.')
+
+    def test_get_invisible_without_permission(self):
+        self.event.visible = False
+        self.event.save()
+
+        response = self.client.get(f'/calendar/{self.event.slug}/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_existing(self):
+        response = self.client.get('/calendar/not_existing/')
+        self.assertEqual(response.status_code, 404)
+
+
+class TestCalendarMonth(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        self.event = Event.objects.create(name='Event 1',
+                                          date=d.date(),
+                                          time=d.time(),
+                                          author=self.user,
+                                          visible=True)
+
+    def test_get(self):
+        response = self.client.get('/calendar/2024/10/')
+        self.assertContains(response, self.event.name)
+
+    def test_not_existing__too_early_year(self):
+        response = self.client.get('/calendar/1899/1/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_existing__not_existing_month(self):
+        response = self.client.get('/calendar/1998/13/')
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get('/calendar/1998/0/')
+        self.assertEqual(response.status_code, 404)
+
+class TestFeedSelector(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get(self):
+        response = self.client.get('/feeds/')
+
+        self.assertContains(response, 'Generate feed')
+
+    def test_get_wiki(self):
+        response = self.client.get('/feeds/wiki/')
+
+        self.assertContains(response, 'Generate feed')
+        self.assertNotContains(response, 'action="/feeds/planet/"')
+
+    def test_post(self):
+        response = self.client.post('/feeds/forum/', {'component': '*', 'count': '8', 'mode': 'short'})
+        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/', fetch_redirect_response=False)
+
+
+class TestGroupView(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get(f'/group/{settings.INYOKA_REGISTERED_GROUP_NAME}/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__with_permission(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get(f'/group/{settings.INYOKA_REGISTERED_GROUP_NAME}/')
+        self.assertContains(response, settings.INYOKA_REGISTERED_GROUP_NAME)
+
+        response = self.client.get(f'/group/{settings.INYOKA_REGISTERED_GROUP_NAME}/2/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__with_permission_paginated(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        for i in range(20):
+            User.objects.register_user(f'user-{i}', f'user{i}@example.com', 'user', False)
+
+        response = self.client.get(f'/group/{settings.INYOKA_REGISTERED_GROUP_NAME}/2/')
+        self.assertContains(response, 'user-19')
+
+
+class TestGroupList(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get(self):
+        response = self.client.get('/groups/')
+        self.assertContains(response, settings.INYOKA_REGISTERED_GROUP_NAME)
+
+    def test_get__pagination(self):
+        for i in range(60):
+            Group.objects.create(name=f'group-{i}')
+
+        response = self.client.get('/groups/2/')
+        self.assertContains(response, 'group-58')
+
+
+class TestMemberList(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get(self):
+        response = self.client.get('/users/')
+        self.assertContains(response, self.user.username)
+
+    def test_get__paginated(self):
+        for i in range(25):
+            User.objects.register_user(f'user-{i}', f'user{i}@example.com', 'user', False)
+
+        response = self.client.get('/users/2/')
+        self.assertContains(response, 'user-22')
+
+    def test_post__no_permission(self):
+        response = self.client.post('/users/', {})
+        self.assertContains(response, 'You need to be logged in before you can continue.', status_code=403)
+
+    def test_post__with_permission(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.post('/users/', {'user': self.user.username}, follow=True)
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/user/user/edit/')
+
+    def test_post__with_permission__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.post('/users/', {'user': 'barfoobaz158'}, follow=True)
+        self.assertContains(response, 'The user “barfoobaz158” does not exist.')
+
+class TestResendActivationMail(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/users/resend_activation_mail/?user=user')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/users/resend_activation_mail/?user=user', follow=True)
+        self.assertContains(response, 'was already activated')
+
+    def test_get__not_activated_user(self):
+        self.user.status = User.STATUS_INACTIVE
+        self.user.save()
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/users/resend_activation_mail/?user=user', follow=True)
+        self.assertContains(response, 'The email with the activation key was resent.')
+        self.assertEqual(len(mail.outbox), 1)
+
+class TestUserNewView(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/user/new/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.add_user', registered_group)
+
+        response = self.client.get('/user/new/', follow=True)
+        self.assertContains(response, 'Create user')
+
+    def test_post(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.add_user', registered_group)
+        assign_perm('portal.change_user', registered_group)
+
+        data = {
+            'username': 'foobar193',
+            'password': '12345',
+            'confirm_password': '12345',
+            'email': 'foobar193@local.test',
+            'authenticate': False
+        }
+        response = self.client.post('/user/new/', data=data, follow=True)
+        self.assertContains(response, 'was successfully created. You can now edit more details.')
+        self.assertEqual(User.objects.filter(username='foobar193').count(), 1)
+
+
+class TestUserEditGroups(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/user/user/edit/groups/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user_not_existing/edit/groups/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user/edit/groups/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.post('/user/user/edit/groups/', data={'groups': registered_group.id}, follow=True)
+        self.assertContains(response, 'were successfully changed.')
+
+class TestUserEditStatus(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/user/user/edit/status/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user_not_existing/edit/status/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user/edit/status/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.post('/user/user/edit/status/', data={'status': User.STATUS_BANNED}, follow=True)
+        self.assertContains(response, 'was successfully changed.')
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, User.STATUS_BANNED)
+
+
+class TestUserEditSettings(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/user/user/edit/settings/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user_not_existing/edit/settings/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user/edit/settings/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.post('/user/user/edit/settings/', data={'timezone': 'Europe/Prague'}, follow=True)
+        self.assertContains(response, 'were successfully changed.')
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.settings.get('show_thumbnails'), False)
+
+
+class TestUserEditProfile(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/user/user/edit/profile/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user_not_existing/edit/profile/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user/edit/profile/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.post('/user/user/edit/profile/', data={'username': 'euprag', 'email': self.user.email}, follow=True)
+        self.assertContains(response, 'was changed successfully')
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'euprag')
+
+
+class TestUserEdit(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/user/user/edit/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user_not_existing/edit/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user/edit/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestUserCPSubscriptions(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get(self):
+        response = self.client.get('/usercp/subscriptions/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'You did not yet subscribed to any topics or articles.')
+
+    def _create_subscription(self):
+        forum1 = Forum.objects.create(name='Forum 1')
+        self.topic = Topic.objects.create(title='A test Topic', author=self.user,
+                                          forum=forum1)
+
+        Subscription.create_auto_subscription(self.user, self.topic)
+
+    def test_post__delete(self):
+        self._create_subscription()
+
+        data = {'delete': '', 'select': [self.topic.id]}
+        response = self.client.post('/usercp/subscriptions/', data=data, follow=True)
+        self.assertContains(response, 'A subscription was deleted.')
+        self.assertFalse(Subscription.objects.filter(user=self.user).exists())
+
+    def test_post__mark_read(self):
+        self._create_subscription()
+
+        data = {'mark_read': '', 'select': [self.topic.id]}
+        response = self.client.post('/usercp/subscriptions/', data=data, follow=True)
+        self.assertContains(response, 'A subscription was marked as read.')
+
+
+class TestUserCPSettings(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get(self):
+        response = self.client.get('/usercp/settings/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post(self):
+        data={'timezone': 'Asia/Seoul'}
+        response = self.client.post('/usercp/settings/', data=data, follow=True)
+        self.assertContains(response, 'Your settings were successfully changed.')
+
+
+class TestUserMail(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get__no_permission(self):
+        response = self.client.get('/user/user/mail/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user_not_existing/mail/', follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get__existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/user/user/mail/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        data = {'text': 'just some random string of text'}
+        response = self.client.post('/user/user/mail/', data=data, follow=True)
+        self.assertContains(response, 'was sent successfully.')
+
+        msg = mail.outbox[0]
+        self.assertIn('Message from user', msg.subject)
+        self.assertIn('just some random string of text', msg.body)
+
+
+class TestActivate(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+
+    def test_get__not_existing_user(self):
+        response = self.client.get('/delete/foobarbaz_user/test_key/', follow=True)
+        self.assertContains(response, 'does not exist.')
+
+    def test_get__logged_in(self):
+        self.client.login(username='user', password='user')
+        response = self.client.get('/delete/user/test_key/', follow=True)
+        self.assertContains(response, 'You cannot enter an activation key when you are logged in.')
+
+    def test_get__delete__already_deleted(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_INACTIVE
+        self.user.save()
+        response = self.client.get(f'/delete/user/{key}/', follow=True)
+        self.assertContains(response,'Your account was anonymized.')
+
+    def test_get__delete__already_active(self):
+        key = gen_activation_key(self.user)
+        response = self.client.get(f'/delete/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'was already activated.')
+
+    def test_get__delete__invalid_key(self):
+        response = self.client.get('/delete/user/test_key/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
+
+    def test_get__activate(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_INACTIVE
+        self.user.save()
+        response = self.client.get(f'/activate/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'Your account was successfully activated.')
+
+    def test_get__activate__invalid_key(self):
+        response = self.client.get('/activate/user/test_key/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
+
+
+class WhoisOnline(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+    def test_get(self):
+        response = self.client.get('/whoisonline/', follow=True)
+        self.assertContains(response, '0 Users online')
+
+    def test_post(self):
+        response = self.client.post('/whoisonline/', data={}, follow=True)
+        self.assertEqual(response.status_code, 405)
