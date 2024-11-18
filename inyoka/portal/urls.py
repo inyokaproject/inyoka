@@ -59,7 +59,6 @@ urlpatterns = [
     re_path(r'^privmsg/(?P<folder>[a-z]+)/all/$', views.privmsg, {'one_page': True}),
     path('privmsg/<int:entry_id>/', views.privmsg),
     re_path(r'^privmsg/(?P<folder>[a-z]+)/(?P<entry_id>\d+)/$', views.privmsg),
-    path('map/', views.usermap),
     path('whoisonline/', views.whoisonline),
     path('inyoka/', views.about_inyoka),
     path('register/', views.register),

@@ -1285,11 +1285,6 @@ def group_edit_forum_permissions(request, name):
     }
 
 
-def usermap(request):
-    messages.info(request, _('The user map was temporarily disabled.'))
-    return HttpResponseRedirect(href('portal'))
-
-
 app_feed_forms = {
     'forum': ForumFeedSelectorForm,
     'ikhaya': IkhayaFeedSelectorForm,
