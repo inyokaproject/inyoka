@@ -13,7 +13,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core import mail
 from django.http import Http404
-from django.test import RequestFactory, Client
+from django.test import Client, RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import now
