@@ -423,10 +423,7 @@ def profile(request, username):
 @templated('portal/user_mail.html')
 def user_mail(request, username):
     try:
-        if '@' in username:
-            user = User.objects.get(email__iexact=username)
-        else:
-            user = User.objects.get(username__iexact=username)
+        user = User.objects.get_by_username_or_email(username)
     except User.DoesNotExist:
         raise Http404
 
