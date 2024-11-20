@@ -272,7 +272,6 @@ def register(request):
 
 def activate(request, action='', username='', activation_key=''):
     """Activate a user with the activation key send via email."""
-    redirect = is_safe_domain(request.GET.get('next', ''))
     try:
         user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
@@ -280,6 +279,8 @@ def activate(request, action='', username='', activation_key=''):
             _('The user “%(username)s” does not exist.') % {
                 'username': escape(username)})
         return HttpResponseRedirect(href('portal'))
+
+    redirect = is_safe_domain(request.GET.get('next', ''))
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
 
@@ -287,9 +288,6 @@ def activate(request, action='', username='', activation_key=''):
         messages.error(request,
             _('You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
-
-    if action not in ('delete', 'activate'):
-        raise Http404()
 
     if action == 'delete':
         if check_activation_key(user, activation_key):
@@ -302,7 +300,7 @@ def activate(request, action='', username='', activation_key=''):
         else:
             messages.error(request, _('Your activation key is invalid.'))
         return HttpResponseRedirect(href('portal'))
-    else:
+    elif action == 'activate':
         if check_activation_key(user, activation_key) and user.is_inactive:
             user.status = User.STATUS_ACTIVE
             user.save()
@@ -314,7 +312,8 @@ def activate(request, action='', username='', activation_key=''):
         else:
             messages.error(request, _('Your activation key is invalid.'))
             return HttpResponseRedirect(href('portal'))
-
+    else:
+        raise Http404()
 
 class InyokaPasswordResetView(SuccessMessageMixin, PasswordResetView):
     """
