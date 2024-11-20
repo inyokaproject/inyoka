@@ -207,6 +207,7 @@ def index(request):
     }
 
 
+@require_safe
 @templated('portal/whoisonline.html')
 def whoisonline(request):
     """Shows who is online and a link to the page the user views."""
