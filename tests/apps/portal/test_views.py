@@ -1477,20 +1477,20 @@ class TestUserCPSubscriptions(TestCase):
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
                                           forum=forum1)
 
-        Subscription.create_auto_subscription(self.user, self.topic)
+        return Subscription.objects.create(user=self.user, content_object=self.topic)
 
     def test_post__delete(self):
-        self._create_subscription()
+        sub = self._create_subscription()
 
-        data = {'delete': '', 'select': [self.topic.id]}
+        data = {'delete': '', 'select': [sub.id]}
         response = self.client.post('/usercp/subscriptions/', data=data, follow=True)
         self.assertContains(response, 'A subscription was deleted.')
         self.assertFalse(Subscription.objects.filter(user=self.user).exists())
 
     def test_post__mark_read(self):
-        self._create_subscription()
+        sub = self._create_subscription()
 
-        data = {'mark_read': '', 'select': [self.topic.id]}
+        data = {'mark_read': '', 'select': [sub.id]}
         response = self.client.post('/usercp/subscriptions/', data=data, follow=True)
         self.assertContains(response, 'A subscription was marked as read.')
 
