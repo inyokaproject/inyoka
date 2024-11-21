@@ -67,6 +67,7 @@ optional-dependencies.dev = [
   "freezegun",
   "responses",
   "myst-parser[linkify]", # markdown for sphinx
+  "pyupgrade",
   "selenium",
   "sphinx",
   "sphinx-rtd-theme",
