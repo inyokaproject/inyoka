@@ -510,12 +510,14 @@ class PageManager(models.Manager):
 
         return attachment.file.name
 
-    def render_all_pages(self):
+    def render_all_pages(self) -> None:
         """
-        This method will rerender all wiki pages (only the newest revision of them and only non-privilged ones).
+        This method will rerender all wiki pages (only the newest revision of them and only non-privileged ones).
         If run on a schedule, it can guarantee that an up-to-date version is in the cache.
 
-        If a page is already in the cache, the cache entry will be dropped before rerendering it.
+        If a page is already in the cache, the cache entry will be dropped before rendering it.
+
+        The metadata of each page is also updated.
         """
         page_list = self.get_page_list(exclude_privileged=True)
 
@@ -530,6 +532,8 @@ class PageManager(models.Manager):
             if page.rev.attachment:
                 # page is an attachment
                 continue
+
+            page.update_meta()
 
             page.rev.text.remove_value_from_cache()
 
