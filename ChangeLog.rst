@@ -28,6 +28,11 @@ Inyoka Changelog
 Unreleased 1.BB.CC (2024-MM-DD)
 ===============================
 
+Deployment notes
+----------------
+
+#. Update requirements
+
 ✨ New features
 ---------------
 
@@ -54,6 +59,8 @@ Unreleased 1.BB.CC (2024-MM-DD)
 
 🔒 Security
 -----------
+
+* Update requirements (at least the dependency ``lxml-html-clean`` includes known security fixes)
 
 
 1.0.1 (2024-10-20)
