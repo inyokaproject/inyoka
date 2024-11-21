@@ -988,6 +988,32 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
+    def update_related_pages(self, update_meta: bool=True) -> None:
+        """
+        Removes the content of page from the cache and its related pages.
+
+        It also updates the metadata of all pages. This is f.e. relevant for page
+        templates that emit tags.
+
+        Intended to be run in a celery task.
+        """
+        related_pages = MetaData.objects.only('page') \
+            .filter(key__in=('X-Link', 'X-Attach'), value=self.name)
+
+        for meta in related_pages:
+            p = meta.page
+            cache.delete(f'wiki/page/{p.name.lower()}')
+            p.last_rev.text.remove_value_from_cache()
+            if update_meta:
+                p.update_meta()
+
+        cache.delete(f'wiki/page/{self.name.lower()}')
+        self.last_rev.text.remove_value_from_cache()
+        if update_meta:
+            self.update_meta()
+
+        ## TODO test number of queries used
+
     def save(self, update_meta=True, *args, **kwargs):
         """
         This not only saves the page but also a revision that is
