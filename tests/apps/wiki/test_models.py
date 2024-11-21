@@ -126,6 +126,31 @@ class TestPageManager(TestCase):
         self.assertTrue(page.rev.text.is_value_in_cache()[0])
         self.assertTrue(page2.rev.text.is_value_in_cache()[0])
 
+    def test_render_all_pages__metadata_updated(self):
+        """
+        Test, that metadata will be also update on rendering wiki pages.
+        """
+        template = Page.objects.create('Wiki/Templates/template', '#tag: untested')
+        page = Page.objects.create('test1', '[:test1:] content [[Vorlage(template, "Hello World")]]')
+
+        self.assertEqual(len(page.metadata), 3)
+        self.assertEqual(page.metadata['X-Link'], ['test1'])
+        self.assertEqual(page.metadata['X-Attach'], ['Wiki/Templates/template'])
+        self.assertEqual(page.metadata['tag'], ['untested'])
+
+        # included `template` was changed
+        # `page` should have a different metadata, but it's yet not updated
+        template.edit('# tag: foo', note='changed tag')
+        page = Page.objects.get(id=page.id) # defer of page.meta caches the metadata once we accessed it
+        self.assertEqual(len(page.metadata), 3)
+        self.assertEqual(page.metadata['tag'], ['untested'])
+
+        # render all pages, so metadata should be also updated
+        Page.objects.render_all_pages()
+        page = Page.objects.get(id=page.id) # defer of page.meta caches the metadata once we accessed it
+        self.assertEqual(len(page.metadata), 3)
+        self.assertEqual(page.metadata['tag'], ['foo'])
+
 
 class TestAttachment(TestCase):
 
