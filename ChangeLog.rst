@@ -25,6 +25,45 @@ Inyoka Changelog
    -----------
 
 
+Unreleased 1.BB.CC (2024-MM-DD)
+===============================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+* Migrate from bump2version to bump-my-version
+* Rework to use more of Django's logic for templates
+* Build requirement files for all supported Python versions (for the time being: Python 3.9, 3.10, 3.11, 3.12)
+* Added more tests for portal view
+* Wiki sidebar: Link to a seperate wiki page to incorrect articles (before the backlink-page of templates was used)
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+* Calendar: Localize some missed strings in the HTML
+* Documentation: Update installation requirements
+* Page 'About Inyoka': Update after OSS release, fix old URLs and localize the page
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependency ``lxml-html-clean`` includes known security fixes)
+
+
 1.0.1 (2024-10-20)
 ==================
 

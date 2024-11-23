@@ -17,8 +17,6 @@ from celery.schedules import crontab
 
 import inyoka
 
-gettext_noop = lambda x: x
-
 #: Base path of this application
 BASE_PATH = dirname(__file__)
 
@@ -313,10 +311,6 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
-
-# Make the template context available as tmpl_context in the TemplateResponse.
-# Useful for tests in combination with override_settings.
-PROPAGATE_TEMPLATE_CONTEXT = False
 
 INTERNAL_IPS = ('127.0.0.1',)
 

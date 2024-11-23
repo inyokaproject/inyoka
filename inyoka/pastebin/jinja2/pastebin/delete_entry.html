@@ -11,7 +11,7 @@
 
 
 <form action="{{ entry|url('delete')|e }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <p>
     {%- trans link=entry|url, entry=entry.title|e -%}
       Do you really want to delete the entry <a href="{{ link }}">{{ entry }}</a>?

@@ -58,7 +58,7 @@ dependencies = [
 ]
 optional-dependencies.dev = [
   "allure-behave",
-  "bump2version",
+  "bump-my-version",
   "coverage",
   "django-codemod",
   "django-debug-toolbar",
@@ -67,6 +67,7 @@ optional-dependencies.dev = [
   "freezegun",
   "responses",
   "myst-parser[linkify]", # markdown for sphinx
+  "pyupgrade",
   "selenium",
   "sphinx",
   "sphinx-rtd-theme",
@@ -82,6 +83,7 @@ version = { attr = "inyoka.INYOKA_VERSION" }
 
 [tool.setuptools]
 packages = [ "inyoka" ]
+
 
 [tool.ruff]
 exclude = [
@@ -111,3 +113,52 @@ ignore = [
 "tests/**/settings/*.py" = ["F405", "F403"]
 "tests/bdd/steps/*.py" = ["F811"]
 "inyoka/locale/de_DE/formats.py" = ["F403"]
+
+
+[tool.bumpversion]
+current_version = "1.0.1"
+parse = "(?P<major>\\d+)\\.(?P<django>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{django}.{patch}"]
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = false
+ignore_missing_files = false
+tag = true
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = false
+commit = true
+message = "Bump version: {current_version} → {new_version}"
+commit_args = ""
+setup_hooks = []
+pre_commit_hooks = []
+post_commit_hooks = []
+
+[tool.bumpversion.parts.django]
+independent = true
+values = [
+    "42",
+    "52"
+]
+
+[[tool.bumpversion.files]]
+filename = "inyoka/__init__.py"
+search = 'INYOKA_VERSION = "{current_version}"'
+replace = 'INYOKA_VERSION = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "package.json"
+search = '"version": "{current_version}"'
+replace = '"version": "{new_version}"'
+
+
+[tool.coverage.run]
+branch = true
+source = [
+  "inyoka/",
+  ]
+omit = [
+  "inyoka/*/migrations/*",
+  ]

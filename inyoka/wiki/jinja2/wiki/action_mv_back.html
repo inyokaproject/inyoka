@@ -11,7 +11,7 @@
 
 
 <form action="{{ page|url('mv_back')|e }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
   <p>
     {% trans %}Are you sure you want to move the page into the wiki?{% endtrans %}
   </p>

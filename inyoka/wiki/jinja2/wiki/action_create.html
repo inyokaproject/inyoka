@@ -13,7 +13,7 @@
 {% set BREADCRUMBS = [(_('create'), href('wiki', 'create'))] + BREADCRUMBS|d([]) %}
 {% block wiki_content %}
 <form action="{{ href('wiki', 'wiki', 'create') }}" method="post">
-  {{ csrf_token() }}
+  {{ csrf_input }}
 
   <p>
     {% trans forum_link=href('forum') -%}

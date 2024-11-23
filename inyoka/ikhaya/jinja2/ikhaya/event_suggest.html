@@ -21,7 +21,7 @@
     {%- endtrans -%}
   </p>
   <form action="" method="post" enctype="multipart/form-data">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {%- if form.errors %}
       <ul>{{ form.errors }}</ul>
     {%- endif %}

@@ -10,7 +10,12 @@
 from django.conf import settings
 from django.urls import include, path, re_path
 
-from ..utils.http import global_not_found, server_error
+from ..utils.http import (
+    bad_request_view,
+    global_not_found,
+    permission_denied_view,
+    server_error,
+)
 from . import views
 
 urlpatterns = [
@@ -54,7 +59,6 @@ urlpatterns = [
     re_path(r'^privmsg/(?P<folder>[a-z]+)/all/$', views.privmsg, {'one_page': True}),
     path('privmsg/<int:entry_id>/', views.privmsg),
     re_path(r'^privmsg/(?P<folder>[a-z]+)/(?P<entry_id>\d+)/$', views.privmsg),
-    path('map/', views.usermap),
     path('whoisonline/', views.whoisonline),
     path('inyoka/', views.about_inyoka),
     path('register/', views.register),
@@ -96,5 +100,7 @@ if settings.DEBUG:
         path('__debug__/', include(debug_toolbar.urls)),
     )
 
+handler400 = bad_request_view
+handler403 = permission_denied_view
 handler404 = global_not_found
 handler500 = server_error

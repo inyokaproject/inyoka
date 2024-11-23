@@ -18,26 +18,36 @@
 {%- endmacro %}
 
 {% block portal_content %}
-  <h3>Was treibt ubuntuusers an?</h3>
+  <h3>{% trans %}About Inyoka{% endtrans %}</h3>
   <p>
-    Seit Juli 2008 läuft das gesamte ubuntuusers-Portal auf einer
-    einzigen <a href="https://www.python.org/">Python</a>-Anwendung mit dem
-    Namen „Inyoka“ (zulu für „Schlange“).
+    {% trans %}The name “Inyoka” means snake in Zulu. It shows the connection to both its used programming language Python and to the Linux-distribution Ubuntu.{% endtrans %}
+    {% trans %}Inyoka's history is deeply connected to the website ubuntuusers.de.{% endtrans %}
+    {% trans %}There it powers the whole portal as an all-in-one application since July 2008.{% endtrans %}
   </p>
+
   <p>
-    Inyoka selbst baut dabei auf eine Vielzahl von OpenSource-Programmen,
-    -Bibliotheken und -Technologien auf:
+    {% trans url="https://ubuntuusers.de/ikhaya/8348/" -%}
+      In 2024 Inyoka became Open Source Software (<a href="{{url}}">news article in German</a>).
+    {%- endtrans %}
+
+    {% trans url="https://github.com/inyokaproject/" -%}
+      As a result, Inyoka is now developed on <a href="{{url}}">GitHub</a> publicly.
+    {%- endtrans %}
+  </p>
+
+  <p>
+    {% trans %}We want to thank open source programs, libraries and technology Inyoka is based on:{% endtrans %}
   </p>
   <p class="badges">
     {{ badge('https://www.ubuntu.com/', 'ubuntu', 'ubuntu.gif') }}
     {{ badge('https://www.python.org/', 'Python', 'python.png') }}
     {{ badge('https://djangoproject.com/', 'Django', 'django.gif') }}
-    {{ badge('https://www.palletsprojects.com/p/jinja/', 'Jinja', 'jinja.png') }}
+    {{ badge('https://palletsprojects.com/projects/jinja', 'Jinja', 'jinja.png') }}
     {{ badge('https://www.postgresql.org/', 'PostgreSQL', 'postgresql.png') }}
     {{ badge('https://pygments.org/', 'Pygments', 'pygments.png') }}
     {{ badge('https://redis.io/', 'redis', 'redis.png') }}
-    {{ badge('https://jquery.com/', 'jquery', 'jquery.png') }}
+    {{ badge('https://jquery.com/', 'jquery', 'jquery.png') }}
     {{ badge('https://github.com/kurtmckee/feedparser', 'Universal Feed Parser', 'feedparser.png') }}
-    {{ badge('https://www.palletsprojects.com/p/werkzeug/', 'Werkzeug', 'werkzeug.png') }}
+    {{ badge('https://palletsprojects.com/projects/werkzeug', 'Werkzeug', 'werkzeug.png') }}
   </p>
 {% endblock %}

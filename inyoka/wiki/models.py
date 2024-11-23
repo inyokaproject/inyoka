@@ -92,6 +92,7 @@ from django.core.cache import cache
 from django.db import models
 from django.db.models import Count
 from django.db.models.functions import Upper
+from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.html import escape
 from django.utils.translation import get_language, gettext_lazy, to_locale
@@ -109,7 +110,6 @@ from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
 from inyoka.utils.local import local as local_cache
 from inyoka.utils.logger import logger
-from inyoka.utils.templating import render_template
 from inyoka.utils.text import (
     get_pagetitle,
     join_pagename,
@@ -510,12 +510,14 @@ class PageManager(models.Manager):
 
         return attachment.file.name
 
-    def render_all_pages(self):
+    def render_all_pages(self) -> None:
         """
-        This method will rerender all wiki pages (only the newest revision of them and only non-privilged ones).
+        This method will rerender all wiki pages (only the newest revision of them and only non-privileged ones).
         If run on a schedule, it can guarantee that an up-to-date version is in the cache.
 
-        If a page is already in the cache, the cache entry will be dropped before rerendering it.
+        If a page is already in the cache, the cache entry will be dropped before rendering it.
+
+        The metadata of each page is also updated.
         """
         page_list = self.get_page_list(exclude_privileged=True)
 
@@ -530,6 +532,8 @@ class PageManager(models.Manager):
             if page.rev.attachment:
                 # page is an attachment
                 continue
+
+            page.update_meta()
 
             page.rev.text.remove_value_from_cache()
 
@@ -736,7 +740,7 @@ class Diff:
         Render the diff using the ``wiki/_diff.html`` template.  Have a look
         at the class' docstring for more detail.
         """
-        return render_template('wiki/_diff.html', {'diff': self})
+        return render_to_string('wiki/_diff.html', {'diff': self})
 
     def __str__(self):
         return self.render()

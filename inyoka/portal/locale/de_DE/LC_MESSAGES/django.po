@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-10-13 15:19+0200\n"
+"POT-Creation-Date: 2024-11-17 13:35+0100\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -110,6 +110,9 @@ msgstr "Ein Benutzer mit diesem Namen existiert bereits."
 msgid "About"
 msgstr "Über"
 
+msgid "About Inyoka"
+msgstr "Über Inyoka"
+
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -136,6 +139,10 @@ msgstr "Archiv"
 
 msgid "Archive it"
 msgstr "Archivieren"
+
+#, python-format
+msgid "As a result, Inyoka is now developed on <a href=\"%(url)s\">GitHub</a> publicly."
+msgstr "Deshalb wird Inyoka nun öffentlich auf <a href=\"%(url)s\">GitHub</a> weiterentwickelt."
 
 msgid "Attachment preview"
 msgstr "Anhang-Vorschau"
@@ -257,6 +264,9 @@ msgstr "Datum"
 
 msgid "Date:"
 msgstr "Datum:"
+
+msgid "Day"
+msgstr "Tag"
 
 msgid "Deactivate account"
 msgstr "Konto deaktivieren"
@@ -498,6 +508,10 @@ msgid "Image URL"
 msgstr "Bild URL"
 
 #, python-format
+msgid "In 2024 Inyoka became Open Source Software (<a href=\"%(url)s\">news article in German</a>)."
+msgstr "In 2024 wurde Inyoka Open Source Software (<a href=\"%(url)s\">Ikhaya-Artikel</a>)."
+
+#, python-format
 msgid "In total there are %(global_registered_users)s users registered."
 msgstr "Insgesamt sind %(global_registered_users)s registriert."
 
@@ -533,6 +547,9 @@ msgstr "Inyoka"
 
 msgid "Inyoka syntax required."
 msgstr "Muss Inyoka-Syntax sein."
+
+msgid "Inyoka's history is deeply connected to the website ubuntuusers.de."
+msgstr "Die Geschichte Inyokas ist eng verbunden mit der Website ubuntuusers.de."
 
 msgid "Is Ikhaya icon"
 msgstr "Ist Ikhaya-Icon"
@@ -956,6 +973,9 @@ msgstr "Die Nachricht wird als „reiner Text“ abgeschickt. Dein Benutzername 
 msgid "The messages was moved into you archive."
 msgstr "Die Nachricht wurde in dein Archiv verschoben."
 
+msgid "The name “Inyoka” means snake in Zulu. It shows the connection to both its used programming language Python and to the Linux-distribution Ubuntu."
+msgstr "Der Name „Inyoka“ bedeutet Schlange in Zulu. Es zeigt die Verbindung sowohl zur verwendeten Programmiersprache Python als auch zur Linux-Distribution Ubuntu."
+
 msgid "The number will be round off to keep the server load low."
 msgstr "Die Anzahl wird abgerundet, um die Serverlast gering zu halten"
 
@@ -1024,6 +1044,9 @@ msgstr "Es gibt keine statischen Seiten, erstelle jetzt die erste!"
 
 msgid "There are no upcoming events."
 msgstr "Es stehen keine Veranstaltungen bevor."
+
+msgid "There it powers the whole portal as an all-in-one application since July 2008."
+msgstr "Seit Juli 2008 treibt es dort das gesamte Portal als eine einzige Anwendung an."
 
 msgid "This Page lets you edit, delete and add external link shortcuts. The icons should be of the size 14px x 14px."
 msgstr "Über diese Seite können Interwikilinks bearbeitet, hinzugefügt und gelöscht werden. Icons sollten die Größe 14px x 14px haben."
@@ -1124,6 +1147,9 @@ msgstr "Beobachten"
 #, python-format
 msgid "We need your email address to send you a new password if you forgot it. It is not visible to other users. For more information, check out our <a href=\"%(link)s\">privacy policy</a>."
 msgstr "Wir benötigen deine E-Mailadresse, um dir ein neues Passwort zu senden, falls du dein Passwort mal vergessen solltest. Sie ist für andere Nutzer nicht sichtbar. Mehr Informationen findest du in unseren <a href=\"%(link)s\">Datenschutzbestimmungen</a>."
+
+msgid "We want to thank open source programs, libraries and technology Inyoka is based on:"
+msgstr "Wir möchten uns bei OpenSource-Programmen, -Bibliotheken und -Technologien bedanken, die Inyoka verwendet:"
 
 msgid "Website"
 msgstr "Website"

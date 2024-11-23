@@ -25,7 +25,7 @@
   </ul>
   <p>{% trans %}Please be patient. It could take a while, until we approve your suggestion.{% endtrans %}</p>
   <form action="{{ href('planet', 'suggest') }}" method="post">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <dl>
       {{ render_form(form, ['name', 'url', 'feed_url', 'description', 'contact_email'], inline=True) }}
       <dd>{{ form.mine }} <label for="id_mine">{{ form.mine.label|e }}</label></dd>

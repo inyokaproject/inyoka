@@ -73,7 +73,7 @@ def step_impl(context, itemtype, required_keyword):
 
 @then('I should see a "403" exception')
 def step_impl(context):
-    caption = context.browser.find_element(by=By.CSS_SELECTOR, value='h1')
+    caption = context.browser.find_element(by=By.CSS_SELECTOR, value='main h1')
     assert '403' in caption.text
 
 

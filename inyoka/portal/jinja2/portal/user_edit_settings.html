@@ -18,7 +18,7 @@
 {% block content %}
 {{ super() }}
 <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
-  {{ csrf_token() }}
+  {{ csrf_input }}
     <h3>{% trans %}Settings{% endtrans %}</h3>
     {{ render_form(form, ['notify', 'notifications', 'ubuntu_version','timezone']) }}
 

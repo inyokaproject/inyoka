@@ -19,7 +19,7 @@
 
 {% block content %}
   <form action="" method="post" class="ikhaya">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     {{ render_form(form, ['name', 'icon']) }}
     <p>
       <input type="submit" value="{% trans %}Submit{% endtrans %}">

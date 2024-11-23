@@ -17,7 +17,7 @@
 
 {% block portal_content %}
   <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
     <h3>{% trans %}Settings{% endtrans %}</h3>
     <dl>
       {{ render_form(form, ['notify', 'notifications', 'ubuntu_version'], inline=True) }}

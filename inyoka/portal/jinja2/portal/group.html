@@ -15,7 +15,7 @@
 {% set BREADCRUMBS = [(_('Groups'), href('portal', 'groups')), (group.name, group|url)] + BREADCRUMBS|d([]) %}
 {% block content %}
   <h3>{{ group.name|e }}
-  {%- if USER.has_perm('auth.change_group') %}
+  {%- if request.user.has_perm('auth.change_group') %}
     <a href="{{ href('portal', 'group', group.name, 'edit') }}" class="admin_link"><img
       src="{{ href('static', 'img/icons/edit.svg') }}" alt="{% trans %}Edit group{% endtrans %}" title="{% trans %}Edit group{% endtrans %}" height="16px" width="16px"></a>
   {%- endif %}

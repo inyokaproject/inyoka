@@ -10,7 +10,7 @@
 
 {%- extends 'portal/overall.html' %}
 {% set styles = ['calendar'] %}
-{% set BREADCRUMBS = [('Kalender', href('portal', 'calendar')),
+{% set BREADCRUMBS = [(_('Calendar'), href('portal', 'calendar')),
                       ('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month))]
                        + BREADCRUMBS|d([]) %}
 {% block portal_content %}
@@ -31,7 +31,7 @@
 
 <table class="calendar_month">
   <tr>
-    <th colspan="2">Tag</th>
+    <th colspan="2">{% trans %}Day{% endtrans %}</th>
     <th>{% trans %}Events{% endtrans %}</th>
   </tr>
   {% for day, events in days %}
@@ -57,7 +57,7 @@
   </tr>
   {% endfor %}
 </table>
-{% if USER.has_perm('portal.suggest_event') %}
+{% if request.user.has_perm('portal.suggest_event') %}
   <p><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest new event{% endtrans %}</a></p>
 {% endif %}
 {% endblock %}

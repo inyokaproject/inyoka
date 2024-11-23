@@ -8,13 +8,11 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.templating import render_template
 
 
 def templated(template_name, status=None, modifier=None,
@@ -30,7 +28,7 @@ def templated(template_name, status=None, modifier=None,
                 'foo': 'bar'
             }
 
-    `ObjectDoesNotExist` exceptions are catched and raised again as
+    `ObjectDoesNotExist` exceptions are caught and raised again as
     `PageNotFound`.
     """
     def decorator(f):
@@ -45,8 +43,7 @@ def templated(template_name, status=None, modifier=None,
                 rv = {}
             if modifier is not None:
                 modifier(request, rv)
-            return TemplateResponse(template_name, rv, status=status,
-                                    content_type=content_type)
+            return render(request, template_name, rv, status=status, content_type=content_type)
         return patch_wrapper(proxy, f)
     return decorator
 
@@ -62,31 +59,19 @@ def does_not_exist_is_404(f):
 
 
 def global_not_found(request, err_message=None, exception=None):
-    return TemplateResponse('errors/404.html', {
+    return render(request, 'errors/404.html', {
         'err_message': err_message,
-    }, 404)
+    }, status=404)
 
 
 def server_error(request, exception=None):
     return render(request, 'errors/500.html', {'request': request}, status=500)
 
 
-class TemplateResponse(HttpResponse):
-    """
-    Returns a rendered template as response.
-    """
-    def __init__(self, template_name, context, status=200,
-                 content_type='text/html; charset=utf-8'):
-        if settings.DEBUG or settings.PROPAGATE_TEMPLATE_CONTEXT:
-            self.tmpl_context = context
-        tmpl = render_template(template_name, context)
-        HttpResponse.__init__(self, tmpl, status=status,
-                              content_type=content_type)
+def permission_denied_view(request, exception=None):
+    return render(request, 'errors/403.html', {'request': request}, status=403)
 
 
-class AccessDeniedResponse(TemplateResponse):
-    """
-    Returns an error message that the user has not enough rights.
-    """
-    def __init__(self):
-        TemplateResponse.__init__(self, 'errors/403.html', {}, status=403)
+def bad_request_view(request, exception=None):
+    return render(request, 'errors/400.html', {'request': request}, status=400)
+

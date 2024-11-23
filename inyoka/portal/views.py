@@ -30,13 +30,14 @@ from django.forms.models import model_to_dict
 from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.middleware.csrf import REASON_NO_CSRF_COOKIE, REASON_NO_REFERER
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_safe
 from icalendar import Calendar as iCal
 from icalendar import Event as iEvent
 from PIL import Image
@@ -96,7 +97,6 @@ from inyoka.portal.utils import (
 )
 from inyoka.utils import generic
 from inyoka.utils.http import (
-    TemplateResponse,
     templated,
 )
 from inyoka.utils.mail import send_mail
@@ -105,7 +105,7 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
+from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
@@ -170,7 +170,6 @@ def index(request):
     countdown_date = storage_values.get('countdown_date', None)
     countdown_image_url = storage_values.get('countdown_image_url', None)
     if countdown_active and countdown_date:
-        release_date = None
         if isinstance(countdown_date, str):
             release_date = datetime.strptime(countdown_date, '%Y-%m-%d').date()
         else:
@@ -195,25 +194,20 @@ def index(request):
                 'remaining': countdown_remaining
             }
 
-    def update_minicalendar():
-        """
-        Renders the Mini Calendar from the portal landing page.
-        """
-        return render_template('portal/minicalendar.html', {'events': Event.objects.get_upcoming(4)}, populate_defaults=False)
-
     return {
         'welcome_message_rendered': storage['welcome_message_rendered'],
         'ikhaya_latest': list(ikhaya_latest),
         'sessions': get_sessions(),
         'record': record,
         'record_time': record_time,
-        'calendar_events': cache.get_or_set('portal/calendar', update_minicalendar, 300),
+        'events': cache.get_or_set('portal/calendar', partial(Event.objects.get_upcoming, 4), 300),
         'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': countdown_image_url,
     }
 
 
+@require_safe
 @templated('portal/whoisonline.html')
 def whoisonline(request):
     """Shows who is online and a link to the page the user views."""
@@ -278,7 +272,6 @@ def register(request):
 
 def activate(request, action='', username='', activation_key=''):
     """Activate a user with the activation key send via email."""
-    redirect = is_safe_domain(request.GET.get('next', ''))
     try:
         user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
@@ -286,6 +279,8 @@ def activate(request, action='', username='', activation_key=''):
             _('The user “%(username)s” does not exist.') % {
                 'username': escape(username)})
         return HttpResponseRedirect(href('portal'))
+
+    redirect = is_safe_domain(request.GET.get('next', ''))
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
 
@@ -293,9 +288,6 @@ def activate(request, action='', username='', activation_key=''):
         messages.error(request,
             _('You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
-
-    if action not in ('delete', 'activate'):
-        raise Http404()
 
     if action == 'delete':
         if check_activation_key(user, activation_key):
@@ -308,7 +300,7 @@ def activate(request, action='', username='', activation_key=''):
         else:
             messages.error(request, _('Your activation key is invalid.'))
         return HttpResponseRedirect(href('portal'))
-    else:
+    elif action == 'activate':
         if check_activation_key(user, activation_key) and user.is_inactive:
             user.status = User.STATUS_ACTIVE
             user.save()
@@ -320,7 +312,8 @@ def activate(request, action='', username='', activation_key=''):
         else:
             messages.error(request, _('Your activation key is invalid.'))
             return HttpResponseRedirect(href('portal'))
-
+    else:
+        raise Http404()
 
 class InyokaPasswordResetView(SuccessMessageMixin, PasswordResetView):
     """
@@ -430,17 +423,15 @@ def profile(request, username):
 @templated('portal/user_mail.html')
 def user_mail(request, username):
     try:
-        if '@' in username:
-            user = User.objects.get(email__iexact=username)
-        else:
-            user = User.objects.get(username__iexact=username)
+        user = User.objects.get_by_username_or_email(username)
     except User.DoesNotExist:
         raise Http404
+
     if request.method == 'POST':
         form = UserMailForm(request.POST)
         if form.is_valid():
             text = form.cleaned_data['text']
-            message = render_template('mails/formmailer_template.txt', {
+            message = render_to_string('mails/formmailer_template.txt', {
                 'user': user,
                 'text': text,
                 'from': request.user.username,
@@ -460,6 +451,7 @@ def user_mail(request, username):
             generic.trigger_fix_errors_message(request)
     else:
         form = UserMailForm()
+
     return {
         'form': form,
         'user': user,
@@ -497,13 +489,13 @@ def unsubscribe_user(request, username):
                     '“%(username)s”.') % {'username': user.username})
         else:
             # ask for confirmation with form in case of GET (CSRF)
-            messages.info(request, render_template('confirm_action_flash.html', {
+            flash_message(request, 'confirm_action_flash.html', {
                     'message': _('Do you want to unsubscribe from the user '
                                  '“%(username)s”?') % {'username': user.username},
                     'confirm_label': _('Unsubscribe'),
                     'cancel_label': _('Cancel'),
                     'action_url': request.build_absolute_uri(),
-                }, flash=True))
+                })
 
     # redirect the user to the page he last watched
     if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
@@ -967,11 +959,11 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                 elif action == 'delete':
                     msg = _('Do you really want to delete the message?')
                     confirm_label = _('Delete')
-                messages.info(request, render_template('confirm_action_flash.html', {
+                flash_message(request, 'confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': _('Cancel'),
-                }, flash=True))
+                })
     else:
         message = None
     link = href('portal', 'privmsg', folder, 'page')
@@ -1183,7 +1175,7 @@ def grouplist(request, page=1):
 @login_required
 @templated('portal/group.html')
 def group(request, name, page=1):
-    """Shows the informations about the group named `name`."""
+    """Shows the information about the group named `name`."""
     if name == settings.INYOKA_REGISTERED_GROUP_NAME and not request.user.has_perm('portal.change_user'):
         raise Http404
     group = Group.objects.get(name__iexact=name)
@@ -1288,11 +1280,6 @@ def group_edit_forum_permissions(request, name):
         'group': group,
         'form': form,
     }
-
-
-def usermap(request):
-    messages.info(request, _('The user map was temporarily disabled.'))
-    return HttpResponseRedirect(href('portal'))
 
 
 app_feed_forms = {
@@ -1428,6 +1415,7 @@ def calendar_detail(request, slug):
     }
 
 
+@require_safe
 def calendar_ical(request, slug):
 
     try:
@@ -1617,7 +1605,7 @@ def csrf_failure(request, reason=None):
         'no_referer': reason == REASON_NO_REFERER,
     }
 
-    return TemplateResponse('errors/403_csrf.html', context, 403)
+    return render(request, 'errors/403_csrf.html', context, status=403)
 
 
 @login_required

@@ -16,7 +16,7 @@
 {% set styles = ['calendar'] %}
 {% set month = event.date.month %}
 {% set year = event.date.year %}
-{% set BREADCRUMBS = [('Kalender', href('portal', 'calendar')),
+{% set BREADCRUMBS = [(_('Calendar'), href('portal', 'calendar')),
                       ('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month)),
                       (event.name, event|url)] + BREADCRUMBS|d([]) %}
 
@@ -60,7 +60,7 @@
   {%- endif %}
   <tr>
     <th colspan="2">{% trans %}Details{% endtrans %}
-      {%- if USER.has_perm('portal.change_event') %}
+      {%- if request.user.has_perm('portal.change_event') %}
         <small class="admin_link">
           (<a href="{{ event|url('edit') }}">{% trans %}edit{% endtrans %}</a>)
         </small>

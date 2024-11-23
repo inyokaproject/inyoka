@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-10-13 15:55+0200\n"
+"POT-Creation-Date: 2024-11-17 13:35+0100\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -41,6 +41,9 @@ msgstr "Artikelvorschläge"
 #, python-format
 msgid "Avatar of %(user)s"
 msgstr "Avatar von %(user)s"
+
+msgid "Bad Request"
+msgstr "Fehlerhafte Anfrage"
 
 msgid "Breadcrumb bottom"
 msgstr "Brotkrumennavigation unten"
@@ -160,6 +163,9 @@ msgstr "Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe d
 msgid "The entered e-mail address belongs to a e-mail provider we had to block because of SPAM problems. Please choose another e-mail address"
 msgstr "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
+msgid "The server cannot or will not process your request due to an apparent client error (e.g., malformed request syntax or too large size)."
+msgstr "Der Server kann oder wird Ihre Anfrage aufgrund eines offensichtlichen Client-Fehlers nicht verarbeiten (z. B. fehlerhafte Anfragesyntax oder zu großer Umfang)"
+
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum abgemeldet."
@@ -203,8 +209,8 @@ msgstr "Du siehst diese Nachricht, weil diese Seite beim Absenden von Daten eine
 msgid "You cannot send data that fast in a row. Please wait a bit until you submit the form again."
 msgstr "Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte noch einige Zeit, bevor du das Formular erneut absendest."
 
-msgid "You do not have permissions to access this page."
-msgstr "Du bist nicht berechtigt, diese Seite aufzurufen."
+msgid "You do not have permissions to access this page. (HTTP 403)"
+msgstr "Du bist nicht berechtigt, diese Seite aufzurufen. (HTTP 403)"
 
 msgid "You have entered an invisible field and were therefore classified as a bot."
 msgstr "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot identifiziert."
@@ -261,3 +267,4 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
+

@@ -21,7 +21,7 @@
   <input type="search" id="table-search" placeholder="Filter by Title">
 
   <form class="edit-forum-permissions" method="post" action="">
-    {{ csrf_token() }}
+    {{ csrf_input }}
 
     {% set first_field = form.fields[form.fields.keys()|first] %}
     {% set number_permissions = first_field.choices|list|length %}
