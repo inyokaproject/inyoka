@@ -88,16 +88,5 @@ def clean_privmsg_folders():
     after end of cache duration according to settings
     has been reached.
     """
-    privmsgs_trash = PrivateMessageEntry.objects.filter(
-        folder="2",
-        message__pub_date__lte=datetime.now() - timedelta(
-            days=settings.PRIVATE_MESSAGE_TRASH_DURATION),
-        )
-    privmsgs_inbox_sent = PrivateMessageEntry.objects.filter(
-        folder__in=["0", "1"],
-        message__pub_date__lte=datetime.now() - timedelta(
-            days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
-        )
     logger.info("Deleting private messages after end of cache duration")
-    privmsgs_trash.delete()
-    privmsgs_inbox_sent.delete()
+    PrivateMessageEntry.clean_private_message_folders()

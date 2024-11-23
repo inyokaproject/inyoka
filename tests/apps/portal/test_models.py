@@ -8,14 +8,17 @@
     :license: BSD, see LICENSE for more details.
 """
 import gzip
+from datetime import datetime, timedelta
 from os import path
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
-from inyoka.portal.models import Linkmap
+from inyoka.portal.models import Linkmap, PrivateMessage, PrivateMessageEntry
+from inyoka.portal.user import User
 from inyoka.utils.urls import href
 
 
@@ -105,3 +108,34 @@ class TestLinkmapManager(TestCase):
 
         self.assertFalse(path.exists(self.full_path))
         self.assertTrue(path.exists(path.join(settings.MEDIA_ROOT, 'linkmap', self.css_file)))
+
+
+class TestPrivateMessageEntry(TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        user = User.objects.register_user('testing', 'example@example.com',
+                                               'pwd', False)
+        user.groups.add(Group.objects.get(name=settings.INYOKA_TEAM_GROUP_NAME))
+        self.other_user = User.objects.register_user(
+            'other_user',
+            'example2@example.com',
+            'pwd', False)
+        pm = PrivateMessage(author=user, subject="Expired message", pub_date=datetime.now() -
+            timedelta(days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION))
+        pm.send([self.other_user])
+
+        self.privmsgentry = PrivateMessageEntry.objects.get(message=pm, user=self.other_user)
+
+    def test_delete_messages(self):
+        self.assertEqual(self.privmsgentry.message.subject, 'Expired message')
+        PrivateMessageEntry.clean_private_message_folders()
+        self.assertFalse(PrivateMessageEntry.objects.filter(folder=1).exists())
+        self.assertTrue(PrivateMessageEntry.objects.filter(folder=0).exists())
+
+    def test_delete_archived_messages(self):
+        self.privmsgentry.archive()
+        self.assertTrue(self.privmsgentry.in_archive)
+        PrivateMessageEntry.clean_private_message_folders()
+        self.assertTrue(PrivateMessageEntry.objects.filter(folder=3, user=self.other_user).exists())

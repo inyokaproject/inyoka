@@ -11,6 +11,7 @@ import glob
 import gzip
 import hashlib
 import os
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -188,6 +189,26 @@ class PrivateMessageEntry(models.Model):
             message.folder = None if message.folder == trash else trash
             message.read = True if message.folder == trash else message.read
             message.save()
+
+    @classmethod
+    @transaction.atomic
+    def clean_private_message_folders(cls):
+        sent = PRIVMSG_FOLDERS['sent'][0]
+        inbox = PRIVMSG_FOLDERS['inbox'][0]
+        trash = PRIVMSG_FOLDERS['trash'][0]
+        privmsgs_trash = PrivateMessageEntry.objects.filter(
+            folder=trash,
+            message__pub_date__lte=datetime.now() - timedelta(
+                days=settings.PRIVATE_MESSAGE_TRASH_DURATION),
+            ).exclude(user__groups__name__iexact=settings.INYOKA_TEAM_GROUP_NAME)
+        privmsgs_inbox_sent = PrivateMessageEntry.objects.filter(
+            folder__in=[inbox, sent],
+            message__pub_date__lte=datetime.now() - timedelta(
+                days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
+            ).exclude(user__groups__name__iexact=settings.INYOKA_TEAM_GROUP_NAME)
+        privmsgs_trash.delete()
+        privmsgs_inbox_sent.delete()
+
 
     def delete(self):
         if self.folder == PRIVMSG_FOLDERS['trash'][0]:
