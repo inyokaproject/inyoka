@@ -217,7 +217,7 @@ class TagList(macros.Macro):
 
 class FilterByMetaData(macros.Macro):
     """
-    Filter pages by their metadata
+    Filter pages by their metadata.
     """
 
     names = ('FilterByMetaData', 'MetaFilter')
@@ -236,17 +236,22 @@ class FilterByMetaData(macros.Macro):
             # TODO: Can we do something else instead of skipping?
             if ':' not in part:
                 continue
-            key = part.split(':')[0].strip()
-            values = [x.strip() for x in part.split(':')[1].split(',')]
-            mapping.extend([(key, x) for x in values])
+            key, values = part.split(":")
+            values = values.split(",")
+            mapping.extend([(key.strip(), x.strip()) for x in values])
         mapping = MultiMap(mapping)
 
         pages = set()
 
         for key in list(mapping.keys()):
             values = list(flatten_iterator(mapping[key]))
-            includes = [x for x in values if not x.startswith('NOT ')]
-            kwargs = {'key': key, 'value__in': includes}
+            includes = [x for x in values if not x.startswith(('NOT ', 'EXACT',))]
+            kwargs = {'key': key}
+            if values[0].startswith("EXACT "):
+                exact_value = values[0][6:]
+                kwargs['value__iexact'] = exact_value
+            else:
+                kwargs['value__in'] = includes
             q = MetaData.objects.select_related('page').filter(**kwargs)
             res = {
                 x.page
@@ -257,16 +262,23 @@ class FilterByMetaData(macros.Macro):
 
         # filter the pages with `AND`
         res = set()
-        for key in list(mapping.keys()):
-            for page in pages:
-                e = [x[4:] for x in mapping[key] if x.startswith('NOT ')]
-                i = [x for x in mapping[key] if not x.startswith('NOT ')]
-                exclude = False
-                for val in set(page.metadata[key]):
-                    if val in e:
+        for page in pages:
+            exclude = False
+            for key in list(mapping.keys()):
+                query_metadata = mapping[key]
+                exclude_values = [x[4:] for x in query_metadata if x.startswith("NOT ")]
+                exact_values = [x[6:] for x in query_metadata if x.startswith("EXACT ")]
+                page_metadata = set(page.metadata[key])
+                for val in page_metadata:
+                    if (
+                        val in exclude_values or
+                        (exact_values and val not in exact_values)
+                    ):
                         exclude = True
-                if not exclude and set(page.metadata[key]) == set(i):
-                    res.add(page)
+                        break
+
+            if not exclude:
+                res.add(page)
 
         names = [p.name for p in res]
         names = sorted(names, key=lambda s: s.lower())
