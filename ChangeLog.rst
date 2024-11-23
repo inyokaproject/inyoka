@@ -25,16 +25,14 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 1.BB.CC (2024-MM-DD)
-===============================
+1.42.0 (2024-11-23)
+===================
 
 Deployment notes
 ----------------
 
 #. Update requirements
 
-✨ New features
----------------
 
 🏗 Changes
 ----------
@@ -44,12 +42,6 @@ Deployment notes
 * Build requirement files for all supported Python versions (for the time being: Python 3.9, 3.10, 3.11, 3.12)
 * Added more tests for portal view
 * Wiki sidebar: Link to a seperate wiki page to incorrect articles (before the backlink-page of templates was used)
-
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
 
 🐛 Fixes
 --------
