@@ -43,6 +43,7 @@ Deployment notes
 * Rework to use more of Django's logic for templates
 * Build requirement files for all supported Python versions (for the time being: Python 3.9, 3.10, 3.11, 3.12)
 * Added more tests for portal view
+* Wiki sidebar: Link to a seperate wiki page to incorrect articles (before the backlink-page of templates was used)
 
 🗑 Deprecations
 --------------
