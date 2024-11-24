@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-11-17 13:35+0100\n"
+"POT-Creation-Date: 2024-11-24 22:12+0100\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -1015,9 +1015,6 @@ msgstr "Die Kürzel <code>attachment</code> und <code>user</code> sind fest in I
 msgid "The user is not banned"
 msgstr "Der Benutzer ist nicht gesperrt"
 
-msgid "The user map was temporarily disabled."
-msgstr "Die Benutzerkarte wurde vorrübergehend deaktiviert."
-
 msgid "The user will be send a confirmation mail and set to “inactive”."
 msgstr "Der Benutzer bekommt eine Bestätigungsmail zugesendet und wird als inaktiv erstellt."
 
@@ -1330,4 +1327,3 @@ msgstr "bis"
 #, python-format
 msgid "“%(name)s” is no member of any group."
 msgstr "„%(name)s“ ist kein Mitglied einer Gruppe."
-
