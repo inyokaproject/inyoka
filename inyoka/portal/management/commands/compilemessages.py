@@ -1,14 +1,15 @@
 """
-    inyoka.portal.management.commands.compilemessages
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inyoka.portal.management.commands.compilemessages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This module provides a command to the Django ``manage.py`` file to compile
-    the ``.po`` language files to ``.mo`` files. The ``.mo`` files are placed
-    in the same directory as the regarding ``.po`` files.
+This module provides a command to the Django ``manage.py`` file to compile
+the ``.po`` language files to ``.mo`` files. The ``.mo`` files are placed
+in the same directory as the regarding ``.po`` files.
 
-    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 from os import path
 from subprocess import call
 
@@ -19,14 +20,15 @@ APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet', 'markup']
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
         args_compile = ['pybabel', 'compile', '-D', 'django', '-l', 'de_DE']
+
         for app in APPS:
-            args = args_compile + ['-d', 'inyoka/%s/locale' % app]
+            args = args_compile + [f'--directory=inyoka/{app}/locale']
             call(args)
+
         # global files
-        args = args_compile + ['-d', 'inyoka/locale']
+        args = args_compile + ['--directory=inyoka/locale']
         call(args)
 
         self._compile_theme_messages(args_compile)
@@ -39,5 +41,5 @@ class Command(BaseCommand):
                 cwd = path.normpath(path.join(base_path, '..'))
                 basename = path.basename(base_path)
                 locale_dir = path.join(basename, 'locale')
-                args = args_compile + ['-d', locale_dir]
+                args = args_compile + [f'--directory={locale_dir}']
                 call(args, cwd=cwd)
