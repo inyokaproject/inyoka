@@ -18,6 +18,8 @@ bdd_screenshots
 .idea
 *.log
 
+*.pot
+
 *.css
 *.gz
 *.min.js
