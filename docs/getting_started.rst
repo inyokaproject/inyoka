@@ -230,8 +230,8 @@ For more information read the theme documentation.
 Documentation
 =============
 
-Installation
-************
+Creation
+********
 
 In order to create or update the documentation (yes, *this* documentation), simply run:
 
