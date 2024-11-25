@@ -1300,7 +1300,7 @@ class Revision(models.Model):
             `rendered_text`.
 
         user
-            The user that created this revision.  If an anoymous user created
+            The user that created this revision.  If an anonymous user created
             the revision this will be `None`.
 
         change_date
