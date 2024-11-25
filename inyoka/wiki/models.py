@@ -997,7 +997,7 @@ class Page(models.Model):
 
         Intended to be run in a celery task.
         """
-        related_pages = MetaData.objects.only('page') \
+        related_pages = MetaData.objects.select_related('page__last_rev__text') \
             .filter(key__in=('X-Link', 'X-Attach'), value=self.name)
 
         for meta in related_pages:
@@ -1011,8 +1011,6 @@ class Page(models.Model):
         self.last_rev.text.remove_value_from_cache()
         if update_meta:
             self.update_meta()
-
-        ## TODO test number of queries used
 
     def save(self, update_meta=True, *args, **kwargs):
         """
