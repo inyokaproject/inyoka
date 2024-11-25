@@ -997,11 +997,12 @@ class Page(models.Model):
 
         Intended to be run in a celery task.
         """
-        related_pages = MetaData.objects.select_related('page__last_rev__text') \
-            .filter(key__in=('X-Link', 'X-Attach'), value=self.name)
 
-        for meta in related_pages:
-            p = meta.page
+        related_pages = Page.objects.select_related('last_rev__text') \
+                        .filter(metadata__key__in=('X-Link', 'X-Attach'),
+                                metadata__value=self.name)
+
+        for p in related_pages:
             cache.delete(f'wiki/page/{p.name.lower()}')
             p.last_rev.text.remove_value_from_cache()
             if update_meta:
