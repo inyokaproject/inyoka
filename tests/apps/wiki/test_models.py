@@ -59,6 +59,16 @@ class TestPage(TestCase):
         self.assertEqual(len(page.metadata), 3)
         self.assertEqual(page.metadata['tag'], ['foo'])
 
+    def test_update_related_pages__queries_used(self):
+        """
+        Test, how many database queries are needed.
+        """
+        template = Page.objects.create('Wiki/Templates/template', 'Foo')
+        Page.objects.create('test1', '[:test1:] content [[Vorlage(template, "Hello World")]]')
+
+        with self.assertNumQueries(7):
+            template.update_related_pages()
+
 
 class TestPageManager(TestCase):
     def test_get_by_name_case_sensitive(self):
