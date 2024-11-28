@@ -200,3 +200,11 @@ class TestViews(TestCase):
 
   </body>
 </opml>''')
+
+    def test_export__invalid_format(self):
+        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
+                    feed_url="http://example.com/feed", user=self.admin,
+                    active=True)
+
+        response = self.client.get('/blogs/export/grml/')
+        self.assertEqual(response.status_code, 404)
