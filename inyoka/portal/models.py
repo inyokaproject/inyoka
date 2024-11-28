@@ -193,6 +193,11 @@ class PrivateMessageEntry(models.Model):
     @classmethod
     @transaction.atomic
     def clean_private_message_folders(cls):
+        """
+        Remove all messages in private message folders (except 'archive')
+        after end of cache duration according to settings
+        has been reached.
+        """
         sent = PRIVMSG_FOLDERS['sent'][0]
         inbox = PRIVMSG_FOLDERS['inbox'][0]
         trash = PRIVMSG_FOLDERS['trash'][0]
@@ -200,12 +205,12 @@ class PrivateMessageEntry(models.Model):
             folder=trash,
             message__pub_date__lte=datetime.now() - timedelta(
                 days=settings.PRIVATE_MESSAGE_TRASH_DURATION),
-            ).exclude(user__groups__name__iexact=settings.INYOKA_TEAM_GROUP_NAME)
+            ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
         privmsgs_inbox_sent = PrivateMessageEntry.objects.filter(
             folder__in=[inbox, sent],
             message__pub_date__lte=datetime.now() - timedelta(
                 days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
-            ).exclude(user__groups__name__iexact=settings.INYOKA_TEAM_GROUP_NAME)
+            ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
         privmsgs_trash.delete()
         privmsgs_inbox_sent.delete()
 

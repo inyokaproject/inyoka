@@ -83,10 +83,6 @@ def query_counter_task(cache_key, sql):
 
 @shared_task
 def clean_privmsg_folders():
-    """
-    Remove all messages in private message folders (except 'archive')
-    after end of cache duration according to settings
-    has been reached.
-    """
+    """Clean private message folders."""
     logger.info("Deleting private messages after end of cache duration")
     PrivateMessageEntry.clean_private_message_folders()

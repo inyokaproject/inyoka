@@ -17,7 +17,12 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
-from inyoka.portal.models import Linkmap, PrivateMessage, PrivateMessageEntry
+from inyoka.portal.models import (
+    PRIVMSG_FOLDERS,
+    Linkmap,
+    PrivateMessage,
+    PrivateMessageEntry,
+)
 from inyoka.portal.user import User
 from inyoka.utils.urls import href
 
@@ -126,16 +131,21 @@ class TestPrivateMessageEntry(TestCase):
             timedelta(days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION))
         pm.send([self.other_user])
 
+        self.archive = PRIVMSG_FOLDERS["archive"][0]
+        self.inbox = PRIVMSG_FOLDERS["inbox"][0]
+        self.sent = PRIVMSG_FOLDERS["sent"][0]
+
         self.privmsgentry = PrivateMessageEntry.objects.get(message=pm, user=self.other_user)
 
     def test_delete_messages(self):
         self.assertEqual(self.privmsgentry.message.subject, 'Expired message')
         PrivateMessageEntry.clean_private_message_folders()
-        self.assertFalse(PrivateMessageEntry.objects.filter(folder=1).exists())
-        self.assertTrue(PrivateMessageEntry.objects.filter(folder=0).exists())
+        self.assertFalse(PrivateMessageEntry.objects.filter(folder=self.inbox).exists())
+        # Team members are spared
+        self.assertTrue(PrivateMessageEntry.objects.filter(folder=self.sent).exists())
 
     def test_delete_archived_messages(self):
         self.privmsgentry.archive()
         self.assertTrue(self.privmsgentry.in_archive)
         PrivateMessageEntry.clean_private_message_folders()
-        self.assertTrue(PrivateMessageEntry.objects.filter(folder=3, user=self.other_user).exists())
+        self.assertTrue(PrivateMessageEntry.objects.filter(folder=self.archive, user=self.other_user).exists())
