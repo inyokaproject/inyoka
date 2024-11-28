@@ -188,7 +188,7 @@ def export(request, export_type):
     assert export_type in ('foaf', 'opml')
     ext = {'foaf': 'rdf', 'opml': 'xml'}
 
-    response = render('planet/%s.xml' % export_type, {'blogs': blogs},
+    response = render(request, f'planet/{export_type}.xml', {'blogs': blogs},
                       content_type='text/xml; charset=utf-8')
     response['Content-Disposition'] = ('attachment; filename=ubuntuusers_%s.%s'
                                        % (export_type, ext[export_type]))
