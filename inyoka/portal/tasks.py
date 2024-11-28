@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
 
+from inyoka.portal.models import PrivateMessageEntry
 from inyoka.portal.user import User
 from inyoka.utils.logger import logger
 from inyoka.utils.storage import storage
@@ -78,3 +79,10 @@ def query_counter_task(cache_key, sql):
     cursor = connection.cursor()
     cursor.execute(sql)
     cache.set(cache_key, cursor.fetchone()[0])
+
+
+@shared_task
+def clean_privmsg_folders():
+    """Clean private message folders."""
+    logger.info("Deleting private messages after end of cache duration")
+    PrivateMessageEntry.clean_private_message_folders()
