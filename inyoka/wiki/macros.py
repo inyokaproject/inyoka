@@ -10,8 +10,11 @@
 import itertools
 import operator
 
+from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import gettext as _
+
+from functools import reduce
 
 from inyoka.markup import macros, nodes
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
@@ -216,8 +219,16 @@ class TagList(macros.Macro):
 
 
 class FilterByMetaData(macros.Macro):
-    """
-    Filter pages by their metadata.
+    """Filter pages by their metadata.
+
+    The metadata given can be combined with keywords to customize
+    the filtering.  The ``NOT`` keyword negates the filter.  The ``EXACT``
+    keyword uses direct matching and does not accept any other value
+    for the metadata key.  Examples:
+
+        X-Link: mardi; tag: gras
+        X-Link: mardi, gras
+        tag: EXACT mardi; X-Link: NOT gras
     """
 
     names = ('FilterByMetaData', 'MetaFilter')
@@ -233,54 +244,40 @@ class FilterByMetaData(macros.Macro):
     def build_node(self, context, format):
         mapping = []
         for part in self.filters:
-            # TODO: Can we do something else instead of skipping?
-            if ':' not in part:
-                continue
+            if part.count(":") != 1:
+                return nodes.error_box(_('No result'),
+                    _('Invalid filter syntax. Query: %(query)s') % {
+                    'query': '; '.join(self.filters)})
             key, values = part.split(":")
             values = values.split(",")
             mapping.extend([(key.strip(), x.strip()) for x in values])
         mapping = MultiMap(mapping)
 
-        pages = set()
-
+        pages_query = Q()
+        exclude_query = Q()
         for key in list(mapping.keys()):
             values = list(flatten_iterator(mapping[key]))
-            includes = [x for x in values if not x.startswith(('NOT ', 'EXACT',))]
+            includes = {x for x in values if not x.startswith(('NOT ', 'EXACT',))}
+            exclude_values = set()
             kwargs = {'key': key}
-            if values[0].startswith("EXACT "):
-                exact_value = values[0][6:]
-                kwargs['value__iexact'] = exact_value
+            if values[0].startswith("EXACT"):
+                exact_value = values[0].removeprefix("EXACT ")
+                kwargs['value__exact'] = exact_value
+            elif values[0].startswith("NOT"):
+                exclude_values.add(values[0].removeprefix("NOT "))
             else:
                 kwargs['value__in'] = includes
-            q = MetaData.objects.select_related('page').filter(**kwargs)
-            res = {
-                x.page
-                for x in q
-                if not is_privileged_wiki_page(x.page.name)
-            }
-            pages = pages.union(res)
+            pages_query |= Q(**kwargs)
+            exclude_query |= Q(**{"key": key, "value__in": exclude_values})
 
-        # filter the pages with `AND`
-        res = set()
-        for page in pages:
-            exclude = False
-            for key in list(mapping.keys()):
-                query_metadata = mapping[key]
-                exclude_values = [x[4:] for x in query_metadata if x.startswith("NOT ")]
-                exact_values = [x[6:] for x in query_metadata if x.startswith("EXACT ")]
-                page_metadata = set(page.metadata[key])
-                for val in page_metadata:
-                    if (
-                        val in exclude_values or
-                        (exact_values and val not in exact_values)
-                    ):
-                        exclude = True
-                        break
+        exclude_privileged_query = Q()
+        for prefix in settings.WIKI_PRIVILEGED_PAGES:
+            exclude_privileged_query |= Q(**{"page__name__startswith": prefix})
 
-            if not exclude:
-                res.add(page)
+        pages = MetaData.objects.select_related('page').filter(pages_query).exclude(
+            exclude_query).exclude(exclude_privileged_query)
 
-        names = [p.name for p in res]
+        names = {p.page.name for p in pages}
         names = sorted(names, key=lambda s: s.lower())
 
         if not names:
