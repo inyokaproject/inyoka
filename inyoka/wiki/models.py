@@ -988,6 +988,31 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
+    def update_related_pages(self, update_meta: bool=True) -> None:
+        """
+        Removes the content of page from the cache and its related pages.
+
+        It also updates the metadata of all pages. This is f.e. relevant for page
+        templates that emit tags.
+
+        Intended to be run in a celery task.
+        """
+
+        related_pages = Page.objects.select_related('last_rev__text') \
+                        .filter(metadata__key__in=('X-Link', 'X-Attach'),
+                                metadata__value=self.name)
+
+        for p in related_pages:
+            cache.delete(f'wiki/page/{p.name.lower()}')
+            p.last_rev.text.remove_value_from_cache()
+            if update_meta:
+                p.update_meta()
+
+        cache.delete(f'wiki/page/{self.name.lower()}')
+        self.last_rev.text.remove_value_from_cache()
+        if update_meta:
+            self.update_meta()
+
     def save(self, update_meta=True, *args, **kwargs):
         """
         This not only saves the page but also a revision that is
@@ -1275,7 +1300,7 @@ class Revision(models.Model):
             `rendered_text`.
 
         user
-            The user that created this revision.  If an anoymous user created
+            The user that created this revision.  If an anonymous user created
             the revision this will be `None`.
 
         change_date
