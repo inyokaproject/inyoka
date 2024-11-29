@@ -123,3 +123,88 @@ class TestViews(TestCase):
         self.assertEqual(entry.author, 'AnonymousAuthor')
         self.assertEqual(entry.author_detail.name, 'AnonymousAuthor')
         self.assertEqual(entry.author_detail.href, 'https://example.com')
+
+    def test_export__foaf(self):
+        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
+                    feed_url="http://example.com/feed", user=self.admin,
+                    active=True)
+        Blog.objects.create(name="Testblog2", blog_url="https://example.test/",
+                            feed_url="https://example.test/feed", user=self.admin,
+                            active=True)
+
+        response = self.client.get('/blogs/export/foaf/')
+        self.assertXMLEqual(response.content.decode(), f'''<?xml version="1.0"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:rss="http://purl.org/rss/1.0/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+>
+<foaf:Group>
+
+  <foaf:name>{ settings.BASE_DOMAIN_NAME } | Planet</foaf:name>
+  <foaf:homepage>http://planet.{ settings.BASE_DOMAIN_NAME }/</foaf:homepage>
+  <rdfs:seeAlso rdf:resource="http://planet.{ settings.BASE_DOMAIN_NAME }/blogs/export/foaf/" />
+
+
+  <foaf:member>
+    <foaf:Person>
+      <foaf:name>Testblog</foaf:name>
+      <foaf:weblog>
+        <foaf:Document rdf:about="http://example.com/">
+          <rdfs:seeAlso>
+            <rss:channel rdf:about="http://example.com/feed" />
+          </rdfs:seeAlso>
+        </foaf:Document>
+      </foaf:weblog>
+    </foaf:Person>
+  </foaf:member>
+
+  <foaf:member>
+    <foaf:Person>
+      <foaf:name>Testblog2</foaf:name>
+      <foaf:weblog>
+        <foaf:Document rdf:about="https://example.test/">
+          <rdfs:seeAlso>
+            <rss:channel rdf:about="https://example.test/feed" />
+          </rdfs:seeAlso>
+        </foaf:Document>
+      </foaf:weblog>
+    </foaf:Person>
+  </foaf:member>
+
+
+</foaf:Group>
+</rdf:RDF>''')
+
+    def test_export__opml(self):
+        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
+                    feed_url="http://example.com/feed", user=self.admin,
+                    active=True)
+        Blog.objects.create(name="Testblog2", blog_url="https://example.test/",
+                            feed_url="https://example.test/feed", user=self.admin,
+                            active=True)
+
+        response = self.client.get('/blogs/export/opml/')
+        self.assertXMLEqual(response.content.decode(), f'''<?xml version="1.0" encoding="utf8"?>
+<opml version="1.1">
+  <head>
+    <title>{ settings.BASE_DOMAIN_NAME } | Planet</title>
+  </head>
+  <body>
+
+      <outline type="rss" text="Testblog" htmlUrl="http://example.com/" xmlUrl="http://example.com/feed"/>
+
+      <outline type="rss" text="Testblog2" htmlUrl="https://example.test/" xmlUrl="https://example.test/feed"/>
+
+  </body>
+</opml>''')
+
+    def test_export__invalid_format(self):
+        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
+                    feed_url="http://example.com/feed", user=self.admin,
+                    active=True)
+
+        response = self.client.get('/blogs/export/grml/')
+        self.assertEqual(response.status_code, 404)

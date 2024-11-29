@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
 from django.db.models import Max
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.html import escape, smart_urlquote
@@ -182,14 +182,16 @@ def hide_entry(request, id):
     return HttpResponseRedirect(href('planet'))
 
 
-def export(request, export_type):
+def export(request, export_type: str):
     """Export the blog list as OPML or FOAF"""
-    blogs = Blog.objects.filter(active=True).all()
-    assert export_type in ('foaf', 'opml')
-    ext = {'foaf': 'rdf', 'opml': 'xml'}
+    if export_type not in ('foaf', 'opml'):
+        raise Http404
 
-    response = render('planet/%s.xml' % export_type, {'blogs': blogs},
+    blogs = Blog.objects.filter(active=True).all()
+
+    response = render(request, f'planet/{export_type}.xml', {'blogs': blogs},
                       content_type='text/xml; charset=utf-8')
+    ext = {'foaf': 'rdf', 'opml': 'xml'}
     response['Content-Disposition'] = ('attachment; filename=ubuntuusers_%s.%s'
                                        % (export_type, ext[export_type]))
     return response
