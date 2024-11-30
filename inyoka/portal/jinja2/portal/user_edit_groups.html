@@ -21,7 +21,7 @@
   <h3>{% trans %}Group memberships{% endtrans %}</h3>
   <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
     {{ csrf_input }}
-    {{ form }}
+    {{ form.as_div() }}
     <input type="submit" value="{% trans %}Submit{% endtrans %}">
   </form>
 {% endblock %}
