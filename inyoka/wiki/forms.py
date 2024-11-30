@@ -153,7 +153,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
 
         data = self.data.copy()
         latest_change_time = self.latest_rev.change_date
-        edit_time = datetime.strptime(data['edit_time'], '%Y-%m-%d %H:%M:%S.%f')
+        edit_time = datetime.strptime(data['edit_time'], '%Y-%m-%d %H:%M:%S.%f%z')
 
         if edit_time < latest_change_time:
             # The user started editing (edit_time) before the last change.
