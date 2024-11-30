@@ -48,9 +48,9 @@ class TestViews(TestCase):
                             text="Text", pub_date=datetime.datetime.today().date(),
                             pub_time=datetime.datetime.now().time(), category=self.cat)
         self.comment = Comment.objects.create(article=self.article, text="Text",
-                            author=self.user, pub_date=datetime.datetime.now())
+                            author=self.user, pub_date=dj_timezone.now())
         self.report = Report.objects.create(article=self.article, text="Text",
-                            author=self.user, pub_date=datetime.datetime.now())
+                            author=self.user, pub_date=dj_timezone.now())
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
@@ -119,7 +119,7 @@ class TestViews(TestCase):
                             pub_time=datetime.datetime.now().time(), category=self.cat)
         for u in (user_w, user_wo, user_g):
             Comment.objects.create(article=a, text="Comment by %s" % u.username,
-                            author=u, pub_date=datetime.datetime.now())
+                            author=u, pub_date=dj_timezone.now())
 
         response = self.client.get("/%s/%s" % (a.stamp, a.slug), follow=True)
         self.assertContains(response, avatar_url, count=1)
@@ -1576,7 +1576,7 @@ class TestArticleFeeds(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.now = dj_timezone.now().replace(microsecond=0)
         now = self.now
         today = now.date()
         time_now = now.time()
@@ -1805,7 +1805,7 @@ class TestCommentsFeed(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.now = dj_timezone.now().replace(microsecond=0)
         self.today = self.now.date()
         self.time_now = self.now.time()
 
@@ -1888,7 +1888,7 @@ class TestCommentsPerArticleFeed(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.now = dj_timezone.now().replace(microsecond=0)
         self.today = self.now.date()
         self.time_now = self.now.time()
 
