@@ -7,9 +7,7 @@
     :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import datetime
 import shutil
-import zoneinfo
 from os import makedirs, path
 from random import randint
 from unittest.mock import patch
@@ -1842,7 +1840,7 @@ class TestTopicFeedPostRevision(TestCase):
     def setUp(self):
         super().setUp()
 
-        now = datetime.datetime.now().replace(microsecond=0)
+        now = timezone.now().replace(microsecond=0)
 
         self.user = User.objects.register_user('user', 'user', 'user', False)
         self.forum = Forum.objects.create(name='hardware')
@@ -1856,13 +1854,12 @@ class TestTopicFeedPostRevision(TestCase):
 
     def test_post_multiple_revision_update_date(self):
         self.post.edit(text='foo')
-        now_utc = datetime.datetime.now(datetime.UTC).replace(tzinfo=zoneinfo.ZoneInfo("UTC"), microsecond=0)
 
         response = self.client.get(f'/feeds/topic/{self.topic.slug}/short/10/', follow=True)
         feed = feedparser.parse(response.content)
 
         feed_updated = parse_datetime(feed.entries[0].updated).replace(microsecond=0)
-        self.assertEqual(feed_updated, now_utc)
+        self.assertEqual(feed_updated, timezone.now().replace(microsecond=0))
 
 
 @freeze_time("2023-12-09T23:55:04Z")
