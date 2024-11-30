@@ -14,6 +14,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.utils import timezone as dj_timezone
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
@@ -183,7 +184,7 @@ class TestUserHasContent(TestCase):
         Comment.objects.create(
             author=self.user,
             article=article,
-            pub_date=now)
+            pub_date=dj_timezone.now())
 
         self.assertTrue(self.user.has_content())
 
@@ -201,12 +202,11 @@ class TestUserHasContent(TestCase):
         """
         Test privatemessage as sender and receiver.
         """
-        now = datetime.now()
         other_user = User.objects.register_user(
             'other_user',
             'example2@example.com',
             'pwd', False)
-        pm = PrivateMessage(author=self.user, pub_date=now)
+        pm = PrivateMessage(author=self.user, pub_date=dj_timezone.now())
         pm.send([other_user])
 
         self.assertTrue(self.user.has_content())
