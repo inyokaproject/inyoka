@@ -8,14 +8,13 @@
     :license: BSD, see LICENSE for more details.
 """
 
-
 import datetime
-from time import mktime
 
 import feedparser
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core import mail
+from django.utils import timezone as dj_timezone
 from django.utils import translation
 
 from inyoka.planet.models import Blog, Entry
@@ -45,13 +44,13 @@ class TestViews(TestCase):
         Entry.objects.create(blog=blog, url="http://example.com/article1",
                              guid="http://example.com/article1",
                              text="This is a test", title="",
-                             pub_date=datetime.datetime.now(),
-                             updated=datetime.datetime.now())
+                             pub_date=dj_timezone.now(),
+                             updated=dj_timezone.now())
         Entry.objects.create(blog=blog, url="http://example.com/article2",
                              guid="http://example.com/article2",
                              text="This is a test", title="I have a title",
-                             pub_date=datetime.datetime.now(),
-                             updated=datetime.datetime.now())
+                             pub_date=dj_timezone.now(),
+                             updated=dj_timezone.now())
 
         with translation.override('en-us'):
             response = self.client.post('/feeds/title/10/')
@@ -74,7 +73,7 @@ class TestViews(TestCase):
                     active=True)
         blog.save()
 
-        now = datetime.datetime.now().replace(microsecond=0)
+        now = dj_timezone.now().replace(microsecond=0)
         Entry.objects.create(blog=blog, url="http://example.com/article1",
                              guid="http://example.com/article1",
                              text="This is a test", title="Test title",
@@ -93,8 +92,8 @@ class TestViews(TestCase):
         self.assertEqual(feed.feed.id, 'http://planet.ubuntuusers.local:8080/')
         self.assertEqual(feed.feed.link, 'http://planet.ubuntuusers.local:8080/')
 
-        feed_updated = datetime.datetime.fromtimestamp(mktime(feed.feed.updated_parsed))
-        self.assertEqual(feed_updated, now - datetime.timedelta(hours=1))
+        feed_updated = datetime.datetime.fromisoformat(feed.feed.updated)
+        self.assertEqual(feed_updated, now)
 
         self.assertEqual(feed.feed.rights, href('portal', 'lizenz'))
         self.assertFalse('author' in feed.feed)
@@ -113,14 +112,14 @@ class TestViews(TestCase):
         self.assertFalse('text' in entry)
         self.assertFalse('created_parsed' in entry)
 
-        entry_published = datetime.datetime.fromtimestamp(mktime(entry.published_parsed))
-        self.assertEqual(entry_published, now - datetime.timedelta(hours=1))
+        entry_published = datetime.datetime.fromisoformat(entry.published)
+        self.assertEqual(entry_published, now)
 
-        entry_date = datetime.datetime.fromtimestamp(mktime(entry.date_parsed))
-        self.assertEqual(entry_date, now - datetime.timedelta(hours=1))
+        entry_date = datetime.datetime.fromisoformat(entry.date)
+        self.assertEqual(entry_date, now)
 
-        entry_updated = datetime.datetime.fromtimestamp(mktime(entry.updated_parsed))
-        self.assertEqual(entry_updated, now - datetime.timedelta(hours=1))
+        entry_updated = datetime.datetime.fromisoformat(entry.updated)
+        self.assertEqual(entry_updated, now)
 
         self.assertEqual(entry.author, 'AnonymousAuthor')
         self.assertEqual(entry.author_detail.name, 'AnonymousAuthor')
