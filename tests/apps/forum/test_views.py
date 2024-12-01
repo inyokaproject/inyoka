@@ -174,6 +174,17 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
 
+    def test_topiclist__content(self):
+        topic = Topic.objects.create(title='very old Topic', author=self.user,
+                forum=self.forum2)
+        Post.objects.create(text='Post 1', author=self.user, topic=topic, position=0,
+                            pub_date='2002-1-1T11:11Z')
+
+        response = self.client.get("/last24/")
+
+        self.assertContains(response, 'A test Topic')
+        self.assertNotContains(response, topic.title)
+
     def test_service_splittopic(self):
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
                 author=self.user, forum=self.forum2)
