@@ -11,8 +11,7 @@
 {% from 'macros.html' import render_form %}
 
 {% set BREADCRUMBS = [(_('Configuration'), href('portal', 'config'))] + BREADCRUMBS|d([]) %}
-{% set styles = ['datetimefield'] %}
-{% set scripts = ['DateTime', 'jstableform'] %}
+{% set scripts = ['jstableform'] %}
 
 {% block content %}
 <form enctype="multipart/form-data" action="" method="post" id="configuration">
