@@ -603,7 +603,7 @@ def do_mv_baustelle(request, name):
                                new_text=new_text):
                     messages.error(request,
                         'Beim Verschieben in die Baustelle ist ein Fehler '
-                        'aufgereten.')
+                        'aufgetreten.')
                     return HttpResponseRedirect(url_for(page))
             else:
                 messages.error(request,
