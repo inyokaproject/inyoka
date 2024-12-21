@@ -417,18 +417,18 @@ class Comment(models.Model):
 class Event(models.Model):
     objects = EventManager()
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(gettext_lazy('Name'), max_length=50)
     slug = models.SlugField(unique=True, max_length=100, db_index=True)
     changed = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    date = models.DateField(db_index=True)
-    time = models.TimeField(blank=True, null=True)  # None -> whole day
-    enddate = models.DateField(blank=True, null=True)  # None
-    endtime = models.TimeField(blank=True, null=True)  # None -> whole day
-    description = InyokaMarkupField(blank=True, application='ikhaya')
+    date = models.DateField(gettext_lazy('Date (from)'), db_index=True)
+    time = models.TimeField(gettext_lazy('Time (from)'), blank=True, null=True)  # None -> whole day
+    enddate = models.DateField(gettext_lazy('Date (to)'), blank=True, null=True)  # None
+    endtime = models.TimeField(gettext_lazy('Time (to)'), blank=True, null=True)  # None -> whole day
+    description = InyokaMarkupField(verbose_name=gettext_lazy('Description'), blank=True, application='ikhaya')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    location = models.CharField(max_length=128, blank=True)
-    location_town = models.CharField(max_length=56, blank=True)
+    location = models.CharField(gettext_lazy('Venue'), max_length=128, blank=True)
+    location_town = models.CharField(gettext_lazy('Town'), max_length=56, blank=True)
     location_lat = models.FloatField(gettext_lazy('Degree of latitude'),
                                      blank=True, null=True)
     location_long = models.FloatField(gettext_lazy('Degree of longitude'),
