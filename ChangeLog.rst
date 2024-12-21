@@ -25,6 +25,37 @@ Inyoka Changelog
    -----------
 
 
+Unreleased AA.BB.CC (YYYY-MM-DD)
+================================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+* ``*.pot`` files are no longer in git
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+*  Planet: Fix export
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependency ``Django`` includes known security fixes)
+
+
 1.42.0 (2024-11-23)
 ===================
 
