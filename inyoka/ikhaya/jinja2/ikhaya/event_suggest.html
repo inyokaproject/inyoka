@@ -30,6 +30,10 @@
 
     <p><input type="submit" value="{% trans %}Submit{% endtrans %}"></p>
   </form>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
 
   <script>
     /* <![CDATA[ */
