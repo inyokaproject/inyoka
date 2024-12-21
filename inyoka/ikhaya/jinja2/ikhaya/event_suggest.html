@@ -1,6 +1,6 @@
 {#
     ikhaya/event_suggest.html
-    ~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This page is for new calendar events.
 
@@ -8,8 +8,8 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
-{% set styles = ['editor', 'datetimefield'] %}
-{% set scripts = ['WikiEditor','DateTime'] %}
+{% set styles = ['editor'] %}
+{% set scripts = ['WikiEditor'] %}
 
 {% set BREADCRUMBS = [(_('Suggest event'), href('ikhaya', 'event', 'suggest'))] + BREADCRUMBS|d([]) %}
 
