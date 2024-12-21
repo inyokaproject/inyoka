@@ -26,29 +26,13 @@
     <ul>{{ form.errors }}</ul>
   {%- endif %}
   {% if event.author %}
-    <dt>
-      {% trans %}Suggested by:{% endtrans %}
+    <div>
+      <b>{% trans %}Suggested by:{% endtrans %}</b>
       <a href="{{ event.author|url }}">{{ event.author|e }}</a>
-    </dt>
+    </div>
   {% endif %}
-  <dt><label for="id_name">{% trans %}Name:{% endtrans %}</label></dt>
-  <dd>{{ form.name }}</dd>
-  <dt>{% trans %}Time:{% endtrans %}</dt>
-  <dd><label for="id_date">{% trans %}Date (from):{% endtrans %}</label> {{ form.date }}</dd>
-  <dd><label for="id_time">{% trans %}Time (from):{% endtrans %}</label> {{ form.time }}</dd>
-  <dd><label for="id_enddate">{% trans %}Date (to):{% endtrans %}</label> {{ form.enddate }}</dd>
-  <dd><label for="id_endtime">{% trans %}Time (to):{% endtrans %}</label> {{ form.endtime }}</dd>
-  <dt><label for="id_description">{% trans %}Description:{% endtrans %}</label></dt>
-  <dd>{{ form.description }}</dd>
-  <dt>{% trans %}Venue:{% endtrans %}</dt>
-  <dd><label for="id_location_town">{% trans %}Town:{% endtrans %}</label> {{ form.location_town }}</dd>
-  <dd><label for="id_location">{% trans %}Venue:{% endtrans %}</label> {{ form.location }}</dd>
 
-  <dt>{% trans %}Coordinates:{% endtrans %}</dt>
-  <dd><label for="id_location_long">{% trans %}Longitude:{% endtrans %}</label> {{ form.location_long }}</dd>
-  <dd><label for="id_location_lat">{% trans %}Latitude:{% endtrans %}</label> {{ form.location_lat }}</dd>
-  <dt>{% trans %}General{% endtrans %}</dt>
-  <dd><label for="id_visible">{{ form.visible.label }}</label> {{ form.visible }}</dd>
+  {{ form.as_div() }}
 
   <p>
     <input type="submit" value="{% trans %}Submit{% endtrans %}">
