@@ -35,6 +35,7 @@ Deployment notes
 
 ✨ New features
 ---------------
+*  Wiki: Update metadata and content of related pages after a edit
 
 🏗 Changes
 ----------

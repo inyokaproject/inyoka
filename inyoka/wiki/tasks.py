@@ -63,20 +63,10 @@ def update_page_by_slug():
 
 
 @shared_task
-def update_related_pages(page, update_meta=True):
-    from inyoka.wiki.models import MetaData, Page
-    page = Page.objects.get(id=page)
-    related_pages = set()
-    values = ('value', 'page__last_rev__text_id')
-    linked = MetaData.objects.values_list(*values) \
-                     .filter(key__in=('X-Link', 'X-Attach'), value=page.name)
-    for value, text_id in linked.all():
-        cache.delete(f'wiki/page/{value.lower()}')
-        related_pages.add(text_id)
-    cache.delete(f'wiki/page/{page.name.lower()}')
-
-    if update_meta:
-        page.update_meta()
+def update_related_pages(page_id: int, update_meta: bool=True) -> None:
+    from inyoka.wiki.models import Page
+    page = Page.objects.get(id=page_id)
+    page.update_related_pages(update_meta=update_meta)
 
 
 @shared_task
