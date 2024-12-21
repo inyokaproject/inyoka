@@ -9,8 +9,8 @@
 #}
 {%- extends 'ikhaya/page.html' %}
 {% from 'macros.html' import render_form %}
-{% set styles = ['editor', 'datetimefield'] %}
-{% set scripts = ['WikiEditor', 'DateTime'] %}
+{% set styles = ['editor'] %}
+{% set scripts = ['WikiEditor'] %}
 
 {% if not article %}
   {% set BREADCRUMBS = [(_('New Article'), href('ikhaya', 'new'))] + BREADCRUMBS|d([]) %}
