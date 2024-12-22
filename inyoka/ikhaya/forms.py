@@ -102,9 +102,9 @@ class EditArticleForm(forms.ModelForm):
             'updated': SplitDateTimeField,
         }
         widgets = {
-            'subject': forms.TextInput(attrs={'size': 50}),
-            'intro': forms.Textarea(attrs={'rows': 3}),
-            'text': forms.Textarea(attrs={'rows': 15}),
+            'subject': forms.TextInput(),
+            'intro': forms.Textarea(),
+            'text': forms.Textarea(),
             'pub_date': NativeDateInput(),
             'pub_time': NativeTimeInput(),
             'updated': NativeSplitDateTimeWidget(),
