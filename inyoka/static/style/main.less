@@ -199,6 +199,13 @@ input[type="url"] {
     border-bottom: thin solid @input-focus-color;
   }
 }
+
+input[type="date"] + input[type="time"] {
+  /* for SplitDatetimeWidgets prevent that date and time fields are in the same line.
+     Instead force a line break for the time input. */
+  display: block;
+}
+
 /* "buttons" */
 input[type="submit"], input[type="button"], input[type="reset"] {
   @button-shadow-height: 0.3em;
