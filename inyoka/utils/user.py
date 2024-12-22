@@ -26,7 +26,7 @@ def gen_activation_key(user):
     """
     It's calculated using a sha1 hash of the user id, the username,
     the users email and our secret key and shortened to ensure the
-    activation link has less then 80 chars.
+    activation link has less than 80 chars.
 
     :Parameters:
         user
