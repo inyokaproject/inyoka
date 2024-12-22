@@ -16,7 +16,7 @@ from django.utils.translation import gettext_lazy
 
 from inyoka.markup.base import StackExhaused, parse
 from inyoka.utils.diff3 import merge
-from inyoka.utils.forms import DateWidget, TopicField, UserField
+from inyoka.utils.forms import TopicField, UserField, NativeDateInput
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.text import join_pagename, normalize_pagename
@@ -256,5 +256,5 @@ class MvBaustelleForm(forms.Form):
     new_name = forms.CharField(label=gettext_lazy('New page name'), required=True)
     user = UserField(label=gettext_lazy('Edited by'), required=True)
     completion_date = forms.DateField(label=gettext_lazy('Completion date'),
-                                      required=False, widget=DateWidget,
+                                      required=False, widget=NativeDateInput,
                                       localize=True)

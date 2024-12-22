@@ -188,7 +188,10 @@ class Article(models.Model, LockableObject):
     pub_date = models.DateField(gettext_lazy('Date'), db_index=True)
     pub_time = models.TimeField(gettext_lazy('Time'))
     updated = models.DateTimeField(gettext_lazy('Last change'), blank=True,
-                null=True, db_index=True)
+                null=True, db_index=True,
+                help_text=gettext_lazy('If you keep this field empty, the '
+                                       'publication date will be used.')
+    )
     author = models.ForeignKey(User, related_name='article_set',
                                verbose_name=gettext_lazy('Author'), on_delete=models.CASCADE)
     subject = models.CharField(gettext_lazy('Headline'), max_length=180)

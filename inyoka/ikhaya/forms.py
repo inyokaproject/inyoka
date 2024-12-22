@@ -11,6 +11,7 @@ from datetime import datetime
 from datetime import time as dt_time
 
 from django import forms
+from django.forms import SplitDateTimeField
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy
 
@@ -18,11 +19,8 @@ from inyoka.ikhaya.models import Article, Category, Event, Suggestion
 from inyoka.portal.models import StaticFile
 from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.forms import (
-    DateTimeField,
-    DateWidget,
     StrippedCharField,
-    TimeWidget,
-    UserField,
+    UserField, NativeSplitDateTimeWidget, NativeDateInput, NativeTimeInput,
 )
 from inyoka.utils.text import slugify
 
@@ -68,10 +66,6 @@ class EditArticleForm(forms.ModelForm):
                 self.fields[field].widget.attrs['readonly'] = True
 
     author = UserField(label=gettext_lazy('Author'), required=True)
-    updated = DateTimeField(label=gettext_lazy('Last update'),
-                help_text=gettext_lazy('If you keep this field empty, the '
-                    'publication date will be used.'),
-                localize=True, required=False)
 
     def save(self):
         instance = super().save(commit=False)
@@ -103,13 +97,17 @@ class EditArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        exclude = ['updated', 'comment_count']
+        exclude = ['comment_count']
+        field_classes = {
+            'updated': SplitDateTimeField,
+        }
         widgets = {
             'subject': forms.TextInput(attrs={'size': 50}),
             'intro': forms.Textarea(attrs={'rows': 3}),
             'text': forms.Textarea(attrs={'rows': 15}),
-            'pub_date': DateWidget(),
-            'pub_time': TimeWidget(),
+            'pub_date': NativeDateInput(),
+            'pub_time': NativeTimeInput(),
+            'updated': NativeSplitDateTimeWidget(),
         }
 
 
@@ -195,10 +193,10 @@ class NewEventForm(forms.ModelForm):
     class Meta:
         model = Event
         widgets = {
-            'date': DateWidget,
-            'time': TimeWidget,
-            'enddate': DateWidget,
-            'endtime': TimeWidget,
+            'date': NativeDateInput,
+            'time': NativeTimeInput,
+            'enddate': NativeDateInput,
+            'endtime': NativeTimeInput,
         }
         exclude = ['author', 'slug', 'visible']
 

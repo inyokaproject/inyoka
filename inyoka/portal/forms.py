@@ -28,7 +28,7 @@ from django.core.validators import validate_email
 from django.db.models import CharField, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
-from django.forms import HiddenInput, modelformset_factory
+from django.forms import HiddenInput, modelformset_factory, SplitDateTimeField
 from django.utils import timezone as dj_timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
@@ -51,11 +51,10 @@ from inyoka.portal.user import (
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
     CaptchaField,
-    DateWidget,
     EmailField,
     ForumMulitpleChoiceField,
     validate_gpgkey,
-    validate_signature,
+    validate_signature, NativeSplitDateTimeWidget, NativeDateInput,
 )
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
@@ -547,6 +546,12 @@ class EditUserStatusForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['status', 'banned_until']
+        field_classes = {
+            'banned_until': SplitDateTimeField,
+        }
+        widgets = {
+            'banned_until': NativeSplitDateTimeWidget(),
+        }
 
     def clean(self):
         """Keep the user from setting banned_until if status is not banned.
@@ -1099,7 +1104,7 @@ class ConfigurationForm(forms.Form):
                     'Use <code>%(remaining)s</code> to be replaced by the '
                     'remaining days or <code>soon</code>.'))
     countdown_date = forms.DateField(label=gettext_lazy('Release date'),
-        required=False, widget=DateWidget, localize=True)
+        required=False, widget=NativeDateInput, localize=True)
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
