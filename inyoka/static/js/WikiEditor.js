@@ -372,7 +372,7 @@
       //this.helpbar = $('<span class="toolbar_help note" />');
 
       /* create toolbar based on button layout */
-      t = $('<ul class="toolbar" />').prependTo(this.textarea.parent());
+      t = $('<ul class="toolbar" />').insertBefore(this.textarea);
       var bar = toolbar();
       for (var i = 0, n = bar.length, x; i != n; ++i)
         if (x = bar[i](self))
