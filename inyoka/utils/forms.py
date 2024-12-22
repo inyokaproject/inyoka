@@ -126,10 +126,10 @@ class UserField(forms.CharField):
         Returns the username from the given data.
 
         data can be:
-        - the a basestring, then it has to be the username,
+        - a string, then it has to be the username,
         - None, then the field is empty,
-        - an user object, then the username of this user is returned or
-        - an user id, then the user is fetched from the database.
+        - a user object, then the username of this user is returned or
+        - a user id, then the user is fetched from the database.
         """
         from inyoka.portal.user import User  # prevent circular import
 
