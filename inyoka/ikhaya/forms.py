@@ -69,17 +69,13 @@ class EditArticleForm(forms.ModelForm):
 
     def save(self):
         instance = super().save(commit=False)
+
         if 'pub_date' in self.cleaned_data and (not instance.pk or
                 not instance.public or self.cleaned_data.get('public', None)):
             instance.pub_date = self.cleaned_data['pub_date']
             instance.pub_time = self.cleaned_data['pub_time']
-        if self.cleaned_data.get('updated', None):
-            instance.updated = self.cleaned_data['updated']
-        elif {'pub_date', 'pub_time'} in set(self.cleaned_data.keys()):
-            instance.updated = datetime.combine(
-                self.cleaned_data['pub_date'],
-                self.cleaned_data['pub_time'])
         instance.save()
+
         return instance
 
     def clean_slug(self):
