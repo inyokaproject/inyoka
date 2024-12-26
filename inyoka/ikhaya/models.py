@@ -15,7 +15,8 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, UniqueConstraint
+from django.db.models.functions import TruncDate
 from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy
@@ -328,7 +329,9 @@ class Article(models.Model, LockableObject):
         verbose_name = gettext_lazy('Article')
         verbose_name_plural = gettext_lazy('Articles')
         ordering = ['-pub_date', '-pub_time', 'author']
-        unique_together = ('pub_date', 'slug')
+        constraints = [
+            UniqueConstraint('pub_date', 'slug', name='unique_pub_date_slug'),
+        ]
         permissions = (
             ('view_unpublished_article', 'Can view unpublished articles'),
             ('suggest_article', 'Can suggest articles'),
