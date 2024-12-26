@@ -12,6 +12,7 @@ from datetime import time as dt_time
 
 from django import forms
 from django.forms import SplitDateTimeField
+from django.utils import timezone as dj_timezone
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy
 
@@ -53,13 +54,15 @@ class EditArticleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         readonly = kwargs.pop('readonly', False)
+
         if instance:
             initial = kwargs.setdefault('initial', {})
-            if instance.pub_datetime != instance.updated:
-                initial['updated'] = instance.updated
+            if instance.public:
+                initial['updated'] = dj_timezone.now()
             initial['author'] = instance.author.username
+
         super().__init__(*args, **kwargs)
-        # Following stuff is in __init__ to keep helptext etc intact.
+
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
         if readonly:
             for field in ('subject', 'intro', 'text'):
