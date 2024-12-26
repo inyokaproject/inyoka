@@ -135,14 +135,14 @@ class TestViews(TestCase):
         response = self.client.post('/event/suggest/', {'confirm': True})
         self.assertContains(response, 'date<ul class="errorlist">', 1)
         self.assertContains(response, 'name<ul class="errorlist">', 1)
-        self.assertContains(response, 'errorlist', 3)
+        self.assertContains(response, 'errorlist', 5)
 
     def test_add_event_without_name(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
                                                         'enddate': datetime.date(2015, 5, 2),
                                                         'confirm': True})
         self.assertContains(response, 'name<ul class="errorlist"', 1)
-        self.assertContains(response, 'errorlist', 2)
+        self.assertContains(response, 'errorlist', 3)
 
     def test_add_event_with_name_startdate_enddate(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
@@ -157,7 +157,7 @@ class TestViews(TestCase):
                                                         'name': 'TestEvent',
                                                         'confirm': True})
         self.assertContains(response, 'enddate<ul class="errorlist">', 1)
-        self.assertContains(response, 'errorlist', 2)
+        self.assertContains(response, 'errorlist', 3)
 
     def test_add_event_with_name_and_startdate(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
@@ -191,7 +191,7 @@ class TestViews(TestCase):
                                                         'name': 'TestEvent',
                                                         'confirm': True})
         self.assertContains(response, 'endtime<ul class="errorlist">', 1)
-        self.assertContains(response, 'errorlist', 2)
+        self.assertContains(response, 'errorlist', 3)
 
 
 class TestIndex(TestCase):
