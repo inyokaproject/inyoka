@@ -188,6 +188,7 @@ class Article(models.Model, LockableObject):
 
     pub_date = models.DateField(gettext_lazy('Date'), db_index=True)
     pub_time = models.TimeField(gettext_lazy('Time'))
+    publication_datetime = models.DateTimeField(gettext_lazy('Publication time'), default=dj_timezone.now)
     updated = models.DateTimeField(gettext_lazy('Last change'), blank=True,
                 null=True, db_index=True,
                 help_text=gettext_lazy('If you keep this field empty, the '
@@ -330,7 +331,7 @@ class Article(models.Model, LockableObject):
         verbose_name_plural = gettext_lazy('Articles')
         ordering = ['-pub_date', '-pub_time', 'author']
         constraints = [
-            UniqueConstraint('pub_date', 'slug', name='unique_pub_date_slug'),
+            UniqueConstraint(TruncDate('publication_datetime'), 'slug', name='unique_pub_date_slug'),
         ]
         permissions = (
             ('view_unpublished_article', 'Can view unpublished articles'),
