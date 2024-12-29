@@ -54,11 +54,9 @@ class ArticleManager(models.Manager):
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
-                q = q.filter(Q(pub_date__lt=dj_timezone.now()) |
-                             Q(pub_date=dj_timezone.now(), pub_time__lte=dj_timezone.now()))
+                q = q.filter(publication_datetime__lte=dj_timezone.now())
             else:
-                q = q.filter(Q(pub_date__gt=dj_timezone.now()) |
-                             Q(pub_date=dj_timezone.now(), pub_time__gte=dj_timezone.now()))
+                q = q.filter(publication_datetime__gte=dj_timezone.now())
         return q
 
     def get_cached(self, keys):
@@ -67,16 +65,16 @@ class ArticleManager(models.Manager):
         automatically fetched from the database. This method should be
         also used for retrieving single objects.
         """
-        keys = [('ikhaya/article/%s/%s' % x, x[0], x[1]) for x in keys]
+        keys = [('ikhaya/article/%s/%s' % x, str(x[0]), x[1]) for x in keys]
         cache_values = cache.get_many(list(map(itemgetter(0), keys)))
         dates, slugs = _get_not_cached_articles(keys, cache_values)
 
         related = ('author', 'category', 'icon', 'category__icon')
-        objects = Article.objects.filter(slug__in=slugs, pub_date__in=dates) \
+        objects = Article.objects.filter(slug__in=slugs, publication_datetime__date__in=dates) \
                          .select_related(*related).defer('author__forum_read_status').order_by()
         new_cache_values = {}
         for article in objects:
-            key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
+            key = 'ikhaya/article/%s/%s' % (article.publication_datetime.date(), article.slug)
             new_cache_values[key] = article
         if new_cache_values:
             # cache for 24 hours
@@ -84,9 +82,9 @@ class ArticleManager(models.Manager):
         cache_values.update(new_cache_values)
         articles = [_f for _f in list(cache_values.values()) if _f]
         unpublished = list(sorted([a for a in articles if not a.public],
-                                  key=attrgetter('updated'), reverse=True))
+                                  key=attrgetter('updated', 'publication_datetime'), reverse=True))
         published = list(sorted([a for a in articles if a not in unpublished],
-                                key=attrgetter('updated'), reverse=True))
+                                key=attrgetter('updated', 'publication_datetime'), reverse=True))
         return unpublished + published
 
     def get_latest_articles(self, category=None, count=10):
@@ -106,12 +104,13 @@ class ArticleManager(models.Manager):
         articles = cache.get(key)
         if articles is None:
             articles = Article.published.order_by('-updated') \
-                                        .values_list('pub_date', 'slug')
+                                        .only('publication_datetime', 'slug')
             if category:
                 articles = articles.filter(category__slug=category)
 
             maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_article'])
-            articles = list(articles[:maxcount])
+            articles = articles[:maxcount]
+            articles = [(a.publication_datetime.astimezone().date(), a.slug) for a in articles]
             cache.set(key, articles, 1200)
 
         return self.get_cached(articles[:count])
@@ -186,8 +185,6 @@ class Article(models.Model, LockableObject):
     objects = ArticleManager(all=True)
     published = ArticleManager(public=True)
 
-    pub_date = models.DateField(gettext_lazy('Date'), db_index=True)
-    pub_time = models.TimeField(gettext_lazy('Time'))
     publication_datetime = models.DateTimeField(gettext_lazy('Publication time'), default=dj_timezone.now)
     updated = models.DateTimeField(gettext_lazy('Last change'), blank=True,
                 null=True, db_index=True,
@@ -228,11 +225,11 @@ class Article(models.Model, LockableObject):
 
     @deferred
     def pub_datetime(self):
-        return datetime.combine(self.pub_date, self.pub_time, UTC)
+        return self.publication_datetime
 
     @property
     def local_pub_datetime(self):
-        return datetime_to_timezone(self.pub_datetime)
+        return datetime_to_timezone(self.publication_datetime)
 
     @property
     def local_updated(self):
@@ -243,10 +240,10 @@ class Article(models.Model, LockableObject):
         """
         This returns a boolean whether this article is not visible for normal
         users.
-        Article that are not published or whose pub_date is in the future
+        Article that are not published or whose publication date is in the future
         aren't shown for a normal user.
         """
-        return not self.public or self.pub_datetime > dj_timezone.now()
+        return not self.public or self.publication_datetime > dj_timezone.now()
 
     @property
     def comments(self):
@@ -256,7 +253,7 @@ class Article(models.Model, LockableObject):
     @property
     def stamp(self):
         """Return the year/month/day part of an article url"""
-        return self.pub_date.strftime('%Y/%m/%d')
+        return self.publication_datetime.strftime('%Y/%m/%d')
 
     def get_absolute_url(self, action='show', **query):
         if action == 'comments':
@@ -290,24 +287,16 @@ class Article(models.Model, LockableObject):
         return self.subject
 
     def save(self, *args, **kwargs):
-        """
-        This increases the edit count by 1.
-        """
         if self.text is None or self.intro is None:
             # might happen, because cached objects are setting text and
             # intro to None to save some space
             raise ValueError('text and intro must not be null')
 
-        # We need a local pubdt variable due to caching of self.pub_datetime
-        pubdt = datetime.combine(self.pub_date, self.pub_time, UTC)
-        if not self.updated or self.updated < pubdt:
-            self.updated = pubdt
-            if kwargs.get("update_fields") is not None:
-                kwargs["update_fields"] = {"updated"}.union(kwargs["update_fields"])
-
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
-                slugify(self.subject), pub_date=self.pub_date)
+                                            slugify(self.subject),
+                                            publication_datetime__date=self.publication_datetime,
+                                            )
         else:
             self.slug = slugify(self.slug)
 
@@ -329,7 +318,7 @@ class Article(models.Model, LockableObject):
     class Meta:
         verbose_name = gettext_lazy('Article')
         verbose_name_plural = gettext_lazy('Articles')
-        ordering = ['-pub_date', '-pub_time', 'author']
+        ordering = ['-publication_datetime', 'author']
         constraints = [
             UniqueConstraint(TruncDate('publication_datetime'), 'slug', name='unique_pub_date_slug'),
         ]

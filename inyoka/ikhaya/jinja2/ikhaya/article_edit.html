@@ -41,7 +41,7 @@
       {%- if article != none %}
         {{ render_form(form, ['updated'], inline=true) }}
       {%- endif %}
-      {{ render_form(form, ['pub_date', 'pub_time', 'slug'], inline=true) }}
+      {{ render_form(form, ['publication_datetime', 'slug'], inline=true) }}
       </dl>
     <p>
       <input type="submit" value="{% trans %}Submit{% endtrans %}" name="send">

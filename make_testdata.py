@@ -211,10 +211,8 @@ def make_ikhaya():
         c = Category(name=name)
         c.save()
         for subject in create_names(6, title):
-            dt = randtime()
             a = Article(
-                pub_date=dt.date(),
-                pub_time=dt.time(),
+                publication_datetime=randtime(),
                 author_id=choice(users).id,
                 subject=subject,
                 category_id=c.id,

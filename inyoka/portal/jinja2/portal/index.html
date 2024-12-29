@@ -42,11 +42,11 @@
       <h4><a href="{{ article|url }}">{{ article.subject|e }}</a></h4>
 
       <div class="meta">
-        {%- if article.pub_datetime == article.updated %}
-          <a href="{{ article|url }}">{{ article.updated|datetime }}</a>
-        {%- else %}
+        {%- if article.updated > article.publication_datetime %}
           <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|datetime
-             }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetime }}">{{ article.updated|datetime }}</a>
+             }} / {% trans %}Created:{% endtrans %} {{ article.publication_datetime|datetime }}">{{ article.updated|datetime }}</a>
+        {%- else %}
+          <a href="{{ article|url }}">{{ article.publication_datetime|datetime }}</a>
         {%- endif %}
         {%- if article.comments_enabled %}
           <a href="{{ article|url('comments') }}" class="comments">

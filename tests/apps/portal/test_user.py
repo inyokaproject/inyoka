@@ -170,15 +170,12 @@ class TestUserHasContent(TestCase):
         self.assertTrue(self.user.has_content())
 
     def test_ikhaya_comment(self):
-        now = datetime.now()
         category = Category.objects.create(name='test_category')
         other_user = User.objects.register_user(
             'other_user',
             'example2@example.com',
             'pwd', False)
         article = Article.objects.create(
-            pub_date=now.date(),
-            pub_time=now.time(),
             author=other_user,
             category=category)
         Comment.objects.create(

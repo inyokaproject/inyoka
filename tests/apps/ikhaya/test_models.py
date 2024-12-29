@@ -29,20 +29,35 @@ class TestArticleModel(TestCase):
         self.category1 = Category.objects.create(name='Test Category')
         self.category2 = Category.objects.create(name='Test Category')
 
-        self.article1 = Article(pub_date=date(2008, 7, 18), text='Text 1',
-            pub_time=time(1, 33, 7), author=self.user, subject='Article',
-            category=self.category1, intro='Intro 1')
+        self.article1 = Article(
+            publication_datetime=datetime(2008, 7, 18, 1, 33, 7, tzinfo=UTC),
+            text='Text 1',
+            author=self.user,
+            subject='Article',
+            category=self.category1,
+            intro='Intro 1'
+        )
         self.article1.save()
 
-        self.article2 = Article(pub_date=date(2008, 7, 18), text="'''Text 2'''",
-            pub_time=time(0, 0, 0), author=self.user, subject='Article',
-            category=self.category2, intro='Intro 2')
+        self.article2 = Article(
+            publication_datetime=datetime(2008, 7, 18, 0, 0, 0, tzinfo=UTC),
+            text="'''Text 2'''",
+            author=self.user,
+            subject='Article',
+            category=self.category2,
+            intro='Intro 2'
+        )
         self.article2.save()
 
-        self.article3 = Article(pub_date=date(2009, 4, 1), text='<a>Text 3</a>',
-            pub_time=time(12, 34, 56), author=self.user,
-            subject='Article', category=self.category1, intro='Intro 3',
-            is_xhtml=True)
+        self.article3 = Article(
+            publication_datetime=datetime(2009, 4, 1, 12, 34, 56, tzinfo=UTC),
+            text='<a>Text 3</a>',
+            author=self.user,
+            subject='Article',
+            category=self.category1,
+            intro='Intro 3',
+            is_xhtml=True
+        )
         self.article3.save()
 
     def test_automatic_slugs(self):
@@ -86,27 +101,6 @@ class TestArticleModel(TestCase):
         self.article1.refresh_from_db()
         self.assertEqual('b', self.article1.subject)
         self.assertEqual('article', self.article1.slug)
-
-    def test_updated(self):
-        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
-
-        self.article1.pub_date = date(2009, 7, 18)
-        self.article1.save()
-
-        self.article1.refresh_from_db()
-        # updated should be now also in 2009, even if not explicitly changed
-        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
-
-    def test_save_update__update_fields(self):
-        """Almost the same as test_updated -- except that `save()` uses update_fields"""
-        self.assertEqual(datetime(2008, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
-
-        self.article1.pub_date = date(2009, 7, 18)
-        self.article1.save(update_fields=["pub_date"])
-
-        self.article1.refresh_from_db()
-        # updated should be now also in 2009, even if not explicitly changed
-        self.assertEqual(datetime(2009, 7, 18, 1, 33, 7, tzinfo=UTC), self.article1.updated)
 
 
 class TestCategoryModel(TestCase):
@@ -340,13 +334,21 @@ class TestComments(TestCase):
         self.category1 = Category.objects.create(name='Test Category')
         self.category2 = Category.objects.create(name='Test Category')
 
-        self.article1 = Article.objects.create(pub_date=date(2008, 7, 18), text='Text 1',
-                                pub_time=time(1, 33, 7), author=self.user, subject='Article',
-                                category=self.category1, intro='Intro 1')
+        self.article1 = Article.objects.create(publication_datetime=datetime(2008, 7, 18, 1, 33, 7, tzinfo=UTC),
+                                               text='Text 1',
+                                               author=self.user,
+                                               subject='Article',
+                                               category=self.category1,
+                                               intro='Intro 1',
+                                               )
 
-        self.article2 = Article.objects.create(pub_date=date(2018, 7, 18), text="'''Text 2'''",
-                                pub_time=time(1, 0, 0), author=self.user, subject='Article',
-                                category=self.category2, intro='Intro 2')
+        self.article2 = Article.objects.create(publication_datetime=datetime(2018, 7, 18, 1, 0, 0, tzinfo=UTC),
+                                               text="'''Text 2'''",
+                                               author=self.user,
+                                               subject='Article',
+                                               category=self.category2,
+                                               intro='Intro 2',
+                                               )
 
         with freezegun.freeze_time('2024-01-01 12:12'):
             self.comment1 = Comment.objects.create(article=self.article1, text='Text', author=self.user,

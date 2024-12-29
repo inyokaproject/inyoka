@@ -70,25 +70,19 @@ class EditArticleForm(forms.ModelForm):
 
     author = UserField(label=gettext_lazy('Author'), required=True)
 
-    def save(self):
-        instance = super().save(commit=False)
-
-        if 'pub_date' in self.cleaned_data and (not instance.pk or
-                not instance.public or self.cleaned_data.get('public', None)):
-            instance.pub_date = self.cleaned_data['pub_date']
-            instance.pub_time = self.cleaned_data['pub_time']
-        instance.save()
-
-        return instance
-
     def clean_slug(self):
         slug = self.cleaned_data['slug']
-        pub_date = self.cleaned_data.get('pub_date', None)
-        if slug and pub_date:
+        pub_datetime = self.cleaned_data.get('publication_datetime', None)
+
+        if slug and pub_datetime:
             slug = slugify(slug)
-            q = Article.objects.filter(slug=slug, pub_date=pub_date)
+            pub_date = pub_datetime.date()
+            ## TODO truncate to date?
+            q = Article.objects.filter(slug=slug, publication_datetime=pub_date)
+
             if self.instance.pk:
                 q = q.exclude(id=self.instance.pk)
+
             if q.exists():
                 raise forms.ValidationError(gettext_lazy('There already '
                             'exists an article with this slug!'))
@@ -99,25 +93,21 @@ class EditArticleForm(forms.ModelForm):
         exclude = ['comment_count']
         field_classes = {
             'updated': SplitDateTimeField,
+            'publication_datetime': SplitDateTimeField,
         }
         widgets = {
             'subject': forms.TextInput(),
             'intro': forms.Textarea(),
             'text': forms.Textarea(),
-            'pub_date': NativeDateInput(),
-            'pub_time': NativeTimeInput(),
+            'publication_datetime': NativeSplitDateTimeWidget(),
             'updated': NativeSplitDateTimeWidget(),
         }
 
 
 class EditPublicArticleForm(EditArticleForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        del self.fields['pub_date']
-        del self.fields['pub_time']
 
     class Meta(EditArticleForm.Meta):
-        exclude = EditArticleForm.Meta.exclude + ['slug']
+        exclude = EditArticleForm.Meta.exclude + ['slug', 'publication_datetime']
 
 
 class EditCategoryForm(forms.ModelForm):

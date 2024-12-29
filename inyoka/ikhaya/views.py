@@ -81,8 +81,7 @@ def context_modifier(request, context):
     key = 'ikhaya/archive'
     data = cache.get(key)
     if data is None:
-        archive = list(Article.published.dates('pub_date',
-                                               'month',
+        archive = list(Article.published.dates('publication_datetime', 'month',
                                                order='DESC'))
         if len(archive) > 5:
             archive = archive[:5]
@@ -128,7 +127,7 @@ def index(request, year=None, month=None, category_slug=None, page=1,
     _full = ('full', )
 
     if year and month:
-        articles = articles.filter(pub_date__year=year, pub_date__month=month)
+        articles = articles.filter(publication_datetime__year=year, publication_datetime__month=month)
         link = (year, month)
     elif category_slug:
         category = Category.objects.get(slug=category_slug)
@@ -147,10 +146,9 @@ def index(request, year=None, month=None, category_slug=None, page=1,
     teaser_link = href('ikhaya', *teaser_link)
     full_link = href('ikhaya', *full_link)
 
-    articles = articles.order_by('public', '-updated').only('pub_date', 'slug')
+    articles = articles.order_by('public', '-updated').only('publication_datetime', 'slug')
     pagination = Pagination(request, articles, page, 15, link)
-    articles = Article.objects.get_cached([(a.pub_date, a.slug) for a in
-        pagination.get_queryset()])
+    articles = Article.objects.get_cached([(a.publication_datetime.date(), a.slug) for a in pagination.get_queryset()])
 
     subscription_ids = []
     if not request.user.is_anonymous:
@@ -179,7 +177,7 @@ def detail(request, year, month, day, slug):
     except (IndexError, ValueError):
         raise Http404()
     preview = None
-    if article.hidden or article.pub_datetime > dj_timezone.now():
+    if article.hidden:
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
             raise PermissionDenied
         messages.info(request, _('This article is not visible for regular '
@@ -238,10 +236,13 @@ def article_delete(request, year, month, day, slug):
         do not access cached object!
         This would lead to inconsistent form content
         """
-        article = Article.objects.get(pub_date=date(int(year), int(month),
-            int(day)), slug=slug)
+        article = Article.objects.get(publication_datetime__year=int(year),
+                                      publication_datetime__month=int(month),
+                                      publication_datetime__day=int(day),
+                                      slug=slug)
     except (IndexError, ValueError):
         raise Http404()
+
     if request.method == 'POST':
         if 'unpublish' in request.POST:
             article.public = False
@@ -286,10 +287,13 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
         try:
             # Do not access cached object!
             # This would lead to inconsistent form content here.
-            pub_date = date(int(year), int(month), int(day))
-            article = Article.objects.get(pub_date=pub_date, slug=slug)
+            article = Article.objects.get(publication_datetime__year=int(year),
+                                          publication_datetime__month=int(month),
+                                          publication_datetime__day=int(day),
+                                          slug=slug)
         except (IndexError, ValueError):
             raise Http404()
+
         locked = article.lock(request)
         if locked:
             messages.error(request,
@@ -322,9 +326,10 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
                             title=escape(article.subject)))
 
                     cache_keys = [
-                        f'ikhaya/article/{article.pub_date}/{article.slug}',
+                        f'ikhaya/article/{article.stamp}/{article.slug}',
                         'ikhaya/latest_articles',
-                        f'ikhaya/latest_articles/{article.category.slug}']
+                        f'ikhaya/latest_articles/{article.category.slug}',
+                    ]
                     cache.delete_many(cache_keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
@@ -364,12 +369,14 @@ def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
+            int(day)), slug)])[0] # TODO
     except (IndexError, ValueError):
         raise Http404()
-    if article.hidden or article.pub_datetime > dj_timezone.now():
+
+    if article.hidden:
         if not request.user.has_perm('ikhaya.view_unpublished_article'):
             raise PermissionDenied
+
     try:
         Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
@@ -570,7 +577,7 @@ def comment_restore(request, comment_id):
 @templated('ikhaya/archive.html', modifier=context_modifier)
 def archive(request):
     """Shows the archive index."""
-    months = Article.published.dates('pub_date', 'month')
+    months = Article.published.dates('publication_datetime', 'month')
     return {
         'months': months
     }
@@ -910,7 +917,10 @@ class IkhayaAtomFeed(InyokaAtomFeed):
         return _localtime(article.pub_datetime)
 
     def item_updateddate(self, article):
-        return _localtime(article.updated)
+        if article.updated:
+            return _localtime(article.updated)
+
+        return _localtime(article.pub_datetime)
 
 
 class IkhayaCategoryAtomFeed(IkhayaAtomFeed):

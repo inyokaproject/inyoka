@@ -45,8 +45,7 @@ class TestViews(TestCase):
 
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="Subject",
-                            text="Text", pub_date=datetime.datetime.today().date(),
-                            pub_time=datetime.datetime.now().time(), category=self.cat)
+                            text="Text", category=self.cat)
         self.comment = Comment.objects.create(article=self.article, text="Text",
                             author=self.user, pub_date=dj_timezone.now())
         self.report = Report.objects.create(article=self.article, text="Text",
@@ -115,8 +114,8 @@ class TestViews(TestCase):
         gravatar_url_part = 'https://www.gravatar.com/avatar/ca39ffdca4bd97c3a6c29a4c8f29b7dc'
 
         a = Article.objects.create(author=self.admin, subject="Subject 2",
-                            text="Text 3", pub_date=datetime.datetime.today().date(),
-                            pub_time=datetime.datetime.now().time(), category=self.cat)
+                                   text="Text 3", category=self.cat,
+                                   )
         for u in (user_w, user_wo, user_g):
             Comment.objects.create(article=a, text="Comment by %s" % u.username,
                             author=u, pub_date=dj_timezone.now())
@@ -1588,8 +1587,7 @@ class TestArticleFeeds(TestCase):
 
         self.cat = Category.objects.create(name="Category")
         self.article = Article.objects.create(author=self.admin, subject="Subject",
-                            text="Text", pub_date=today,
-                            pub_time=time_now, category=self.cat, public=True)
+                            text="Text", category=self.cat, public=True)
         self.comment = Comment.objects.create(article=self.article, text="Text",
                             author=self.user, pub_date=now)
 
@@ -1610,12 +1608,8 @@ class TestArticleFeeds(TestCase):
             self.client.get('/feeds/full/50/')
 
     def test_multiple_articles(self):
-        today = self.now.date()
-        time_now = self.now.time()
-
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
-                            text="Text 2", pub_date=today,
-                            pub_time=time_now, category=self.cat, public=True)
+                            text="Text 2", category=self.cat, public=True)
 
         response = self.client.get('/feeds/full/10/')
         self.assertIn(self.article.subject, response.content.decode())
@@ -1718,9 +1712,7 @@ class TestArticleCategoryFeeds(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
-        self.today = self.now.date()
-        self.time_now = self.now.time()
+        self.now = dj_timezone.now().replace(microsecond=0)
 
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
@@ -1729,8 +1721,8 @@ class TestArticleCategoryFeeds(TestCase):
 
         self.cat = Category.objects.create(name="Test Category")
         self.article = Article.objects.create(author=self.admin, subject="Subject",
-                            text="Text", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True)
+                            text="Text", category=self.cat, public=True,
+                            publication_datetime=self.now)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
 
@@ -1752,8 +1744,8 @@ class TestArticleCategoryFeeds(TestCase):
 
     def test_multiple_articles(self):
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
-                            text="Text 2", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True)
+                            text="Text 2", category=self.cat, public=True,
+                            publication_datetime=self.now)
 
         response = self.client.get(f'/feeds/{self.cat.slug}/full/10/')
         self.assertIn(self.article.subject, response.content.decode())
@@ -1765,8 +1757,8 @@ class TestArticleCategoryFeeds(TestCase):
         response = self.client.get(f'/feeds/{self.cat.slug}/full/10/')
 
         Article.objects.create(author=self.admin, subject="Another article in another category",
-                               text="Text 2", pub_date=self.today,
-                               pub_time=self.time_now, category=Category.objects.create(name="Another"), public=True)
+                               text="Text 2", category=Category.objects.create(name="Another"), public=True,
+                               publication_datetime=self.now)
 
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
@@ -1816,8 +1808,7 @@ class TestCommentsFeed(TestCase):
 
         self.cat = Category.objects.create(name="Test Category")
         self.article = Article.objects.create(author=self.admin, subject="Article Subject",
-                            text="Text", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True)
+                            text="Text", category=self.cat, public=True)
 
         self.comment = Comment.objects.create(article=self.article, text="Text",
                             author=self.user, pub_date=self.now)
@@ -1899,8 +1890,7 @@ class TestCommentsPerArticleFeed(TestCase):
 
         self.cat = Category.objects.create(name="Test Category")
         self.article = Article.objects.create(author=self.admin, subject="Article Subject",
-                            text="Text", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True, id=1)
+                            text="Text", category=self.cat, public=True, id=1)
 
         self.comment = Comment.objects.create(article=self.article, text="Text",
                             author=self.user, pub_date=self.now)
