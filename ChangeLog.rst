@@ -54,7 +54,7 @@ Deployment notes
 🔒 Security
 -----------
 
-* Update requirements (at least the dependency ``Django`` includes known security fixes)
+* Update requirements (at least the dependencies ``Django`` and ``jinja2`` includes known security fixes)
 
 
 1.42.0 (2024-11-23)
