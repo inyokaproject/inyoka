@@ -16,7 +16,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, Coalesce
 from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy
@@ -33,13 +33,6 @@ from inyoka.utils.decorators import deferred
 from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
-
-
-def _get_not_cached_articles(keys, cache_values):
-    """Return a tuple of (dates, slugs) for all keys in cache_values that are None"""
-    not_cached = [(x[1], x[2]) for x in keys if x[0] not in cache_values]
-    dates, slugs = list(map(itemgetter(0), not_cached)), list(map(itemgetter(1), not_cached))
-    return dates, slugs
 
 
 class ArticleManager(models.Manager):
@@ -59,61 +52,28 @@ class ArticleManager(models.Manager):
                 q = q.filter(publication_datetime__gte=dj_timezone.now())
         return q
 
-    def get_cached(self, keys):
-        """Get some articles from the cache. `keys` must be a list with
-        (pub_date, slug) pairs. Missing entries from the cache are
-        automatically fetched from the database. This method should be
-        also used for retrieving single objects.
+    def get_by_date_and_slug(self, year: int, month: int, day: int, slug: str):
+        """Get one article by date and slug
         """
-        keys = [('ikhaya/article/%s/%s' % x, str(x[0]), x[1]) for x in keys]
-        cache_values = cache.get_many(list(map(itemgetter(0), keys)))
-        dates, slugs = _get_not_cached_articles(keys, cache_values)
-
         related = ('author', 'category', 'icon', 'category__icon')
-        objects = Article.objects.filter(slug__in=slugs, publication_datetime__date__in=dates) \
-                         .select_related(*related).defer('author__forum_read_status').order_by()
-        new_cache_values = {}
-        for article in objects:
-            key = 'ikhaya/article/%s/%s' % (article.publication_datetime.date(), article.slug)
-            new_cache_values[key] = article
-        if new_cache_values:
-            # cache for 24 hours
-            cache.set_many(new_cache_values, 24 * 60)
-        cache_values.update(new_cache_values)
-        articles = [_f for _f in list(cache_values.values()) if _f]
-        unpublished = list(sorted([a for a in articles if not a.public],
-                                  key=attrgetter('updated', 'publication_datetime'), reverse=True))
-        published = list(sorted([a for a in articles if a not in unpublished],
-                                key=attrgetter('updated', 'publication_datetime'), reverse=True))
-        return unpublished + published
+        return Article.objects.select_related(*related).get(slug=slug,
+                                                            publication_datetime__year=year,
+                                                            publication_datetime__month=month,
+                                                            publication_datetime__day=day)
 
-    def get_latest_articles(self, category=None, count=10):
+    def get_latest_articles(self, category: Optional[str]=None, count: int=10):
         """Return `count` lastest articles for the category `category` or for
         all categories if None.
 
         :param category: Takes the slug of the category or None
         :param count: maximum retrieve this many articles. Defaults to 10
-        :type category: str or None
-        :type count: int
-
         """
-        key = 'ikhaya/latest_articles'
-        if category is not None:
-            key = 'ikhaya/latest_articles/%s' % category
+        related = ('author', 'category', 'icon', 'category__icon')
+        articles = Article.published.select_related(*related).order_by(Coalesce("updated", "publication_datetime").desc())
+        if category:
+            articles = articles.filter(category__slug=category)
 
-        articles = cache.get(key)
-        if articles is None:
-            articles = Article.published.order_by('-updated') \
-                                        .only('publication_datetime', 'slug')
-            if category:
-                articles = articles.filter(category__slug=category)
-
-            maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_article'])
-            articles = articles[:maxcount]
-            articles = [(a.publication_datetime.astimezone().date(), a.slug) for a in articles]
-            cache.set(key, articles, 1200)
-
-        return self.get_cached(articles[:count])
+        return articles[:count]
 
 
 class SuggestionManager(models.Manager):
@@ -315,7 +275,6 @@ class Article(models.Model, LockableObject):
         cache.delete('ikhaya/archive')
         cache.delete(f'ikhaya/article_text/{self.id}')
         cache.delete(f'ikhaya/article_intro/{self.id}')
-        cache.delete(f'ikhaya/article/{self.slug}')
 
     def delete(self):
         """

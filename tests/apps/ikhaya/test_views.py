@@ -1604,7 +1604,7 @@ class TestArticleFeeds(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get('/feeds/full/50/')
 
     def test_multiple_articles(self):
@@ -1739,7 +1739,7 @@ class TestArticleCategoryFeeds(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             self.client.get(f'/feeds/{self.cat.slug}/full/50/')
 
     def test_multiple_articles(self):

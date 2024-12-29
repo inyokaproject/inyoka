@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db.models.functions import Coalesce
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
@@ -146,9 +147,8 @@ def index(request, year=None, month=None, category_slug=None, page=1,
     teaser_link = href('ikhaya', *teaser_link)
     full_link = href('ikhaya', *full_link)
 
-    articles = articles.order_by('public', '-updated').only('publication_datetime', 'slug')
+    articles = articles.order_by('public', Coalesce("updated", "publication_datetime").desc())
     pagination = Pagination(request, articles, page, 15, link)
-    articles = Article.objects.get_cached([(a.publication_datetime.date(), a.slug) for a in pagination.get_queryset()])
 
     subscription_ids = []
     if not request.user.is_anonymous:
@@ -157,7 +157,7 @@ def index(request, year=None, month=None, category_slug=None, page=1,
             .filter(user=request.user, content_type=ctype(Article))
 
     return {
-        'articles': articles,
+        'articles': pagination.get_queryset(),
         'pagination': pagination,
         'category': category,
         'subscription_ids': subscription_ids,
@@ -172,8 +172,8 @@ def index(request, year=None, month=None, category_slug=None, page=1,
 def detail(request, year, month, day, slug):
     """Shows a single article."""
     try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
+        article = Article.objects.get_by_date_and_slug(int(year), int(month),
+                                                       int(day), slug)
     except (IndexError, ValueError):
         raise Http404()
     preview = None
@@ -325,12 +325,6 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
                         _('The article “{title}” was saved.').format(
                             title=escape(article.subject)))
 
-                    cache_keys = [
-                        f'ikhaya/article/{article.stamp}/{article.slug}',
-                        'ikhaya/latest_articles',
-                        f'ikhaya/latest_articles/{article.category.slug}',
-                    ]
-                    cache.delete_many(cache_keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
             preview_intro = Article.get_intro_rendered(
@@ -368,8 +362,8 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0] # TODO
+        article = Article.objects.get_by_date_and_slug(int(year), int(month),
+                                                       int(day), slug)
     except (IndexError, ValueError):
         raise Http404()
 
@@ -384,6 +378,7 @@ def article_subscribe(request, year, month, day, slug):
         messages.info(request,
             _('Notifications on new comments to this article will be sent '
               'to you.'))
+
     redirect = is_safe_domain(request.GET.get('next', '')) and \
         request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
@@ -393,10 +388,11 @@ def article_subscribe(request, year, month, day, slug):
 def article_unsubscribe(request, year, month, day, slug):
     """Unsubscribe from article."""
     try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
+        article = Article.objects.get_by_date_and_slug(int(year), int(month),
+                                                       int(day), slug)
     except (IndexError, ValueError):
         raise Http404()
+
     try:
         subscription = Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
@@ -406,8 +402,10 @@ def article_unsubscribe(request, year, month, day, slug):
         messages.info(request,
             _('You will no longer be notified of new comments for this '
               'article.'))
+
     redirect = is_safe_domain(request.GET.get('next', '')) and \
         request.GET['next'] or url_for(article)
+
     return HttpResponseRedirect(redirect)
 
 
@@ -417,8 +415,8 @@ def report_new(request, year, month, day, slug):
     """Report a mistake in an article."""
     preview = None
     try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
+        article = Article.objects.get_by_date_and_slug(int(year), int(month),
+                                                       int(day), slug)
     except (IndexError, ValueError):
         raise Http404()
 
@@ -439,6 +437,7 @@ def report_new(request, year, month, day, slug):
                 return HttpResponseRedirect(url_for(report))
     else:
         form = EditCommentForm()
+
     return {
         'article': article,
         'form': form,
@@ -503,10 +502,11 @@ def report_unsolve(request, report_id):
 def reports(request, year, month, day, slug):
     """Shows a list of suggested improved versions of the article."""
     try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
+        article = Article.objects.get_by_date_and_slug(int(year), int(month),
+                                                       int(day), slug)
     except (IndexError, ValueError):
         raise Http404()
+
     return {
         'article': article,
         'reports': article.report_set.select_related(),
