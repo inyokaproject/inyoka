@@ -273,8 +273,6 @@ class Article(models.Model, LockableObject):
         super().save(*args, **kwargs)
 
         cache.delete('ikhaya/archive')
-        cache.delete(f'ikhaya/article_text/{self.id}')
-        cache.delete(f'ikhaya/article_intro/{self.id}')
 
     def delete(self):
         """
