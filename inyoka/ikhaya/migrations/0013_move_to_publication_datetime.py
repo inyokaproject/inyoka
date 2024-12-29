@@ -10,7 +10,7 @@ def populate_publication_datetime(apps, schema_editor):
     article_model = apps.get_model("ikhaya", "Article")
 
     for a in article_model.objects.all():
-        p_datetime = datetime.datetime.combine(a.pub_date, a.pub_time, datetime.UTC)
+        p_datetime = datetime.datetime.combine(a.pub_date, a.pub_time, datetime.timezone.utc)
         a.publication_datetime = p_datetime
         a.save()
 

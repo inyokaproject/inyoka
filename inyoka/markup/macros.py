@@ -24,7 +24,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
@@ -289,7 +289,7 @@ class Date(Macro):
                 self.date = datetime.fromisoformat(date)
             except ValueError:
                 try:
-                    self.date = datetime.fromtimestamp(int(date), UTC)
+                    self.date = datetime.fromtimestamp(int(date), timezone.utc)
                 except ValueError:
                     self.date = None
 

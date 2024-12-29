@@ -52,11 +52,11 @@ class TestArticalePublicationMerge(MigratorTestCase):
         a = Article.objects.get(pk=self.a.pk)
 
         self.assertEqual(a.publication_datetime,
-                         datetime.datetime(2024, 1, 1, 10, 0, tzinfo=datetime.UTC))
+                         datetime.datetime(2024, 1, 1, 10, 0, tzinfo=datetime.timezone.utc))
 
     def test_publication_datetime__second_article(self):
         Article = self.new_state.apps.get_model("ikhaya", "Article")
         a = Article.objects.get(pk=self.a2.pk)
 
         self.assertEqual(a.publication_datetime,
-                         datetime.datetime(2023, 5, 15, 23, 0, tzinfo=datetime.UTC))
+                         datetime.datetime(2023, 5, 15, 23, 0, tzinfo=datetime.timezone.utc))

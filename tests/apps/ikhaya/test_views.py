@@ -1374,8 +1374,8 @@ class TestEventDelete(TestCase):
 
         self.event = Event.objects.create(
             name='Event',
-            date=datetime.datetime.now(datetime.UTC).date() + datetime.timedelta(days=0),
-            enddate=datetime.datetime.now(datetime.UTC).date() + datetime.timedelta(days=1),
+            date=datetime.datetime.now(datetime.timezone.utc).date() + datetime.timedelta(days=0),
+            enddate=datetime.datetime.now(datetime.timezone.utc).date() + datetime.timedelta(days=1),
             author=self.user,
             visible=False
         )

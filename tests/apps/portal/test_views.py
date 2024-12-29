@@ -8,7 +8,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.core import mail
@@ -193,7 +193,7 @@ class TestViews(TestCase):
         category = Category.objects.create(name="Categrory")
         a = Article.objects.create(author=self.admin, subject="Subject",
                                    text="Text",
-                                   publication_datetime=datetime(2024, 10, 10, 9, 30, 0, tzinfo=UTC),
+                                   publication_datetime=datetime(2024, 10, 10, 9, 30, 0, tzinfo=timezone.utc),
                                    category=category)
 
         response = self.client.get(f'/ikhaya/{a.id}/')
