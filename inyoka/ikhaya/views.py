@@ -107,6 +107,34 @@ def context_modifier(request, context):
         **data
     )
 
+def _get_article_by_date_and_slug(request, year: int, month: int, day: int, slug: str, check_hidden: bool=True):
+    """Helper function to fetch an article by date and slug.
+
+    It will raise an 404, if no article fits the date and slug.
+
+    It will also raise an 403, if `check_hidden` is True and a user does not have appropriate
+    permissions to view a hidden article.
+    """
+
+    try:
+        year = int(year)
+        month = int(month)
+        day = int(day)
+    except ValueError:
+        raise Http404()
+
+    try:
+        article = Article.objects.get_by_date_and_slug(year, month, day, slug)
+    except Article.DoesNotExist:
+        raise Http404()
+
+    if article.hidden:
+        if check_hidden and not request.user.has_perm('ikhaya.view_unpublished_article'):
+            raise PermissionDenied
+        messages.info(request, _('This article is not visible for regular '
+                                 'users.'))
+
+    return article
 
 event_delete = generic.DeleteView.as_view(model=Event,
     template_name='ikhaya/event_delete.html',
@@ -171,17 +199,11 @@ def index(request, year=None, month=None, category_slug=None, page=1,
 @templated('ikhaya/detail.html', modifier=context_modifier)
 def detail(request, year, month, day, slug):
     """Shows a single article."""
-    try:
-        article = Article.objects.get_by_date_and_slug(int(year), int(month),
-                                                       int(day), slug)
-    except (IndexError, ValueError):
-        raise Http404()
+
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug)
+
     preview = None
-    if article.hidden:
-        if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            raise PermissionDenied
-        messages.info(request, _('This article is not visible for regular '
-                                 'users.'))
 
     if request.method == 'POST' and (not article.comments_enabled or
                                      not request.user.is_authenticated):
@@ -231,17 +253,7 @@ def detail(request, year, month, day, slug):
 @login_required
 @permission_required('ikhaya.delete_article', raise_exception=True)
 def article_delete(request, year, month, day, slug):
-    try:
-        """
-        do not access cached object!
-        This would lead to inconsistent form content
-        """
-        article = Article.objects.get(publication_datetime__year=int(year),
-                                      publication_datetime__month=int(month),
-                                      publication_datetime__day=int(day),
-                                      slug=slug)
-    except (IndexError, ValueError):
-        raise Http404()
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day), slug, check_hidden=False)
 
     if request.method == 'POST':
         if 'unpublish' in request.POST:
@@ -284,15 +296,8 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
     initial = {'author': request.user}
 
     if year and month and day and slug:
-        try:
-            # Do not access cached object!
-            # This would lead to inconsistent form content here.
-            article = Article.objects.get(publication_datetime__year=int(year),
-                                          publication_datetime__month=int(month),
-                                          publication_datetime__day=int(day),
-                                          slug=slug)
-        except (IndexError, ValueError):
-            raise Http404()
+        article = _get_article_by_date_and_slug(request, int(year), int(month),
+                                                int(day), slug, check_hidden=False)
 
         locked = article.lock(request)
         if locked:
@@ -361,15 +366,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 @login_required
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
-    try:
-        article = Article.objects.get_by_date_and_slug(int(year), int(month),
-                                                       int(day), slug)
-    except (IndexError, ValueError):
-        raise Http404()
-
-    if article.hidden:
-        if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            raise PermissionDenied
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day), slug)
 
     try:
         Subscription.objects.get_for_user(request.user, article)
@@ -387,11 +384,9 @@ def article_subscribe(request, year, month, day, slug):
 @login_required
 def article_unsubscribe(request, year, month, day, slug):
     """Unsubscribe from article."""
-    try:
-        article = Article.objects.get_by_date_and_slug(int(year), int(month),
-                                                       int(day), slug)
-    except (IndexError, ValueError):
-        raise Http404()
+    # don't check for hidden status to allow to unsubscribe from a hidden article (f.e. if a team member left)
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug, check_hidden=False)
 
     try:
         subscription = Subscription.objects.get_for_user(request.user, article)
@@ -413,12 +408,10 @@ def article_unsubscribe(request, year, month, day, slug):
 @templated('ikhaya/report_new.html', modifier=context_modifier)
 def report_new(request, year, month, day, slug):
     """Report a mistake in an article."""
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug)
+
     preview = None
-    try:
-        article = Article.objects.get_by_date_and_slug(int(year), int(month),
-                                                       int(day), slug)
-    except (IndexError, ValueError):
-        raise Http404()
 
     if request.method == 'POST':
         form = EditCommentForm(request.POST)
@@ -501,11 +494,8 @@ def report_unsolve(request, report_id):
 @templated('ikhaya/reports.html', modifier=context_modifier)
 def reports(request, year, month, day, slug):
     """Shows a list of suggested improved versions of the article."""
-    try:
-        article = Article.objects.get_by_date_and_slug(int(year), int(month),
-                                                       int(day), slug)
-    except (IndexError, ValueError):
-        raise Http404()
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug)
 
     return {
         'article': article,
