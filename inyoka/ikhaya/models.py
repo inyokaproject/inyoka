@@ -7,16 +7,14 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import UTC, datetime
-from operator import attrgetter, itemgetter
+from datetime import datetime
 from typing import Optional
 from urllib.parse import urlencode
 
-from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q, UniqueConstraint
-from django.db.models.functions import TruncDate, Coalesce
+from django.db.models.functions import Coalesce, TruncDate
 from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy

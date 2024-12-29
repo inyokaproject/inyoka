@@ -8,7 +8,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 from django.conf import settings
 from django.core import mail

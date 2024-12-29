@@ -20,8 +20,11 @@ from inyoka.ikhaya.models import Article, Category, Event, Suggestion
 from inyoka.portal.models import StaticFile
 from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.forms import (
+    NativeDateInput,
+    NativeSplitDateTimeWidget,
+    NativeTimeInput,
     StrippedCharField,
-    UserField, NativeSplitDateTimeWidget, NativeDateInput, NativeTimeInput,
+    UserField,
 )
 from inyoka.utils.text import slugify
 

@@ -19,7 +19,7 @@ from random import randrange
 from django import forms
 from django.conf import settings
 from django.core import validators
-from django.forms import MultipleChoiceField, DateInput, TimeInput, SplitDateTimeWidget
+from django.forms import DateInput, MultipleChoiceField, SplitDateTimeWidget, TimeInput
 from django.forms.widgets import TextInput
 from django.utils.translation import gettext as _
 

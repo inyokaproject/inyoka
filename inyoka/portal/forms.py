@@ -28,7 +28,7 @@ from django.core.validators import validate_email
 from django.db.models import CharField, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
-from django.forms import HiddenInput, modelformset_factory, SplitDateTimeField
+from django.forms import HiddenInput, SplitDateTimeField, modelformset_factory
 from django.utils import timezone as dj_timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
@@ -53,8 +53,10 @@ from inyoka.utils.forms import (
     CaptchaField,
     EmailField,
     ForumMulitpleChoiceField,
+    NativeDateInput,
+    NativeSplitDateTimeWidget,
     validate_gpgkey,
-    validate_signature, NativeSplitDateTimeWidget, NativeDateInput,
+    validate_signature,
 )
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
