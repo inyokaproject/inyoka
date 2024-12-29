@@ -1576,9 +1576,6 @@ class TestArticleFeeds(TestCase):
         super().setUp()
 
         self.now = dj_timezone.now().replace(microsecond=0)
-        now = self.now
-        today = now.date()
-        time_now = now.time()
 
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
@@ -1589,7 +1586,7 @@ class TestArticleFeeds(TestCase):
         self.article = Article.objects.create(author=self.admin, subject="Subject",
                             text="Text", category=self.cat, public=True)
         self.comment = Comment.objects.create(article=self.article, text="Text",
-                            author=self.user, pub_date=now)
+                            author=self.user, pub_date=self.now)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
 
