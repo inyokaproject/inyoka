@@ -62,7 +62,7 @@
             {{ article.publication_datetime|datetime }} |
             {% trans %}Category:{% endtrans %}
             <a href="{{ article.category|url }}">{{ article.category.name|e }}</a> |
-            {%- if article.updated > article.publication_datetime %}
+            {%- if article.is_updated %}
               {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }} |
             {%- endif %}
             {%- if article.comments_enabled %}

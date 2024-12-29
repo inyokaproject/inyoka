@@ -246,6 +246,16 @@ class Article(models.Model, LockableObject):
         return not self.public or self.publication_datetime > dj_timezone.now()
 
     @property
+    def is_updated(self) -> bool:
+        """
+        Returns whether this article has an update (f.e. a addition was made or a big mistake fixed)
+        """
+        if not self.updated:
+            return False
+
+        return self.updated > self.publication_datetime
+
+    @property
     def comments(self):
         """This returns all the comments for this article"""
         return Comment.objects.filter(article=self)

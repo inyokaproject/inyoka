@@ -42,7 +42,7 @@
       <h4><a href="{{ article|url }}">{{ article.subject|e }}</a></h4>
 
       <div class="meta">
-        {%- if article.updated > article.publication_datetime %}
+        {%- if article.is_updated %}
           <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|datetime
              }} / {% trans %}Created:{% endtrans %} {{ article.publication_datetime|datetime }}">{{ article.updated|datetime }}</a>
         {%- else %}
