@@ -307,11 +307,11 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 
     if request.method == 'POST':
         if article and article.public:
-            form = EditPublicArticleForm(request.POST, instance=article,
-                                         initial=initial, readonly=locked)
+            form_class = EditPublicArticleForm
         else:
-            form = EditArticleForm(request.POST, instance=article,
-                                   initial=initial, readonly=locked)
+            form_class = EditArticleForm
+        form = form_class(request.POST, instance=article, initial=initial, readonly=locked)
+
         if 'send' in request.POST:
             if form.is_valid():
                 new = article is None
