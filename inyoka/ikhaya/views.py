@@ -19,6 +19,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
+from django.utils import timezone as dj_timezone
 from django.utils.dates import MONTHS
 from django.utils.html import escape
 from django.utils.timezone import get_current_timezone
@@ -198,34 +199,24 @@ def detail(request, year, month, day, slug):
         if 'preview' in request.POST:
             preview = Comment.get_text_rendered(request.POST.get('text', ''))
         elif form.is_valid():
-            send_subscribe = False
             data = form.cleaned_data
-            if data.get('comment_id') and request.user.has_perm('ikhaya.change_comment'):
-                c = Comment.objects.get(id=data['comment_id'])
-                c.text = data['text']
-                messages.success(request, _('The comment was edited '
-                                            'successfully.'))
-            else:
-                send_subscribe = True
-                c = Comment(text=data['text'])
-                c.article = article
-                c.author = request.user
-                c.pub_date = datetime.utcnow()
-                messages.success(request, _('Your comment was created.'))
+
+            c = Comment(text=data['text'],
+                        article=article,
+                        author=request.user,
+                        pub_date=dj_timezone.now(),
+                        )
             c.save()
-            if send_subscribe:
-                # Send a message to users who subscribed to the article
-                send_comment_notifications(request.user.pk, c.pk, article.pk)
+
+            messages.success(request, _('Your comment was created.'))
+
+            # Send a message to users who subscribed to the article
+            send_comment_notifications(request.user.pk, c.pk, article.pk)
 
             return HttpResponseRedirect(url_for(c))
-    elif request.GET.get('moderate'):
-        comment = Comment.objects.get(id=int(request.GET.get('moderate')))
-        form = EditCommentForm(initial={
-            'comment_id': comment.id,
-            'text': comment.text,
-        })
     else:
         form = EditCommentForm()
+
     return {
         'article': article,
         'comments': article.comment_set.select_related('author'),
