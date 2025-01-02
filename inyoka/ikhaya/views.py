@@ -785,7 +785,7 @@ def event_edit(request, pk=None):
             messages.error(request,
                 _('The event with the id %(id)s could not be used as draft '
                   'for a new event because it does not exist.')
-                % {'id': request.GET['copy_from']})
+                % {'id': escape(request.GET['copy_from'])})
         else:
             fields = ('name', 'changed', 'created', 'date', 'time',
                       'enddate', 'endtime', 'description', 'author_id',
