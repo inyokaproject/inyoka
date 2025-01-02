@@ -208,8 +208,6 @@ class TestIndex(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -222,8 +220,7 @@ class TestIndex(TestCase):
     def test_month(self):
         article2 = Article.objects.create(author=self.admin, subject="a2Subject",
                                               intro="a2Intro", text="a2Text",
-                                              pub_date=datetime.date(2005, 2, 10),
-                                              pub_time=datetime.time(12, 0),
+                                              publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.timezone.utc),
                                               category=self.cat)
 
         response = self.client.get('/2005/2/')
@@ -234,8 +231,6 @@ class TestIndex(TestCase):
         cat2 = Category.objects.create(name="Categrory2")
         article2 = Article.objects.create(author=self.admin, subject="a2Subject",
                                               intro="a2Intro", text="a2Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=cat2)
 
         response = self.client.get(f'/category/{self.cat.slug}/')
@@ -246,14 +241,12 @@ class TestIndex(TestCase):
         for i in range(2, 20):
             Article.objects.create(author=self.admin, subject=f"a{i}Subject",
                                intro=f"a{i}Intro", text=f"a{i}Text",
-                               pub_date=datetime.date(2005, 2, i),
-                               pub_time=datetime.time(12, 0),
+                               publication_datetime=datetime.datetime(2005, 2, i,12, 0, tzinfo=datetime.timezone.utc),
                                category=self.cat)
 
         article_last = Article.objects.create(author=self.admin, subject="aLastSubject",
                                intro="aLastIntro", text="aLastText",
-                               pub_date=datetime.date(2004, 5, 1),
-                               pub_time=datetime.time(13, 0),
+                               publication_datetime=datetime.datetime(2004, 5, 1, 13, 0, tzinfo=datetime.timezone.utc),
                                category=self.cat)
 
         response = self.client.get('/2/')
@@ -291,8 +284,7 @@ class TestIndex(TestCase):
     def test_anonymous_user__no_unpublished_articles(self):
         article_public = Article.objects.create(author=self.admin, subject="a2Subject",
                                           intro="a2Intro", text="a2Text",
-                                          pub_date=datetime.date(2005, 2, 10),
-                                          pub_time=datetime.time(12, 0),
+                                          publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.timezone.utc),
                                           category=self.cat,
                                           public=True)
 
@@ -306,42 +298,37 @@ class TestIndex(TestCase):
     def test_order_of_articles(self):
         old_public = Article.objects.create(author=self.admin, subject="a2Subject",
                                                 intro="a2Intro", text="a2Text",
-                                                pub_date=datetime.date(2005, 2, 10),
-                                                pub_time=datetime.time(12, 0),
+                                                publication_datetime=datetime.datetime(2005, 2, 10,12, 0, tzinfo=datetime.timezone.utc),
                                                 category=self.cat,
                                                 public=True)
 
         public = Article.objects.create(author=self.admin, subject="aPublicSubject",
                                           intro="aPublicIntro", text="aPublicText",
-                                          pub_date=datetime.date(2024, 2, 10),
-                                          pub_time=datetime.time(10, 0),
+                                          publication_datetime=datetime.datetime(2024, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
                                           category=self.cat,
                                           public=True)
 
         public_same_day = Article.objects.create(author=self.admin, subject="aPublic2Subject",
                                           intro="aPublic2Intro", text="aPublic2Text",
-                                          pub_date=datetime.date(2024, 2, 10),
-                                          pub_time=datetime.time(20, 0),
+                                          publication_datetime=datetime.datetime(2024, 2, 10,20, 0, tzinfo=datetime.timezone.utc),
                                           category=self.cat,
                                           public=True)
 
         updated = Article.objects.create(author=self.admin, subject="aUpdateSubject",
                                          intro="aUpdateIntro", text="aUpdateText",
-                                         pub_date=datetime.date(2023, 2, 10),
-                                         pub_time=datetime.time(10, 0),
-                                         updated = datetime.datetime(2024, 2, 11, 21, 0),
+                                         publication_datetime=datetime.datetime(2023, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
+                                         updated=datetime.datetime(2024, 2, 11, 21, 0, tzinfo=datetime.timezone.utc),
                                          category=self.cat,
                                          public=True)
 
         old_draft = Article.objects.create(author=self.admin, subject="aOldDraftSubject",
                                                 intro="aOldDraftIntro", text="aOldDraftText",
-                                                pub_date=datetime.date(2005, 2, 10),
-                                                pub_time=datetime.time(20, 0),
+                                                publication_datetime=datetime.datetime(2005, 2, 10, 20, 0, tzinfo=datetime.timezone.utc),
                                                 category=self.cat,
                                                 public=False)
 
         response = self.client.get('')
-        self.assertListEqual(response.context['articles'],
+        self.assertListEqual(list(response.context['articles']),
                               [self.article, old_draft, updated, public_same_day, public, old_public])
 
 
@@ -360,8 +347,6 @@ class TestArticleDetail(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -430,8 +415,6 @@ class TestArticleDelete(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -442,8 +425,8 @@ class TestArticleDelete(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_existing_article__status_code(self):
-        with self.assertRaises(Article.DoesNotExist):
-            self.client.get('/1785/5/8/goo/delete/')
+        response = self.client.get('/1785/5/8/goo/delete/')
+        self.assertEqual(response.status_code, 404)
 
     def test_not_valid_month__status_code(self):
         response = self.client.get('/1785/a/8/goo/delete/')
@@ -488,8 +471,6 @@ class TestArticleEdit(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -532,8 +513,8 @@ class TestArticleEdit(TestCase):
             'subject': 'aNewSubject',
             'intro': 'aNewIntro',
             'text': 'aNewText',
-            'pub_date': '2024-12-31',
-            'pub_time': '23:55:00',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
             'category': self.cat.pk,
             'send': True,
         }
@@ -560,8 +541,8 @@ class TestArticleEdit(TestCase):
             'subject': self.article.subject,
             'intro': 'aNewIntro',
             'text': 'aNewText',
-            'pub_date': '2024-12-31',
-            'pub_time': '23:55:00',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
             'category': self.cat.pk,
             'send': True,
         }
@@ -578,8 +559,8 @@ class TestArticleEdit(TestCase):
             'subject': 'aNewSubject',
             'intro': 'aNewIntro',
             'text': 'aNewText',
-            'pub_date': '2024-12-31',
-            'pub_time': '23:55:00',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
             'category': self.cat.pk,
             'send': True,
         }
@@ -606,8 +587,8 @@ class TestArticleEdit(TestCase):
             'subject': 'aNewSubject',
             'intro': 'aNewIntro',
             'text': 'aNewText',
-            'pub_date': '2024-12-31',
-            'pub_time': '23:55:00',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
             'category': self.cat.pk,
             'send': True,
         }
@@ -632,8 +613,8 @@ class TestArticleEdit(TestCase):
             'subject': 'aNewSubject',
             'intro': 'aNewIntro',
             'text': 'aNewText',
-            'pub_date': '2024-12-31',
-            'pub_time': '23:55:00',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
             'category': self.cat.pk,
             'send': True,
         }
@@ -664,8 +645,6 @@ class TestArticleSubscribe(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -707,8 +686,6 @@ class TestArticleUnsubscribe(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -754,8 +731,6 @@ class TestReportNew(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -768,6 +743,12 @@ class TestReportNew(TestCase):
     def test_not_existing_article_status_code(self):
         response = self.client.get('/1785/5/8/goo/new_report/')
         self.assertEqual(response.status_code, 404)
+
+    def test_user_report_unpublished_article(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/new_report/')
+        self.assertEqual(response.status_code, 403)
 
     def test_preview_rendered(self):
         canary_text = 'canary6718'
@@ -800,8 +781,6 @@ class TestReports(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -814,6 +793,12 @@ class TestReports(TestCase):
     def test_not_existing_article_status_code(self):
         response = self.client.get('/1785/5/8/goo/reports/')
         self.assertEqual(response.status_code, 404)
+
+    def test_user_report_unpublished_article(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/reports/')
+        self.assertEqual(response.status_code, 403)
 
     def test_reports_shown(self):
         unsolved_report = Report.objects.create(
@@ -851,8 +836,6 @@ class TestReportList(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -916,8 +899,6 @@ class TestCommentEdit(TestCase):
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="a1Subject",
                                               intro="a1Intro", text="a1Text",
-                                              pub_date=datetime.datetime.today().date(),
-                                              pub_time=datetime.datetime.now().time(),
                                               category=self.cat)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
@@ -984,16 +965,14 @@ class TestArchive(TestCase):
         for i in range(1, 12):
             Article.objects.create(author=self.admin, subject=f"a{i}Subject",
                                    intro=f"a{i}Intro", text=f"a{i}Text",
-                                   pub_date=datetime.date(2005, i, 2),
-                                   pub_time=datetime.time(12, 0),
+                                   publication_datetime=datetime.datetime(2005, i, 2, 12, 0, tzinfo=datetime.timezone.utc),
                                    category=self.cat,
                                    public=True,
                                    )
 
         Article.objects.create(author=self.user, subject="aLastSubject",
                                intro="aLastIntro", text="aLastText",
-                               pub_date=datetime.date(2004, 5, 12),
-                               pub_time=datetime.time(13, 0),
+                               publication_datetime=datetime.datetime(2004, 5, 12, 13, 0, tzinfo=datetime.timezone.utc),
                                category=self.cat,
                                public=True,
                                )
