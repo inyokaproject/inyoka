@@ -255,11 +255,6 @@ class Article(models.Model, LockableObject):
         return self.subject
 
     def save(self, *args, **kwargs):
-        if self.text is None or self.intro is None:
-            # might happen, because cached objects are setting text and
-            # intro to None to save some space
-            raise ValueError('text and intro must not be null')
-
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
                                             slugify(self.subject),
