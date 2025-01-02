@@ -781,6 +781,8 @@ def event_edit(request, pk=None):
             event = Event()
         try:
             base_event = Event.objects.get(pk=int(request.GET['copy_from']))
+        except ValueError:
+            messages.error(request, _('Parameter "copy_from" is not a number.'))
         except Event.DoesNotExist:
             messages.error(request,
                 _('The event with the id %(id)s could not be used as draft '

@@ -1523,6 +1523,10 @@ class TestEventEdit(TestCase):
         response = self.client.get('/event/new/?copy_from=1337')
         self.assertContains(response, 'because it does not exist')
 
+    def test_copy_event__text_parameter(self):
+        response = self.client.get('/event/new/?copy_from=<script>console.log("foo")</script>')
+        self.assertContains(response, 'is not a number')
+
 
 class TestServices(TestCase):
 
