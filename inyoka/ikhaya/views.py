@@ -609,16 +609,13 @@ def suggest_delete(request, suggestion):
                 messages.error(request, (_('This suggestion does not exist.')))
                 return HttpResponseRedirect(href('ikhaya', 'suggestions'))
             if request.POST.get('note'):
-                args = {'title': s.title,
-                        'username': request.user.username,
-                        'note': request.POST['note']}
-                send_notification(s.author, 'suggestion_rejected',
-                    _('Article suggestion deleted'), args)
-
                 # Send the user a private message
                 msg = PrivateMessage()
                 msg.author = request.user
-                msg.subject = _('Article suggestion deleted')
+                msg.subject = _('Article suggestion rejected')
+                args = {'title': s.title,
+                        'username': request.user.username,
+                        'note': request.POST['note']}
                 msg.text = render_to_string('mails/suggestion_rejected.txt', args)
                 msg.pub_date = datetime.utcnow()
                 recipients = [s.author]
