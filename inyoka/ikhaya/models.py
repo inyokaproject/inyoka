@@ -318,7 +318,7 @@ class Suggestion(models.Model):
     objects = SuggestionManager()
 
     author = models.ForeignKey(User, related_name='suggestion_set', on_delete=models.CASCADE)
-    pub_date = models.DateTimeField('Datum', default=dj_timezone.now)
+    pub_date = models.DateTimeField(gettext_lazy('Date'), default=dj_timezone.now)
     title = models.CharField(gettext_lazy('Title'), max_length=100)
     text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='ikhaya')
     intro = InyokaMarkupField(verbose_name=gettext_lazy('Introduction'), application='ikhaya')
