@@ -7,10 +7,12 @@
     :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import zoneinfo
 from datetime import datetime, timedelta, timezone
 
 import freezegun
 from django.conf import settings
+from django.db import IntegrityError
 
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.portal.models import StaticFile
@@ -127,6 +129,92 @@ class TestArticleModel(TestCase):
                 category=self.category1,
                 intro=None,
             )
+
+    def test_unique_constraint__same_date_and_slug_raises_error(self):
+        common_parameters = {
+            'publication_datetime': datetime(2008, 7, 18, 1, 33, 7,
+                                             tzinfo=timezone.utc),
+            'text': 'foo',
+            'author': self.user,
+            'subject': 'Article',
+            'category': self.category1,
+            'intro': 'Intro',
+            'slug': 'foo',
+        }
+
+        Article.objects.create(
+            **common_parameters
+        )
+
+        with self.assertRaisesMessage(IntegrityError,
+                                      "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
+            Article.objects.create(
+                **common_parameters
+            )
+
+    def test_unique_constraint__same_slug_different_days_works(self):
+        common_parameters = {
+            'publication_datetime': datetime(2008, 7, 18, 1, 33, 7,
+                                             tzinfo=timezone.utc),
+            'text': 'foo',
+            'author': self.user,
+            'subject': 'Article',
+            'category': self.category1,
+            'intro': 'Intro',
+            'slug': 'foo',
+        }
+
+        Article.objects.create(
+            **common_parameters
+        )
+
+        common_parameters['publication_datetime'] = datetime(2008, 7, 19, 1, 33, 7,
+                                                             tzinfo=timezone.utc)
+        Article.objects.create(**common_parameters)
+
+    def test_unique_constraint__different_timezones(self):
+        common_parameters = {
+            'publication_datetime': datetime(2008, 7, 18, 1, 33, 7,
+                                             tzinfo=timezone.utc),
+            'text': 'foo',
+            'author': self.user,
+            'subject': 'Article',
+            'category': self.category1,
+            'intro': 'Intro',
+            'slug': 'foo',
+        }
+
+        Article.objects.create(
+            **common_parameters
+        )
+
+        common_parameters['publication_datetime'] = datetime(2008, 7, 18, 23, 33, 7,
+                                                             tzinfo=timezone(timedelta(seconds=7200)))
+        with self.assertRaisesMessage(IntegrityError,
+                                      "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
+            Article.objects.create(**common_parameters)
+
+    def test_stamp_wrapping_time(self):
+        self.article1.publication_datetime = datetime(2025, 1, 2, 23, 30, 44, tzinfo=timezone.utc)
+        self.article1.save()
+
+        self.article1.refresh_from_db()
+
+        self.assertEqual(self.article1.stamp, '2025/01/02')
+        self.assertEqual(self.article1.local_pub_datetime,
+                         datetime(2025, 1, 3, 0, 30, 44,
+                                  tzinfo=zoneinfo.ZoneInfo(key='Europe/Berlin')))
+
+    def test_get_by_date_and_slug__wrapping_time(self):
+        self.article1.publication_datetime = datetime(2025, 1, 2, 23, 30, 44,
+                                                      tzinfo=timezone.utc)
+        self.article1.save()
+
+        with self.assertRaises(Article.DoesNotExist):
+            Article.objects.get_by_date_and_slug(2025, 1, 3, self.article1.slug)
+
+        Article.objects.get_by_date_and_slug(2025, 1, 2, self.article1.slug)
+
 
 class TestCategoryModel(TestCase):
 

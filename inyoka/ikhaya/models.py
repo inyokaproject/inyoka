@@ -7,7 +7,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from urllib.parse import urlencode
 
@@ -51,13 +51,18 @@ class ArticleManager(models.Manager):
         return q
 
     def get_by_date_and_slug(self, year: int, month: int, day: int, slug: str):
-        """Get one article by date and slug
+        """Get one article by date and slug.
+
+        The componentes of the passed date are assumed to be in UTC.
         """
         related = ('author', 'category', 'icon', 'category__icon')
-        return Article.objects.select_related(*related).get(slug=slug,
-                                                            publication_datetime__year=year,
-                                                            publication_datetime__month=month,
-                                                            publication_datetime__day=day)
+        query = Article.objects.select_related(*related).annotate(
+            date_utc=TruncDate('publication_datetime', tzinfo=timezone.utc))
+        article = query.get(slug=slug,
+                            date_utc__year=year,
+                            date_utc__month=month,
+                            date_utc__day=day)
+        return article
 
     def get_latest_articles(self, category: Optional[str]=None, count: int=10):
         """Return `count` lastest articles for the category `category` or for
@@ -220,7 +225,7 @@ class Article(models.Model, LockableObject):
 
     @property
     def stamp(self):
-        """Return the year/month/day part of an article url"""
+        """Return the year/month/day part of an article url. Slugs are always in UTC."""
         return self.publication_datetime.strftime('%Y/%m/%d')
 
     def get_absolute_url(self, action='show', **query):
