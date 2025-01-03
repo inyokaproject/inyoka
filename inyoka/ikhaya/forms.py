@@ -71,6 +71,9 @@ class EditArticleForm(forms.ModelForm):
             for field in ('subject', 'intro', 'text'):
                 self.fields[field].widget.attrs['readonly'] = True
 
+        if not instance:
+            del self.fields['updated']
+
     author = UserField(label=gettext_lazy('Author'), required=True)
 
     def clean_slug(self):
@@ -93,7 +96,7 @@ class EditArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        exclude = ['comment_count']
+        fields = ('subject', 'intro', 'text', 'author', 'category', 'icon', 'public', 'comments_enabled', 'updated', 'publication_datetime', 'slug')
         field_classes = {
             'updated': SplitDateTimeField,
             'publication_datetime': SplitDateTimeField,
@@ -110,7 +113,7 @@ class EditArticleForm(forms.ModelForm):
 class EditPublicArticleForm(EditArticleForm):
 
     class Meta(EditArticleForm.Meta):
-        exclude = EditArticleForm.Meta.exclude + ['slug', 'publication_datetime']
+        exclude = ['slug', 'publication_datetime']
 
 
 class EditCategoryForm(forms.ModelForm):
