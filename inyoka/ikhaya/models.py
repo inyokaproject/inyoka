@@ -226,7 +226,7 @@ class Article(models.Model, LockableObject):
     @property
     def stamp(self):
         """Return the year/month/day part of an article url. Slugs are always in UTC."""
-        return self.publication_datetime.strftime('%Y/%m/%d')
+        return self.publication_datetime.astimezone(timezone.utc).strftime('%Y/%m/%d')
 
     def get_absolute_url(self, action='show', **query):
         if action == 'comments':

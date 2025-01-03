@@ -194,6 +194,28 @@ class TestArticleModel(TestCase):
                                       "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
             Article.objects.create(**common_parameters)
 
+    def test_stamp__no_utc_time_passed__still_returns_utc_date(self):
+        """
+        2010-07-1**8** 01:33:07+02:00
+         is equal to
+        2010-07-1**7** 23:33:07+00:00
+
+        The stamp should be dated in UTC: 2010-07-17
+        """
+        self.article1.publication_datetime = datetime(2010, 7, 18, 1, 33, 7,
+                                             tzinfo=timezone(timedelta(seconds=7200)))
+        self.article1.save()
+
+        self.assertEqual(self.article1.publication_datetime.tzinfo,
+                         timezone(timedelta(seconds=7200)))
+        self.assertEqual(self.article1.stamp, '2010/07/17')
+
+        self.article1.refresh_from_db()
+
+        # ORM will return in UTC
+        self.assertEqual(self.article1.publication_datetime.tzinfo, timezone.utc)
+        self.assertEqual(self.article1.stamp, '2010/07/17')
+
     def test_stamp_wrapping_time(self):
         self.article1.publication_datetime = datetime(2025, 1, 2, 23, 30, 44, tzinfo=timezone.utc)
         self.article1.save()
