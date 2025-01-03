@@ -13,7 +13,7 @@
 {% set scripts = ['WikiEditor'] %}
 
 {% if not article %}
-  {% set BREADCRUMBS = [(_('New Article'), href('ikhaya', 'new'))] + BREADCRUMBS|d([]) %}
+  {% set BREADCRUMBS = [(_('New Article'), href('ikhaya', 'article', 'new'))] + BREADCRUMBS|d([]) %}
 {% else %}
   {% set BREADCRUMBS = [(article.subject, article|url),
                         (_('Edit'), article|url('edit'))] + BREADCRUMBS|d([]) %}
