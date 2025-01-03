@@ -24,6 +24,7 @@ from inyoka.portal.user import User
 from inyoka.utils.database import (
     InyokaMarkupField,
     LockableObject,
+    TruncDateUtc,
     find_next_increment,
 )
 from inyoka.utils.dates import datetime_to_timezone
@@ -285,7 +286,7 @@ class Article(models.Model, LockableObject):
         verbose_name_plural = gettext_lazy('Articles')
         ordering = ['-publication_datetime', 'author']
         constraints = [
-            UniqueConstraint(TruncDate('publication_datetime'), 'slug', name='unique_pub_date_slug'),
+            UniqueConstraint(TruncDateUtc('publication_datetime'), 'slug', name='unique_pub_date_slug'),
         ]
         permissions = (
             ('view_unpublished_article', 'Can view unpublished articles'),

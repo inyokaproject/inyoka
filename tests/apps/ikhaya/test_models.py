@@ -194,6 +194,36 @@ class TestArticleModel(TestCase):
                                       "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
             Article.objects.create(**common_parameters)
 
+    def test_unique_constraint__different_dates_in_UTC(self):
+        """
+        Even if both articles have the same date in locale time,
+        no integrity error will be raised. (as in UTC they have different dates)
+        """
+        local_timezone = timezone(timedelta(seconds=7200))
+
+        common_parameters = {
+            'publication_datetime': datetime(2010, 7, 18, 1, 33, 7,
+                                             tzinfo=local_timezone),
+            'text': 'foo',
+            'author': self.user,
+            'subject': 'Article',
+            'category': self.category1,
+            'intro': 'Intro',
+            'slug': 'foo',
+        }
+
+        a = Article.objects.create(
+            **common_parameters
+        )
+        a.refresh_from_db()
+        self.assertEqual(a.stamp, '2010/07/17')
+
+        common_parameters['publication_datetime'] = datetime(2010, 7, 18, 23, 33, 7,
+                                                             tzinfo=local_timezone)
+
+        a = Article.objects.create(**common_parameters)
+        self.assertEqual(a.stamp, '2010/07/18')
+
     def test_stamp__no_utc_time_passed__still_returns_utc_date(self):
         """
         2010-07-1**8** 01:33:07+02:00

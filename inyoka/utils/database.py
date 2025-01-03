@@ -8,10 +8,12 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
+from datetime import timezone
 
 from django.core.cache import cache, caches
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.db.models.functions import TruncDate
 from django.db.models.signals import post_save as model_post_save_signal
 
 from inyoka.markup.base import RenderContext, parse
@@ -364,3 +366,16 @@ class PygmentsField(BaseMarkupField):
                 inst_self.lang)
 
         return create_content
+
+
+class TruncDateUtc(TruncDate):
+    """
+    `TrunDate('mygratefield', tzinfo=timezone.utc)` can not be serialized for a migration,
+    if used in a UniqueConstraint.
+
+    However, with this little helper class serialization is possible.
+    """
+
+    def __init__(self, *args, **kwargs):
+        kwargs['tzinfo'] = timezone.utc
+        super().__init__(*args, **kwargs)
