@@ -187,7 +187,7 @@ class Pagination:
 
     @property
     def next(self):
-        """ Return the url to the last page, or False if already on the last page """
+        """ Return the url to the next page, or False if already on the last page """
 
         if self.page >= self.pages:
             return False
