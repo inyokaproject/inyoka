@@ -904,13 +904,13 @@ class IkhayaAtomFeed(InyokaAtomFeed):
         return url_for(article.author)
 
     def item_pubdate(self, article):
-        return _localtime(article.pub_datetime)
+        return _localtime(article.publication_datetime)
 
     def item_updateddate(self, article):
         if article.updated:
             return _localtime(article.updated)
 
-        return _localtime(article.pub_datetime)
+        return _localtime(article.publication_datetime)
 
 
 class IkhayaCategoryAtomFeed(IkhayaAtomFeed):

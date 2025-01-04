@@ -195,10 +195,6 @@ class Article(models.Model, LockableObject):
     def article_icon(self):
         return self.icon or self.category.icon
 
-    @deferred
-    def pub_datetime(self):
-        return self.publication_datetime
-
     @property
     def local_pub_datetime(self):
         return datetime_to_timezone(self.publication_datetime)
