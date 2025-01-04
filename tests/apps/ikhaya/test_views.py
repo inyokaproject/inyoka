@@ -396,11 +396,13 @@ class TestArticleDetail(TestCase):
         factory = RequestFactory()
         request = factory.post(f'/{self.article.stamp}/{self.article.slug}/', {})
         request.user = User.objects.get_anonymous_user()
+
+        self.article.refresh_from_db() # force UTC for datetimes
         with self.assertRaises(PermissionDenied):
             detail(request,
-                   self.article.local_pub_datetime.year,
-                   self.article.local_pub_datetime.month,
-                   self.article.local_pub_datetime.day,
+                   self.article.publication_datetime.year,
+                   self.article.publication_datetime.month,
+                   self.article.publication_datetime.day,
                    self.article.slug,
                    )
 
