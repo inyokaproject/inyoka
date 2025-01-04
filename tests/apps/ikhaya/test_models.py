@@ -95,6 +95,44 @@ class TestArticleModel(TestCase):
         self.article1.refresh_from_db()
         self.assertEqual('test-article', self.article1.slug)
 
+    def test_save__change_slug__invalid_characters(self):
+        self.article1.slug = 'test articleß'
+        self.article1.save()
+
+        self.article1.refresh_from_db()
+        self.assertEqual('test-articless', self.article1.slug)
+
+    def test_save__slug(self):
+        local_timezone = timezone(timedelta(seconds=7200))
+
+        a = Article.objects.create(**{
+            'publication_datetime': datetime(2008, 7, 18, 1, 33, 7,
+                                             tzinfo=local_timezone),
+            'text': 'foo',
+            'author': self.user,
+            'subject': 'Article',
+            'category': self.category1,
+            'intro': 'Intro',
+        })
+        a.refresh_from_db()
+        self.assertEqual(a.stamp, '2008/07/17')
+
+        # ideally this could be 'article' -- but as `find_next_increment` in
+        # `Article.save` uses the local datetime, the postfix gets added
+        self.assertEqual(a.slug, 'article-3')
+
+        with self.subTest(case='slug not changed for uniqueness, if manually set'):
+            a.slug = 'article'
+            a.save()
+            a.refresh_from_db()
+            self.assertEqual(a.slug, 'article')
+
+        with self.subTest(case='integrity error raised, if slug and publication datetime changed'), \
+             self.assertRaisesMessage(IntegrityError,
+                                      "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
+            a.publication_datetime = self.article1.publication_datetime
+            a.save()
+
     def test_save__slug_stable(self):
         """Even if the subject is changed, the slug is still the same"""
         self.article1.subject = 'b'

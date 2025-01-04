@@ -66,12 +66,11 @@ class ArticleManager(models.Manager):
         The componentes of the passed date are assumed to be in UTC.
         """
         related = ('author', 'category', 'icon', 'category__icon')
-        query = Article.objects.select_related(*related).annotate(
-            date_utc=TruncDate('publication_datetime', tzinfo=timezone.utc))
+        query = Article.objects.annotate_publication_date_utc().select_related(*related)
         article = query.get(slug=slug,
-                            date_utc__year=year,
-                            date_utc__month=month,
-                            date_utc__day=day)
+                            publication_date_utc__year=year,
+                            publication_date_utc__month=month,
+                            publication_date_utc__day=day)
         return article
 
     def get_latest_articles(self, category: Optional[str]=None, count: int=10):
