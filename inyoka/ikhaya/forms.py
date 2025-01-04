@@ -60,7 +60,7 @@ class EditArticleForm(forms.ModelForm):
 
         if instance:
             initial = kwargs.setdefault('initial', {})
-            if instance.public:
+            if instance.public and not instance.updated:
                 initial['updated'] = dj_timezone.now()
             initial['author'] = instance.author.username
 
@@ -82,9 +82,9 @@ class EditArticleForm(forms.ModelForm):
 
         if slug and pub_datetime:
             slug = slugify(slug)
-            pub_date = pub_datetime.date()
-            ## TODO truncate to date?
-            q = Article.objects.filter(slug=slug, publication_datetime=pub_date)
+
+            q = Article.objects.annotate_publication_date_utc()
+            q = q.filter(slug=slug, publication_date_utc=pub_datetime)
 
             if self.instance.pk:
                 q = q.exclude(id=self.instance.pk)

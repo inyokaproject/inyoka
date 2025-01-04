@@ -41,6 +41,15 @@ class ArticleManager(models.Manager):
         self._public = public
         self._all = all
 
+    def annotate_publication_date_utc(self):
+        """
+        Adds a publication date in UTC for every article.
+        In contrast, the default publication datetime is in the local timezone.
+        """
+        q = super().get_queryset()
+        q = q.annotate(publication_date_utc=TruncDate('publication_datetime', tzinfo=timezone.utc))
+        return q
+
     def get_queryset(self):
         q = super().get_queryset()
         if not self._all:
