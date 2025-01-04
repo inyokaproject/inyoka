@@ -217,6 +217,32 @@ class TestIndex(TestCase):
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
 
+    def test_queries_needed(self):
+        # use a normal user to prevent some queries for e.g. report numbers
+        self.client.login(username='user', password='user')
+
+        self.article.public = True
+        self.article.save()
+
+        Article.objects.create(
+            author=self.user,
+            subject="a2Subject",
+            intro="a2Intro",
+            text="a2Text",
+            publication_datetime=datetime.datetime(2005,2, 10,
+                                                   12, 0,
+                                                   tzinfo=datetime.timezone.utc),
+            category=self.cat,
+            public=True,
+        )
+
+        with self.assertNumQueries(12):
+            self.client.get('')
+
+        # second request -> cache populated
+        with self.assertNumQueries(6):
+            self.client.get('')
+
     def test_month(self):
         article2 = Article.objects.create(author=self.admin, subject="a2Subject",
                                               intro="a2Intro", text="a2Text",

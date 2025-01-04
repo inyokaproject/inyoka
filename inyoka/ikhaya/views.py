@@ -178,6 +178,8 @@ def index(request, year=None, month=None, category_slug=None, page=1,
     articles = articles.order_by('public', Coalesce("updated", "publication_datetime").desc())
     pagination = Pagination(request, articles, page, 15, link)
 
+    articles = pagination.get_queryset().select_related('author', 'category', 'icon', 'category__icon')
+
     subscription_ids = []
     if not request.user.is_anonymous:
         subscription_ids = Subscription.objects \
@@ -185,7 +187,7 @@ def index(request, year=None, month=None, category_slug=None, page=1,
             .filter(user=request.user, content_type=ctype(Article))
 
     return {
-        'articles': pagination.get_queryset(),
+        'articles': articles,
         'pagination': pagination,
         'category': category,
         'subscription_ids': subscription_ids,
