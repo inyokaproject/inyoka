@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db.models import Exists, OuterRef, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -180,17 +181,18 @@ def index(request, year=None, month=None, category_slug=None, page=1,
 
     articles = pagination.get_queryset().select_related('author', 'category', 'icon', 'category__icon')
 
-    subscription_ids = []
     if not request.user.is_anonymous:
-        subscription_ids = Subscription.objects \
-            .values_list('object_id', flat=True) \
-            .filter(user=request.user, content_type=ctype(Article))
+        articles = articles.annotate(subscribed=Exists(Subscription.objects.filter(user=request.user, content_type=ctype(Article), object_id=OuterRef("pk"))))
+    else:
+        articles = articles.annotate(subscribed=Value(False))
+
+    if not full:
+        articles = articles.defer('text')
 
     return {
         'articles': articles,
         'pagination': pagination,
         'category': category,
-        'subscription_ids': subscription_ids,
         'full': full,
         'show_full_choice': True,
         'full_link': full_link,

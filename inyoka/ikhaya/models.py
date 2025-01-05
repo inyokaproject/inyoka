@@ -28,7 +28,6 @@ from inyoka.utils.database import (
     find_next_increment,
 )
 from inyoka.utils.dates import datetime_to_timezone
-from inyoka.utils.decorators import deferred
 from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href

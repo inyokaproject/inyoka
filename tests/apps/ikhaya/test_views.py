@@ -217,6 +217,30 @@ class TestIndex(TestCase):
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
 
+    def test_annotated_subscription_status__subscription_exists(self):
+        Subscription(user=self.admin, content_object=self.article).save()
+
+        response = self.client.get('')
+        self.assertEqual(len(response.context['articles']), 1)
+        self.assertTrue(response.context['articles'][0].subscribed)
+
+    def test_annotated_subscription_status__no_subscription_exists(self):
+        # no subscription exists
+
+        response = self.client.get('')
+        self.assertEqual(len(response.context['articles']), 1)
+        self.assertFalse(response.context['articles'][0].subscribed)
+
+    def test_annotated_subscription_status__anonymous(self):
+        self.article.public = True
+        self.article.save()
+
+        self.client.logout()
+
+        response = self.client.get('')
+        self.assertEqual(len(response.context['articles']), 1)
+        self.assertFalse(response.context['articles'][0].subscribed)
+
     def test_queries_needed(self):
         # use a normal user to prevent some queries for e.g. report numbers
         self.client.login(username='user', password='user')
@@ -236,11 +260,11 @@ class TestIndex(TestCase):
             public=True,
         )
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(10):
             self.client.get('')
 
         # second request -> cache populated
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get('')
 
     def test_month(self):

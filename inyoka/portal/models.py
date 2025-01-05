@@ -286,6 +286,7 @@ class StaticFile(models.Model):
 
 class Subscription(models.Model):
     objects = SubscriptionManager()
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     notified = models.BooleanField(
         gettext_lazy('User was already notified'),
