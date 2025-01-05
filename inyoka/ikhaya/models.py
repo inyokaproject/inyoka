@@ -287,7 +287,6 @@ class Article(models.Model, LockableObject):
     class Meta:
         verbose_name = gettext_lazy('Article')
         verbose_name_plural = gettext_lazy('Articles')
-        ordering = ['-publication_datetime', 'author']
         constraints = [
             UniqueConstraint(TruncDateUtc('publication_datetime'), 'slug', name='unique_pub_date_slug'),
         ]
