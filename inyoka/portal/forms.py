@@ -20,7 +20,7 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
-from django.core import signing
+from django.core import signing, validators
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -99,6 +99,12 @@ class LoginForm(AuthenticationForm):
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(request, *args, **kwargs)
         self.fields['username'].label = _('Username or email address')
+
+        # adapt max length for emails (super class only considered username max_length)
+        username_max_length = max(User.username.field.max_length, User.email.field.max_length)
+        self.fields["username"].validators.append(validators.MaxLengthValidator(username_max_length))
+        self.fields["username"].max_length = username_max_length
+        self.fields["username"].widget.attrs["maxlength"] = username_max_length
 
         self.error_messages['inactive'] = format_html(
                 _("Login failed because the user is inactive. You probably didn’t click on the link in the "
