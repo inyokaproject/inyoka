@@ -5,6 +5,7 @@ from django.core.cache import cache
 from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.test import TestCase
 from inyoka.wiki.exceptions import CaseSensitiveException
 from inyoka.wiki.models import Attachment, Page
@@ -13,6 +14,10 @@ BASE_PATH = path.dirname(__file__)
 
 
 class TestPage(TestCase):
+
+    def test_tag_with_comma_as_metadata(self):
+        p1 = Page.objects.create('foo', "some text\n#tag: gra\\,s")
+        self.assertEqual(p1.metadata, MultiMap([('tag', 'gra,s')]))
 
     def test_update_related_pages__content_updated(self):
         """

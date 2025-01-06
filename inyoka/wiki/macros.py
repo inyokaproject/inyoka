@@ -10,20 +10,17 @@
 import itertools
 import operator
 
-from django.db.models import Q
 from django.conf import settings
+from django.db.models import FilteredRelation, Q
 from django.utils.translation import gettext as _
 
-from functools import reduce
-
 from inyoka.markup import macros, nodes
-from inyoka.markup.parsertools import MultiMap, flatten_iterator
 from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
 from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, urlencode
-from inyoka.wiki.models import MetaData, Page, is_privileged_wiki_page
+from inyoka.wiki.models import Page, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
 
@@ -221,14 +218,20 @@ class TagList(macros.Macro):
 class FilterByMetaData(macros.Macro):
     """Filter pages by their metadata.
 
-    The metadata given can be combined with keywords to customize
-    the filtering.  The ``NOT`` keyword negates the filter.  The ``EXACT``
-    keyword uses direct matching and does not accept any other value
-    for the metadata key.  Examples:
+    One filter has the form `key: value`.
+    Multiple filters can be combined with a `;` in the sense of a `and`.
+    Value can contain multiple values seperated by `,` in the sense of `or`.
 
-        X-Link: mardi; tag: gras
-        X-Link: mardi, gras
-        tag: EXACT mardi; X-Link: NOT gras
+    ``NOT`` at the start of a value negates the filter.
+    It can be used (multiple times) only at the start of a filter.
+    Additionally, only one value can be used with ``NOT``.
+
+    Examples:
+
+        `[[FilterByMetaData("tag: baz")]]` lists pages that have the tag baz
+        `[[FilterByMetaData("X-Link: foo,bar")]]` lists pages that have a link to `foo` _or_ `bar`
+        `[[FilterByMetaData("X-Link: foo; X-Link: bar")]]` lists pages that have a link to `foo` _and_ `bar`
+        `[[FilterByMetaData("X-Link: NOT gras")]]` lists pages that not contain a link to gras
     """
 
     names = ('FilterByMetaData', 'MetaFilter')
@@ -241,55 +244,70 @@ class FilterByMetaData(macros.Macro):
     def __init__(self, filters):
         self.filters = [x.strip() for x in filters.split(';')]
 
+    def _is_allowed_key(self, key: str) -> bool:
+        """
+        Returns True, if this is an allowed metadata key.
+
+        Via this method the queryable metadata keys can be restricted.
+        Disallowed is for example the key `X-Behave`.
+        """
+        return key in {'tags', 'tag', 'X-Redirect', 'X-Link', 'X-Attach', 'getestet'}
+
     def build_node(self, context, format):
-        mapping = []
+        pages = Page.objects.all()
+
         for part in self.filters:
             if part.count(":") != 1:
                 return nodes.error_box(_('No result'),
                     _('Invalid filter syntax. Query: %(query)s') % {
                     'query': '; '.join(self.filters)})
+
             key, values = part.split(":")
-            values = values.split(",")
-            mapping.extend([(key.strip(), x.strip()) for x in values])
-        mapping = MultiMap(mapping)
 
-        pages_query = Q()
-        exclude_query = Q()
-        for key in list(mapping.keys()):
-            values = list(flatten_iterator(mapping[key]))
-            includes = {x for x in values if not x.startswith(('NOT ', 'EXACT',))}
-            exclude_values = set()
-            kwargs = {'key': key}
-            if values[0].startswith("EXACT"):
-                exact_value = values[0].removeprefix("EXACT ")
-                kwargs['value__exact'] = exact_value
-            elif values[0].startswith("NOT"):
-                exclude_values.add(values[0].removeprefix("NOT "))
+            values = [v.strip() for v in values.split(",")]
+            if values[0].startswith("NOT") and len(values) > 1:
+                return nodes.error_box(_('No result'),
+                    _('Invalid filter syntax. Query: %(query)s') % {
+                    'query': '; '.join(self.filters)})
+
+            key = key.strip()
+            if not self._is_allowed_key(key):
+                return nodes.error_box(_('No result'),
+                    _('Invalid filter key %(key)s. Query: %(query)s') % {
+                        'key': key,
+                        'query': '; '.join(self.filters)})
+
+            if values[0].startswith("NOT"):
+                exclude_value = values[0].removeprefix("NOT ")
+
+                normalized_key = key.lower().replace("-", "")
+                pages = pages.annotate(**{
+                    f'filtered_{normalized_key}': FilteredRelation(
+                        'metadata',
+                        condition=Q(metadata__key=key),
+                    )}
+                ).exclude(**{f'filtered_{normalized_key}__value': exclude_value})
             else:
-                kwargs['value__in'] = includes
-            pages_query |= Q(**kwargs)
-            exclude_query |= Q(**{"key": key, "value__in": exclude_values})
+                includes = set(values)
+                pages = pages.filter(metadata__key=key, metadata__value__in=includes)
 
-        exclude_privileged_query = Q()
+        # exclude privileged pages
         for prefix in settings.WIKI_PRIVILEGED_PAGES:
-            exclude_privileged_query |= Q(**{"page__name__startswith": prefix})
+            pages = pages.exclude(name__startswith=prefix)
 
-        pages = MetaData.objects.select_related('page').filter(pages_query).exclude(
-            exclude_query).exclude(exclude_privileged_query)
+        pages = pages.distinct()
+        page_names = pages.values_list('name', flat=True)
 
-        names = {p.page.name for p in pages}
-        names = sorted(names, key=lambda s: s.lower())
-
-        if not names:
+        if not page_names:
             return nodes.error_box(_('No result'),
                 _('The metadata filter has found no results. Query: %(query)s') % {
                     'query': '; '.join(self.filters)})
 
         # build the node
         result = nodes.List('unordered')
-        for page in names:
-            title = [nodes.Text(get_pagetitle(page))]
-            link = nodes.InternalLink(page, title, force_existing=True)
+        for p in page_names:
+            title = [nodes.Text(get_pagetitle(p))]
+            link = nodes.InternalLink(p, title, force_existing=True)
             result.children.append(nodes.ListItem([link]))
 
         return result
