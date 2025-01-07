@@ -95,8 +95,10 @@ def suggest(request):
                 messages.error(request, _('No user is registered as a planet administrator.'))
                 return HttpResponseRedirect(href('planet'))
 
+            context = form.cleaned_data.copy()
+            context['user'] = request.user
             text = render_to_string('mails/planet_suggest.txt',
-                                    form.cleaned_data)
+                                    context)
             for user in users:
                 send_mail(_('A new blog was suggested.'), text,
                           settings.INYOKA_SYSTEM_USER_EMAIL,

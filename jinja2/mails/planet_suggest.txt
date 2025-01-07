@@ -1,9 +1,9 @@
 Neuer Vorschlag für einen Blog im Planet
 ========================================
 
-Vorschlag von:  {{ USER.username }} ({{ USER|url }})
+Vorschlag von:  {{ user.username }} ({{ user|url }})
 {%- if mine %}
-                Der Blog gehört {{ USER.username }}{% endif %}
+                Der Blog gehört {{ user.username }}{% endif %}
 Name:	        {{ name }}
 URL:	        {{ url }}
 Feed:	        {{ feed_url or '–' }}
