@@ -16,7 +16,7 @@
 {% set selected = 'settings' %}
 
 {% block portal_content %}
-  <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
+  <form enctype="multipart/form-data" class="usercp_form -no-bold-label" method="post" action="">
     {{ csrf_input }}
     <h3>{% trans %}Settings{% endtrans %}</h3>
     <dl>
