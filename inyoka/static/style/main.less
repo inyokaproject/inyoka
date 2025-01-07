@@ -130,6 +130,10 @@ html:not(.reduce-motion) {
   }
 }
 
+:root {
+  --paragraph-margin: 0.7em 0;
+}
+
 body {
   font-family: @font-content;
   color: black;
@@ -272,6 +276,9 @@ legend {
 }
 fieldset {
   border: none;
+}
+main form > div {
+  margin: var(--paragraph-margin);
 }
 
 textarea {
@@ -727,7 +734,7 @@ table.syntaxtable {
   margin: 0 @body-innerspace;
 
   p {
-    margin: 0.7em 0.0em;
+    margin: var(--paragraph-margin);
 
     @supports(hyphens: auto) {
       hyphens: auto;
