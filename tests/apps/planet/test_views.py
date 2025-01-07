@@ -14,6 +14,8 @@ from time import mktime
 
 import feedparser
 from django.conf import settings
+from django.contrib.auth.models import Group
+from django.core import mail
 from django.utils import translation
 
 from inyoka.planet.models import Blog, Entry
@@ -208,3 +210,59 @@ class TestViews(TestCase):
 
         response = self.client.get('/blogs/export/grml/')
         self.assertEqual(response.status_code, 404)
+
+
+class TestSuggestView(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.client.defaults['HTTP_HOST'] = 'planet.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get('/suggest/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_abort(self):
+        response = self.client.post('/suggest/', data={'abort': True}, follow=True)
+        self.assertRedirects(response, href('planet'))
+
+    def test_submit_suggestion(self):
+        ikhaya_team_member = User.objects.register_user('ikm', 'ikm@inyoka.local', 'ikm', False)
+        ikhaya_team_member2 = User.objects.register_user('ikm2', 'ikm2@inyoka.local', 'ikm2', False)
+
+        group = Group.objects.get(name__iexact=settings.INYOKA_IKHAYA_GROUP_NAME)
+        ikhaya_team_member.groups.add(group)
+        ikhaya_team_member2.groups.add(group)
+
+        data = {
+            'name': 'Testblog',
+            'url': 'http://inyoka.test/',
+            'description': 'Description of the Testblog',
+        }
+
+        response = self.client.post('/suggest/', data=data, follow=True)
+        self.assertRedirects(response, href('planet'))
+        self.assertContains(response, 'was suggested.')
+
+        self.assertEqual(len(mail.outbox), 2)
+        for m in mail.outbox:
+            self.assertIn('was suggested.', m.subject)
+            self.assertIn(m.to[0], [ikhaya_team_member.email, ikhaya_team_member2.email])
+
+    def test_submit_suggestion__no_team_member(self):
+        data = {
+            'name': 'Testblog',
+            'url': 'http://inyoka.test/',
+            'description': 'Description of the Testblog',
+        }
+
+        response = self.client.post('/suggest/', data=data, follow=True)
+        self.assertRedirects(response, href('planet'))
+        self.assertContains(response, 'No user is registered as a planet administrator.')
