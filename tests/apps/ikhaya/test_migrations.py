@@ -13,8 +13,8 @@ from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
 
 class TestArticalePublicationMerge(MigratorTestCase):
-    migrate_from = ("ikhaya", "0012_alter_article__unique_constraint__updated_verbose_name")
-    migrate_to = ("ikhaya", "0013_move_to_publication_datetime")
+    migrate_from = ("ikhaya", "0010_auto_20230312_1704")
+    migrate_to = ("ikhaya", "0011_article_publication_datetime")
 
     def prepare(self):
         """Prepare some data before the migration."""
