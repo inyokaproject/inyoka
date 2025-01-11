@@ -40,12 +40,15 @@ Deployment notes
 🏗 Changes
 ----------
 * ``*.pot`` files are no longer in git
+* Enable timezon-aware datetimes from Django
+* Fix deprecation warnings related to UTC methods
 
 🗑 Deprecations
 --------------
 
 🔥 Removals
 -----------
+* Replace javascript based datetime picker with native HTML one
 
 🐛 Fixes
 --------
