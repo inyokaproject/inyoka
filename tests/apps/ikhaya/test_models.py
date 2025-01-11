@@ -144,7 +144,7 @@ class TestArticleModel(TestCase):
 
     def test_empty_text(self):
         with self.assertRaisesMessage(IntegrityError,
-                                      'NOT NULL constraint failed: ikhaya_article.text'):
+                                      self._msg_not_null_constraint('ikhaya_article', 'text')):
             Article.objects.create(
                 publication_datetime=datetime(2008, 7, 18, 1, 33, 7,
                                               tzinfo=timezone.utc),
@@ -157,7 +157,7 @@ class TestArticleModel(TestCase):
 
     def test_empty_intro(self):
         with self.assertRaisesMessage(IntegrityError,
-                                      'NOT NULL constraint failed: ikhaya_article.intro'):
+                                      self._msg_not_null_constraint('ikhaya_article', 'intro')):
             Article.objects.create(
                 publication_datetime=datetime(2008, 7, 18, 1, 33, 7,
                                               tzinfo=timezone.utc),
