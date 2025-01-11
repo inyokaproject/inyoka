@@ -180,3 +180,18 @@ class TestCase(_TestCase):
         xml2 = xml.dom.minidom.parseString(xml2).toprettyxml(indent='  ')
 
         super().assertXMLEqual(xml1, xml2, msg)
+
+    def _msg_unique_constraint(self, constraint_name: str) -> str:
+        """
+        If you want to check the message of an `IntegrityError` with `self.assertRaisesMessage`,
+        the messages differ between database backends. This method helps to act as an
+        abstraction layer.
+        """
+        if 'sqlite3' in settings.DATABASES['default']['ENGINE']:
+            return f"UNIQUE constraint failed: index '{constraint_name}'"
+        elif 'postgresql' in settings.DATABASES['default']['ENGINE']:
+            return f'duplicate key value violates unique constraint "{constraint_name}"'
+
+        raise NotImplementedError(
+            '_msg_unique_constraint not implemented for this backend. Please add another if-branch.')
+

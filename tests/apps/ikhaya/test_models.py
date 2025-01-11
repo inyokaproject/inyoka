@@ -129,7 +129,7 @@ class TestArticleModel(TestCase):
 
         with self.subTest(case='integrity error raised, if slug and publication datetime changed'), \
              self.assertRaisesMessage(IntegrityError,
-                                      "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
+                                      self._msg_unique_constraint('unique_pub_date_slug')):
             a.publication_datetime = self.article1.publication_datetime
             a.save()
 
@@ -185,7 +185,7 @@ class TestArticleModel(TestCase):
         )
 
         with self.assertRaisesMessage(IntegrityError,
-                                      "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
+                                      self._msg_unique_constraint('unique_pub_date_slug')):
             Article.objects.create(
                 **common_parameters
             )
@@ -229,7 +229,7 @@ class TestArticleModel(TestCase):
         common_parameters['publication_datetime'] = datetime(2008, 7, 18, 23, 33, 7,
                                                              tzinfo=timezone(timedelta(seconds=7200)))
         with self.assertRaisesMessage(IntegrityError,
-                                      "UNIQUE constraint failed: index 'unique_pub_date_slug'"):
+                                      self._msg_unique_constraint('unique_pub_date_slug')):
             Article.objects.create(**common_parameters)
 
     def test_unique_constraint__different_dates_in_UTC(self):
