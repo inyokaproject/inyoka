@@ -1865,12 +1865,13 @@ class TestTopicFeedPostRevision(TestCase):
 
     def test_post_multiple_revision_update_date(self):
         self.post.edit(text='foo')
+        now = timezone.now().replace(microsecond=0)
 
         response = self.client.get(f'/feeds/topic/{self.topic.slug}/short/10/', follow=True)
         feed = feedparser.parse(response.content)
 
         feed_updated = parse_datetime(feed.entries[0].updated).replace(microsecond=0)
-        self.assertEqual(feed_updated, timezone.now().replace(microsecond=0))
+        self.assertEqual(feed_updated, now)
 
 
 @freeze_time("2023-12-09T23:55:04Z")
