@@ -14,8 +14,8 @@
     <link rel="profile" href="http://microformats.org/profile/hcalendar">
 {% endblock %}
 {% set styles = ['calendar'] %}
-{% set month = event.date.month %}
-{% set year = event.date.year %}
+{% set month = event.start.month %}
+{% set year = event.start.year %}
 {% set BREADCRUMBS = [(_('Calendar'), href('portal', 'calendar')),
                       ('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month)),
                       (event.name, event|url)] + BREADCRUMBS|d([]) %}
@@ -24,28 +24,11 @@
 <h3>
   {%- trans title=event.name|e %}Event “{{ title }}”{% endtrans -%}
 </h3>
+
 <table class="vevent admin_link_hover">
   <tr><th>{% trans %}Date{% endtrans %}</th><td>
-    {%- if event.date != None %}
-      {{ _('from') }}
-      {% if event.time == None %}
-        {{ event.date|naturalday }}
-      {% else %}
-        {{ event.startdatetime|naturalday }}
-        {{ event.startdatetime|time }}
-      {% endif %}
-      {%- if event.enddate != None %}
-        {{ _('to') }}
-        {% if event.endtime == None %}
-          {{ event.enddate|naturalday }}
-        {% else %}
-          {{ event.enddatetime|naturalday }}
-          {{ event.enddatetime|time }}
-        {% endif %}
-      {% endif %}
-    {% else %}
-      –
-    {% endif %}
+    {{ _('from') }} {{ event.start|datetime }}
+    {{ _('to') }} {{ event.end|datetime }}
   </td></tr>
   {%- if event.location_town %}
   <tr>
@@ -69,6 +52,7 @@
   </tr>
   <tr><td colspan="2"><span class="description">{{ event.description_rendered or '–' }}</span></td></tr>
 </table>
+
 <span class="hcal-downloads extension-note">
   <a href="{{ ical_link }}">{% trans %}Download iCal{% endtrans %}</a> |
   <a href="{{ google_link }}">{% trans %}Enter in Google Calendar{% endtrans %}</a>

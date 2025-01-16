@@ -9,7 +9,7 @@
 """
 import calendar
 import json
-from datetime import date, datetime, time
+from datetime import date
 from urllib.parse import quote_plus
 
 from django.core.exceptions import PermissionDenied
@@ -41,42 +41,29 @@ def calendar_entries_for_month(year, month):
     for i in month_range:
         days[i] = []
     start_date = date(year=year, month=month, day=month_range[0])
-    end_date = date(year=year, month=month, day=month_range[-1])
 
-    events = Event.objects.filter(
-        Q(date__range=(start_date, end_date)) |
-        Q(enddate__range=(start_date, end_date)), visible=True).all()
+    events = Event.objects.filter(Q(start__year=year, start__month=month) | Q(end__year=year, end__month=month), visible=True)
 
     for event in events:
-        if event.date is not None:
-            if event.date < start_date:
-                delta = start_date - event.date
-                base = start_date.day
-            else:
-                if event.enddate:
-                    delta = event.enddate - event.date
-                else:
-                    delta = event.date - event.date
-                base = event.date.day
-
-            for day in range(delta.days + 1):
-                if base + day in days:
-                    days[base + day].append(event)
+        if event.start.date() < start_date:
+            delta = event.end.date() - start_date
+            base = start_date.day
         else:
-            days[event.date.day].append(event)
+            delta = event.end.date() - event.start.date()
+            base = event.start.date().day
+
+        for day in range(delta.days + 1):
+            if base + day in days:
+                days[base + day].append(event)
+
     return days
 
 
 def google_calendarize(event):
     tfmt = '%Y%m%dT000000'
 
-    start = datetime.combine(event.date, event.time or time())
-    dates = start.strftime(tfmt)
-    if event.enddate:
-        end = datetime.combine(event.enddate, event.endtime or time())
-        dates += '%2F' + end.strftime(tfmt)
-    else:
-        dates += '%2F' + start.strftime(tfmt)
+    dates = event.start.strftime(tfmt)
+    dates += '%2F' + event.end.strftime(tfmt)
     name = quote_plus(event.name)
 
     s = ('https://www.google.com/calendar/event?action=TEMPLATE&' +

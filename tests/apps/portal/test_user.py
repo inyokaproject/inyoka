@@ -220,8 +220,8 @@ class TestUserHasContent(TestCase):
         self.assertTrue(self.user.has_content())
 
     def test_event(self):
-        now = datetime.now()
-        Event.objects.create(author=self.user, date=now.date())
+        now = dj_timezone.now()
+        Event.objects.create(author=self.user, start=now, end=now)
 
         self.assertTrue(self.user.has_content())
 

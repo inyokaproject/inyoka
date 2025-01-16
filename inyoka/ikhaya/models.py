@@ -7,7 +7,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timezone
+from datetime import timezone
 from typing import Optional
 from urllib.parse import urlencode
 
@@ -114,9 +114,13 @@ class CommentManager(models.Manager):
 class EventManager(models.Manager):
 
     def get_upcoming(self, count=10):
-        return self.get_queryset().order_by('date').filter(Q(visible=True) & (
-            (Q(enddate__gte=dj_timezone.now()) & Q(date__lte=dj_timezone.now())) |
-            (Q(date__gte=dj_timezone.now()))))[:count]
+        q = self.get_queryset().order_by('start').filter(Q(start__gte=dj_timezone.now()) | (Q(start__lte=dj_timezone.now()) & Q(end__gte=dj_timezone.now())), visible=True)
+
+        if count is None:
+            # don't limit number of items returned, if None was passed
+            return q
+
+        return q[:count]
 
 
 class Category(models.Model):
@@ -385,10 +389,10 @@ class Event(models.Model):
     slug = models.SlugField(unique=True, max_length=100, db_index=True)
     changed = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    date = models.DateField(gettext_lazy('Date (from)'), db_index=True)
-    time = models.TimeField(gettext_lazy('Time (from)'), blank=True, null=True)  # None -> whole day
-    enddate = models.DateField(gettext_lazy('Date (to)'), blank=True, null=True)  # None
-    endtime = models.TimeField(gettext_lazy('Time (to)'), blank=True, null=True)  # None -> whole day
+
+    start = models.DateTimeField(gettext_lazy('Start date'), db_index=True)
+    end = models.DateTimeField(gettext_lazy('End date'))
+
     description = InyokaMarkupField(verbose_name=gettext_lazy('Description'), blank=True, application='ikhaya')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.CharField(gettext_lazy('Venue'), max_length=128, blank=True)
@@ -397,7 +401,7 @@ class Event(models.Model):
                                      blank=True, null=True)
     location_long = models.FloatField(gettext_lazy('Degree of longitude'),
                                       blank=True, null=True)
-    visible = models.BooleanField(default=False)
+    visible = models.BooleanField(gettext_lazy('Display event?'), default=False)
 
     def __str__(self):
         return self.name
@@ -414,7 +418,7 @@ class Event(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            name = self.date.strftime('%Y/%m/%d/') + slugify(self.name)
+            name = self.start.astimezone().strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
 
         super().save(*args, **kwargs)
@@ -423,6 +427,7 @@ class Event(models.Model):
         cache.delete('ikhaya/event_count')
 
     def friendly_title(self, with_html_link=False):
+        # TODO get rid of or use format_html?
         s_location = '<span class="location">%s</span>' % (
             self.location_town and ' in %s' % self.location_town or '')
         summary = '<span class="summary">%s</span>' % escape(self.name)
@@ -466,18 +471,13 @@ class Event(models.Model):
 
         return f'https://www.openstreetmap.org/?{query_parameter}'
 
-    def _construct_datetimes(self, day, time):
-        if not day:
-            day = dj_timezone.localdate() ## TODO check
-        return datetime_to_timezone(datetime.combine(day, time))
-
     @property
     def startdatetime(self):
-        return self._construct_datetimes(self.date, self.time)
+        return self.start
 
     @property
     def enddatetime(self):
-        return self._construct_datetimes(self.enddate or self.date, self.endtime)
+        return self.end
 
     class Meta:
         db_table = 'portal_event'
