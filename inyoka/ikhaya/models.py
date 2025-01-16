@@ -471,14 +471,6 @@ class Event(models.Model):
 
         return f'https://www.openstreetmap.org/?{query_parameter}'
 
-    @property
-    def startdatetime(self):
-        return self.start
-
-    @property
-    def enddatetime(self):
-        return self.end
-
     class Meta:
         db_table = 'portal_event'
         app_label = 'portal'
