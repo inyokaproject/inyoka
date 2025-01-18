@@ -103,3 +103,16 @@
 
   {{ title_parts|reverse|join(' › ') }}
 {% endmacro %}
+
+{% macro friendly_title(event) %}
+  <span class="vevent">
+    <a href="{{ event|url }}" class="event_link">
+      <span class="summary">{{ event.name|e }}</span>
+    </a>
+    {% if event.location_town %}
+      <span class="location">
+        {% trans town=event.location_town|e %}in {{ town }}{% endtrans %}
+      </span>
+    {% endif %}
+  </span>
+{% endmacro %}

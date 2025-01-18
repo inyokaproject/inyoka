@@ -44,7 +44,7 @@
   {% if events %}
     <ul class="events vcalendar">
       {% for event in events %}
-      <li>{{ event.friendly_title(with_html_link=true) }} – {{ event.start|naturalday }}</li>
+      <li>{{ macros.friendly_title(event) }} – {{ event.start|naturalday }}</li>
       {%- endfor %}
     </ul>
   {% else %}

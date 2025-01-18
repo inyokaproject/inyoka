@@ -16,7 +16,6 @@ from django.db import models
 from django.db.models import Q, UniqueConstraint
 from django.db.models.functions import Coalesce, TruncDate
 from django.utils import timezone as dj_timezone
-from django.utils.html import escape
 from django.utils.translation import gettext_lazy
 
 from inyoka.portal.models import StaticFile
@@ -425,20 +424,6 @@ class Event(models.Model):
 
         cache.delete(f'ikhaya/event/{self.id}')
         cache.delete('ikhaya/event_count')
-
-    def friendly_title(self, with_html_link=False):
-        # TODO get rid of or use format_html?
-        s_location = '<span class="location">%s</span>' % (
-            self.location_town and ' in %s' % self.location_town or '')
-        summary = '<span class="summary">%s</span>' % escape(self.name)
-        if with_html_link:
-            ret = '<a href="%s" class="event_link">%s</a>%s' % (
-                escape(self.get_absolute_url()),
-                summary,
-                s_location)
-        else:
-            ret = summary + s_location
-        return '<span class="vevent">%s</span>' % ret
 
     @property
     def natural_coordinates(self):

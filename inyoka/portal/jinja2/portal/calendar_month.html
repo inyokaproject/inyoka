@@ -49,7 +49,7 @@
       {%- if events %}
       <ul>
         {%- for event in events %}
-        <li>{{ event.friendly_title(with_html_link=true) }}</li>
+        <li>{{ macros.friendly_title(event) }}</li>
         {%- endfor %}
       </ul>
     {% endif -%}
