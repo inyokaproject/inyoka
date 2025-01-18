@@ -2009,3 +2009,52 @@ class TestCommentsPerArticleFeed(TestCase):
   </entry>
 </feed>
 ''')
+
+
+class TestCategoryEdit(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user('test', 'test@inyoka.test', password='test', send_mail=False)
+
+        group = Group.objects.create(name='edit_category')
+        assign_perm('ikhaya.change_category', group)
+        group.user_set.add(self.user)
+
+        self.client.login(username='test', password='test')
+
+        self.client.defaults['HTTP_HOST'] = f'ikhaya.{settings.BASE_DOMAIN_NAME}'
+
+    def test_category_new__get__status_code(self):
+        response = self.client.get('/category/new/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_category_new__post__redirect(self):
+        data = {
+            'name': 'foo'
+        }
+
+        response = self.client.post('/category/new/', data=data, follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/category/foo/edit/')
+        self.assertEqual(Category.objects.count(), 1)
+
+    def test_category_edit__get__status_code(self):
+        c = Category.objects.create(name='new')
+        c.refresh_from_db()
+
+        response = self.client.get(f'/category/{c.slug}/edit/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_category_edit__post__redirect(self):
+        c = Category.objects.create(name='new')
+        c.refresh_from_db()
+
+        data = {
+            'name': 'foo'
+        }
+
+        response = self.client.post(f'/category/{c.slug}/edit/', data=data, follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/category/new/edit/')
