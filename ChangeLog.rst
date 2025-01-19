@@ -56,6 +56,7 @@ Deployment notes
 * Planet: Fix export
 * Planet: Fix suggestion for a new blog
 * Login: Allow to enter long email adress
+* Events: Fix discrepancy between times displayed in forms and rendered on page
 
 🔒 Security
 -----------
