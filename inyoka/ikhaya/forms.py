@@ -11,6 +11,8 @@ from datetime import datetime
 from datetime import time as dt_time
 
 from django import forms
+from django.forms import SplitDateTimeField
+from django.utils import timezone as dj_timezone
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy
 
@@ -18,10 +20,10 @@ from inyoka.ikhaya.models import Article, Category, Event, Suggestion
 from inyoka.portal.models import StaticFile
 from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.forms import (
-    DateTimeField,
-    DateWidget,
+    NativeDateInput,
+    NativeSplitDateTimeWidget,
+    NativeTimeInput,
     StrippedCharField,
-    TimeWidget,
     UserField,
 )
 from inyoka.utils.text import slugify
@@ -55,47 +57,38 @@ class EditArticleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         readonly = kwargs.pop('readonly', False)
+
         if instance:
             initial = kwargs.setdefault('initial', {})
-            if instance.pub_datetime != instance.updated:
-                initial['updated'] = instance.updated
+            if instance.public and not instance.updated:
+                initial['updated'] = dj_timezone.now()
             initial['author'] = instance.author.username
+
         super().__init__(*args, **kwargs)
-        # Following stuff is in __init__ to keep helptext etc intact.
+
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
         if readonly:
             for field in ('subject', 'intro', 'text'):
                 self.fields[field].widget.attrs['readonly'] = True
 
-    author = UserField(label=gettext_lazy('Author'), required=True)
-    updated = DateTimeField(label=gettext_lazy('Last update'),
-                help_text=gettext_lazy('If you keep this field empty, the '
-                    'publication date will be used.'),
-                localize=True, required=False)
+        if not instance:
+            del self.fields['updated']
 
-    def save(self):
-        instance = super().save(commit=False)
-        if 'pub_date' in self.cleaned_data and (not instance.pk or
-                not instance.public or self.cleaned_data.get('public', None)):
-            instance.pub_date = self.cleaned_data['pub_date']
-            instance.pub_time = self.cleaned_data['pub_time']
-        if self.cleaned_data.get('updated', None):
-            instance.updated = self.cleaned_data['updated']
-        elif {'pub_date', 'pub_time'} in set(self.cleaned_data.keys()):
-            instance.updated = datetime.combine(
-                self.cleaned_data['pub_date'],
-                self.cleaned_data['pub_time'])
-        instance.save()
-        return instance
+    author = UserField(label=gettext_lazy('Author'), required=True)
 
     def clean_slug(self):
         slug = self.cleaned_data['slug']
-        pub_date = self.cleaned_data.get('pub_date', None)
-        if slug and pub_date:
+        pub_datetime = self.cleaned_data.get('publication_datetime', None)
+
+        if slug and pub_datetime:
             slug = slugify(slug)
-            q = Article.objects.filter(slug=slug, pub_date=pub_date)
+
+            q = Article.objects.annotate_publication_date_utc()
+            q = q.filter(slug=slug, publication_date_utc=pub_datetime)
+
             if self.instance.pk:
                 q = q.exclude(id=self.instance.pk)
+
             if q.exists():
                 raise forms.ValidationError(gettext_lazy('There already '
                             'exists an article with this slug!'))
@@ -103,24 +96,24 @@ class EditArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        exclude = ['updated', 'comment_count']
+        fields = ('subject', 'intro', 'text', 'author', 'category', 'icon', 'public', 'comments_enabled', 'updated', 'publication_datetime', 'slug')
+        field_classes = {
+            'updated': SplitDateTimeField,
+            'publication_datetime': SplitDateTimeField,
+        }
         widgets = {
-            'subject': forms.TextInput(attrs={'size': 50}),
-            'intro': forms.Textarea(attrs={'rows': 3}),
-            'text': forms.Textarea(attrs={'rows': 15}),
-            'pub_date': DateWidget(),
-            'pub_time': TimeWidget(),
+            'subject': forms.TextInput(),
+            'intro': forms.Textarea(),
+            'text': forms.Textarea(),
+            'publication_datetime': NativeSplitDateTimeWidget(),
+            'updated': NativeSplitDateTimeWidget(),
         }
 
 
 class EditPublicArticleForm(EditArticleForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        del self.fields['pub_date']
-        del self.fields['pub_time']
 
     class Meta(EditArticleForm.Meta):
-        exclude = EditArticleForm.Meta.exclude + ['slug']
+        exclude = ['slug', 'publication_datetime']
 
 
 class EditCategoryForm(forms.ModelForm):
@@ -195,10 +188,10 @@ class NewEventForm(forms.ModelForm):
     class Meta:
         model = Event
         widgets = {
-            'date': DateWidget,
-            'time': TimeWidget,
-            'enddate': DateWidget,
-            'endtime': TimeWidget,
+            'date': NativeDateInput,
+            'time': NativeTimeInput,
+            'enddate': NativeDateInput,
+            'endtime': NativeTimeInput,
         }
         exclude = ['author', 'slug', 'visible']
 

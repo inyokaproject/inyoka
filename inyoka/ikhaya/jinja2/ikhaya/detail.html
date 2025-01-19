@@ -54,9 +54,9 @@
       {% trans link=article.author|url, author=article.author.username|e -%}
         Published by <a href="{{ link }}">{{ author }}</a>
       {%- endtrans %} |
-      {{ article.pub_datetime|datetime }} |
+      {{ article.publication_datetime|datetime }} |
       {% trans %}Category:{% endtrans %} <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
-      {%- if article.updated > article.pub_datetime %}
+      {%- if article.is_updated %}
         | {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
       {%- endif %}
         | <a href="{{ article|url('id') }}">#</a>

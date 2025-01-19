@@ -130,6 +130,10 @@ html:not(.reduce-motion) {
   }
 }
 
+:root {
+  --paragraph-margin: 0.7em 0;
+}
+
 body {
   font-family: @font-content;
   color: black;
@@ -182,6 +186,7 @@ input[type="password"],
 input[type="search"],
 input[type="tel"],
 input[type="text"],
+input[type="time"],
 input[type="url"] {
   border: none;
   border-bottom: thin solid #AAA;
@@ -198,6 +203,13 @@ input[type="url"] {
     border-bottom: thin solid @input-focus-color;
   }
 }
+
+input[type="date"] + input[type="time"] {
+  /* for SplitDatetimeWidgets prevent that date and time fields are in the same line.
+     Instead force a line break for the time input. */
+  display: block;
+}
+
 /* "buttons" */
 input[type="submit"], input[type="button"], input[type="reset"] {
   @button-shadow-height: 0.3em;
@@ -255,6 +267,20 @@ input[type="submit"], input[type="button"], input[type="reset"] {
     margin-left: 0.5em;
   }
 }
+
+form:not(.-no-bold-label) label {
+  font-weight: bold;
+}
+legend {
+  font-weight: bold;
+}
+fieldset {
+  border: none;
+}
+main form > div {
+  margin: var(--paragraph-margin);
+}
+
 textarea {
   box-sizing: border-box;
   border: thin solid #AAA;
@@ -535,7 +561,7 @@ span.highlight {
   color: #641A1A;
   font-weight: bold;
 }
-.note {
+.note, .helptext {
   font-size: 0.9em;
   padding-left: 1.0em;
   color: #444;
@@ -708,7 +734,7 @@ table.syntaxtable {
   margin: 0 @body-innerspace;
 
   p {
-    margin: 0.7em 0.0em;
+    margin: var(--paragraph-margin);
 
     @supports(hyphens: auto) {
       hyphens: auto;

@@ -13,6 +13,7 @@ from time import time
 
 from django.core.cache import cache
 from django.forms import ValidationError
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext_lazy
 
 from inyoka.utils.local import current_request
@@ -43,7 +44,7 @@ def set_session_info(request):
         'username': None,
         'type': 'anonymous',
         'anonymous': True,
-        'last_changed': datetime.utcnow()
+        'last_changed': dj_timezone.now()
     }
 
     if request.user.is_authenticated and not request.user.settings.get('hide_profile', False):
@@ -98,7 +99,7 @@ def get_user_record(values=None):
     record, timestamp = (int(values.get('session_record', 1) or 1),
                          values.get('session_record_time', 0))
     if timestamp is None:
-        timestamp = datetime.utcnow()
+        timestamp = dj_timezone.now()
     else:
         timestamp = datetime.fromtimestamp(int(timestamp))
     return record, timestamp

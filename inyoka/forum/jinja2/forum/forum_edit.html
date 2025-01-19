@@ -9,8 +9,6 @@
 #}
 {%- extends 'forum/page.html' %}
 {% from 'macros.html' import render_form %}
-{% set styles = ['editor', 'datetimefield'] %}
-{% set scripts = ['WikiEditor', 'DateTime'] %}
 
 {% if not forum %}
   {% set BREADCRUMBS = [(_('Create forum'), href('forum', 'forum', 'new'))] + BREADCRUMBS|d([]) %}

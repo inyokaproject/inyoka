@@ -10,12 +10,13 @@
 from datetime import datetime
 
 from django import forms
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
 from inyoka.markup.base import StackExhaused, parse
 from inyoka.utils.diff3 import merge
-from inyoka.utils.forms import DateWidget, TopicField, UserField
+from inyoka.utils.forms import NativeDateInput, TopicField, UserField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.text import join_pagename, normalize_pagename
@@ -152,14 +153,14 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
 
         data = self.data.copy()
         latest_change_time = self.latest_rev.change_date
-        edit_time = datetime.strptime(data['edit_time'], '%Y-%m-%d %H:%M:%S.%f')
+        edit_time = datetime.strptime(data['edit_time'], '%Y-%m-%d %H:%M:%S.%f%z')
 
         if edit_time < latest_change_time:
             # The user started editing (edit_time) before the last change.
             data['text'] = merge(old=self.old_rev.text.value,
                                  other=self.latest_rev.text.value,
                                  new=data['text'])
-            data['edit_time'] = datetime.utcnow()
+            data['edit_time'] = dj_timezone.now()
             self.data = data
             self.add_error('text', _('Somebody else edited the page while you '
                                      'were making your changes. We tried to '
@@ -255,5 +256,5 @@ class MvBaustelleForm(forms.Form):
     new_name = forms.CharField(label=gettext_lazy('New page name'), required=True)
     user = UserField(label=gettext_lazy('Edited by'), required=True)
     completion_date = forms.DateField(label=gettext_lazy('Completion date'),
-                                      required=False, widget=DateWidget,
+                                      required=False, widget=NativeDateInput,
                                       localize=True)

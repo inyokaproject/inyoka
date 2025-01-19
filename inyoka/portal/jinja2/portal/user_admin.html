@@ -9,8 +9,8 @@
 #}
 {%- extends 'portal/overall.html' %}
 {% from 'macros.html' import render_form %}
-{% set styles = ['editor', 'datetimefield', 'portal'] %}
-{% set scripts = ['WikiEditor', 'DateTime', 'jquery.autocomplete'] %}
+{% set styles = ['editor', 'portal'] %}
+{% set scripts = ['WikiEditor', 'jquery.autocomplete'] %}
 
 {% block content %}
   <div class="warning_important">{% trans name=user.username -%}

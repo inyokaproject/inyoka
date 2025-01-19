@@ -9,12 +9,10 @@
     :license: BSD, see LICENSE for more details.
 #}
 
-
 {%- extends 'wiki/page.html' %}
 {% from 'macros.html' import render_form %}
 {% set action = 'mv_baustelle' %}
-{% set styles = ['datetimefield'] %}
-{% set scripts = ['DateTime'] %}
+
 {% block wiki_content %}
   <h1>
     {%- trans page=page.name %}Mark page “{{ page }}” as “under construction”{% endtrans -%}

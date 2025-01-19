@@ -7,7 +7,6 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import datetime
 import functools
 import io
 import json
@@ -29,7 +28,8 @@ from django.core.validators import validate_email
 from django.db.models import CharField, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
-from django.forms import HiddenInput, modelformset_factory
+from django.forms import HiddenInput, SplitDateTimeField, modelformset_factory
+from django.utils import timezone as dj_timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
@@ -51,9 +51,10 @@ from inyoka.portal.user import (
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
     CaptchaField,
-    DateWidget,
     EmailField,
     ForumMulitpleChoiceField,
+    NativeDateInput,
+    NativeSplitDateTimeWidget,
     validate_gpgkey,
     validate_signature,
 )
@@ -540,24 +541,30 @@ class CreateUserForm(forms.Form):
 
 
 class EditUserStatusForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['banned_until'].localize = True
 
     class Meta:
         model = User
         fields = ['status', 'banned_until']
+        field_classes = {
+            'banned_until': SplitDateTimeField,
+        }
+        widgets = {
+            'banned_until': NativeSplitDateTimeWidget(),
+        }
 
     def clean(self):
         """Keep the user from setting banned_until if status is not banned.
         """
         data = self.cleaned_data
+
         if not data.get('banned_until'):
             return data
+
         if int(data['status']) != User.STATUS_BANNED:
             raise forms.ValidationError(_('The user is not banned'))
-        if data['banned_until'] < datetime.datetime.utcnow():
+        if data['banned_until'] < dj_timezone.now():
             raise forms.ValidationError(_('The point of time is in the past.'))
+
         return data
 
 
@@ -1096,7 +1103,7 @@ class ConfigurationForm(forms.Form):
                     'Use <code>%(remaining)s</code> to be replaced by the '
                     'remaining days or <code>soon</code>.'))
     countdown_date = forms.DateField(label=gettext_lazy('Release date'),
-        required=False, widget=DateWidget, localize=True)
+        required=False, widget=NativeDateInput, localize=True)
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,

@@ -7,7 +7,7 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import partial
 from itertools import groupby
 from operator import attrgetter
@@ -18,8 +18,10 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models import F, Q
+from django.db.models.functions import Now
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
@@ -327,9 +329,11 @@ def handle_polls(request, topic, poll_ids):
 
     if 'add_poll' in request.POST and poll_form.is_valid():
         d = poll_form.cleaned_data
-        now = datetime.utcnow()
-        end_time = (d['duration'] and now + timedelta(days=d['duration'])
-                    or None)
+        now = dj_timezone.now()
+        if d['duration']:
+            end_time = now + timedelta(days=d['duration'])
+        else:
+            end_time = None
         poll = Poll(topic=topic, question=d['question'],
                     multiple_votes=d['multiple'],
                     start_time=now, end_time=end_time)
@@ -624,7 +628,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         if not post:  # not when editing an existing post
             doublepost = Post.objects \
                 .filter(author=request.user, text=d['text'],
-                        pub_date__gt=(datetime.utcnow() - timedelta(0, 300)))
+                        pub_date__gt=(Now() - timedelta(0, 300)))
             if not newtopic:
                 doublepost = doublepost.filter(topic=topic)
             try:
@@ -1626,7 +1630,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         hours = int(hours)
         if hours > 24:
             raise Http404()
-        topics = topics.filter(posts__pub_date__gt=datetime.utcnow() - timedelta(hours=hours))
+        topics = topics.filter(posts__pub_date__gt=Now() - timedelta(hours=hours))
         topics = topics.distinct()
         title = _('Posts of the last %(n)d hours') % {'n': hours}
         url = href('forum', 'last%d' % hours, forum)

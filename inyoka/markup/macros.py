@@ -24,8 +24,9 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
@@ -288,13 +289,13 @@ class Date(Macro):
                 self.date = datetime.fromisoformat(date)
             except ValueError:
                 try:
-                    self.date = datetime.utcfromtimestamp(int(date))
+                    self.date = datetime.fromtimestamp(int(date), timezone.utc)
                 except ValueError:
                     self.date = None
 
     def build_node(self, context, format):
         if self.now:
-            date = datetime.utcnow()
+            date = dj_timezone.now()
         else:
             date = self.date
 

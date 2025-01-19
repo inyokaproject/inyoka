@@ -16,6 +16,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db.models import Exists, OuterRef, Value
+from django.db.models.functions import Coalesce
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
@@ -81,8 +83,7 @@ def context_modifier(request, context):
     key = 'ikhaya/archive'
     data = cache.get(key)
     if data is None:
-        archive = list(Article.published.dates('pub_date',
-                                               'month',
+        archive = list(Article.published.dates('publication_datetime', 'month',
                                                order='DESC'))
         if len(archive) > 5:
             archive = archive[:5]
@@ -107,6 +108,34 @@ def context_modifier(request, context):
         **data
     )
 
+def _get_article_by_date_and_slug(request, year: int, month: int, day: int, slug: str, check_hidden: bool=True):
+    """Helper function to fetch an article by date and slug.
+
+    It will raise an 404, if no article fits the date and slug.
+
+    It will also raise an 403, if `check_hidden` is True and a user does not have appropriate
+    permissions to view a hidden article.
+    """
+
+    try:
+        year = int(year)
+        month = int(month)
+        day = int(day)
+    except ValueError:
+        raise Http404()
+
+    try:
+        article = Article.objects.get_by_date_and_slug(year, month, day, slug)
+    except Article.DoesNotExist:
+        raise Http404()
+
+    if article.hidden:
+        if check_hidden and not request.user.has_perm('ikhaya.view_unpublished_article'):
+            raise PermissionDenied
+        messages.info(request, _('This article is not visible for regular '
+                                 'users.'))
+
+    return article
 
 event_delete = generic.DeleteView.as_view(model=Event,
     template_name='ikhaya/event_delete.html',
@@ -128,7 +157,7 @@ def index(request, year=None, month=None, category_slug=None, page=1,
     _full = ('full', )
 
     if year and month:
-        articles = articles.filter(pub_date__year=year, pub_date__month=month)
+        articles = articles.filter(publication_datetime__year=year, publication_datetime__month=month)
         link = (year, month)
     elif category_slug:
         category = Category.objects.get(slug=category_slug)
@@ -147,22 +176,23 @@ def index(request, year=None, month=None, category_slug=None, page=1,
     teaser_link = href('ikhaya', *teaser_link)
     full_link = href('ikhaya', *full_link)
 
-    articles = articles.order_by('public', '-updated').only('pub_date', 'slug')
+    articles = articles.order_by('public', Coalesce("updated", "publication_datetime").desc())
     pagination = Pagination(request, articles, page, 15, link)
-    articles = Article.objects.get_cached([(a.pub_date, a.slug) for a in
-        pagination.get_queryset()])
 
-    subscription_ids = []
+    articles = pagination.get_queryset().select_related('author', 'category', 'icon', 'category__icon')
+
     if not request.user.is_anonymous:
-        subscription_ids = Subscription.objects \
-            .values_list('object_id', flat=True) \
-            .filter(user=request.user, content_type=ctype(Article))
+        articles = articles.annotate(subscribed=Exists(Subscription.objects.filter(user=request.user, content_type=ctype(Article), object_id=OuterRef("pk"))))
+    else:
+        articles = articles.annotate(subscribed=Value(False))
+
+    if not full:
+        articles = articles.defer('text')
 
     return {
         'articles': articles,
         'pagination': pagination,
         'category': category,
-        'subscription_ids': subscription_ids,
         'full': full,
         'show_full_choice': True,
         'full_link': full_link,
@@ -173,17 +203,11 @@ def index(request, year=None, month=None, category_slug=None, page=1,
 @templated('ikhaya/detail.html', modifier=context_modifier)
 def detail(request, year, month, day, slug):
     """Shows a single article."""
-    try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
-    except (IndexError, ValueError):
-        raise Http404()
+
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug)
+
     preview = None
-    if article.hidden or article.pub_datetime > datetime.utcnow():
-        if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            raise PermissionDenied
-        messages.info(request, _('This article is not visible for regular '
-                                 'users.'))
 
     if request.method == 'POST' and (not article.comments_enabled or
                                      not request.user.is_authenticated):
@@ -233,15 +257,8 @@ def detail(request, year, month, day, slug):
 @login_required
 @permission_required('ikhaya.delete_article', raise_exception=True)
 def article_delete(request, year, month, day, slug):
-    try:
-        """
-        do not access cached object!
-        This would lead to inconsistent form content
-        """
-        article = Article.objects.get(pub_date=date(int(year), int(month),
-            int(day)), slug=slug)
-    except (IndexError, ValueError):
-        raise Http404()
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day), slug, check_hidden=False)
+
     if request.method == 'POST':
         if 'unpublish' in request.POST:
             article.public = False
@@ -283,13 +300,9 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
     initial = {'author': request.user}
 
     if year and month and day and slug:
-        try:
-            # Do not access cached object!
-            # This would lead to inconsistent form content here.
-            pub_date = date(int(year), int(month), int(day))
-            article = Article.objects.get(pub_date=pub_date, slug=slug)
-        except (IndexError, ValueError):
-            raise Http404()
+        article = _get_article_by_date_and_slug(request, int(year), int(month),
+                                                int(day), slug, check_hidden=False)
+
         locked = article.lock(request)
         if locked:
             messages.error(request,
@@ -298,11 +311,11 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 
     if request.method == 'POST':
         if article and article.public:
-            form = EditPublicArticleForm(request.POST, instance=article,
-                                         initial=initial, readonly=locked)
+            form_class = EditPublicArticleForm
         else:
-            form = EditArticleForm(request.POST, instance=article,
-                                   initial=initial, readonly=locked)
+            form_class = EditArticleForm
+        form = form_class(request.POST, instance=article, initial=initial, readonly=locked)
+
         if 'send' in request.POST:
             if form.is_valid():
                 new = article is None
@@ -321,11 +334,6 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
                         _('The article “{title}” was saved.').format(
                             title=escape(article.subject)))
 
-                    cache_keys = [
-                        f'ikhaya/article/{article.pub_date}/{article.slug}',
-                        'ikhaya/latest_articles',
-                        f'ikhaya/latest_articles/{article.category.slug}']
-                    cache.delete_many(cache_keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
             preview_intro = Article.get_intro_rendered(
@@ -362,14 +370,8 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 @login_required
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
-    try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
-    except (IndexError, ValueError):
-        raise Http404()
-    if article.hidden or article.pub_datetime > datetime.utcnow():
-        if not request.user.has_perm('ikhaya.view_unpublished_article'):
-            raise PermissionDenied
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day), slug)
+
     try:
         Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
@@ -377,6 +379,7 @@ def article_subscribe(request, year, month, day, slug):
         messages.info(request,
             _('Notifications on new comments to this article will be sent '
               'to you.'))
+
     redirect = is_safe_domain(request.GET.get('next', '')) and \
         request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
@@ -385,11 +388,10 @@ def article_subscribe(request, year, month, day, slug):
 @login_required
 def article_unsubscribe(request, year, month, day, slug):
     """Unsubscribe from article."""
-    try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
-    except (IndexError, ValueError):
-        raise Http404()
+    # don't check for hidden status to allow to unsubscribe from a hidden article (f.e. if a team member left)
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug, check_hidden=False)
+
     try:
         subscription = Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
@@ -399,8 +401,10 @@ def article_unsubscribe(request, year, month, day, slug):
         messages.info(request,
             _('You will no longer be notified of new comments for this '
               'article.'))
+
     redirect = is_safe_domain(request.GET.get('next', '')) and \
         request.GET['next'] or url_for(article)
+
     return HttpResponseRedirect(redirect)
 
 
@@ -408,12 +412,10 @@ def article_unsubscribe(request, year, month, day, slug):
 @templated('ikhaya/report_new.html', modifier=context_modifier)
 def report_new(request, year, month, day, slug):
     """Report a mistake in an article."""
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug)
+
     preview = None
-    try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
-    except (IndexError, ValueError):
-        raise Http404()
 
     if request.method == 'POST':
         form = EditCommentForm(request.POST)
@@ -425,13 +427,14 @@ def report_new(request, year, month, day, slug):
                 report = Report(text=data['text'])
                 report.article = article
                 report.author = request.user
-                report.pub_date = datetime.utcnow()
+                report.pub_date = dj_timezone.now()
                 report.save()
                 cache.delete('ikhaya/reported_article_count')
                 messages.success(request, _('Thanks for your report.'))
                 return HttpResponseRedirect(url_for(report))
     else:
         form = EditCommentForm()
+
     return {
         'article': article,
         'form': form,
@@ -495,11 +498,9 @@ def report_unsolve(request, report_id):
 @templated('ikhaya/reports.html', modifier=context_modifier)
 def reports(request, year, month, day, slug):
     """Shows a list of suggested improved versions of the article."""
-    try:
-        article = Article.objects.get_cached([(date(int(year), int(month),
-            int(day)), slug)])[0]
-    except (IndexError, ValueError):
-        raise Http404()
+    article = _get_article_by_date_and_slug(request, int(year), int(month), int(day),
+                                            slug)
+
     return {
         'article': article,
         'reports': article.report_set.select_related(),
@@ -570,7 +571,7 @@ def comment_restore(request, comment_id):
 @templated('ikhaya/archive.html', modifier=context_modifier)
 def archive(request):
     """Shows the archive index."""
-    months = Article.published.dates('pub_date', 'month')
+    months = Article.published.dates('publication_datetime', 'month')
     return {
         'months': months
     }
@@ -617,7 +618,7 @@ def suggest_delete(request, suggestion):
                         'username': request.user.username,
                         'note': request.POST['note']}
                 msg.text = render_to_string('mails/suggestion_rejected.txt', args)
-                msg.pub_date = datetime.utcnow()
+                msg.pub_date = dj_timezone.now()
                 recipients = [s.author]
                 msg.send(recipients)
                 # send notification
@@ -907,10 +908,13 @@ class IkhayaAtomFeed(InyokaAtomFeed):
         return url_for(article.author)
 
     def item_pubdate(self, article):
-        return _localtime(article.pub_datetime)
+        return _localtime(article.publication_datetime)
 
     def item_updateddate(self, article):
-        return _localtime(article.updated)
+        if article.updated:
+            return _localtime(article.updated)
+
+        return _localtime(article.publication_datetime)
 
 
 class IkhayaCategoryAtomFeed(IkhayaAtomFeed):

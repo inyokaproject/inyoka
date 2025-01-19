@@ -9,11 +9,11 @@
 #}
 {%- extends 'ikhaya/page.html' %}
 {% from 'macros.html' import render_form %}
-{% set styles = ['editor', 'datetimefield'] %}
-{% set scripts = ['WikiEditor', 'DateTime'] %}
+{% set styles = ['editor'] %}
+{% set scripts = ['WikiEditor'] %}
 
 {% if not article %}
-  {% set BREADCRUMBS = [(_('New Article'), href('ikhaya', 'new'))] + BREADCRUMBS|d([]) %}
+  {% set BREADCRUMBS = [(_('New Article'), href('ikhaya', 'article', 'new'))] + BREADCRUMBS|d([]) %}
 {% else %}
   {% set BREADCRUMBS = [(article.subject, article|url),
                         (_('Edit'), article|url('edit'))] + BREADCRUMBS|d([]) %}
@@ -36,13 +36,9 @@
     {%- if article.article_icon %}
       <div class="icon"><img src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}"></div>
     {%- endif %}
-    <dl>
-      {{ render_form(form, ['subject', 'intro', 'text', 'author', 'category', 'icon', 'public', 'comments_enabled'], inline=true) }}
-      {%- if article != none %}
-        {{ render_form(form, ['updated'], inline=true) }}
-      {%- endif %}
-      {{ render_form(form, ['pub_date', 'pub_time', 'slug'], inline=true) }}
-      </dl>
+
+    {{ form.as_div() }}
+
     <p>
       <input type="submit" value="{% trans %}Submit{% endtrans %}" name="send">
       <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview">

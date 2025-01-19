@@ -17,8 +17,6 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -26,6 +24,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 
@@ -510,7 +509,7 @@ def do_edit(request, name, rev=None):
             page.edit(user=request.user,
                       text=form.cleaned_data['text'],
                       note=form.cleaned_data['note'],
-                      change_date=datetime.utcnow(),
+                      change_date=dj_timezone.now(),
                       deleted=None)
             current_rev = page.rev
             send_edit_notifications(user=request.user,
@@ -522,7 +521,7 @@ def do_edit(request, name, rev=None):
         form = PageEditForm(user=request.user,
                             name=name)
         form.initial = {'text': page.rev.text.value,
-                        'edit_time': datetime.utcnow(),
+                        'edit_time': dj_timezone.now(),
                         'revision': page.rev.id}
 
     return {
@@ -604,7 +603,7 @@ def do_mv_baustelle(request, name):
                                new_text=new_text):
                     messages.error(request,
                         'Beim Verschieben in die Baustelle ist ein Fehler '
-                        'aufgereten.')
+                        'aufgetreten.')
                     return HttpResponseRedirect(url_for(page))
             else:
                 messages.error(request,

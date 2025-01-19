@@ -19,13 +19,11 @@ from random import randrange
 from django import forms
 from django.conf import settings
 from django.core import validators
-from django.forms import MultipleChoiceField
-from django.forms.widgets import Input, TextInput
-from django.utils.timezone import get_current_timezone
+from django.forms import DateInput, MultipleChoiceField, SplitDateTimeWidget, TimeInput
+from django.forms.widgets import TextInput
 from django.utils.translation import gettext as _
 
 from inyoka.markup.base import StackExhaused, parse
-from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.sessions import SurgeProtectionMixin
@@ -126,10 +124,10 @@ class UserField(forms.CharField):
         Returns the username from the given data.
 
         data can be:
-        - the a basestring, then it has to be the username,
+        - a string, then it has to be the username,
         - None, then the field is empty,
-        - an user object, then the username of this user is returned or
-        - an user id, then the user is fetched from the database.
+        - a user object, then the username of this user is returned or
+        - a user id, then the user is fetched from the database.
         """
         from inyoka.portal.user import User  # prevent circular import
 
@@ -154,46 +152,51 @@ class UserField(forms.CharField):
             raise forms.ValidationError(_('This user does not exist'))
 
 
-class DateTimeWidget(Input):
-    input_type = 'text'
-    value_type = 'datetime'
+class NativeDateInput(DateInput):
+    """
+    Uses <input type="date">. Thus, the default format is also
+    changed to ISO-like 2017-01-01 (year-month-day).
 
-    def render(self, name, value, attrs=None, renderer=None):
-        if attrs is None:
-            attrs = {}
-        attrs['valuetype'] = self.value_type
-        return Input.render(self, name, value, attrs)
+    If browsers do not support the input-type, the fallback will be the
+    default of DateInput: <input type="text">.
+    """
+    date_format = '%Y-%m-%d'
 
-
-class DateWidget(DateTimeWidget):
-    input_type = 'text'
-    value_type = 'date'
+    def __init__(self):
+        super().__init__(attrs={'type': 'date'}, format=self.date_format)
 
 
-class TimeWidget(DateTimeWidget):
-    input_type = 'text'
-    value_type = 'time'
+class NativeTimeInput(TimeInput):
+    """
+    Uses <input type="time">. Thus, the default format is also
+    changed to 12:37:31 (hour:minute:second).
+
+    If browsers do not support the input-type, the fallback will be the
+    default of TimeInput: <input type="text">.
+    """
+    time_format = '%H:%M:%S'
+    step = 1  # seconds, default 60
+
+    def __init__(self):
+        super().__init__(attrs={'type': 'time', 'step': self.step},
+                         format=self.time_format)
 
 
-class DateTimeField(forms.DateTimeField):
-    widget = DateTimeWidget
+class NativeSplitDateTimeWidget(SplitDateTimeWidget):
+    """
+    Uses <input type="time"> for the time field and <input type="date"> for
+    the date field. See NativeDateInput and NativeTimeInput for some details.
 
-    def prepare_value(self, data):
-        if data in validators.EMPTY_VALUES:
-            return ''
-        if isinstance(data, str):
-            return data
-        datetime = super().prepare_value(data)
-        return datetime_to_timezone(datetime).replace(tzinfo=None)
+    Note that the field in the form needs to be a `SplitDateTimeField`.
+    """
+    time_step = NativeTimeInput.step
 
-    def clean(self, value):
-        datetime = super().clean(value)
-        if not datetime:
-            return
+    def __init__(self):
+        super().__init__(date_attrs={'type': 'date'},
+                         date_format=NativeDateInput.date_format,
+                         time_attrs={'type': 'time', 'step': self.time_step},
+                         time_format=NativeTimeInput.time_format)
 
-        datetime = datetime.replace(tzinfo=get_current_timezone())
-
-        return datetime
 
 
 class StrippedCharField(forms.CharField):

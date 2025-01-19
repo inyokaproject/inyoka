@@ -35,17 +35,20 @@ Deployment notes
 
 ✨ New features
 ---------------
-*  Wiki: Update metadata and content of related pages after a edit
+* Wiki: Update metadata and content of related pages after a edit
 
 🏗 Changes
 ----------
 * ``*.pot`` files are no longer in git
+* Enable timezon-aware datetimes from Django
+* Fix deprecation warnings related to UTC methods
 
 🗑 Deprecations
 --------------
 
 🔥 Removals
 -----------
+* Replace javascript based datetime picker with native HTML one
 
 🐛 Fixes
 --------

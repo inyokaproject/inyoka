@@ -1,3 +1,13 @@
+"""
+    tests.apps.portal.test_migrations
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test portal migrations.
+
+    :copyright: (c) 2023-2024 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+"""
+
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
 
