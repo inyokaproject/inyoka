@@ -132,9 +132,9 @@ class TestViews(TestCase):
 
     def test_add_event_without_data(self):
         response = self.client.post('/event/suggest/', {'confirm': True})
-        self.assertContains(response, 'name<ul class="errorlist">', 1)
-        self.assertContains(response, 'start<ul class="errorlist">', 1)
-        self.assertContains(response, 'end<ul class="errorlist">', 1)
+        self.assertContains(response, 'name<ul class="errorlist"', 1)
+        self.assertContains(response, 'start<ul class="errorlist"', 1)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
         self.assertContains(response, 'errorlist', 7)
 
     def test_add_event_without_name(self):
@@ -172,7 +172,7 @@ class TestViews(TestCase):
             'confirm': True
         }
         response = self.client.post('/event/suggest/', data)
-        self.assertContains(response, 'end<ul class="errorlist">', 1)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
         self.assertContains(response, 'errorlist', 3)
 
     def test_add_event_with_name_startdatetime_enddatetime_midnight(self):
@@ -209,7 +209,7 @@ class TestViews(TestCase):
             'confirm': True
         }
         response = self.client.post('/event/suggest/', data)
-        self.assertContains(response, 'end<ul class="errorlist">', 1)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
         self.assertContains(response, 'errorlist', 3)
 
 
