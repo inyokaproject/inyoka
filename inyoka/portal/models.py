@@ -19,6 +19,7 @@ from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
+from django.db.models import Count
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy
 
@@ -91,6 +92,14 @@ for folder in PRIVMSG_FOLDERS_DATA:
     PRIVMSG_FOLDERS[folder[0]] = PRIVMSG_FOLDERS[folder[1]] = folder
 
 
+class PrivateMessageManager(models.Manager):
+
+    def orphan_messages(self):
+        q = self.get_queryset()
+        q = q.order_by('id').annotate(number_of_entries=Count('privatemessageentry')).filter(number_of_entries=0)
+        return q
+
+
 class PrivateMessage(models.Model):
     """
     Private messages allow users to communicate with each other privately.
@@ -100,6 +109,8 @@ class PrivateMessage(models.Model):
     subject = models.CharField(gettext_lazy('Title'), max_length=255)
     pub_date = models.DateTimeField(gettext_lazy('Date'))
     text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='portal')
+
+    objects = PrivateMessageManager()
 
     class Meta:
         ordering = ('-pub_date',)
@@ -201,19 +212,23 @@ class PrivateMessageEntry(models.Model):
         sent = PRIVMSG_FOLDERS['sent'][0]
         inbox = PRIVMSG_FOLDERS['inbox'][0]
         trash = PRIVMSG_FOLDERS['trash'][0]
+
         privmsgs_trash = PrivateMessageEntry.objects.filter(
             folder=trash,
             message__pub_date__lte=datetime.now() - timedelta(
                 days=settings.PRIVATE_MESSAGE_TRASH_DURATION),
             ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
+
         privmsgs_inbox_sent = PrivateMessageEntry.objects.filter(
             folder__in=[inbox, sent],
             message__pub_date__lte=datetime.now() - timedelta(
                 days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
             ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
+
         privmsgs_trash.delete()
         privmsgs_inbox_sent.delete()
 
+        PrivateMessage.objects.orphan_messages().delete()
 
     def delete(self):
         if self.folder == PRIVMSG_FOLDERS['trash'][0]:

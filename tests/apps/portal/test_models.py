@@ -16,6 +16,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
+from django.utils import timezone as dj_timezone
 
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
@@ -115,6 +116,69 @@ class TestLinkmapManager(TestCase):
         self.assertTrue(path.exists(path.join(settings.MEDIA_ROOT, 'linkmap', self.css_file)))
 
 
+class TestPrivateMessageManager(TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        user = User.objects.register_user('testing', 'example@example.com',
+                                               'pwd', False)
+        self.other_user = User.objects.register_user(
+            'other_user',
+            'example2@example.com',
+            'pwd', False)
+
+        pm = PrivateMessage(author=user, subject="message", pub_date=dj_timezone.now())
+        pm.send([self.other_user])
+
+    def test_orphan_messages__no_orphans(self):
+        self.assertEqual(PrivateMessage.objects.count(), 1)
+        self.assertEqual(PrivateMessageEntry.objects.count(), 2)
+
+        self.assertEqual(list(PrivateMessage.objects.orphan_messages()), [])
+
+    def test_orphan_messages__only_orphans(self):
+        self.assertEqual(PrivateMessage.objects.count(), 1)
+        self.assertEqual(PrivateMessageEntry.objects.count(), 2)
+
+        PrivateMessageEntry.objects.all().delete()
+
+        self.assertEqual(PrivateMessage.objects.count(), 1)
+        self.assertEqual(PrivateMessageEntry.objects.count(), 0)
+
+        self.assertEqual(list(PrivateMessage.objects.orphan_messages()), [PrivateMessage.objects.get()])
+
+    def test_orphan_messages__mixture_orphans_and_no_orphans(self):
+        self.third_user = User.objects.register_user(
+            'third_user',
+            'example3@inyoka.test',
+            'pwd',
+            False
+        )
+
+        pm2 = PrivateMessage(author=self.other_user, subject="message2", pub_date=dj_timezone.now())
+        pm2.send([self.third_user])
+
+        pm3 = PrivateMessage(author=self.other_user, subject="message3", pub_date=dj_timezone.now())
+        pm3.send([self.third_user])
+
+        self.assertEqual(PrivateMessage.objects.count(), 3)
+        self.assertEqual(PrivateMessageEntry.objects.count(), 6)
+
+        pm2.refresh_from_db()
+        pm2.privatemessageentry_set.all().delete()
+
+        self.assertEqual(PrivateMessage.objects.count(), 3)
+        self.assertEqual(PrivateMessageEntry.objects.count(), 4)
+
+        pm3.privatemessageentry_set.filter(user=self.other_user).delete()
+
+        self.assertEqual(PrivateMessage.objects.count(), 3)
+        self.assertEqual(PrivateMessageEntry.objects.count(), 3)
+
+        self.assertEqual(list(PrivateMessage.objects.orphan_messages()),[pm2])
+
+
 class TestPrivateMessageEntry(TestCase):
 
     def setUp(self):
@@ -139,13 +203,34 @@ class TestPrivateMessageEntry(TestCase):
 
     def test_delete_messages(self):
         self.assertEqual(self.privmsgentry.message.subject, 'Expired message')
+
         PrivateMessageEntry.clean_private_message_folders()
+
         self.assertFalse(PrivateMessageEntry.objects.filter(folder=self.inbox).exists())
         # Team members are spared
         self.assertTrue(PrivateMessageEntry.objects.filter(folder=self.sent).exists())
+        self.assertEqual(PrivateMessage.objects.count(), 1)
 
     def test_delete_archived_messages(self):
         self.privmsgentry.archive()
         self.assertTrue(self.privmsgentry.in_archive)
+
         PrivateMessageEntry.clean_private_message_folders()
+
         self.assertTrue(PrivateMessageEntry.objects.filter(folder=self.archive, user=self.other_user).exists())
+        self.assertEqual(PrivateMessage.objects.count(), 1)
+
+    def test_private_messages_deleted(self):
+        """
+        remove user from team group, so clean_private_message_folders
+         - clears all entries
+         - deletes all private messages
+        """
+        u = User.objects.get(username='testing')
+        u.groups.remove(Group.objects.get(name=settings.INYOKA_TEAM_GROUP_NAME))
+
+        self.assertEqual(PrivateMessage.objects.count(), 1)
+
+        PrivateMessageEntry.clean_private_message_folders()
+
+        self.assertEqual(PrivateMessage.objects.count(), 0)
