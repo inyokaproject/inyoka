@@ -11,7 +11,7 @@ import glob
 import gzip
 import hashlib
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -20,6 +20,7 @@ from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.db.models import Count
+from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy
 
@@ -215,13 +216,13 @@ class PrivateMessageEntry(models.Model):
 
         privmsgs_trash = PrivateMessageEntry.objects.filter(
             folder=trash,
-            message__pub_date__lte=datetime.now() - timedelta(
+            message__pub_date__lte=dj_timezone.now() - timedelta(
                 days=settings.PRIVATE_MESSAGE_TRASH_DURATION),
             ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
 
         privmsgs_inbox_sent = PrivateMessageEntry.objects.filter(
             folder__in=[inbox, sent],
-            message__pub_date__lte=datetime.now() - timedelta(
+            message__pub_date__lte=dj_timezone.now() - timedelta(
                 days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
             ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
 

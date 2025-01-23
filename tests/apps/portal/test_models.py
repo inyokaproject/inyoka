@@ -8,7 +8,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import gzip
-from datetime import datetime, timedelta
+from datetime import timedelta
 from os import path
 
 from django.conf import settings
@@ -191,7 +191,7 @@ class TestPrivateMessageEntry(TestCase):
             'other_user',
             'example2@example.com',
             'pwd', False)
-        pm = PrivateMessage(author=user, subject="Expired message", pub_date=datetime.now() -
+        pm = PrivateMessage(author=user, subject="Expired message", pub_date=dj_timezone.now() -
             timedelta(days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION))
         pm.send([self.other_user])
 

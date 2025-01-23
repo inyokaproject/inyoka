@@ -15,8 +15,8 @@ from django.core import mail
 from django.http import Http404
 from django.test import Client, RequestFactory
 from django.test.utils import override_settings
+from django.utils import timezone as dj_timezone
 from django.utils import translation
-from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
@@ -692,13 +692,13 @@ class TestPrivMsgViews(TestCase):
     def test_delete_many(self):
         user2 = User.objects.register_user('user2', 'user2@example.com', 'user', False)
         pm1 = PrivateMessage.objects.create(author=user2, subject='Subject',
-            text='Text', pub_date=now())
+            text='Text', pub_date=dj_timezone.now())
         PrivateMessageEntry.objects.create(message=pm1, user=user2,
             read=False, folder=PRIVMSG_FOLDERS['sent'][0])
         pme1 = PrivateMessageEntry.objects.create(message=pm1, user=self.user,
             read=False, folder=PRIVMSG_FOLDERS['inbox'][0])
         pm2 = PrivateMessage.objects.create(author=user2, subject='Subject',
-            text='Text', pub_date=now())
+            text='Text', pub_date=dj_timezone.now())
         PrivateMessageEntry.objects.create(message=pm2, user=user2,
             read=False, folder=PRIVMSG_FOLDERS['sent'][0])
         pme2 = PrivateMessageEntry.objects.create(message=pm2, user=self.user,
