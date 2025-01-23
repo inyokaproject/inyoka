@@ -42,6 +42,7 @@ Deployment notes
 * ``*.pot`` files are no longer in git
 * Enable timezon-aware datetimes from Django
 * Fix deprecation warnings related to UTC methods
+* Remove private messages after specific duration. This will not affect messages in the 'archive' folder and team members.
 
 🗑 Deprecations
 --------------
