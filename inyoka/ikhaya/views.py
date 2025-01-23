@@ -7,8 +7,6 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import date, datetime
-from datetime import time as dt_time
 
 from django.conf import settings
 from django.contrib import messages
@@ -24,7 +22,6 @@ from django.template.loader import render_to_string
 from django.utils import timezone as dj_timezone
 from django.utils.dates import MONTHS
 from django.utils.html import escape
-from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
@@ -718,13 +715,12 @@ def events(request, show_all=False, invisible=False):
     elif invisible:
         events = Event.objects.filter(visible=False).all()
     else:
-        events = Event.objects.filter(date__gt=date.today(), visible=True)
+        events = Event.objects.get_upcoming(count=None)
 
     events = events.select_related('author')
-    events = events.only('author__username', 'slug', 'name', 'date')
+    events = events.only('author__username', 'slug', 'name', 'start')
 
-    sortable = Sortable(events, request.GET, '-date',
-        columns=['name', 'date'])
+    sortable = Sortable(events, request.GET, '-start', columns=['name', 'start'])
     return {
         'table': sortable,
         'events': sortable.get_queryset(),
@@ -787,8 +783,8 @@ def event_edit(request, pk=None):
                   'for a new event because it does not exist.')
                 % {'id': escape(request.GET['copy_from'])})
         else:
-            fields = ('name', 'changed', 'created', 'date', 'time',
-                      'enddate', 'endtime', 'description', 'author_id',
+            fields = ('name', 'changed', 'created', 'start',
+                      'end', 'description', 'author_id',
                       'location', 'location_town', 'location_lat',
                       'location_long')
             for key in fields:
@@ -822,39 +818,8 @@ def event_suggest(request):
     if request.method == 'POST':
         form = NewEventForm(request.POST)
         if form.is_valid():
-            event = Event()
-            convert = lambda v: v.replace(tzinfo=get_current_timezone())
-            data = form.cleaned_data
-            event.name = data['name']
-            if data['date'] and data['time']:
-                d = convert(datetime.combine(
-                    data['date'],
-                    data['time'] or dt_time(0)
-                ))
-                event.date = d.date()
-                event.time = d.time()
-            else:
-                event.date = data['date']
-                event.time = None
-            if data['endtime']:
-                d = convert(datetime.combine(
-                    data['enddate'] or event.date,
-                    data['endtime']
-                ))
-                event.enddate = d.date()
-                event.endtime = event.time and d.time()
-            else:
-                event.enddate = data['enddate'] or None
-                event.endtime = None
-            event.description = data['description']
-            event.author = request.user
-            event.location = data['location']
-            event.location_town = data['location_town']
-            if data['location_lat'] and data['location_long']:
-                event.location_lat = data['location_lat']
-                event.location_long = data['location_long']
-            event.save()
-            cache.delete('ikhaya/event_count')
+            form.save(user=request.user)
+
             messages.success(request,
                 _('The event has been saved. A team member will review it '
                   'soon.'))

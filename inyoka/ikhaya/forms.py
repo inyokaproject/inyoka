@@ -7,22 +7,17 @@
     :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
-from datetime import time as dt_time
 
 from django import forms
 from django.forms import SplitDateTimeField
 from django.utils import timezone as dj_timezone
-from django.utils.timezone import get_current_timezone
+from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
 from inyoka.ikhaya.models import Article, Category, Event, Suggestion
 from inyoka.portal.models import StaticFile
-from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.forms import (
-    NativeDateInput,
     NativeSplitDateTimeWidget,
-    NativeTimeInput,
     StrippedCharField,
     UserField,
 )
@@ -128,39 +123,9 @@ class EditCategoryForm(forms.ModelForm):
 
 
 class NewEventForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        event = kwargs.get('instance', None)
-        if event:  # Adjust datetime to local timezone
-            if event.date and event.time is not None:
-                dt = datetime_to_timezone(datetime.combine(
-                    event.date, event.time or dt_time(0)))
-                event.date = dt.date()
-                event.time = dt.time()
-
-            if event.endtime is not None:
-                dt_end = datetime_to_timezone(datetime.combine(
-                    event.enddate or event.date, event.endtime))
-                event.enddate = dt_end.date()
-                event.endtime = dt_end.time()
-
-        super().__init__(*args, **kwargs)
 
     def save(self, user):
         event = super().save(commit=False)
-        convert = lambda v: v.replace(tzinfo=get_current_timezone())
-        # Convert local timezone to unicode
-        if event.date and event.time is not None:
-            d = convert(datetime.combine(
-                event.date, event.time or dt_time(0)
-            ))
-            event.date = d.date()
-            event.time = d.time()
-        if event.endtime is not None:
-            d = convert(datetime.combine(
-                event.enddate or event.date, event.endtime
-            ))
-            event.enddate = d.date()
-            event.endtime = event.time is not None and d.time()
 
         event.author = user
         event.save()
@@ -168,37 +133,35 @@ class NewEventForm(forms.ModelForm):
         return event
 
     def clean(self):
+        super().clean()
+
         cleaned_data = self.cleaned_data
-        startdate = cleaned_data.get('date')
-        enddate = cleaned_data.get('enddate')
-        if startdate and enddate and enddate < startdate:
-            self._errors['enddate'] = self.error_class([gettext_lazy('The '
-                'end date must occur after the start date.')])
-            del cleaned_data['enddate']
-        elif startdate == enddate:
-            starttime = cleaned_data.get('time')
-            endtime = cleaned_data.get('endtime')
-            if starttime and endtime and endtime < starttime:
-                self._errors['endtime'] = self.error_class([gettext_lazy('The '
-                      'end time must occur after the start time.')])
-                del cleaned_data['endtime']
+
+        if cleaned_data.get('end') and cleaned_data.get('start') and cleaned_data['end'] <= cleaned_data['start']:
+            self.add_error('end', _('The end date must occur after the start date.'))
+
+        if cleaned_data['location_lat'] and not cleaned_data['location_long']:
+            self.add_error('location_long', _('You must specify a location longitude.'))
+
+        if not cleaned_data['location_lat'] and cleaned_data['location_long']:
+            self.add_error('location_lat', _('You must specify a location latitude.'))
 
         return cleaned_data
 
     class Meta:
         model = Event
+        field_classes = {
+            'start': SplitDateTimeField,
+            'end': SplitDateTimeField,
+        }
         widgets = {
-            'date': NativeDateInput,
-            'time': NativeTimeInput,
-            'enddate': NativeDateInput,
-            'endtime': NativeTimeInput,
+            'start': NativeSplitDateTimeWidget(),
+            'end': NativeSplitDateTimeWidget(),
         }
         exclude = ['author', 'slug', 'visible']
 
 
 class EditEventForm(NewEventForm):
-    visible = forms.BooleanField(label=gettext_lazy('Display event?'),
-                required=False)
 
     class Meta(NewEventForm.Meta):
         exclude = ['author', 'slug']

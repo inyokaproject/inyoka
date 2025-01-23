@@ -132,64 +132,84 @@ class TestViews(TestCase):
 
     def test_add_event_without_data(self):
         response = self.client.post('/event/suggest/', {'confirm': True})
-        self.assertContains(response, 'date<ul class="errorlist">', 1)
-        self.assertContains(response, 'name<ul class="errorlist">', 1)
-        self.assertContains(response, 'errorlist', 5)
+        self.assertContains(response, 'name<ul class="errorlist"', 1)
+        self.assertContains(response, 'start<ul class="errorlist"', 1)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
+        self.assertContains(response, 'errorlist', 7)
 
     def test_add_event_without_name(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'confirm': True})
+        data = {
+            'start_0': '2015-05-01',
+            'start_1': '12:00',
+            'end_0': '2015-05-02',
+            'end_1': '13:00',
+            'confirm': True
+        }
+
+        response = self.client.post('/event/suggest/', data)
         self.assertContains(response, 'name<ul class="errorlist"', 1)
         self.assertContains(response, 'errorlist', 3)
 
     def test_add_event_with_name_startdate_enddate(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '12:00',
+            'end_0': '2015-05-02',
+            'end_1': '13:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
         self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddate_before_startdate(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
-        self.assertContains(response, 'enddate<ul class="errorlist">', 1)
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-06-01',
+            'start_1': '12:00',
+            'end_0': '2015-05-02',
+            'end_1': '13:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
         self.assertContains(response, 'errorlist', 3)
 
-    def test_add_event_with_name_and_startdate(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
-        self.assertEqual(response.status_code, 302)
-
     def test_add_event_with_name_startdatetime_enddatetime_midnight(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'time': datetime.time(0, 0, 0),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'endtime': datetime.time(0, 0, 0),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '00:00',
+            'end_0': '2015-05-02',
+            'end_1': '00:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
         self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_startdatetime_enddatetime(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'time': datetime.time(10, 0, 0),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'endtime': datetime.time(11, 0, 0),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '10:00',
+            'end_0': '2015-05-02',
+            'end_1': '11:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
         self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddatetime_before_startdatetime(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'time': datetime.time(10, 0, 0),
-                                                        'enddate': datetime.date(2015, 5, 1),
-                                                        'endtime': datetime.time(9, 0, 0),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
-        self.assertContains(response, 'endtime<ul class="errorlist">', 1)
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '14:00',
+            'end_0': '2015-05-01',
+            'end_1': '09:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
         self.assertContains(response, 'errorlist', 3)
 
 
@@ -1403,10 +1423,11 @@ class TestEventDelete(TestCase):
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='test', password='test')
 
+        now = datetime.datetime.now(datetime.timezone.utc)
         self.event = Event.objects.create(
             name='Event',
-            date=datetime.datetime.now(datetime.timezone.utc).date() + datetime.timedelta(days=0),
-            enddate=datetime.datetime.now(datetime.timezone.utc).date() + datetime.timedelta(days=1),
+            start=now,
+            end=now + datetime.timedelta(days=1),
             author=self.user,
             visible=False
         )
@@ -1465,9 +1486,11 @@ class TestEventEdit(TestCase):
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='test', password='test')
 
+        now = dj_timezone.now()
         self.event = Event.objects.create(
             name='Event',
-            date=dj_timezone.now(),
+            start=now,
+            end=now + datetime.timedelta(days=1),
             author=self.user,
             visible=False
         )
@@ -1500,7 +1523,10 @@ class TestEventEdit(TestCase):
     def test_modify_event__http_post(self):
         data = {
             'name': 'EventEdited',
-            'date': '2016-01-16',
+            'start_0': '2016-01-16',
+            'start_1': '12:00',
+            'end_0': '2016-01-16',
+            'end_1': '13:00',
         }
         self.client.post(f'/event/{self.event.id}/edit/', data=data, follow=True)
 
@@ -1510,7 +1536,10 @@ class TestEventEdit(TestCase):
     def test_new_event__http_post(self):
         data = {
             'name': 'New Event',
-            'date': '2016-01-16',
+            'start_0': '2016-01-16',
+            'start_1': '12:00',
+            'end_0': '2016-01-16',
+            'end_1': '13:00',
         }
         response = self.client.post('/event/new/', data=data)
         self.assertEqual(Event.objects.count(), 2)
@@ -1540,7 +1569,8 @@ class TestEventEdit(TestCase):
 
         event2 = Event.objects.create(
             name='SecondEvent',
-            date=dj_timezone.now(),
+            start=dj_timezone.now(),
+            end=dj_timezone.now(),
             author=self.user,
             visible=True
         )
@@ -1979,3 +2009,52 @@ class TestCommentsPerArticleFeed(TestCase):
   </entry>
 </feed>
 ''')
+
+
+class TestCategoryEdit(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user('test', 'test@inyoka.test', password='test', send_mail=False)
+
+        group = Group.objects.create(name='edit_category')
+        assign_perm('ikhaya.change_category', group)
+        group.user_set.add(self.user)
+
+        self.client.login(username='test', password='test')
+
+        self.client.defaults['HTTP_HOST'] = f'ikhaya.{settings.BASE_DOMAIN_NAME}'
+
+    def test_category_new__get__status_code(self):
+        response = self.client.get('/category/new/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_category_new__post__redirect(self):
+        data = {
+            'name': 'foo'
+        }
+
+        response = self.client.post('/category/new/', data=data, follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/category/foo/edit/')
+        self.assertEqual(Category.objects.count(), 1)
+
+    def test_category_edit__get__status_code(self):
+        c = Category.objects.create(name='new')
+        c.refresh_from_db()
+
+        response = self.client.get(f'/category/{c.slug}/edit/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_category_edit__post__redirect(self):
+        c = Category.objects.create(name='new')
+        c.refresh_from_db()
+
+        data = {
+            'name': 'foo'
+        }
+
+        response = self.client.post(f'/category/{c.slug}/edit/', data=data, follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/category/new/edit/')

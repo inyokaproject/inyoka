@@ -382,8 +382,12 @@ class TestEventModel(TestCase):
         self.user = User.objects.register_user('admin', 'admin', 'admin',
             False)
 
-    # Negative parameters will not be tested because this would be
-    # an invalid usage.
+    def _create_one_event(self, visible=True):
+        return Event.objects.create(name='Event',
+                                    start=datetime.now(timezone.utc) + timedelta(minutes=12),
+                                    end=datetime.now(timezone.utc) + timedelta(hours=12),
+                                    author=self.user,
+                                    visible=visible)
 
     def test_upcoming_getZero_isEmpty_returnNone(self):
         self.assertEqual(list(Event.objects.get_upcoming(0)), [])
@@ -392,128 +396,134 @@ class TestEventModel(TestCase):
         self.assertEqual(list(Event.objects.get_upcoming(1)), [])
 
     def test_upcoming_getZero_oneVisibleEvent_returnNone(self):
-        Event.objects.create(name='Event', date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=True)
+        self._create_one_event()
         self.assertEqual(list(Event.objects.get_upcoming(0)), [])
 
     def test_upcoming_getOne_oneVisibleEvent_returnEvent(self):
-        event = Event.objects.create(name='Event', date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=True)
+        event = self._create_one_event()
         self.assertEqual(list(Event.objects.get_upcoming(1)), [event])
 
     def test_upcoming_getMoreThanInside_oneVisibleEvent_returnEvent(self):
-        event = Event.objects.create(name='Event', date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=True)
+        event = self._create_one_event()
         self.assertEqual(list(Event.objects.get_upcoming(2)), [event])
 
     def test_upcoming_getZero_oneInvisibleEvent_returnNone(self):
-        Event.objects.create(name='Event', date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=False)
+        self._create_one_event()
         self.assertEqual(list(Event.objects.get_upcoming(0)), [])
 
     def test_upcoming_getOne_oneInvisibleEvent_returnNone(self):
-        Event.objects.create(name='Event', date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=False)
+        self._create_one_event(visible=False)
         self.assertEqual(list(Event.objects.get_upcoming(1)), [])
 
     def test_upcoming_getMoreThanInside_oneInvisibleEvent_returnNone(self):
-        Event.objects.create(name='Event', date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=False)
+        self._create_one_event(visible=False)
         self.assertEqual(list(Event.objects.get_upcoming(2)), [])
 
     def test_upcoming_getDefault_returnCorrectNumEvents(self):
-        events = [Event.objects.create(name='Event %d' % i, date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=True) for i in range(10)]
-        Event.objects.create(name='Event not listed', date=datetime.now(timezone.utc).date(),
-            author=self.user, visible=True)
+        events = [
+            Event.objects.create(name='Event %d' % i,
+                                 start=datetime.now(timezone.utc) + timedelta(hours=2),
+                                 end=datetime.now(timezone.utc) + timedelta(hours=3),
+                                 author=self.user, visible=True) for i in range(10)]
+        Event.objects.create(name='Event not listed', start=datetime.now(timezone.utc),
+                             end=datetime.now(timezone.utc),
+                             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), events)
 
     def test_upcomingDate_startYesterday_returnNone(self):
         Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=-1),
+            start=datetime.now(timezone.utc) + timedelta(days=-1),
+            end=datetime.now(timezone.utc) + timedelta(days=-1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [])
 
     def test_upcomingDate_startToday_returnEvent(self):
         event = Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=0),
+            start=datetime.now(timezone.utc) + timedelta(seconds=10),
+            end=datetime.now(timezone.utc),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTomorrow_returnEvent(self):
         event = Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=1),
+            start=datetime.now(timezone.utc) + timedelta(days=1),
+            end=datetime.now(timezone.utc) + timedelta(days=1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startYesterdayEndYesterday_returnNone(self):
         Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=-1),
-            enddate=datetime.now(timezone.utc).date() + timedelta(days=-1),
+            start=datetime.now(timezone.utc) + timedelta(days=-1),
+            end=datetime.now(timezone.utc) + timedelta(days=-1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [])
 
     def test_upcoming_getLessThanInside_severalEvents_returnCorrectNumber(self):
-        date = datetime.now(timezone.utc).date()
-        Event.objects.create(name='Event1', date=date,
+        start = datetime.now(timezone.utc) + timedelta(minutes=5)
+        Event.objects.create(name='Event1', start=start, end=start,
             author=self.user, visible=True)
-        Event.objects.create(name='Event2', date=date,
+        Event.objects.create(name='Event2', start=start, end=start,
             author=self.user, visible=True)
-        Event.objects.create(name='Event3', date=date,
+        Event.objects.create(name='Event3', start=start, end=start,
             author=self.user, visible=True)
         self.assertEqual(len(Event.objects.get_upcoming(2)), 2)
 
     def test_upcomingDate_startYesterdayEndToday_returnEvent(self):
         event = Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=-1),
-            enddate=datetime.now(timezone.utc).date() + timedelta(days=0),
+            start=datetime.now(timezone.utc) + timedelta(days=-1),
+            end=datetime.now(timezone.utc) + timedelta(hours=1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startYesterdayEndTomorrow_returnEvent(self):
         event = Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=-1),
-            enddate=datetime.now(timezone.utc).date() + timedelta(days=1),
+            start=datetime.now(timezone.utc) + timedelta(days=-1),
+            end=datetime.now(timezone.utc) + timedelta(days=1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTodayEndToday_returnEvent(self):
         event = Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=0),
-            enddate=datetime.now(timezone.utc).date() + timedelta(days=0),
+            start=datetime.now(timezone.utc) + timedelta(minutes=2),
+            end=datetime.now(timezone.utc) + timedelta(hours=2),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTodayEndTomorrow_returnEvent(self):
         event = Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=0),
-            enddate=datetime.now(timezone.utc).date() + timedelta(days=1),
+            start=datetime.now(timezone.utc) + timedelta(minutes=2),
+            end=datetime.now(timezone.utc) + timedelta(days=1),
             author=self.user, visible=True)
+
         self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTomorrowEndTomorrow_returnEvent(self):
         event = Event.objects.create(name='Event',
-            date=datetime.now(timezone.utc).date() + timedelta(days=1),
-            enddate=datetime.now(timezone.utc).date() + timedelta(days=1),
+            start=datetime.now(timezone.utc) + timedelta(days=1),
+            end=datetime.now(timezone.utc) + timedelta(days=1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDateUnordered_getDefault_returnCorrectOrder(self):
         event1 = Event.objects.create(name='Event1',
-            date=datetime.now(timezone.utc).date() + timedelta(days=2),
+            start=datetime.now(timezone.utc) + timedelta(days=2),
+            end=datetime.now(timezone.utc) + timedelta(days=2),
             author=self.user, visible=True)
         event2 = Event.objects.create(name='Event2',
-            date=datetime.now(timezone.utc).date() + timedelta(days=3),
+            start=datetime.now(timezone.utc) + timedelta(days=3),
+            end=datetime.now(timezone.utc) + timedelta(days=2),
             author=self.user, visible=True)
         event3 = Event.objects.create(name='Event3',
-            date=datetime.now(timezone.utc).date() + timedelta(days=1),
+            start=datetime.now(timezone.utc) + timedelta(days=1),
+            end=datetime.now(timezone.utc) + timedelta(days=2),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()),
             [event3, event1, event2])
 
     def test__coordinates_url__no_coordinates(self):
         event = Event.objects.create(name='Event1',
-                                     date=datetime.now(timezone.utc).date(),
+                                     start=datetime.now(timezone.utc),
+                                     end=datetime.now(timezone.utc),
                                      author=self.user, visible=True,
                                      )
 
@@ -521,7 +531,8 @@ class TestEventModel(TestCase):
 
     def test__coordinates_url(self):
         event = Event.objects.create(name='Event1',
-                                     date=datetime.now(timezone.utc).date(),
+                                     start=datetime.now(timezone.utc),
+                                     end=datetime.now(timezone.utc),
                                      author=self.user, visible=True,
                                      location_long=13.37871,
                                      location_lat=52.5139

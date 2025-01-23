@@ -8,7 +8,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core import mail
@@ -1009,10 +1009,10 @@ class TestCalendarIcal(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
 
-        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        d = datetime(2024, 10, 10, 0, 0, 0, 0, tzinfo=timezone.utc)
         self.event = Event.objects.create(name='Event 1',
-                                          date=d.date(),
-                                          time=d.time(),
+                                          start=d,
+                                          end=d + timedelta(hours=1),
                                           author=self.user,
                                           visible=True)
 
@@ -1022,8 +1022,8 @@ class TestCalendarIcal(TestCase):
         ical_content = '''BEGIN:VCALENDAR\r
 BEGIN:VEVENT\r
 SUMMARY:Event 1\r
-DTSTART:20241010T000000\r
-DTEND:20241010T000000\r
+DTSTART:20241010T000000Z\r
+DTEND:20241010T010000Z\r
 DTSTAMP:20241117T000000Z\r
 UID:2024/10/10/event-1\r
 LOCATION:\r
@@ -1057,10 +1057,10 @@ class TestCalendarDetail(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
 
-        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        d = datetime(2024, 10, 10, 0, 0, 0, 0, tzinfo=timezone.utc)
         self.event = Event.objects.create(name='Event 1',
-                                          date=d.date(),
-                                          time=d.time(),
+                                          start=d,
+                                          end=d + timedelta(hours=1),
                                           author=self.user,
                                           visible=True)
 
@@ -1098,10 +1098,10 @@ class TestCalendarMonth(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
 
-        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        d = datetime(2024, 10, 10, 0, 0, 0, 0, tzinfo=timezone.utc)
         self.event = Event.objects.create(name='Event 1',
-                                          date=d.date(),
-                                          time=d.time(),
+                                          start=d,
+                                          end=d + timedelta(hours=1),
                                           author=self.user,
                                           visible=True)
 

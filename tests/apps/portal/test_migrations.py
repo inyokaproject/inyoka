@@ -7,6 +7,7 @@
     :copyright: (c) 2023-2024 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from datetime import date, datetime, time, timezone
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
@@ -102,3 +103,71 @@ class TestUserSha1PasswordRemoval(MigratorTestCase):
 
         u = User.objects.get(username="test2")
         self.assertEqual(u.password, "pbkdf2_sha256$600000$not_valid")
+
+
+class TestEventDateTimeMerge(MigratorTestCase):
+    migrate_from = ("portal", "0039_alter_event_verbose_name_fields")
+    migrate_to = ("portal", "0040_event__datetimes__helptext_visible")
+
+    def prepare(self):
+        """Prepare some data before the migration."""
+        User = self.old_state.apps.get_model("portal", "User")
+        self.author = User.objects.create(
+            username="foo", email="foo@local.localhost",
+        )
+
+        event_model = self.old_state.apps.get_model("portal", "Event")
+        only_start_date = event_model.objects.create(name="foo", slug="foo",
+                                                     date=date(2000, 1, 1),
+                                                     author=self.author)
+        self.only_start_date_slug = only_start_date.slug
+
+        only_start_date_and_time = event_model(name="foobar", slug="foobar",
+                                               date=date(2001, 1, 1),
+                                               time=time(1, 11), author=self.author)
+        only_start_date_and_time.save()
+        self.only_start_date_and_time_slug = only_start_date_and_time.slug
+
+        only_end_date = event_model(name="foo2", slug="foo2", date=date(2001, 1, 1),
+                                    time=time(1, 11),
+                                    enddate=date(2001, 1, 2),
+                                    author=self.author)
+        only_end_date.save()
+        self.only_end_date_slug = only_end_date.slug
+
+        end_date_and_time = event_model(name="foo3", slug="foo3", date=date(2001, 1, 1),
+                                        time=time(1, 11),
+                                        enddate=date(2001, 1, 2),
+                                        endtime=time(1, 12),
+                                        author=self.author)
+        end_date_and_time.save()
+        self.end_date_and_time_slug = end_date_and_time.slug
+
+
+    def test_only_start_date(self):
+        event_model = self.new_state.apps.get_model("portal", "Event")
+
+        e = event_model.objects.get(slug=self.only_start_date_slug)
+        self.assertEqual(e.start, datetime(2000, 1, 1, 0, 0, tzinfo=timezone.utc))
+        self.assertEqual(e.end, datetime(2000, 1, 1, 21, 59, tzinfo=timezone.utc))
+
+    def test_only_start_date_and_time(self):
+        event_model = self.new_state.apps.get_model("portal", "Event")
+
+        e = event_model.objects.get(slug=self.only_start_date_and_time_slug)
+        self.assertEqual(e.start, datetime(2001, 1, 1, 1, 11, tzinfo=timezone.utc))
+        self.assertEqual(e.end, datetime(2001, 1, 1, 21, 59, tzinfo=timezone.utc))
+
+    def test_only_end_date(self):
+        event_model = self.new_state.apps.get_model("portal", "Event")
+
+        e = event_model.objects.get(slug=self.only_end_date_slug)
+        self.assertEqual(e.start, datetime(2001, 1, 1, 1, 11, tzinfo=timezone.utc))
+        self.assertEqual(e.end, datetime(2001, 1, 2, 21, 59, tzinfo=timezone.utc))
+
+    def test_end_date_and_time(self):
+        event_model = self.new_state.apps.get_model("portal", "Event")
+
+        e = event_model.objects.get(slug=self.end_date_and_time_slug)
+        self.assertEqual(e.start, datetime(2001, 1, 1, 1, 11, tzinfo=timezone.utc))
+        self.assertEqual(e.end, datetime(2001, 1, 2, 1, 12, tzinfo=timezone.utc))

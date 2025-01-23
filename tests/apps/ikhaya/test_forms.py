@@ -11,7 +11,12 @@ from datetime import datetime, timedelta, timezone
 
 from freezegun import freeze_time
 
-from inyoka.ikhaya.forms import EditArticleForm, EditCommentForm, EditPublicArticleForm
+from inyoka.ikhaya.forms import (
+    EditArticleForm,
+    EditCommentForm,
+    EditPublicArticleForm,
+    NewEventForm,
+)
 from inyoka.ikhaya.models import Article, Category
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
@@ -208,3 +213,50 @@ class TestEditArticleForm(TestCase):
     def test_public_article_form__missing_fields(self):
         self.assertNotIn('slug', EditPublicArticleForm().fields.keys())
         self.assertNotIn('publication_datetime', EditPublicArticleForm().fields.keys())
+
+
+class TestNewEventForm(TestCase):
+
+    form_class = NewEventForm
+
+    def test_valid_form(self):
+        data = {
+            'name': 'foo',
+            'start_0': '2022-12-02',
+            'start_1': '11:11:11',
+            'end_0': '2022-12-03',
+            'end_1': '10:10:0',
+        }
+
+        form = self.form_class(data=data)
+        self.assertTrue(form.is_valid())
+
+    def test_missing_location_long(self):
+        data = {
+            'name': 'foo',
+            'start_0': '2022-12-02',
+            'start_1': '11:11:11',
+            'end_0': '2022-12-03',
+            'end_1': '10:10:0',
+            'location_lat': 2,
+        }
+
+        form = self.form_class(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['location_long'],
+                         ['You must specify a location longitude.'])
+
+    def test_missing_location_lat(self):
+        data = {
+            'name': 'foo',
+            'start_0': '2022-12-02',
+            'start_1': '11:11:11',
+            'end_0': '2022-12-03',
+            'end_1': '10:10:0',
+            'location_long': 2,
+        }
+
+        form = self.form_class(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['location_lat'],
+                         ['You must specify a location latitude.'])

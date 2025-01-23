@@ -1427,21 +1427,12 @@ def calendar_ical(request, slug):
         raise Http404()
 
     cal = iCal()
-    current_time = datetime.now().time()
-
-    start = datetime.combine(event.date, event.time or current_time)
-
-    if event.enddate:
-        end = datetime.combine(event.enddate, event.endtime or current_time)
-    else:
-        end = start
-
     ievent = iEvent()
     ievent.add('summary', event.name)
     ievent.add('uid', slug)
     ievent.add('dtstamp', dj_timezone.now())
-    ievent.add('dtstart', start)
-    ievent.add('dtend', end)
+    ievent.add('dtstart', event.start)
+    ievent.add('dtend', event.end)
     if event.description:
         ievent.add('description', event.description)
 
