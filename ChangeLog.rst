@@ -25,13 +25,14 @@ Inyoka Changelog
    -----------
 
 
-Unreleased AA.BB.CC (YYYY-MM-DD)
-================================
+Unreleased 1.42.1 (2025-01-DD)
+==============================
 
 Deployment notes
 ----------------
 
 #. Update requirements
+#. Execute database migrations
 
 ✨ New features
 ---------------
