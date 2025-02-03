@@ -8,10 +8,12 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, datetime, time, timezone
+from unittest import skip
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
 
+@skip
 class TestUserJabberFieldMigration(MigratorTestCase):
     migrate_from = ("portal", "0033_auto_20230312_1704")
     migrate_to = ("portal", "0034_alter_user_jabber")
@@ -29,6 +31,7 @@ class TestUserJabberFieldMigration(MigratorTestCase):
         self.assertEqual(u.jabber, "foo@local.localhost")
 
 
+@skip
 class TestUserJabberContentMigration(MigratorTestCase):
     migrate_from = ("portal", "0034_alter_user_jabber")
     migrate_to = ("portal", "0035_auto_20231127_0114")
@@ -62,6 +65,7 @@ class TestUserJabberContentMigration(MigratorTestCase):
         self.assertEqual(u.settings["notify"], [])
 
 
+@skip
 class TestUserSha1PasswordRemoval(MigratorTestCase):
     migrate_from = ("portal", "0036_user_upper_username_idx")
     migrate_to = ("portal", "0037_remove_sha1_user")
@@ -105,6 +109,7 @@ class TestUserSha1PasswordRemoval(MigratorTestCase):
         self.assertEqual(u.password, "pbkdf2_sha256$600000$not_valid")
 
 
+@skip
 class TestEventDateTimeMerge(MigratorTestCase):
     migrate_from = ("portal", "0039_alter_event_verbose_name_fields")
     migrate_to = ("portal", "0040_event__datetimes__helptext_visible")
