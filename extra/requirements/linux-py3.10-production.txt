@@ -59,9 +59,9 @@ build==1.2.2.post1 \
     --hash=sha256:1d61c0887fa860c01971625baae8bdd338e517b836a2f70dd1f7aa3a6b2fc5b5 \
     --hash=sha256:b36993e92ca9375a219c99e606a122ff365a760a2d4bba0caa09bd5278b608b7
     # via pip-tools
-celery==5.4.0 \
-    --hash=sha256:369631eb580cf8c51a82721ec538684994f8277637edde2dfc0dacd73ed97f64 \
-    --hash=sha256:504a19140e8d3029d5acad88330c541d4c3f64c789d85f94756762d8bca7e706
+celery==5.5.0rc4 \
+    --hash=sha256:414bf75791eb8b060f417d030d38523614e8b02aa1bd3b60df5dacdf69ef8056 \
+    --hash=sha256:de8594a08186e94a99227c3fd99d5c850c9f49ae0d8a68deac27b0fc89c31149
     # via inyoka (pyproject.toml)
 certifi==2025.1.31 \
     --hash=sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651 \
@@ -253,13 +253,13 @@ click-repl==0.3.0 \
     --hash=sha256:17849c23dba3d667247dc4defe1757fff98694e90fe37474f3feebb69ced26a9 \
     --hash=sha256:fb7e06deb8da8de86180a33a9da97ac316751c094c6899382da7feeeeb51b812
     # via celery
-defusedxml==0.7.1 \
-    --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
-    --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
+defusedxml==0.8.0rc2 \
+    --hash=sha256:138c7d540a78775182206c7c97fe65b246a2f40b29471e1a2f1b0da76e7a3942 \
+    --hash=sha256:1c812964311154c3bf4aaf3bc1443b31ee13530b7f255eaaa062c0553c76103d
     # via inyoka (pyproject.toml)
-django==4.2.18 \
-    --hash=sha256:52ae8eacf635617c0f13b44f749e5ea13dc34262819b2cc8c8636abb08d82c4b \
-    --hash=sha256:ba52eff7e228f1c775d5b0db2ba53d8c49d2f8bfe6ca0234df6b7dd12fb25b19
+django==5.2a1 \
+    --hash=sha256:34b39e8508364f816415e3c8f032445a1bb49d37069db8aa300886ce821735e4 \
+    --hash=sha256:ed895284801c58a415944f0efd6821e709260d029f5d74b93db9dccb650a8d50
     # via
     #   django-filter
     #   django-guardian
@@ -269,9 +269,9 @@ django-filter==24.3 \
     --hash=sha256:c4852822928ce17fb699bcfccd644b3574f1a2d80aeb2b4ff4f16b02dd49dc64 \
     --hash=sha256:d8ccaf6732afd21ca0542f6733b11591030fa98669f8d15599b358e24a2cd9c3
     # via inyoka (pyproject.toml)
-django-guardian==2.4.0 \
-    --hash=sha256:440ca61358427e575323648b25f8384739e54c38b3d655c81d75e0cd0d61b697 \
-    --hash=sha256:c58a68ae76922d33e6bdc0e69af1892097838de56e93e78a8361090bcd9f89a0
+django-guardian==3.0.0rc1 \
+    --hash=sha256:82c6b00b6731c6fa521a6cbf6c77ab1d6ab22e55eeb9f5e6ee415e78112f321d \
+    --hash=sha256:fbe0f4a08bf005687bf61d327a293a22214c64852e5949c48eb45cce0cd6f162
     # via inyoka (pyproject.toml)
 django-hosts==6.0 \
     --hash=sha256:34a97a183b3fb8a00de3e0a8af5355a25ff5203019d2e213edd8f12c330cc303 \
@@ -305,9 +305,9 @@ jinja2==3.1.5 \
     --hash=sha256:8fefff8dc3034e27bb80d67c671eb8a9bc424c0ef4c0826edbff304cceff43bb \
     --hash=sha256:aba0f4dc9ed8013c424088f68a5c226f7d6097ed89b246d7749c2ec4175c6adb
     # via inyoka (pyproject.toml)
-kombu==5.4.2 \
-    --hash=sha256:14212f5ccf022fc0a70453bb025a1dcc32782a588c49ea866884047d66e14763 \
-    --hash=sha256:eef572dd2fd9fc614b37580e3caeafdd5af46c1eff31e7fba89138cdb406f2cf
+kombu==5.5.0rc2 \
+    --hash=sha256:213dc124de2a9dada467aa3387c638d8594e91a9dff2dcf6206cd9c6bcf84a5d \
+    --hash=sha256:f581f3b2945a46d5de540a8fde920e87725308cfed6bdeed6983fa4124879cd0
     # via celery
 lxml==5.3.0 \
     --hash=sha256:01220dca0d066d1349bd6a1726856a78f7929f3878f7e2ee83c296c69495309e \
@@ -627,6 +627,10 @@ pygments==2.19.1 \
     --hash=sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f \
     --hash=sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c
     # via inyoka (pyproject.toml)
+pyjwt==2.9.0 \
+    --hash=sha256:3b02fb0f44517787776cf48f2ae25d8e14f300e6d7545a4315cee571a415e850 \
+    --hash=sha256:7e1e5b56cc735432a7369cbfa0efe50fa113ebecdc04ae6922deba8b84582d0c
+    # via redis
 pyproject-hooks==1.2.0 \
     --hash=sha256:1e859bd5c40fae9448642dd871adf459e5e2084186e8d2c2a79a824c970da1f8 \
     --hash=sha256:9e5c6bfa8dcc30091c74b0cf803c81fdd29d94f01992a7707bc97babb1141913
@@ -644,9 +648,9 @@ python-magic==0.4.27 \
     --hash=sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b \
     --hash=sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3
     # via inyoka (pyproject.toml)
-redis==5.2.1 \
-    --hash=sha256:16f2e22dff21d5125e8481515e386711a34cbec50f0e44413dd7d9c060a54e0f \
-    --hash=sha256:ee7e1056b9aea0f04c6c2ed59452947f34c4940ee025f5dd83e6a6418b6989e4
+redis==5.3.0b4 \
+    --hash=sha256:d05d634b6f75a971ab3481f00c051990ee8ae5c6eb9a9e993aec0d740905f3ed \
+    --hash=sha256:e8be754fdb61a95e4e7c43c4ad9fb94b1c4b407623a3bfaaf6c5f53ffb5a46cc
     # via
     #   celery
     #   django-redis
@@ -717,11 +721,10 @@ typing-extensions==4.12.2 \
     # via
     #   asgiref
     #   beautifulsoup4
-tzdata==2025.1 \
-    --hash=sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694 \
-    --hash=sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639
+tzdata==2024.2 \
+    --hash=sha256:7d85cc416e9382e69095b7bdf4afd9e3880418a2413feec7069d533d6b4e31cc \
+    --hash=sha256:a48093786cdcde33cad18c2555e8532f34422074448fbc874186f0abd79565cd
     # via
-    #   celery
     #   icalendar
     #   inyoka (pyproject.toml)
     #   kombu

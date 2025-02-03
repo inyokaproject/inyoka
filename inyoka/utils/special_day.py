@@ -8,7 +8,6 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, timedelta
-from typing import Dict, List, Optional
 
 
 def easter_sunday(year: int) -> date:
@@ -49,7 +48,7 @@ def fourth_advent(year: int) -> date:
     return fourth_advent
 
 
-def advent_week(n_th: int, year: int) -> List[date]:
+def advent_week(n_th: int, year: int) -> list[date]:
     """
         Returns a list of date-objects that represent the given advent-week.
         The "week" of the 4th advent ends with the 26th december.
@@ -66,7 +65,7 @@ def advent_week(n_th: int, year: int) -> List[date]:
         return [fourth + timedelta(days=d-n_th_offset) for d in range(0, 7)]
 
 
-def collect_styles(year: int) -> Dict[date, str]:
+def collect_styles(year: int) -> dict[date, str]:
     """
         Creates a dict with scheme {date1: 'stylesheet.css', …}
         → easier for check_special_day() to determine today's style
@@ -88,7 +87,7 @@ def collect_styles(year: int) -> Dict[date, str]:
     return special_styles
 
 
-def check_special_day() -> Optional[str]:
+def check_special_day() -> str | None:
     """
         Checks whether today is a special day.
         If true, the function returns the name of the css-file to use.

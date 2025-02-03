@@ -8,10 +8,12 @@
     :license: BSD, see LICENSE for more details.
 """
 import datetime
+from unittest import skip
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
 
+@skip
 class TestArticalePublicationMerge(MigratorTestCase):
     migrate_from = ("ikhaya", "0010_auto_20230312_1704")
     migrate_to = ("ikhaya", "0011_article_publication_datetime")

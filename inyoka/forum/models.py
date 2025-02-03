@@ -17,7 +17,7 @@ from itertools import groupby
 from operator import attrgetter, itemgetter
 from os import path
 from time import time
-from typing import List, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -179,7 +179,7 @@ class ForumManager(models.Manager):
         return forums
 
     @staticmethod
-    def update_last_post(forums: List["Forum"],
+    def update_last_post(forums: list["Forum"],
                          exclude_topic: Optional["Topic"] = None,
                          exclude_post: Optional["Post"] = None) -> None:
         """
@@ -228,7 +228,7 @@ class TopicManager(models.Manager):
                    .select_related(*related).order_by(*order)
 
     def get_latest(self, forum: Optional["Forum"] = None,
-                   count: Optional[int] = 10,
+                   count: int | None = 10,
                    user: Optional["User"] = None) -> "QuerySet":
         """
         Returns a queryset of the last-updated topics in this forum (and potential sub forums).

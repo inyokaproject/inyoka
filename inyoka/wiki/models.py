@@ -82,7 +82,6 @@ import time
 from collections import defaultdict
 from functools import partial
 from hashlib import sha1
-from typing import Optional
 
 import magic
 from django.apps import apps
@@ -491,7 +490,7 @@ class PageManager(models.Manager):
                                 .values_list('page__name', flat=True)
         return pages
 
-    def attachment_for_page(self, page_name: str) -> Optional[str]:
+    def attachment_for_page(self, page_name: str) -> str | None:
         """
         Get the internal filename of the attachment attached to the page
         provided.  If the page does not exist or it doesn't have an attachment

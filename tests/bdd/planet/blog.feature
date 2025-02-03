@@ -50,7 +50,7 @@ Feature: Planet - Blog
   Scenario Outline: URL-Fields should be validated
     Given I am "user"
       And I have the permission "planet.change_blog"
-      And the user "blog_user" exits
+      And The user "blog_user" with status "active" exists
      When I use the "planet" and visit the "blog/new" page
       And I fill out the form
         | field          | value            |
