@@ -8,7 +8,6 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import timezone
-from typing import Optional
 from urllib.parse import urlencode
 
 from django.core.cache import cache
@@ -71,7 +70,7 @@ class ArticleManager(models.Manager):
                             publication_date_utc__day=day)
         return article
 
-    def get_latest_articles(self, category: Optional[str]=None, count: int=10):
+    def get_latest_articles(self, category: str | None=None, count: int=10):
         """Return `count` lastest articles for the category `category` or for
         all categories if None.
 
@@ -443,7 +442,7 @@ class Event(models.Model):
         return '%s;%s' % (self.location_lat, self.location_long)
 
     @property
-    def coordinates_url(self) -> Optional[str]:
+    def coordinates_url(self) -> str | None:
         """Create a link to openstreetmap that shows details to a provided location"""
         if not self.location_long or not self.location_lat:
             return None
