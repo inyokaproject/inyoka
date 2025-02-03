@@ -37,7 +37,7 @@ def get_timezone_list():
         aliases = set()
 
         current_folder = pathlib.Path(__file__).parent.resolve()
-        with open(current_folder / "tzdb" / "backward", "r") as file:
+        with open(current_folder / "tzdb" / "backward") as file:
             for line_full in file:
                 line = line_full.strip()
                 if not line.startswith("Link\t"):

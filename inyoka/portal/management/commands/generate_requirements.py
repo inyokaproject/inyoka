@@ -13,7 +13,6 @@ import os
 import platform
 import subprocess
 import sys
-from typing import List
 
 from django.core.management.base import BaseCommand
 
@@ -49,7 +48,7 @@ class Command(BaseCommand):
             except FileNotFoundError:
                 continue
 
-    def generate_requirements_file(self, stage: str, upgrade_all: bool = False, upgrade_packages: List = []) -> None:
+    def generate_requirements_file(self, stage: str, upgrade_all: bool = False, upgrade_packages: list = []) -> None:
         full_path = self._get_requirements_path(stage)
 
         program_name = 'pip-compile'
