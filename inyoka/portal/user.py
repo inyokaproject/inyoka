@@ -34,6 +34,7 @@ from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
+from django.views.decorators.debug import sensitive_variables
 from guardian.mixins import GuardianUserMixin
 from guardian.shortcuts import get_perms
 
@@ -169,6 +170,7 @@ def reset_email(id, email):
     return _('Your email address was reset.')
 
 
+@sensitive_variables('message')
 def send_activation_mail(user):
     """send an activation mail"""
     message = render_to_string('mails/activation_mail.txt', {

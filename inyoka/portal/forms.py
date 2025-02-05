@@ -33,6 +33,7 @@ from django.utils import timezone as dj_timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
+from django.views.decorators.debug import sensitive_variables
 from guardian.shortcuts import assign_perm, get_perms, remove_perm
 from PIL import Image
 
@@ -338,6 +339,7 @@ class UserCPProfileForm(forms.ModelForm):
         validate_signature(signature)
         return signature
 
+    @sensitive_variables('email')
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
@@ -511,6 +513,7 @@ class CreateUserForm(forms.Form):
                 _('The username is already in use. Please choose another one.'))
         return username
 
+    @sensitive_variables('data')
     def clean_confirm_password(self):
         """
         Validates that the two password inputs match.
@@ -1145,6 +1148,7 @@ class TokenForm(forms.Form):
             self.action = kwargs.pop('action')
         super().__init__(*args, **kwargs)
 
+    @sensitive_variables("token")
     def clean_token(self):
         def get_action_and_limit():
             if self.action == 'reactivate_user':
