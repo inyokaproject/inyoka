@@ -34,9 +34,11 @@ from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.utils import timezone as dj_timezone
 from django.utils.dates import MONTHS, WEEKDAYS
+from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
+from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.views.decorators.http import require_POST, require_safe
 from icalendar import Calendar as iCal
 from icalendar import Event as iEvent
@@ -223,6 +225,8 @@ def whoisonline(request):
     }
 
 
+@sensitive_variables("data")
+@sensitive_post_parameters()
 @templated('portal/register.html')
 def register(request):
     """Register a new user."""
@@ -270,6 +274,7 @@ def register(request):
     }
 
 
+@sensitive_variables("activation_key")
 def activate(request, action='', username='', activation_key=''):
     """Activate a user with the activation key send via email."""
     try:
@@ -331,6 +336,7 @@ class InyokaPasswordResetView(SuccessMessageMixin, PasswordResetView):
     success_url = href('portal', 'login')
     success_message = _('An email with further instructions was sent to you.')
 
+    @method_decorator(sensitive_post_parameters())
     def dispatch(self, *args, **kwargs):
         if self.request.user.is_authenticated:
             messages.error(self.request, _('You are already logged in.'))
@@ -350,6 +356,8 @@ class InyokaPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmVi
     template_name = 'portal/set_new_password.html'
 
 
+@sensitive_post_parameters()
+@sensitive_variables("data")
 @templated('portal/login.html')
 def login(request):
     """Login dialog that supports permanent logins"""
@@ -514,6 +522,7 @@ def usercp(request):
     }
 
 
+@sensitive_post_parameters('email')
 @login_required
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
@@ -651,6 +660,8 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
 usercp_subscriptions = UserCPSubscriptions.as_view()
 
 
+@sensitive_post_parameters('password_confirmation')
+@sensitive_variables('check')
 @login_required
 @templated('portal/usercp/deactivate.html')
 def usercp_deactivate(request):
@@ -695,6 +706,7 @@ def user_edit(request, username):
     }
 
 
+@sensitive_post_parameters('email')
 @login_required
 @permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_profile.html')
@@ -834,6 +846,8 @@ def user_edit_groups(request, username):
     }
 
 
+@sensitive_post_parameters()
+@sensitive_variables('data')
 @login_required
 @permission_required('portal.add_user', raise_exception=True)
 @templated('portal/user_new.html')
@@ -1449,6 +1463,7 @@ def calendar_ical(request, slug):
     return response
 
 
+@sensitive_post_parameters('token')
 @templated('portal/confirm.html')
 def confirm(request, action):
     if action == 'reactivate_user' and request.user.is_authenticated:
