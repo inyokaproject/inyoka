@@ -4,7 +4,7 @@ tests.apps.markup.test_html_renderer
 
 Here we test the HTML rendering.
 
-:copyright: (c) 2013-2024 by the Inyoka Team, see AUTHORS for more details.
+:copyright: (c) 2013-2025 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
 

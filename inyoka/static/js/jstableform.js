@@ -4,7 +4,7 @@
     JavaScript Table Form. This is an independent script to create fancy JS
     table forms. An example can be seen in the portal configuration.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 */
 $(function () {

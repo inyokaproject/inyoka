@@ -4,7 +4,7 @@
  *
  * Some scripts for the admin (requires jQuery).
  *
- * :copyright: (c) 2010-2024 by the Inyoka Team, see AUTHORS for more details.
+ * :copyright: (c) 2010-2025 by the Inyoka Team, see AUTHORS for more details.
  * :license: BSD, see LICENSE for more details.
  */
 

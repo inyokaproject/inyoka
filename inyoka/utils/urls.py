@@ -6,7 +6,7 @@
     to build urls for different subdomains using the `href` function.
 
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from urllib.parse import quote, quote_plus

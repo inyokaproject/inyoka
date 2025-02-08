@@ -4,7 +4,7 @@
 
     Init file for the inyoka portal.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 # Secure XML libraries till a python solution exists.

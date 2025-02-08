@@ -6,7 +6,7 @@ This module provides a command to the Django ``manage.py`` file to compile
 the ``.po`` language files to ``.mo`` files. The ``.mo`` files are placed
 in the same directory as the regarding ``.po`` files.
 
-:copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+:copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
 
