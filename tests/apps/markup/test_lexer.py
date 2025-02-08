@@ -5,7 +5,7 @@
     This unittest tests various features of the wiki lexer. Just the lexer,
     not the parser.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest

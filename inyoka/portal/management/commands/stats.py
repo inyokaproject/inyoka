@@ -5,7 +5,7 @@
     This module provides a command to the Django ``manage.py`` file that outputs some statistics about the portal.
     In some time in the future, these should be converted to a proper view.
 
-    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.core.management.base import BaseCommand

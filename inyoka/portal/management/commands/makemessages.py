@@ -7,7 +7,7 @@ the ``.po`` language files out of the Python and template files. The actual
 output files are written to ``inyoka/APP/locale/lang_CODE/django.po`` and
 the regarding ``.pot`` file to ``inyoka/APP/django.pot``.
 
-:copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+:copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
 

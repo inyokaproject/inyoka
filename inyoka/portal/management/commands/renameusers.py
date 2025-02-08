@@ -6,7 +6,7 @@
     a list of users defined by a JSON file as shown in the following example:
     [{"oldname":"user1", "newname":"kloss"},{"oldname":"user2", "newname":"spinne"}]
     If the optional parameter '--silent' or '-s' is passed, no mails will be sent to the users
-    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import json

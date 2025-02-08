@@ -4,7 +4,7 @@
 
     Test portal migrations.
 
-    :copyright: (c) 2023-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2023-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, datetime, time, timezone
