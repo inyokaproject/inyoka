@@ -44,6 +44,7 @@ Deployment notes
 * Enable timezon-aware datetimes from Django
 * Fix deprecation warnings related to UTC methods
 * Remove private messages after specific duration. This will not affect messages in the 'archive' folder and team members.
+* Event: Slug is changed for unpublished events
 
 🗑 Deprecations
 --------------
