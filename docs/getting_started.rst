@@ -14,8 +14,8 @@ The base development branch is ``staging`` and all new development branches
 should be based from that branch. ``master`` is always the latest stable release
 which is also running on ubuntuusers.de.
 
-Testing
-=======
+Tests
+=====
 
 .. _test-notifies:
 
