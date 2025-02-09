@@ -87,7 +87,7 @@ If you don't want to use the export of the settings you may also run
 
 
 Code style
-**********
+==========
 
 The project uses `ruff <https://docs.astral.sh/ruff/>`_ to run code quality checks
 on Inyoka's code base. Start the linter as follows from the project's root directory:
