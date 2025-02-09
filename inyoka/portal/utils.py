@@ -82,12 +82,16 @@ def google_calendarize(event):
 
 class UbuntuVersion:
     """
-    This class holds a single Ubuntu version. Based on the settings for
-    :py:attr:`lts`, :py:attr:`active`, :py:attr:`current`, :py:attr:`dev`, a
-    different notification appears in the forum front-end while selecting the
+    This class holds a single Ubuntu version. Based on the init-parameters
+    different notification appear in the forum front-end while selecting the
     topic version.
 
-    The attributes :py:attr:`number` and :py:attr:`name` have to be given.
+    :ivar number: ubuntu version number like 24.04
+    :ivar name: ubuntu name of a version like Noble Numbat
+    :ivar lts: is it a long term support version?
+    :ivar active: is it a supported version?
+    :ivar current: is it the most recent version?
+    :ivar dev: is it a development version?
     """
 
     def __init__(self, number, name, lts=False, active=False,
