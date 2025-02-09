@@ -1,0 +1,4 @@
+/* restrict width of Inyoka logo */
+.wy-side-nav-search > a.icon img.logo {
+    max-width: 70%;
+}

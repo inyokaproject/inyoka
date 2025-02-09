@@ -122,3 +122,14 @@ html_context = {
     "github_version": "staging", # Version
     "conf_py_path": "/docs/", # Path in the checkout to the docs root
 }
+
+html_logo = '../inyoka/static/img/logo.svg'
+
+# These folders are copied to the documentation's HTML output
+html_static_path = ['_static']
+
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    'css/custom.css',
+]
