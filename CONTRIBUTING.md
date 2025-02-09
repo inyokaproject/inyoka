@@ -9,8 +9,8 @@ This includes:
 * Bug reports
 * Change reviews
 
-Inyoka uses Github to keep track of bugs, feature requests, and associated
-changes.
+Inyoka uses GitHub to keep track of bugs, feature requests, and associated
+changes. Feel free to report one at <https://github.com/inyokaproject/inyoka/issues>.
 
 # Code of Conduct
 
