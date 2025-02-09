@@ -17,26 +17,6 @@ which is also running on ubuntuusers.de.
 Tests
 =====
 
-.. _test-notifies:
-
-Test notifications
-******************
-
-Notifications for an user with the email address ``admin@localhost`` can easily be
-tested by starting celery:
-
-.. code-block:: console
-
-   (inyoka)$ export DJANGO_SETTINGS_MODULE=development_settings
-   (inyoka)$ celery -A inyoka worker -B -l DEBUG
-
-Among other things you will see the notification mails for the admin user.
-
-.. note::
-
-   After changing a @task function, you need to restart the celery server.
-
-
 Run tests
 *********
 
@@ -64,6 +44,26 @@ as well for the classes. You'll find the tests under ``tests/apps/$APPNAME/``.
 
 The Python test files start with ``test_*``. For adding new tests you usually
 copy and adapt existing test classes and methods.
+
+.. _test-notifies:
+
+Test notifications
+******************
+
+Notifications for an user with the email address ``admin@localhost`` can easily be
+tested by starting celery:
+
+.. code-block:: console
+
+   (inyoka)$ export DJANGO_SETTINGS_MODULE=development_settings
+   (inyoka)$ celery -A inyoka worker -B -l DEBUG
+
+Among other things you will see the notification mails for the admin user.
+
+.. note::
+
+   After changing a ``@task`` function, you need to restart the celery server.
+
 
 BDD-Integration Tests
 *********************
