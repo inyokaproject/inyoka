@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 import freezegun
 from django.conf import settings
 from django.db import IntegrityError
+from freezegun import freeze_time
 
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.portal.models import StaticFile
@@ -388,6 +389,26 @@ class TestEventModel(TestCase):
                                     end=datetime.now(timezone.utc) + timedelta(hours=12),
                                     author=self.user,
                                     visible=visible)
+
+    @freeze_time("2025-01-09T20:05:04Z")
+    def test_slug_fixed__published_event(self):
+        a = self._create_one_event()
+        a.name = 'foobar'
+        a.save()
+
+        a.refresh_from_db()
+        self.assertEqual(a.name, 'foobar')
+        self.assertEqual(a.slug, '2025/01/09/event')
+
+    @freeze_time("2025-01-09T06:05:04Z")
+    def test_slug_changes__unpublished_event(self):
+        a = self._create_one_event(visible=False)
+        a.name = 'foobar'
+        a.save()
+
+        a.refresh_from_db()
+        self.assertEqual(a.name, 'foobar')
+        self.assertEqual(a.slug, '2025/01/09/foobar')
 
     def test_upcoming_getZero_isEmpty_returnNone(self):
         self.assertEqual(list(Event.objects.get_upcoming(0)), [])

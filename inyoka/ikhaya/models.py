@@ -416,7 +416,7 @@ class Event(models.Model):
         }[action])
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if not self.slug or not self.visible:
             name = self.start.astimezone().strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
 
