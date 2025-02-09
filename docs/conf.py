@@ -114,3 +114,11 @@ html_theme = 'sphinx_rtd_theme'
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Inyokadoc'
+
+html_context = {
+    "display_github": True, # Integrate GitHub
+    "github_user": "inyokaproject", # Username
+    "github_repo": "inyoka", # Repo name
+    "github_version": "staging", # Version
+    "conf_py_path": "/docs/", # Path in the checkout to the docs root
+}
