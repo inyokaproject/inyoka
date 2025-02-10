@@ -1,44 +1,43 @@
 .. _index:
 
-====================
-Inyoka documentation
-====================
+.. include:: general.rst
 
 .. toctree::
+    :caption: First steps
+    :maxdepth: 2
     :hidden:
 
-Overview
-========
-
-.. toctree::
-    :maxdepth: 2
-
-    general
     installation
     getting_started
     settings
-    packagemanagement
 
-Releases
-========
 
 .. toctree::
+    :caption: Contributing
     :maxdepth: 2
+    :hidden:
+
+    contributing
+    packagemanagement
+
+
+.. toctree::
+    :caption: Releases
+    :maxdepth: 2
+    :hidden:
 
     release_procedure
     releases/index
     security
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-
 
 .. toctree::
+    :caption: Reference
     :maxdepth: 2
+    :hidden:
 
+    genindex
+    modindex
     ref/forum/index
     ref/ikhaya/index
     ref/markup/index

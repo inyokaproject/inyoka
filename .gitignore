@@ -21,6 +21,7 @@ bdd_screenshots
 *.pot
 
 *.css
+!docs/_static/css/*.css
 *.gz
 *.min.js
 *.py[cod]
