@@ -1413,13 +1413,15 @@ def calendar_overview(request):
 def calendar_detail(request, slug):
     try:
         event = Event.objects.get(slug=slug)
-        if not event.visible:
-            if request.user.has_perm('portal.change_event'):
-                messages.info(request, _('This event is not visible for regular users.'))
-            else:
-                raise Http404()
     except Event.DoesNotExist:
         raise Http404()
+
+    if not event.visible:
+        if request.user.has_perm('portal.change_event'):
+            messages.info(request, _('This event is not visible for regular users.'))
+        else:
+            raise Http404()
+
     return {
         'google_link': google_calendarize(event),
         'ical_link': href('portal', 'calendar', slug, 'ics'),
@@ -1434,10 +1436,10 @@ def calendar_ical(request, slug):
 
     try:
         event = Event.objects.get(slug=slug)
-        if not event.visible and not request.user.has_perm('portal.change_event'):
-            raise Http404()
-
     except Event.DoesNotExist:
+        raise Http404()
+
+    if not event.visible and not request.user.has_perm('portal.change_event'):
         raise Http404()
 
     cal = iCal()
