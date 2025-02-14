@@ -45,6 +45,7 @@ Deployment notes
 * Fix deprecation warnings related to UTC methods
 * Remove private messages after specific duration. This will not affect messages in the 'archive' folder and team members.
 * Event: Slug is changed for unpublished events
+* Forum, Topic: Make slug unique which creates an index and fasten look ups
 
 🗑 Deprecations
 --------------
