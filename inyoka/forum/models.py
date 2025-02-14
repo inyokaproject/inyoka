@@ -569,7 +569,7 @@ class Topic(models.Model):
     objects = TopicManager()
 
     title = models.CharField(max_length=TITLE_MAX_LENGTH, blank=True)
-    slug = models.CharField(max_length=50, blank=True)
+    slug = models.CharField(max_length=50, blank=True, unique=True)
     view_count = models.IntegerField(default=0)
     sticky = models.BooleanField(default=False, db_index=True)
     solved = models.BooleanField(default=False)
