@@ -67,6 +67,15 @@ Deployment notes
 * Update requirements (at least the dependencies ``Django`` and ``jinja2`` includes known security fixes)
 
 
+1.42.1 (2025-02-16)
+===================
+
+🔒 Security
+-----------
+
+* Prevent to leak posts via `__service__=forum.get_new_latest_posts`
+
+
 1.42.0 (2024-11-23)
 ===================
 

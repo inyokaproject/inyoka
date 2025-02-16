@@ -116,7 +116,7 @@ ignore = [
 
 
 [tool.bumpversion]
-current_version = "1.42.0"
+current_version = "1.42.1"
 parse = "(?P<major>\\d+)\\.(?P<django>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{django}.{patch}"]
 search = "{current_version}"
