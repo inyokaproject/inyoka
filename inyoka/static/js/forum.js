@@ -60,49 +60,6 @@ $(function () { /* collapsable elements for the input forms */
     };
   })();
 
-  function doAction(type, slug, tags, callback) {
-    // Get the matching string for replacement. Since the two buttons (top and bottom)
-    // are in the same macro we just need to check for one buttons text at all.
-    var action = "";
-    var new_text = "";
-
-    var text = $(tags[0]).text();
-
-    switch (text) {
-    case 'abbestellen':
-      action = 'unsubscribe';
-      new_text = 'abonnieren';
-      break;
-    case 'abonnieren':
-      action = 'subscribe';
-      new_text = 'abbestellen';
-      break;
-    case 'als ungelöst markieren':
-      action = 'mark_unsolved';
-      new_text = 'als gelöst markieren';
-      break;
-    case 'als gelöst markieren':
-      action = 'mark_solved';
-      new_text = 'als ungelöst markieren';
-      break;
-    }
-
-    var url = "/?__service__=forum." + action;
-
-    $.post(url, {
-      type: type,
-      slug: slug
-    }, function (data, status, xhr) {
-      // Bind new events and change button's text.
-      if (xhr.status == 200) {
-        $(tags).fadeOut('fast');
-        $(tags).text(new_text);
-        $(tags).fadeIn('fast');
-        if (typeof callback == 'function') callback();
-      }
-    });
-  }
-
   /* Display some more information about the ubuntu version */
   (function () {
     $('select[name="ubuntu_version"]').change(function () {
