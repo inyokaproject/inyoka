@@ -21,7 +21,7 @@
    a global is the `WikiEditor`. */
 (function() {
 
-  var CODES = {
+  const CODES = {
     'text': 'Code ohne Highlighting',
     'bash': 'Bash',
     'c': 'C',
@@ -46,7 +46,7 @@
   };
 
   /* subset of all available smilies, see django's settings.SMILIES */
-  var SMILIES = {
+  const SMILIES = {
     ':)': '☺',
     ':(': '☹',
     ';)': '😉',
