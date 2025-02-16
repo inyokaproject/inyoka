@@ -25,7 +25,7 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 1.42.1 (2025-01-DD)
+Unreleased 1.42.2 (2025-02-DD)
 ==============================
 
 Deployment notes
