@@ -106,30 +106,26 @@ $(function () { /* collapsable elements for the input forms */
   /* Display some more information about the ubuntu version */
   (function () {
     $('select[name="ubuntu_version"]').change(function () {
-      var text_unstable = `<a href="{LL}">Dies</a> ist die momentane <a href="https://wiki.${$BASE_DOMAIN_NAME}/Entwicklungsversion">Entwicklungsversion</a> von Ubuntu`;
-      var text_lts = `<a href="{LL}">Dies</a> ist eine <a href="https://wiki.${$BASE_DOMAIN_NAME}/Long_Term_Support">LTS (Long Term Support)</a> Version`;
-      var text_current = `<a href="{LL}">Dies</a> ist die momentan <a href="https://wiki.${$BASE_DOMAIN_NAME}/Downloads">aktuelle Version</a> von Ubuntu`;
-      var url = "/?__service__=forum.get_version_details";
-      var version_str = $(this).find('option:selected').val();
+      const url = "/?__service__=forum.get_version_details";
+      const version_str = $(this).find('option:selected').val();
 
       /* Only send a request if there's really a Version selected */
       if (!$.trim(version_str)) {
         return false;
       }
 
-      var with_link = function (text, data) {
-        return text.replace(/\{LL\}/, data.link);
-      };
-
       $.getJSON(url, {
         version: version_str
       }, function (data) {
         if (data.dev) {
-          $('span#version_info').attr('class', 'unstable').html(with_link(text_unstable, data));
+          const text_unstable = `<a href="${data.link}">Dies</a> ist die momentane <a href="https://wiki.${$BASE_DOMAIN_NAME}/Entwicklungsversion">Entwicklungsversion</a> von Ubuntu`;
+          $('span#version_info').attr('class', 'unstable').html(text_unstable);
         } else if (data.lts) {
-          $('span#version_info').attr('class', 'lts').html(with_link(text_lts, data));
+          const text_lts = `<a href="${data.link}">Dies</a> ist eine <a href="https://wiki.${$BASE_DOMAIN_NAME}/Long_Term_Support">LTS (Long Term Support)</a> Version`;
+          $('span#version_info').attr('class', 'lts').html(text_lts);
         } else if (data.current) {
-          $('span#version_info').attr('class', 'current').html(with_link(text_current, data));
+          const text_current = `<a href="${data.link}">Dies</a> ist die momentan <a href="https://wiki.${$BASE_DOMAIN_NAME}/Downloads">aktuelle Version</a> von Ubuntu`;
+          $('span#version_info').attr('class', 'current').html(text_current);
         } else {
           $('span#version_info').attr('class', '').text('');
         }
