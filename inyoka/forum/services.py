@@ -167,6 +167,9 @@ def get_new_latest_posts(request):
     post_id = int(request.POST['post'])
     post = Post.objects.get(id=post_id)
 
+    if not request.user.has_perm('forum.view_forum', post.topic.forum) or (not request.user.has_perm('forum.moderate_forum', post.topic.forum) and post.topic.hidden or post.hidden):
+        return None
+
     posts = Post.objects.filter(id__gt=post.id, topic__id=post.topic.id) \
                         .order_by('-position').all()
 
