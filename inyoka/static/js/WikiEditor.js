@@ -381,9 +381,9 @@
       /* Helpbar */
       //this.helpbar.appendTo($('<li />').appendTo(t)).hide();
       if (profile == 'wiki') {
-        link = '//wiki.inyokaproject.org/Wiki/Syntax';
+        link = `https://wiki.${$BASE_DOMAIN_NAME}/Wiki/Syntax`;
       } else {
-        link = '//wiki.inyokaproject.org/Forum/Syntax';
+        link = `https://wiki.${$BASE_DOMAIN_NAME}/Forum/Syntax`;
       }
       $('<li class="syntax_help note"><a href="' + link + '">Hilfe zur Syntax</a></li>').appendTo(t);
 

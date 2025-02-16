@@ -150,9 +150,9 @@ $(function () { /* collapsable elements for the input forms */
   /* Display some more informations about the ubuntu version */
   (function () {
     $('select[name="ubuntu_version"]').change(function () {
-      var text_unstable = '<a href="{LL}">Dies</a> ist die momentane <a href="//wiki.inyokaproject.org/Entwicklungsversion">Entwicklungsversion</a> von Ubuntu';
-      var text_lts = '<a href="{LL}">Dies</a> ist eine <a href="//wiki.inyokaproject.org/Long_Term_Support">LTS (Long Term Support)</a> Version';
-      var text_current = '<a href="{LL}">Dies</a> ist die momentan <a href="//wiki.inyokaproject.org/Downloads">aktuelle Version</a> von Ubuntu';
+      var text_unstable = `<a href="{LL}">Dies</a> ist die momentane <a href="https://wiki.${$BASE_DOMAIN_NAME}/Entwicklungsversion">Entwicklungsversion</a> von Ubuntu`;
+      var text_lts = `<a href="{LL}">Dies</a> ist eine <a href="https://wiki.${$BASE_DOMAIN_NAME}/Long_Term_Support">LTS (Long Term Support)</a> Version`;
+      var text_current = `<a href="{LL}">Dies</a> ist die momentan <a href="https://wiki.${$BASE_DOMAIN_NAME}/Downloads">aktuelle Version</a> von Ubuntu`;
       var url = "/?__service__=forum.get_version_details";
       var version_str = $(this).find('option:selected').val();
 
