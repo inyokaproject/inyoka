@@ -103,7 +103,7 @@ $(function () { /* collapsable elements for the input forms */
     });
   }
 
-  /* Display some more informations about the ubuntu version */
+  /* Display some more information about the ubuntu version */
   (function () {
     $('select[name="ubuntu_version"]').change(function () {
       var text_unstable = `<a href="{LL}">Dies</a> ist die momentane <a href="https://wiki.${$BASE_DOMAIN_NAME}/Entwicklungsversion">Entwicklungsversion</a> von Ubuntu`;
@@ -112,7 +112,7 @@ $(function () { /* collapsable elements for the input forms */
       var url = "/?__service__=forum.get_version_details";
       var version_str = $(this).find('option:selected').val();
 
-      /* Only send an request if there's really a Version selected */
+      /* Only send a request if there's really a Version selected */
       if (!$.trim(version_str)) {
         return false;
       }
