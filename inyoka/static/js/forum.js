@@ -185,7 +185,7 @@ $(function () { /* collapsable elements for the input forms */
     const newLine = 10;
 
     $("#id_text").keypress(function (event) {
-      var enterPressed = event.keyCode === newLine || event.keyCode === carriageReturn;
+      const enterPressed = event.keyCode === newLine || event.keyCode === carriageReturn;
       if (enterPressed && event.ctrlKey &&
           confirm("Möchtest du den Beitrag absenden?")) {
         document.getElementById("submit_post").click()
