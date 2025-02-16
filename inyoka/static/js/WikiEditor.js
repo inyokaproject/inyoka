@@ -21,9 +21,6 @@
    a global is the `WikiEditor`. */
 (function() {
 
-  /* indentation size */
-  var INDENTATION = 2;
-
   var CODES = {
     'text': 'Code ohne Highlighting',
     'bash': 'Bash',
@@ -179,25 +176,6 @@
   var help = function(message) {
     return function(evt) {
     };
-  };
-
-  /**
-   * Helper function that formats a `Date` object into a iso8601
-   * format string.
-   *
-   */
-  var formatISO8601 = function(orig) {
-    var year = orig.getUTCFullYear(),
-        month = orig.getUTCMonth(),
-        date = orig.getUTCDate(),
-        hours = orig.getUTCHours(),
-        minutes = orig.getUTCHours(),
-        seconds = orig.getUTCSeconds();
-    return (year + '-' + (month < 9 ? '0' : '') + (month + 1) + '-' +
-                         (date < 10 ? '0' : '') + date + 'T' +
-                         (hours < 10 ? '0' : '') + hours + ':' +
-                         (minutes < 10 ? '0' : '') + minutes + ':' +
-                         (seconds < 10 ? '0' : '') + seconds + 'Z');
   };
 
   /**
