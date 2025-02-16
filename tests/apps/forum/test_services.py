@@ -49,3 +49,15 @@ class TestForumServices(TestCase):
         response = self.client.post('/?__service__=forum.get_new_latest_posts', data={'post': self.post.id}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode(), 'null')
+
+    def test_get_new_latest_posts__missing_post_parameter(self):
+        response = self.client.post('/?__service__=forum.get_new_latest_posts', follow=True)
+        self.assertEqual(response.status_code, 400)
+
+    def test_get_new_latest_posts__string_as_post_parameter(self):
+        response = self.client.post('/?__service__=forum.get_new_latest_posts', data={'post': 'foo'}, follow=True)
+        self.assertEqual(response.status_code, 400)
+
+    def test_get_new_latest_posts__get_method(self):
+        response = self.client.get('/?__service__=forum.get_new_latest_posts', follow=True)
+        self.assertEqual(response.status_code, 400)

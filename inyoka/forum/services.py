@@ -10,6 +10,7 @@
 """
 from urllib.parse import unquote
 
+from django.http import HttpResponseBadRequest
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_GET, require_POST
@@ -164,7 +165,11 @@ def get_version_details(request):
 @require_POST
 @dispatcher.register()
 def get_new_latest_posts(request):
-    post_id = int(request.POST['post'])
+    try:
+        post_id = int(request.POST.get('post'))
+    except (TypeError, ValueError):
+        return HttpResponseBadRequest()
+
     post = Post.objects.get(id=post_id)
 
     if not request.user.has_perm('forum.view_forum', post.topic.forum) or (not request.user.has_perm('forum.moderate_forum', post.topic.forum) and post.topic.hidden or post.hidden):
