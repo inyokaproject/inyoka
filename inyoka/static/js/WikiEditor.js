@@ -21,10 +21,7 @@
    a global is the `WikiEditor`. */
 (function() {
 
-  /* indentation size */
-  var INDENTATION = 2;
-
-  var CODES = {
+  const CODES = {
     'text': 'Code ohne Highlighting',
     'bash': 'Bash',
     'c': 'C',
@@ -49,7 +46,7 @@
   };
 
   /* subset of all available smilies, see django's settings.SMILIES */
-  var SMILIES = {
+  const SMILIES = {
     ':)': '☺',
     ':(': '☹',
     ';)': '😉',
@@ -179,25 +176,6 @@
   var help = function(message) {
     return function(evt) {
     };
-  };
-
-  /**
-   * Helper function that formats a `Date` object into a iso8601
-   * format string.
-   *
-   */
-  var formatISO8601 = function(orig) {
-    var year = orig.getUTCFullYear(),
-        month = orig.getUTCMonth(),
-        date = orig.getUTCDate(),
-        hours = orig.getUTCHours(),
-        minutes = orig.getUTCHours(),
-        seconds = orig.getUTCSeconds();
-    return (year + '-' + (month < 9 ? '0' : '') + (month + 1) + '-' +
-                         (date < 10 ? '0' : '') + date + 'T' +
-                         (hours < 10 ? '0' : '') + hours + ':' +
-                         (minutes < 10 ? '0' : '') + minutes + ':' +
-                         (seconds < 10 ? '0' : '') + seconds + 'Z');
   };
 
   /**
@@ -381,9 +359,9 @@
       /* Helpbar */
       //this.helpbar.appendTo($('<li />').appendTo(t)).hide();
       if (profile == 'wiki') {
-        link = '//wiki.inyokaproject.org/Wiki/Syntax';
+        link = `https://wiki.${$BASE_DOMAIN_NAME}/Wiki/Syntax`;
       } else {
-        link = '//wiki.inyokaproject.org/Forum/Syntax';
+        link = `https://wiki.${$BASE_DOMAIN_NAME}/Forum/Syntax`;
       }
       $('<li class="syntax_help note"><a href="' + link + '">Hilfe zur Syntax</a></li>').appendTo(t);
 

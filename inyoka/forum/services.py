@@ -15,17 +15,11 @@ from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_GET, require_POST
 
-from inyoka.forum.models import Forum, Post, Topic
-from inyoka.portal.models import Subscription
-from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
+from inyoka.forum.models import Post
+from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.services import SimpleDispatcher, never_cache
 
-dispatcher = SimpleDispatcher(
-    subscribe=lambda r: subscription_action(r, 'subscribe'),
-    unsubscribe=lambda r: subscription_action(r, 'unsubscribe'),
-    mark_solved=lambda r: change_status(r, True),
-    mark_unsolved=lambda r: change_status(r, False),
-)
+dispatcher = SimpleDispatcher()
 
 
 @dispatcher.register()
@@ -88,59 +82,6 @@ def toggle_category(request):
     request.user.settings['hidden_forum_categories'] = tuple(set(hidden_categories))
     request.user.save()
     return True
-
-
-@never_cache
-@require_POST
-@dispatcher.register()
-def subscription_action(request, action=None):
-    assert action is not None and action in ('subscribe', 'unsubscribe')
-
-    subscription_type = request.POST['type']
-    slug = request.POST['slug']
-    cls = None
-
-    if subscription_type == 'forum':
-        cls = Forum
-    elif subscription_type == 'topic':
-        cls = Topic
-
-    obj = cls.objects.get(slug=slug)
-    if isinstance(obj, Topic):
-        forum = obj.forum
-    else:
-        forum = obj
-
-    if request.user.is_anonymous \
-       or not request.user.has_perm('forum.view_forum', forum):
-        return abort_access_denied(request)
-
-    try:
-        subscription = Subscription.objects.get_for_user(request.user, obj)
-    except Subscription.DoesNotExist:
-        if action == 'subscribe':
-            Subscription(user=request.user, content_object=obj).save()
-    else:
-        if action == 'unsubscribe':
-            subscription.delete()
-
-
-@never_cache
-@require_POST
-@dispatcher.register()
-def change_status(request, solved=None):
-    if 'slug' not in request.POST:
-        return
-
-    topic = Topic.objects.get(slug=request.POST['slug'])
-    can_read = request.user.has_perm('forum.view_forum', topic.forum)
-
-    if request.user.is_anonymous or not can_read:
-        return abort_access_denied(request)
-
-    if solved is not None:
-        topic.solved = solved
-        topic.save()
 
 
 @dispatcher.register()
