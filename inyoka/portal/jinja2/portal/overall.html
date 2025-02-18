@@ -29,6 +29,9 @@
 {% block sidebar %}
   {%- block pre_navigation %}{% endblock -%}
   <div class="container">
+
+    {% include 'portal/overall_sidebar_additions.html' %}
+
     <h3 class="navi_ubuntuusers"><a href="{{ href('portal') }}">{{ BASE_DOMAIN_NAME }}</a></h3>
     <ul>
       <li><a href="{{ href('wiki', 'ubuntuusers') }}">{{ _('About') }} {{ BASE_DOMAIN_NAME }}</a></li>
