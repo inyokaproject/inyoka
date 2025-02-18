@@ -12,6 +12,9 @@
 {%- extends 'portal/overall.html' %}
 
 {% block pre_navigation %}
+
+  {% include 'portal/index_sidebar_additions.html' %}
+
   <div class="container calendar">
     <div class="calendar link">
       <h3><a href="{{ href('portal', 'calendar') }}">{% trans %}Upcoming events{% endtrans %}</a></h3>
