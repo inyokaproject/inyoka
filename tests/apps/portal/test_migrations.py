@@ -171,3 +171,36 @@ class TestEventDateTimeMerge(MigratorTestCase):
         e = event_model.objects.get(slug=self.end_date_and_time_slug)
         self.assertEqual(e.start, datetime(2001, 1, 1, 1, 11, tzinfo=timezone.utc))
         self.assertEqual(e.end, datetime(2001, 1, 2, 1, 12, tzinfo=timezone.utc))
+
+
+class TestAdjustDateTime(MigratorTestCase):
+    migrate_from = ("portal", "0040_event__datetimes__helptext_visible")
+    migrate_to = ("portal", "0041_adjust_datetimes")
+
+    def prepare(self):
+        """Prepare some data before the migration."""
+        user_model = self.old_state.apps.get_model("portal", "User")
+        user = user_model.objects.create(
+            username="foo", email="foo@local.localhost",
+            date_joined=datetime(2000, 8, 1, 13, 37, tzinfo=timezone.utc),
+        )
+        self.user_id = user.id
+
+        pm_model = self.old_state.apps.get_model("portal", "PrivateMessage")
+        pm = pm_model.objects.create(
+            author=user,
+            subject='Title',
+            pub_date=datetime(2001, 1, 2, 1, 12, tzinfo=timezone.utc),
+            text='Text',
+        )
+        self.pm_id = pm.id
+
+    def test_dates(self):
+        pm_model = self.new_state.apps.get_model("portal", "PrivateMessage")
+
+        pm = pm_model.objects.get(id=self.pm_id)
+        self.assertEqual(pm.pub_date, datetime(2001, 1, 2, 2, 12, tzinfo=timezone.utc))
+
+        user_model = self.new_state.apps.get_model("portal", "User")
+        user = user_model.objects.get(id=self.user_id)
+        self.assertEqual(user.date_joined, datetime(2000, 8, 1, 15, 37, tzinfo=timezone.utc))
