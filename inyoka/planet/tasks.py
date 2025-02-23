@@ -54,6 +54,10 @@ def nl2p(s):
 
 @shared_task
 def sync():
+    _sync()
+
+
+def _sync():
     """
     Performs a synchronization. Articles that are already synchronized aren't
     touched anymore.
