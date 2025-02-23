@@ -19,7 +19,7 @@ import urllib
 
 # And further patch it so feedparser works :/
 import xml.sax
-from datetime import datetime
+from datetime import datetime, timezone
 from time import time
 
 import feedparser
@@ -134,8 +134,8 @@ def _sync():
                 continue
 
             # convert the time tuples to datetime objects.
-            pub_date = datetime(*pub_date[:6])
-            updated = datetime(*updated[:6])
+            pub_date = datetime(*pub_date[:6], tzinfo=timezone.utc)
+            updated = datetime(*updated[:6], tzinfo=timezone.utc)
 
             # get the blog author or fall back to blog default.
             author = entry.get('author') or blog_author
