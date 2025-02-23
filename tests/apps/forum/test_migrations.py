@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
 
-class TestForumPostAdjustDatetime(MigratorTestCase):
+class TestForumAdjustDatetime(MigratorTestCase):
     migrate_from = ('forum', '0018_add_index__topic_slug')
     migrate_to = ('forum', '0019_adjust_datetimes')
 
@@ -51,6 +51,16 @@ class TestForumPostAdjustDatetime(MigratorTestCase):
             pub_date=datetime(2024, 1, 16, 21, 57, 1, tzinfo=timezone.utc),
         )
         self.post_id__cet = post__cet.id
+
+
+        revision_model = self.old_state.apps.get_model('forum', 'PostRevision')
+        revision = revision_model.objects.create(
+            text='Post 2 revision',
+            post=post__cet,
+            store_date=datetime(2014, 1, 10, 10, 5, 1, tzinfo=timezone.utc),
+        )
+        self.revision_id = revision.id
+
 
         poll_model = self.old_state.apps.get_model('forum', 'Poll')
         poll_no_end = poll_model.objects.create(
@@ -124,3 +134,10 @@ class TestForumPostAdjustDatetime(MigratorTestCase):
                              datetime(2024, 1, 8, 13, 24, 29,
                                       tzinfo=timezone(timedelta(seconds=3600), 'CET')))
 
+    def test_revision_datetime(self):
+        revision_model = self.new_state.apps.get_model('forum', 'PostRevision')
+
+        self.assertEqual(revision_model.objects.count(), 1)
+
+        r = revision_model.objects.get(id=self.revision_id)
+        self.assertEqual(r.store_date, datetime(2014, 1, 10, 11, 5, 1, tzinfo=timezone.utc))

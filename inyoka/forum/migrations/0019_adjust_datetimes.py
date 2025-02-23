@@ -25,6 +25,13 @@ def adjust_poll_datetime(apps, schema_editor):
 
         p.save(update_fields=fields_to_update)
 
+def adjust_post_revision_datetime(apps, schema_editor):
+    revision_model = apps.get_model("forum", "PostRevision")
+
+    for r in revision_model.objects.all():
+        r.store_date = r.store_date.astimezone().replace(tzinfo=datetime.timezone.utc)
+        r.save(update_fields=["store_date"])
+
 
 class Migration(migrations.Migration):
 
@@ -38,5 +45,8 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(
             code=adjust_poll_datetime,
+        ),
+        migrations.RunPython(
+            code=adjust_post_revision_datetime,
         ),
     ]
