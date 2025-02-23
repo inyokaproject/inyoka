@@ -52,6 +52,22 @@ class TestForumPostAdjustDatetime(MigratorTestCase):
         )
         self.post_id__cet = post__cet.id
 
+        poll_model = self.old_state.apps.get_model('forum', 'Poll')
+        poll_no_end = poll_model.objects.create(
+            question='quo vadis?',
+            start_time=datetime(2024, 1, 1, 11, 24, 29, tzinfo=timezone.utc),
+            topic=topic
+        )
+        self.poll_no_end_id = poll_no_end.id
+
+        poll_with_end = poll_model.objects.create(
+            question='quo vadis 2?',
+            start_time=datetime(2024, 1, 1, 11, 24, 29, tzinfo=timezone.utc),
+            end_time=datetime(2024, 1, 8, 11, 24, 29, tzinfo=timezone.utc),
+            topic=topic,
+        )
+        self.poll_with_end_id = poll_with_end.id
+
     def test_post_pub_date(self):
         post_model = self.new_state.apps.get_model('forum', 'Post')
 
@@ -90,3 +106,21 @@ class TestForumPostAdjustDatetime(MigratorTestCase):
                     tzinfo=timezone(timedelta(seconds=3600), 'CET'),
                 ),
             )
+
+    def test_poll_datetimes(self):
+        poll_model = self.new_state.apps.get_model('forum', 'Poll')
+        with self.subTest('no end'):
+            poll = poll_model.objects.get(id=self.poll_no_end_id)
+            self.assertEqual(poll.start_time,
+                             datetime(2024, 1, 1, 13, 24, 29, tzinfo=timezone(timedelta(seconds=3600), 'CET')))
+            self.assertIsNone(poll.end_time)
+
+        with self.subTest('with end'):
+            poll = poll_model.objects.get(id=self.poll_with_end_id)
+            self.assertEqual(poll.start_time,
+                             datetime(2024, 1, 1, 13, 24, 29,
+                                      tzinfo=timezone(timedelta(seconds=3600), 'CET')))
+            self.assertEqual(poll.end_time,
+                             datetime(2024, 1, 8, 13, 24, 29,
+                                      tzinfo=timezone(timedelta(seconds=3600), 'CET')))
+
