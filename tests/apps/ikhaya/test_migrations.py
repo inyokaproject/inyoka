@@ -12,7 +12,7 @@ import datetime
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
 
-class TestArticalePublicationMerge(MigratorTestCase):
+class TestArticlePublicationMerge(MigratorTestCase):
     migrate_from = ("ikhaya", "0010_auto_20230312_1704")
     migrate_to = ("ikhaya", "0011_article_publication_datetime")
 
@@ -62,7 +62,7 @@ class TestArticalePublicationMerge(MigratorTestCase):
                          datetime.datetime(2023, 5, 15, 23, 0, tzinfo=datetime.timezone.utc))
 
 
-class TestCommentAdjustDatetime(MigratorTestCase):
+class TestAdjustDatetime(MigratorTestCase):
     migrate_from = ('ikhaya', '0011_article_publication_datetime')
     migrate_to = ('ikhaya', '0012_adjust_datetimes')
 
@@ -103,6 +103,15 @@ class TestCommentAdjustDatetime(MigratorTestCase):
         )
         self.comment_id__cet = comment__cet.id
 
+        report_model = self.old_state.apps.get_model('ikhaya', 'Report')
+        report = report_model.objects.create(
+            article=a,
+            text='Report 1',
+            author=user,
+            pub_date=datetime.datetime(2023, 4, 16, 5, 27, tzinfo=datetime.timezone.utc)
+        )
+        self.report_id = report.id
+
     def test_comment_pub_date(self):
         comment_model = self.new_state.apps.get_model('ikhaya', 'Comment')
 
@@ -141,3 +150,9 @@ class TestCommentAdjustDatetime(MigratorTestCase):
                     tzinfo=datetime.timezone(datetime.timedelta(seconds=3600), 'CET'),
                 ),
             )
+
+    def test_report_pub_date(self):
+        report_model = self.new_state.apps.get_model('ikhaya', 'Report')
+        r = report_model.objects.get(id=self.report_id)
+        self.assertEqual(r.pub_date,
+                         datetime.datetime(2023, 4, 16, 9, 27, tzinfo=datetime.timezone(datetime.timedelta(seconds=7200), 'CEST')))

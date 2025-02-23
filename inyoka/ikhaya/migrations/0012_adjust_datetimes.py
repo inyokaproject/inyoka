@@ -11,6 +11,14 @@ def adjust_comment_datetime(apps, schema_editor):
         c.pub_date = c.pub_date.astimezone().replace(tzinfo=datetime.timezone.utc)
         c.save(update_fields=["pub_date"])
 
+def adjust_report_datetime(apps, schema_editor):
+    report_model = apps.get_model("ikhaya", "Report")
+
+    for r in report_model.objects.all():
+        r.pub_date = r.pub_date.astimezone().replace(tzinfo=datetime.timezone.utc)
+        r.save(update_fields=["pub_date"])
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -20,5 +28,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             code=adjust_comment_datetime,
+        ),
+
+        migrations.RunPython(
+            code=adjust_report_datetime,
         ),
     ]
