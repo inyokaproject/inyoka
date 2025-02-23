@@ -1,8 +1,8 @@
 """
-    tests.apps.portal.test_migrations
+    tests.apps.ikhaya.test_migrations
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test portal migrations.
+    Test ikhaya migrations.
 
     :copyright: (c) 2023-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
@@ -60,3 +60,84 @@ class TestArticalePublicationMerge(MigratorTestCase):
 
         self.assertEqual(a.publication_datetime,
                          datetime.datetime(2023, 5, 15, 23, 0, tzinfo=datetime.timezone.utc))
+
+
+class TestCommentAdjustDatetime(MigratorTestCase):
+    migrate_from = ('ikhaya', '0011_article_publication_datetime')
+    migrate_to = ('ikhaya', '0012_adjust_datetimes')
+
+    def prepare(self):
+        """Prepare some data before the migration."""
+        user_model = self.old_state.apps.get_model('portal', 'User')
+        user = user_model.objects.create(
+            username='foo',
+            email='foo@local.localhost',
+        )
+
+        category_model = self.old_state.apps.get_model("ikhaya", "Category")
+        category = category_model.objects.create(name='Test Category')
+
+        article_model = self.old_state.apps.get_model("ikhaya", "Article")
+        a = article_model.objects.create(
+            intro='Intro 1',
+            text='Text 1',
+            subject='Article',
+            category=category,
+            author=user,
+        )
+
+        comment_model = self.old_state.apps.get_model('ikhaya', 'Comment')
+        comment__cest = comment_model.objects.create(
+            article=a,
+            text='Comment 1',
+            author=user,
+            pub_date=datetime.datetime(2023, 5, 26, 3, 34, 54, tzinfo=datetime.timezone.utc),
+        )
+        self.comment_id__cest = comment__cest.id
+
+        comment__cet = comment_model.objects.create(
+            article=a,
+            text='Comment 1',
+            author=user,
+            pub_date=datetime.datetime(2024, 1, 16, 21, 57, 1, tzinfo=datetime.timezone.utc),
+        )
+        self.comment_id__cet = comment__cet.id
+
+    def test_comment_pub_date(self):
+        comment_model = self.new_state.apps.get_model('ikhaya', 'Comment')
+
+        with self.subTest('CEST'):
+            c = comment_model.objects.get(id=self.comment_id__cest)
+            self.assertEqual(
+                c.pub_date, datetime.datetime(2023, 5, 26, 5, 34, 54, tzinfo=datetime.timezone.utc)
+            )
+            self.assertEqual(
+                c.pub_date,
+                datetime.datetime(
+                    2023,
+                    5,
+                    26,
+                    7,
+                    34,
+                    54,
+                    tzinfo=datetime.timezone(datetime.timedelta(seconds=7200), 'CEST'),
+                ),
+            )
+
+        with self.subTest('CET'):
+            c = comment_model.objects.get(id=self.comment_id__cet)
+            self.assertEqual(
+                c.pub_date, datetime.datetime(2024, 1, 16, 22, 57, 1, tzinfo=datetime.timezone.utc)
+            )
+            self.assertEqual(
+                c.pub_date,
+                datetime.datetime(
+                    2024,
+                    1,
+                    16,
+                    23,
+                    57,
+                    1,
+                    tzinfo=datetime.timezone(datetime.timedelta(seconds=3600), 'CET'),
+                ),
+            )
