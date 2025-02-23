@@ -1,9 +1,9 @@
 """
     inyoka.planet.tasks
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~
 
     The ``sync`` function should be called periodically to check for new
-    articles.  It checks whether the last syncronization of a blog is more
+    articles.  It checks whether the last synchronization of a blog is more
     than ``PLANET_SYNC_TIME`` ago and updates them.
 
     It'd be ideal if ``sync`` was called every 30 minutes.
@@ -40,7 +40,7 @@ make_parser = xml.sax.make_parser
 xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
 
-# set a default timeout. Otherwise fetching some feeds might cause the script
+# set a default timeout. Otherwise, fetching some feeds might cause the script
 # to block forever
 socket.setdefaulttimeout(20.0)
 
@@ -63,12 +63,12 @@ feedparser.registerDateHandler(dateutilDateHandler)
 @shared_task
 def sync():
     """
-    Performs a synchronization. Articles that are already syncronized aren't
+    Performs a synchronization. Articles that are already synchronized aren't
     touched anymore.
     """
     for blog in Blog.objects.filter(active=True):
         logger.debug('syncing blog %s' % blog.name)
-        # parse the feed. feedparser.parse will never given an exception
+        # parse the feed. feedparser.parse will never give an exception
         # but the bozo bit might be defined.
         try:
             feed = feedparser.parse(blog.feed_url)
