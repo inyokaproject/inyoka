@@ -24,7 +24,6 @@ from time import time
 
 import feedparser
 from celery import shared_task
-from dateutil.parser import parse as dateutil_parse
 from django.utils import timezone as dj_timezone
 from django.utils.encoding import force_str
 from django.utils.html import escape
@@ -51,13 +50,6 @@ _par_re = re.compile(r'\n{2,}')
 def nl2p(s):
     """Add paragraphs to a text."""
     return '\n'.join('<p>%s</p>' % p for p in _par_re.split(s))
-
-
-def dateutilDateHandler(aDateString):
-    return dateutil_parse(aDateString).utctimetuple()
-
-
-feedparser.registerDateHandler(dateutilDateHandler)
 
 
 @shared_task
