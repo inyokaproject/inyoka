@@ -52,7 +52,6 @@ class TestForumAdjustDatetime(MigratorTestCase):
         )
         self.post_id__cet = post__cet.id
 
-
         revision_model = self.old_state.apps.get_model('forum', 'PostRevision')
         revision = revision_model.objects.create(
             text='Post 2 revision',
@@ -61,12 +60,11 @@ class TestForumAdjustDatetime(MigratorTestCase):
         )
         self.revision_id = revision.id
 
-
         poll_model = self.old_state.apps.get_model('forum', 'Poll')
         poll_no_end = poll_model.objects.create(
             question='quo vadis?',
             start_time=datetime(2024, 1, 1, 11, 24, 29, tzinfo=timezone.utc),
-            topic=topic
+            topic=topic,
         )
         self.poll_no_end_id = poll_no_end.id
 
@@ -121,18 +119,46 @@ class TestForumAdjustDatetime(MigratorTestCase):
         poll_model = self.new_state.apps.get_model('forum', 'Poll')
         with self.subTest('no end'):
             poll = poll_model.objects.get(id=self.poll_no_end_id)
-            self.assertEqual(poll.start_time,
-                             datetime(2024, 1, 1, 13, 24, 29, tzinfo=timezone(timedelta(seconds=3600), 'CET')))
+            self.assertEqual(
+                poll.start_time,
+                datetime(
+                    2024,
+                    1,
+                    1,
+                    13,
+                    24,
+                    29,
+                    tzinfo=timezone(timedelta(seconds=3600), 'CET'),
+                ),
+            )
             self.assertIsNone(poll.end_time)
 
         with self.subTest('with end'):
             poll = poll_model.objects.get(id=self.poll_with_end_id)
-            self.assertEqual(poll.start_time,
-                             datetime(2024, 1, 1, 13, 24, 29,
-                                      tzinfo=timezone(timedelta(seconds=3600), 'CET')))
-            self.assertEqual(poll.end_time,
-                             datetime(2024, 1, 8, 13, 24, 29,
-                                      tzinfo=timezone(timedelta(seconds=3600), 'CET')))
+            self.assertEqual(
+                poll.start_time,
+                datetime(
+                    2024,
+                    1,
+                    1,
+                    13,
+                    24,
+                    29,
+                    tzinfo=timezone(timedelta(seconds=3600), 'CET'),
+                ),
+            )
+            self.assertEqual(
+                poll.end_time,
+                datetime(
+                    2024,
+                    1,
+                    8,
+                    13,
+                    24,
+                    29,
+                    tzinfo=timezone(timedelta(seconds=3600), 'CET'),
+                ),
+            )
 
     def test_revision_datetime(self):
         revision_model = self.new_state.apps.get_model('forum', 'PostRevision')
@@ -140,4 +166,6 @@ class TestForumAdjustDatetime(MigratorTestCase):
         self.assertEqual(revision_model.objects.count(), 1)
 
         r = revision_model.objects.get(id=self.revision_id)
-        self.assertEqual(r.store_date, datetime(2014, 1, 10, 11, 5, 1, tzinfo=timezone.utc))
+        self.assertEqual(
+            r.store_date, datetime(2014, 1, 10, 11, 5, 1, tzinfo=timezone.utc)
+        )
