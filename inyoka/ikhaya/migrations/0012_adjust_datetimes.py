@@ -18,6 +18,17 @@ def adjust_report_datetime(apps, schema_editor):
         r.pub_date = r.pub_date.astimezone().replace(tzinfo=datetime.timezone.utc)
         r.save(update_fields=["pub_date"])
 
+def adjust_article_updated_datetime(apps, schema_editor):
+    article_model = apps.get_model("ikhaya", "Article")
+
+    for a in article_model.objects.all():
+        if not a.updated:
+            continue
+
+        a.updated = a.updated.astimezone().replace(tzinfo=datetime.timezone.utc)
+        if a.updated == a.publication_datetime:
+            a.updated = None
+        a.save(update_fields=["updated"])
 
 class Migration(migrations.Migration):
 
@@ -29,8 +40,10 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             code=adjust_comment_datetime,
         ),
-
         migrations.RunPython(
             code=adjust_report_datetime,
+        ),
+        migrations.RunPython(
+            code=adjust_article_updated_datetime,
         ),
     ]

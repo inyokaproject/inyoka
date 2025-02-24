@@ -84,7 +84,23 @@ class TestAdjustDatetime(MigratorTestCase):
             subject='Article',
             category=category,
             author=user,
+            publication_datetime=datetime.datetime(2023, 5, 26, 3, 34, 54,
+                                                   tzinfo=datetime.timezone.utc),
+            updated=datetime.datetime(2023, 5, 26, 3, 34, 54,
+                                      tzinfo=datetime.timezone.utc),
         )
+        self.a_id = a.id
+        a2 = article_model.objects.create(
+            intro='Intro 2',
+            text='Text 2',
+            subject='Article2',
+            category=category,
+            author=user,
+            publication_datetime=datetime.datetime(2023, 5, 25, 3, 34, 54, tzinfo=datetime.timezone.utc),
+            updated=datetime.datetime(2023, 5, 25, 1, 34, 54,
+                                                   tzinfo=datetime.timezone.utc),
+        )
+        self.a2_id = a2.id
 
         comment_model = self.old_state.apps.get_model('ikhaya', 'Comment')
         comment__cest = comment_model.objects.create(
@@ -156,3 +172,18 @@ class TestAdjustDatetime(MigratorTestCase):
         r = report_model.objects.get(id=self.report_id)
         self.assertEqual(r.pub_date,
                          datetime.datetime(2023, 4, 16, 9, 27, tzinfo=datetime.timezone(datetime.timedelta(seconds=7200), 'CEST')))
+
+    def test_article_publication_date(self):
+        article_model = self.new_state.apps.get_model('ikhaya', 'Article')
+        a = article_model.objects.get(id=self.a_id)
+        # publication_datetime should be the same
+        self.assertEqual(a.publication_datetime,
+                         datetime.datetime(2023, 5, 26, 3, 34, 54,
+                                           tzinfo=datetime.timezone.utc))
+        self.assertEqual(a.updated,
+                         datetime.datetime(2023, 5, 26, 5, 34, 54,
+                                           tzinfo=datetime.timezone.utc))
+
+        a2 = article_model.objects.get(id=self.a2_id)
+        self.assertEqual(a2.publication_datetime, datetime.datetime(2023, 5, 25, 3, 34, 54, tzinfo=datetime.timezone.utc))
+        self.assertIsNone(a2.updated)
