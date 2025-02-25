@@ -7,7 +7,7 @@ from django.db import migrations
 def adjust_post_datetime(apps, schema_editor):
     post_model = apps.get_model("forum", "Post")
 
-    for p in post_model.objects.all():
+    for p in post_model.objects.all().order_by('-id'):
         p.pub_date = p.pub_date.astimezone().replace(tzinfo=datetime.timezone.utc)
         p.save(update_fields=["pub_date"])
 
