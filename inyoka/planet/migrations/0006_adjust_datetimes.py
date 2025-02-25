@@ -8,6 +8,8 @@ def adjust_blog_last_sync(apps, schema_editor):
     blog_model = apps.get_model("planet", "Blog")
 
     for b in blog_model.objects.all():
+        if not b.last_sync:
+            continue
         b.last_sync = b.last_sync.astimezone().replace(tzinfo=datetime.timezone.utc)
         b.save(update_fields=["last_sync"])
 
