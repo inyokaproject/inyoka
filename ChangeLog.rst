@@ -25,8 +25,8 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 1.42.2 (2025-02-DD)
-==============================
+1.42.2 (2025-03-07)
+===================
 
 Deployment notes
 ----------------
@@ -46,9 +46,6 @@ Deployment notes
 * Remove private messages after specific duration. This will not affect messages in the 'archive' folder and team members.
 * Event: Slug is changed for unpublished events
 * Forum, Topic: Make slug unique which creates an index and fasten look ups
-
-🗑 Deprecations
---------------
 
 🔥 Removals
 -----------
