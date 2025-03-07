@@ -4,13 +4,11 @@
 
     Admin template for editing forums.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
 {% from 'macros.html' import render_form %}
-{% set styles = ['editor', 'datetimefield'] %}
-{% set scripts = ['WikiEditor', 'DateTime'] %}
 
 {% if not forum %}
   {% set BREADCRUMBS = [(_('Create forum'), href('forum', 'forum', 'new'))] + BREADCRUMBS|d([]) %}

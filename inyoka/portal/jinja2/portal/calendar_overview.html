@@ -4,7 +4,7 @@
 
     Show the next few events.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 #}
 
@@ -44,7 +44,7 @@
   {% if events %}
     <ul class="events vcalendar">
       {% for event in events %}
-      <li>{{ event.friendly_title(with_html_link=true) }} – {{ event.date|naturalday }}</li>
+      <li>{{ macros.friendly_title(event) }} – {{ event.start|naturalday }}</li>
       {%- endfor %}
     </ul>
   {% else %}

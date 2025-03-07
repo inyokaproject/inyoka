@@ -4,7 +4,7 @@
 
     Various utilities for datetime handling.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import pathlib
@@ -100,19 +100,17 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
     } for k, items in days if items]
 
 
-def datetime_to_timezone(dt, enforce_utc=False):
+def datetime_to_timezone(dt):
     """
-    Convert a datetime object to the user's timezone or UTC if the
-    user is not available or `enforce_utc` was set to `True` to enforce
-    UTC.  If the object is `None` it's returned unchanged.
+    Convert a datetime object to the user's timezone or the
+    instance default timezone.
+
+    If the object is `None`, it's returned unchanged.
     """
     if dt is None:
         return None
 
-    if enforce_utc:
-        tz = py_timezone.utc
-    else:
-        tz = timezone.get_current_timezone()
+    tz = timezone.get_current_timezone()
 
     if is_naive(dt):
         dt = dt.replace(tzinfo=py_timezone.utc)

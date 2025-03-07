@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: 2007 by Benjamin Wiegand.
-    :copyright: (c) 2011-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -211,10 +211,8 @@ def make_ikhaya():
         c = Category(name=name)
         c.save()
         for subject in create_names(6, title):
-            dt = randtime()
             a = Article(
-                pub_date=dt.date(),
-                pub_time=dt.time(),
+                publication_datetime=randtime(),
                 author_id=choice(users).id,
                 subject=subject,
                 category_id=c.id,

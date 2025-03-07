@@ -5,7 +5,7 @@
     The module contains the core macros and the logic to find macros.
 
     The term macro is derived from the MoinMoin wiki engine which refers to
-    macros as small pieces of dynamic snippets that are exanded at rendering
+    macros as small pieces of dynamic snippets that are expanded at rendering
     time.  For inyoka macros are pretty much the same just they are always
     expanded at parsing time.  However, for the sake of dynamics macros can
     mark themselves as runtime macros.  In that case during parsing the macro
@@ -21,11 +21,12 @@
     which implements all the builtin macros.
 
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext as _
 
 from inyoka.markup import nodes
@@ -184,9 +185,10 @@ class TableOfContents(TreeMacro):
         self.list_type = list_type
 
     def build_node(self, tree):
-        """Queries for all :class:`nodes.Headline` nodes and constructs a
-        :class:`nodes.List` representing the headlines. The optimal result
-        will look like::
+        """
+        Queries for all :class:`~inyoka.markup.nodes.Headline` nodes and constructs a
+        :class:`~inyoka.markup.nodes.List` representing the headlines. The optimal
+        result will look like::
 
             = Foo1 =
             == Bar1 ==
@@ -288,13 +290,13 @@ class Date(Macro):
                 self.date = datetime.fromisoformat(date)
             except ValueError:
                 try:
-                    self.date = datetime.utcfromtimestamp(int(date))
+                    self.date = datetime.fromtimestamp(int(date), timezone.utc)
                 except ValueError:
                     self.date = None
 
     def build_node(self, context, format):
         if self.now:
-            date = datetime.utcnow()
+            date = dj_timezone.now()
         else:
             date = self.date
 

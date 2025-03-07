@@ -4,10 +4,9 @@
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import datetime
 import functools
 import io
 import json
@@ -20,7 +19,7 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
-from django.core import signing
+from django.core import signing, validators
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -29,10 +28,12 @@ from django.core.validators import validate_email
 from django.db.models import CharField, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
-from django.forms import HiddenInput, modelformset_factory
+from django.forms import HiddenInput, SplitDateTimeField, modelformset_factory
+from django.utils import timezone as dj_timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
+from django.views.decorators.debug import sensitive_variables
 from guardian.shortcuts import assign_perm, get_perms, remove_perm
 from PIL import Image
 
@@ -51,9 +52,10 @@ from inyoka.portal.user import (
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
     CaptchaField,
-    DateWidget,
     EmailField,
     ForumMulitpleChoiceField,
+    NativeDateInput,
+    NativeSplitDateTimeWidget,
     validate_gpgkey,
     validate_signature,
 )
@@ -99,6 +101,12 @@ class LoginForm(AuthenticationForm):
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(request, *args, **kwargs)
         self.fields['username'].label = _('Username or email address')
+
+        # adapt max length for emails (super class only considered username max_length)
+        username_max_length = max(User.username.field.max_length, User.email.field.max_length)
+        self.fields["username"].validators.append(validators.MaxLengthValidator(username_max_length))
+        self.fields["username"].max_length = username_max_length
+        self.fields["username"].widget.attrs["maxlength"] = username_max_length
 
         self.error_messages['inactive'] = format_html(
                 _("Login failed because the user is inactive. You probably didn’t click on the link in the "
@@ -331,6 +339,7 @@ class UserCPProfileForm(forms.ModelForm):
         validate_signature(signature)
         return signature
 
+    @sensitive_variables('email')
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
@@ -504,6 +513,7 @@ class CreateUserForm(forms.Form):
                 _('The username is already in use. Please choose another one.'))
         return username
 
+    @sensitive_variables('data')
     def clean_confirm_password(self):
         """
         Validates that the two password inputs match.
@@ -534,24 +544,30 @@ class CreateUserForm(forms.Form):
 
 
 class EditUserStatusForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['banned_until'].localize = True
 
     class Meta:
         model = User
         fields = ['status', 'banned_until']
+        field_classes = {
+            'banned_until': SplitDateTimeField,
+        }
+        widgets = {
+            'banned_until': NativeSplitDateTimeWidget(),
+        }
 
     def clean(self):
         """Keep the user from setting banned_until if status is not banned.
         """
         data = self.cleaned_data
+
         if not data.get('banned_until'):
             return data
+
         if int(data['status']) != User.STATUS_BANNED:
             raise forms.ValidationError(_('The user is not banned'))
-        if data['banned_until'] < datetime.datetime.utcnow():
+        if data['banned_until'] < dj_timezone.now():
             raise forms.ValidationError(_('The point of time is in the past.'))
+
         return data
 
 
@@ -1090,7 +1106,7 @@ class ConfigurationForm(forms.Form):
                     'Use <code>%(remaining)s</code> to be replaced by the '
                     'remaining days or <code>soon</code>.'))
     countdown_date = forms.DateField(label=gettext_lazy('Release date'),
-        required=False, widget=DateWidget, localize=True)
+        required=False, widget=NativeDateInput, localize=True)
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
@@ -1132,6 +1148,7 @@ class TokenForm(forms.Form):
             self.action = kwargs.pop('action')
         super().__init__(*args, **kwargs)
 
+    @sensitive_variables("token")
     def clean_token(self):
         def get_action_and_limit():
             if self.action == 'reactivate_user':

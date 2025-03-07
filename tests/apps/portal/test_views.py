@@ -4,19 +4,19 @@
 
     Test portal views.
 
-    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core import mail
 from django.http import Http404
 from django.test import Client, RequestFactory
 from django.test.utils import override_settings
+from django.utils import timezone as dj_timezone
 from django.utils import translation
-from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
@@ -191,9 +191,9 @@ class TestViews(TestCase):
 
     def test_ikhaya_redirect(self):
         category = Category.objects.create(name="Categrory")
-        d = datetime(2024, 10, 10, 9, 30, 0)
         a = Article.objects.create(author=self.admin, subject="Subject",
-                                   text="Text", pub_date=d.date(), pub_time=d.time(),
+                                   text="Text",
+                                   publication_datetime=datetime(2024, 10, 10, 9, 30, 0, tzinfo=timezone.utc),
                                    category=category)
 
         response = self.client.get(f'/ikhaya/{a.id}/')
@@ -692,13 +692,13 @@ class TestPrivMsgViews(TestCase):
     def test_delete_many(self):
         user2 = User.objects.register_user('user2', 'user2@example.com', 'user', False)
         pm1 = PrivateMessage.objects.create(author=user2, subject='Subject',
-            text='Text', pub_date=now())
+            text='Text', pub_date=dj_timezone.now())
         PrivateMessageEntry.objects.create(message=pm1, user=user2,
             read=False, folder=PRIVMSG_FOLDERS['sent'][0])
         pme1 = PrivateMessageEntry.objects.create(message=pm1, user=self.user,
             read=False, folder=PRIVMSG_FOLDERS['inbox'][0])
         pm2 = PrivateMessage.objects.create(author=user2, subject='Subject',
-            text='Text', pub_date=now())
+            text='Text', pub_date=dj_timezone.now())
         PrivateMessageEntry.objects.create(message=pm2, user=user2,
             read=False, folder=PRIVMSG_FOLDERS['sent'][0])
         pme2 = PrivateMessageEntry.objects.create(message=pm2, user=self.user,
@@ -1009,10 +1009,10 @@ class TestCalendarIcal(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
 
-        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        d = datetime(2024, 10, 10, 0, 0, 0, 0, tzinfo=timezone.utc)
         self.event = Event.objects.create(name='Event 1',
-                                          date=d.date(),
-                                          time=d.time(),
+                                          start=d,
+                                          end=d + timedelta(hours=1),
                                           author=self.user,
                                           visible=True)
 
@@ -1022,8 +1022,8 @@ class TestCalendarIcal(TestCase):
         ical_content = '''BEGIN:VCALENDAR\r
 BEGIN:VEVENT\r
 SUMMARY:Event 1\r
-DTSTART:20241010T000000\r
-DTEND:20241010T000000\r
+DTSTART:20241010T000000Z\r
+DTEND:20241010T010000Z\r
 DTSTAMP:20241117T000000Z\r
 UID:2024/10/10/event-1\r
 LOCATION:\r
@@ -1057,10 +1057,10 @@ class TestCalendarDetail(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
 
-        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        d = datetime(2024, 10, 10, 0, 0, 0, 0, tzinfo=timezone.utc)
         self.event = Event.objects.create(name='Event 1',
-                                          date=d.date(),
-                                          time=d.time(),
+                                          start=d,
+                                          end=d + timedelta(hours=1),
                                           author=self.user,
                                           visible=True)
 
@@ -1098,10 +1098,10 @@ class TestCalendarMonth(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
 
-        d = datetime(2024, 10, 10, 0, 0, 0, 0)
+        d = datetime(2024, 10, 10, 0, 0, 0, 0, tzinfo=timezone.utc)
         self.event = Event.objects.create(name='Event 1',
-                                          date=d.date(),
-                                          time=d.time(),
+                                          start=d,
+                                          end=d + timedelta(hours=1),
                                           author=self.user,
                                           visible=True)
 

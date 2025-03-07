@@ -5,7 +5,7 @@
     This module provides a function decorator to flash a confirmation form upon
     deletion or revert views.
 
-    :copyright: (c) 2008-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2008-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.http import HttpResponseRedirect

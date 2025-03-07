@@ -4,18 +4,16 @@
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
-
-import jinja2
 from datetime import timedelta
 from os.path import dirname, join
 
 from celery.schedules import crontab
 
-import inyoka
+import jinja2
 
 #: Base path of this application
 BASE_PATH = dirname(__file__)
@@ -41,7 +39,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 TIME_ZONE = 'Europe/Berlin'
 
 # https://docs.djangoproject.com/en/3.2/topics/i18n/timezones/
-USE_TZ = False
+USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
@@ -151,6 +149,11 @@ ACTIVATION_HOURS = 48
 
 # days to describe an inactive user
 USER_INACTIVE_DAYS = 365
+
+# days after private messages
+# in specific folder will be removed
+PRIVATE_MESSAGE_TRASH_DURATION = 90
+PRIVATE_MESSAGE_INBOX_SENT_DURATION = 180
 
 # wiki settings
 WIKI_MAIN_PAGE = 'Welcome'
@@ -308,6 +311,10 @@ CELERY_BEAT_SCHEDULE = {
     'render_all_wiki_pages': {
         'task': 'inyoka.wiki.tasks.render_all_pages',
         'schedule': crontab(hour=23, minute=5),
+    },
+    'clean_private_message_folders': {
+        'task': 'inyoka.portal.tasks.clean_privmsg_folders',
+        'schedule': crontab(hour=6, minute=30, day_of_week='saturday'),
     }
 }
 

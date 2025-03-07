@@ -20,7 +20,7 @@ The basic application structure is explained below.
 Build states
 ------------
 
-Master |Build Status Master|   Staging |Build Status Staging|   Testing |Build Status Testing|
+Master |Build Status Master|   Staging |Build Status Staging|
 
 Requirements
 ------------
@@ -77,9 +77,13 @@ The following applications are part of Inyoka so far:
    for highlighting. It does not support diffing yet but allows to
    download pastes.
 
+Contributing
+------------
+
+See :doc:`/contributing`
+
+
 .. |Build Status Master| image:: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml/badge.svg?branch=master
    :target: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml?query=branch%3Amaster
 .. |Build Status Staging| image:: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml/badge.svg?branch=staging
    :target: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml?query=branch%3Astaging
-.. |Build Status Testing| image:: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml/badge.svg?branch=testing
-   :target: https://github.com/inyokaproject/inyoka/actions/workflows/test.yml?query=branch%3Atesting

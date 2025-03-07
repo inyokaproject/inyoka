@@ -14,28 +14,8 @@ The base development branch is ``staging`` and all new development branches
 should be based from that branch. ``master`` is always the latest stable release
 which is also running on ubuntuusers.de.
 
-Testing
-=======
-
-.. _test-notifies:
-
-Test notifications
-******************
-
-Notifications for an user with the email address ``admin@localhost`` can easily be
-tested by starting celery:
-
-.. code-block:: console
-
-   (inyoka)$ export DJANGO_SETTINGS_MODULE=development_settings
-   (inyoka)$ celery -A inyoka worker -B -l DEBUG
-
-Among other things you will see the notification mails for the admin user.
-
-.. note::
-
-   After changing a @task function, you need to restart the celery server.
-
+Tests
+=====
 
 Run tests
 *********
@@ -65,6 +45,26 @@ as well for the classes. You'll find the tests under ``tests/apps/$APPNAME/``.
 The Python test files start with ``test_*``. For adding new tests you usually
 copy and adapt existing test classes and methods.
 
+.. _test-notifies:
+
+Test notifications
+******************
+
+Notifications for an user with the email address ``admin@localhost`` can easily be
+tested by starting celery:
+
+.. code-block:: console
+
+   (inyoka)$ export DJANGO_SETTINGS_MODULE=development_settings
+   (inyoka)$ celery -A inyoka worker -B -l DEBUG
+
+Among other things you will see the notification mails for the admin user.
+
+.. note::
+
+   After changing a ``@task`` function, you need to restart the celery server.
+
+
 BDD-Integration Tests
 *********************
 
@@ -87,7 +87,7 @@ If you don't want to use the export of the settings you may also run
 
 
 Code style
-**********
+==========
 
 The project uses `ruff <https://docs.astral.sh/ruff/>`_ to run code quality checks
 on Inyoka's code base. Start the linter as follows from the project's root directory:
@@ -230,8 +230,8 @@ For more information read the theme documentation.
 Documentation
 =============
 
-Installation
-************
+Creation
+********
 
 In order to create or update the documentation (yes, *this* documentation), simply run:
 

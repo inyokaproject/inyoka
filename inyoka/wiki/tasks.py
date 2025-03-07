@@ -5,16 +5,17 @@
     Module that implements wiki related tasks that must be executed by
     our distributed queue implementation.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from os import path, remove
 
 from celery import shared_task
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models.functions import Now
 
 from inyoka.utils.logger import logger
 
@@ -63,20 +64,10 @@ def update_page_by_slug():
 
 
 @shared_task
-def update_related_pages(page, update_meta=True):
-    from inyoka.wiki.models import MetaData, Page
-    page = Page.objects.get(id=page)
-    related_pages = set()
-    values = ('value', 'page__last_rev__text_id')
-    linked = MetaData.objects.values_list(*values) \
-                     .filter(key__in=('X-Link', 'X-Attach'), value=page.name)
-    for value, text_id in linked.all():
-        cache.delete(f'wiki/page/{value.lower()}')
-        related_pages.add(text_id)
-    cache.delete(f'wiki/page/{page.name.lower()}')
-
-    if update_meta:
-        page.update_meta()
+def update_related_pages(page_id: int, update_meta: bool=True) -> None:
+    from inyoka.wiki.models import Page
+    page = Page.objects.get(id=page_id)
+    page.update_related_pages(update_meta=update_meta)
 
 
 @shared_task
@@ -86,7 +77,7 @@ def update_recentchanges():
     """
     from inyoka.wiki.models import Revision
 
-    from_time = datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)
+    from_time = Now() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)
 
     revisions = (Revision.objects
         .filter(change_date__gt=from_time)

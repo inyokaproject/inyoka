@@ -12,7 +12,7 @@ jobs:
       REQUIREMENTS_FILE: extra/requirements/linux-py${{ matrix.python-version }}-development.txt
     strategy:
       matrix:
-        python-version: ['3.12', '3.11', '3.10', '3.9']
+        python-version: ['3.13', '3.12', '3.11', '3.10', '3.9']
         database: ['postgresql', 'sqlite']
         theme: ['', 'theme-ubuntuusers']
 

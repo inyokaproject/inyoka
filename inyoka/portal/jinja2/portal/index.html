@@ -6,12 +6,15 @@
 
     It also displays some of the latest ikhaya messages.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
 
 {% block pre_navigation %}
+
+  {% include 'portal/index_sidebar_additions.html' %}
+
   <div class="container calendar">
     <div class="calendar link">
       <h3><a href="{{ href('portal', 'calendar') }}">{% trans %}Upcoming events{% endtrans %}</a></h3>
@@ -20,7 +23,7 @@
     {% if events %}
       <ul class="events">
       {% for event in events %}
-        <li>{{ event.friendly_title(with_html_link=true) }}</li>
+        <li>{{ macros.friendly_title(event) }}</li>
       {%- endfor %}
       </ul>
     {% else %}
@@ -42,11 +45,11 @@
       <h4><a href="{{ article|url }}">{{ article.subject|e }}</a></h4>
 
       <div class="meta">
-        {%- if article.pub_datetime == article.updated %}
-          <a href="{{ article|url }}">{{ article.updated|datetime }}</a>
-        {%- else %}
+        {%- if article.is_updated %}
           <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|datetime
-             }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetime }}">{{ article.updated|datetime }}</a>
+             }} / {% trans %}Created:{% endtrans %} {{ article.publication_datetime|datetime }}">{{ article.updated|datetime }}</a>
+        {%- else %}
+          <a href="{{ article|url }}">{{ article.publication_datetime|datetime }}</a>
         {%- endif %}
         {%- if article.comments_enabled %}
           <a href="{{ article|url('comments') }}" class="comments">

@@ -25,6 +25,48 @@ Inyoka Changelog
    -----------
 
 
+Unreleased 1.42.2 (2025-02-DD)
+==============================
+
+Deployment notes
+----------------
+
+#. Update requirements
+#. Execute database migrations
+
+✨ New features
+---------------
+* Wiki: Update metadata and content of related pages after a edit
+
+🏗 Changes
+----------
+* ``*.pot`` files are no longer in git
+* Enable timezon-aware datetimes from Django
+* Fix deprecation warnings related to UTC methods
+* Remove private messages after specific duration. This will not affect messages in the 'archive' folder and team members.
+* Event: Slug is changed for unpublished events
+* Forum, Topic: Make slug unique which creates an index and fasten look ups
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+* Replace javascript based datetime picker with native HTML one
+
+🐛 Fixes
+--------
+* Planet: Fix export
+* Planet: Fix suggestion for a new blog
+* Login: Allow to enter long email adress
+* Events: Fix discrepancy between times displayed in forms and rendered on page
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``Django`` and ``jinja2`` includes known security fixes)
+
+
 1.42.1 (2025-02-16)
 ===================
 

@@ -1,5 +1,3 @@
-import datetime
-
 import django.utils.timezone
 from django.conf import settings
 from django.db import migrations, models
@@ -24,7 +22,7 @@ class Migration(migrations.Migration):
                 ('username', models.CharField(unique=True, max_length=30, verbose_name='Username', db_index=True)),
                 ('email', models.EmailField(unique=True, max_length=50, verbose_name='Email address', db_index=True)),
                 ('status', models.IntegerField(default=0, verbose_name='Activation status', choices=[(0, 'not yet activated'), (1, 'active'), (2, 'banned'), (3, 'deleted himself')])),
-                ('date_joined', models.DateTimeField(default=datetime.datetime.utcnow, verbose_name='Member since')),
+                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Member since')),
                 ('banned_until', models.DateTimeField(help_text='leave empty to ban permanent', null=True, verbose_name='Banned until', blank=True)),
                 ('post_count', models.IntegerField(default=0, verbose_name='Posts')),
                 ('avatar', models.ImageField(upload_to=inyoka.portal.user.upload_to_avatar, null=True, verbose_name='Avatar', blank=True)),

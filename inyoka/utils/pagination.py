@@ -49,7 +49,7 @@
     Caveat: paginations with link functions generated in a closure are
     not pickleable.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -187,7 +187,7 @@ class Pagination:
 
     @property
     def next(self):
-        """ Return the url to the last page, or False if already on the last page """
+        """ Return the url to the next page, or False if already on the last page """
 
         if self.page >= self.pages:
             return False

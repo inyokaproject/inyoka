@@ -4,7 +4,7 @@
 
     This is the overview of the events.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
@@ -31,7 +31,7 @@
     <thead>
       <tr>
         <th class="name">{{ table.get_html('name', _('Name')) }}</th>
-        <th class="date">{{ table.get_html('date', _('Date')) }}</th>
+        <th class="date">{{ table.get_html('start', _('Start date')) }}</th>
         <th class="author">{{ table.get_html('author', _('Author')) }}</th>
         <th class="actions">{% trans %}Actions{% endtrans %}</th>
       </tr>
@@ -40,8 +40,8 @@
     {%- for event in events %}
       <tr>
         <td class="name"><a href="{{ event|url }}">{{ event.name|e }}</a></td>
-        <td class="date">{{ event.date|e }}</td>
-        <td class="author"><a href="{{ event.author|url }}">{{ event.author|e }}</a></th>
+        <td class="date">{{ event.start|datetime('Y-m-d H:i') }}</td>
+        <td class="author"><a href="{{ event.author|url }}">{{ event.author|e }}</a></td>
         <td class="actions">
           <a href="{{ event|url('edit') }}" class="event_edit" title="{% trans %}Edit{% endtrans %}"></a>
           <a href="{{ event|url('delete') }}" class="event_delete" title="{% trans %}Delete{% endtrans %}"></a>

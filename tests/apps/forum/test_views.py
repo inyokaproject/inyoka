@@ -4,12 +4,10 @@
 
     Test forum views.
 
-    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import datetime
 import shutil
-import zoneinfo
 from os import makedirs, path
 from random import randint
 from unittest.mock import patch
@@ -175,6 +173,17 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(len(self.client.get("/last24/5/").context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
+
+    def test_topiclist__content(self):
+        topic = Topic.objects.create(title='very old Topic', author=self.user,
+                forum=self.forum2)
+        Post.objects.create(text='Post 1', author=self.user, topic=topic, position=0,
+                            pub_date='2002-1-1T11:11Z')
+
+        response = self.client.get("/last24/")
+
+        self.assertContains(response, 'A test Topic')
+        self.assertNotContains(response, topic.title)
 
     def test_service_splittopic(self):
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
@@ -1842,7 +1851,7 @@ class TestTopicFeedPostRevision(TestCase):
     def setUp(self):
         super().setUp()
 
-        now = datetime.datetime.now().replace(microsecond=0)
+        now = timezone.now().replace(microsecond=0)
 
         self.user = User.objects.register_user('user', 'user', 'user', False)
         self.forum = Forum.objects.create(name='hardware')
@@ -1856,13 +1865,13 @@ class TestTopicFeedPostRevision(TestCase):
 
     def test_post_multiple_revision_update_date(self):
         self.post.edit(text='foo')
-        now_utc = datetime.datetime.utcnow().replace(tzinfo=zoneinfo.ZoneInfo("UTC"), microsecond=0)
+        now = timezone.now().replace(microsecond=0)
 
         response = self.client.get(f'/feeds/topic/{self.topic.slug}/short/10/', follow=True)
         feed = feedparser.parse(response.content)
 
         feed_updated = parse_datetime(feed.entries[0].updated).replace(microsecond=0)
-        self.assertEqual(feed_updated, now_utc)
+        self.assertEqual(feed_updated, now)
 
 
 @freeze_time("2023-12-09T23:55:04Z")

@@ -4,12 +4,12 @@
 
     Utilities for the portal.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import calendar
 import json
-from datetime import date, datetime, time
+from datetime import date
 from urllib.parse import quote_plus
 
 from django.core.exceptions import PermissionDenied
@@ -41,42 +41,29 @@ def calendar_entries_for_month(year, month):
     for i in month_range:
         days[i] = []
     start_date = date(year=year, month=month, day=month_range[0])
-    end_date = date(year=year, month=month, day=month_range[-1])
 
-    events = Event.objects.filter(
-        Q(date__range=(start_date, end_date)) |
-        Q(enddate__range=(start_date, end_date)), visible=True).all()
+    events = Event.objects.filter(Q(start__year=year, start__month=month) | Q(end__year=year, end__month=month), visible=True)
 
     for event in events:
-        if event.date is not None:
-            if event.date < start_date:
-                delta = start_date - event.date
-                base = start_date.day
-            else:
-                if event.enddate:
-                    delta = event.enddate - event.date
-                else:
-                    delta = event.date - event.date
-                base = event.date.day
-
-            for day in range(delta.days + 1):
-                if base + day in days:
-                    days[base + day].append(event)
+        if event.start.date() < start_date:
+            delta = event.end.date() - start_date
+            base = start_date.day
         else:
-            days[event.date.day].append(event)
+            delta = event.end.date() - event.start.date()
+            base = event.start.date().day
+
+        for day in range(delta.days + 1):
+            if base + day in days:
+                days[base + day].append(event)
+
     return days
 
 
 def google_calendarize(event):
     tfmt = '%Y%m%dT000000'
 
-    start = datetime.combine(event.date, event.time or time())
-    dates = start.strftime(tfmt)
-    if event.enddate:
-        end = datetime.combine(event.enddate, event.endtime or time())
-        dates += '%2F' + end.strftime(tfmt)
-    else:
-        dates += '%2F' + start.strftime(tfmt)
+    dates = event.start.strftime(tfmt)
+    dates += '%2F' + event.end.strftime(tfmt)
     name = quote_plus(event.name)
 
     s = ('https://www.google.com/calendar/event?action=TEMPLATE&' +
@@ -95,12 +82,16 @@ def google_calendarize(event):
 
 class UbuntuVersion:
     """
-    This class holds a single Ubuntu version. Based on the settings for
-    :py:attr:`lts`, :py:attr:`active`, :py:attr:`current`, :py:attr:`dev`, a
-    different notification appears in the forum front-end while selecting the
+    This class holds a single Ubuntu version. Based on the init-parameters
+    different notification appear in the forum front-end while selecting the
     topic version.
 
-    The attributes :py:attr:`number` and :py:attr:`name` have to be given.
+    :ivar number: ubuntu version number like 24.04
+    :ivar name: ubuntu name of a version like Noble Numbat
+    :ivar lts: is it a long term support version?
+    :ivar active: is it a supported version?
+    :ivar current: is it the most recent version?
+    :ivar dev: is it a development version?
     """
 
     def __init__(self, number, name, lts=False, active=False,

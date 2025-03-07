@@ -2,14 +2,9 @@
     inyoka.utils.cache
     ~~~~~~~~~~~~~~~~~~
 
-    The caching infrastructure of Inyoka.
+    Custom caching classes for Inyoka.
 
-    On top of the django cache client that speaks directly to either redis
-    or caches in-memory we have a :class:`RequestCache` that caches
-    redis-commands in a thread-local dictionary.  This saves a lot of
-    redis-commands in some scenarios.
-
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from time import sleep

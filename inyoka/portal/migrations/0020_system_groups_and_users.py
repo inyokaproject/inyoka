@@ -1,8 +1,7 @@
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.db import migrations
+from django.utils import timezone as dj_timezone
 
 
 def get_models(apps):
@@ -23,7 +22,7 @@ def create_system_groups(apps, schema_editor):
 
 def create_system_users(apps, schema_editor):
     User, Group = get_models(apps)
-    now = datetime.utcnow()
+    now = dj_timezone.now()
 
     def get_or_create(username):
         try:

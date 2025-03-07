@@ -73,14 +73,13 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import locale
 import random
 import time
 from collections import defaultdict
-from datetime import datetime
 from functools import partial
 from hashlib import sha1
 from typing import Optional
@@ -93,6 +92,7 @@ from django.db import models
 from django.db.models import Count
 from django.db.models.functions import Upper
 from django.template.loader import render_to_string
+from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
 from django.utils.html import escape
 from django.utils.translation import get_language, gettext_lazy, to_locale
@@ -617,7 +617,7 @@ class PageManager(models.Manager):
             raise TypeError('either user or remote addr required')
         page = Page(name=name)
         if change_date is None:
-            change_date = datetime.utcnow()
+            change_date = dj_timezone.now()
         if isinstance(text, str):
             text, created = Text.objects.get_or_create(value=text)
         if note is None:
@@ -988,6 +988,31 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
+    def update_related_pages(self, update_meta: bool=True) -> None:
+        """
+        Removes the content of page from the cache and its related pages.
+
+        It also updates the metadata of all pages. This is f.e. relevant for page
+        templates that emit tags.
+
+        Intended to be run in a celery task.
+        """
+
+        related_pages = Page.objects.select_related('last_rev__text') \
+                        .filter(metadata__key__in=('X-Link', 'X-Attach'),
+                                metadata__value=self.name)
+
+        for p in related_pages:
+            cache.delete(f'wiki/page/{p.name.lower()}')
+            p.last_rev.text.remove_value_from_cache()
+            if update_meta:
+                p.update_meta()
+
+        cache.delete(f'wiki/page/{self.name.lower()}')
+        self.last_rev.text.remove_value_from_cache()
+        if update_meta:
+            self.update_meta()
+
     def save(self, update_meta=True, *args, **kwargs):
         """
         This not only saves the page but also a revision that is
@@ -1111,7 +1136,7 @@ class Page(models.Model):
             attachment = att
 
         if change_date is None:
-            change_date = datetime.utcnow()
+            change_date = dj_timezone.now()
 
         self.rev = Revision(page=self, text=text, user=user,
                             change_date=change_date, note=note,
@@ -1275,7 +1300,7 @@ class Revision(models.Model):
             `rendered_text`.
 
         user
-            The user that created this revision.  If an anoymous user created
+            The user that created this revision.  If an anonymous user created
             the revision this will be `None`.
 
         change_date
@@ -1367,7 +1392,7 @@ class Revision(models.Model):
              'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated else None),
-                           change_date=datetime.utcnow(),
+                           change_date=dj_timezone.now(),
                            note=note, deleted=False,
                            remote_addr=remote_addr or '127.0.0.1',
                            attachment=self.attachment)

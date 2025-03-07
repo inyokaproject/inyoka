@@ -4,7 +4,7 @@
 
     Test forum services.
 
-    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -37,9 +37,27 @@ class TestForumServices(TestCase):
                                         topic=self.topic, position=0)
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
-        #self.client.login(username='admin', password='admin')
 
     def test_get_new_latest_posts(self):
+        self.client.login(username='admin', password='admin')
+
         response = self.client.post('/?__service__=forum.get_new_latest_posts', data={'post': self.post.id}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Post 2')
+
+    def test_get_new_latest_posts__anonymous(self):
+        response = self.client.post('/?__service__=forum.get_new_latest_posts', data={'post': self.post.id}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode(), 'null')
+
+    def test_get_new_latest_posts__missing_post_parameter(self):
+        response = self.client.post('/?__service__=forum.get_new_latest_posts', follow=True)
+        self.assertEqual(response.status_code, 400)
+
+    def test_get_new_latest_posts__string_as_post_parameter(self):
+        response = self.client.post('/?__service__=forum.get_new_latest_posts', data={'post': 'foo'}, follow=True)
+        self.assertEqual(response.status_code, 400)
+
+    def test_get_new_latest_posts__get_method(self):
+        response = self.client.get('/?__service__=forum.get_new_latest_posts', follow=True)
+        self.assertEqual(response.status_code, 400)

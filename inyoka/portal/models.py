@@ -4,13 +4,14 @@
 
     Models for the portal.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import glob
 import gzip
 import hashlib
 import os
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -18,6 +19,8 @@ from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
 from django.core.validators import RegexValidator
 from django.db import models, transaction
+from django.db.models import Count
+from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy
 
@@ -90,6 +93,14 @@ for folder in PRIVMSG_FOLDERS_DATA:
     PRIVMSG_FOLDERS[folder[0]] = PRIVMSG_FOLDERS[folder[1]] = folder
 
 
+class PrivateMessageManager(models.Manager):
+
+    def orphan_messages(self):
+        q = self.get_queryset()
+        q = q.order_by('id').annotate(number_of_entries=Count('privatemessageentry')).filter(number_of_entries=0)
+        return q
+
+
 class PrivateMessage(models.Model):
     """
     Private messages allow users to communicate with each other privately.
@@ -99,6 +110,8 @@ class PrivateMessage(models.Model):
     subject = models.CharField(gettext_lazy('Title'), max_length=255)
     pub_date = models.DateTimeField(gettext_lazy('Date'))
     text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='portal')
+
+    objects = PrivateMessageManager()
 
     class Meta:
         ordering = ('-pub_date',)
@@ -188,6 +201,35 @@ class PrivateMessageEntry(models.Model):
             message.folder = None if message.folder == trash else trash
             message.read = True if message.folder == trash else message.read
             message.save()
+
+    @classmethod
+    @transaction.atomic
+    def clean_private_message_folders(cls):
+        """
+        Remove all messages in private message folders (except 'archive')
+        after end of cache duration according to settings
+        has been reached.
+        """
+        sent = PRIVMSG_FOLDERS['sent'][0]
+        inbox = PRIVMSG_FOLDERS['inbox'][0]
+        trash = PRIVMSG_FOLDERS['trash'][0]
+
+        privmsgs_trash = PrivateMessageEntry.objects.filter(
+            folder=trash,
+            message__pub_date__lte=dj_timezone.now() - timedelta(
+                days=settings.PRIVATE_MESSAGE_TRASH_DURATION),
+            ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
+
+        privmsgs_inbox_sent = PrivateMessageEntry.objects.filter(
+            folder__in=[inbox, sent],
+            message__pub_date__lte=dj_timezone.now() - timedelta(
+                days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
+            ).exclude(user__groups__name__exact=settings.INYOKA_TEAM_GROUP_NAME)
+
+        privmsgs_trash.delete()
+        privmsgs_inbox_sent.delete()
+
+        PrivateMessage.objects.orphan_messages().delete()
 
     def delete(self):
         if self.folder == PRIVMSG_FOLDERS['trash'][0]:
@@ -286,6 +328,7 @@ class StaticFile(models.Model):
 
 class Subscription(models.Model):
     objects = SubscriptionManager()
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     notified = models.BooleanField(
         gettext_lazy('User was already notified'),

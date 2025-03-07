@@ -70,3 +70,10 @@ services:
     environment:
       << : *default-environment
       PYTHON_VERSION: '3.12'
+
+  py313:
+    << : *default-django
+    image: docker.io/library/python:3.13-slim-bookworm
+    environment:
+      << : *default-environment
+      PYTHON_VERSION: '3.13'

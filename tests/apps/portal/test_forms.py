@@ -4,7 +4,7 @@
 
     Test portal forms.
 
-    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm
 from inyoka.portal.models import StaticFile, StaticPage
+from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 
 
@@ -198,3 +199,25 @@ class TestLoginForm(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn('Null characters are not allowed.', form.errors['username'])
+
+    def test_longer_email_as_username(self):
+        """
+        Form should be valid with an email that is longer than the maximum allowed length
+        of a username.
+        """
+        data = {'username': 'xxxx-xxxxxxx.xxxxxxx@inyoka-test.test', 'password': 'foo'}
+
+        User.objects.register_user('user', email=data['username'], password=data['password'], send_mail=False)
+
+        form = self.form(None, data)
+
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.errors, {})
+
+    def test_too_long_email_as_username(self):
+        data = {'username': f"{256 * 'x'}@inyoka.test", 'password': 'foo'}
+
+        form = self.form(None, data)
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors,  {'username': ['Ensure this value has at most 254 characters (it has 268).']})

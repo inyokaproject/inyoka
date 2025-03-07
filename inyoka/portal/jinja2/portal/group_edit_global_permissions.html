@@ -5,7 +5,7 @@
 
     Edit the permission of a group within ikhaya, portal, pastebin and planet.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
@@ -19,7 +19,7 @@
 {% block content %}
   {{ form.non_field_errors() }}
 
-  <form class="usercp_form" method="post" action="">
+  <form class="usercp_form -no-bold-label" method="post" action="">
     {{ csrf_input }}
     {% for field in form %}
       {{ field.errors }}

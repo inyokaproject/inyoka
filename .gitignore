@@ -18,7 +18,10 @@ bdd_screenshots
 .idea
 *.log
 
+*.pot
+
 *.css
+!docs/_static/css/*.css
 *.gz
 *.min.js
 *.py[cod]

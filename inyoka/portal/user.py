@@ -5,13 +5,12 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
 import secrets
 import string
-from datetime import datetime
 from json import dumps, loads
 
 from django.conf import settings
@@ -31,9 +30,11 @@ from django.db import models, transaction
 from django.db.models.functions import Upper
 from django.dispatch import receiver
 from django.template.loader import render_to_string
+from django.utils import timezone as dj_timezone
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
+from django.views.decorators.debug import sensitive_variables
 from guardian.mixins import GuardianUserMixin
 from guardian.shortcuts import get_perms
 
@@ -69,7 +70,7 @@ def reactivate_user(id, email, status):
     user.email = email
     user.status = status
 
-    if user.banned_until and user.banned_until < datetime.utcnow():
+    if user.banned_until and user.banned_until < dj_timezone.now():
         # User was banned but the ban time exceeded
         user.status = User.STATUS_ACTIVE
         user.banned_until = None
@@ -169,6 +170,7 @@ def reset_email(id, email):
     return _('Your email address was reset.')
 
 
+@sensitive_variables('message')
 def send_activation_mail(user):
     """send an activation mail"""
     message = render_to_string('mails/activation_mail.txt', {
@@ -196,7 +198,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, username, email, password=None):
-        now = datetime.utcnow()
+        now = dj_timezone.now()
         user = self.model(username=username, email=email.strip().lower(),
                           status=User.STATUS_INACTIVE, date_joined=now, last_login=now)
 
@@ -281,7 +283,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                                  default=STATUS_INACTIVE,
                                  choices=STATUS_CHOICES)
     date_joined = models.DateTimeField(verbose_name=gettext_lazy('Member since'),
-                                       default=datetime.utcnow)
+                                       default=dj_timezone.now)
 
     banned_until = models.DateTimeField(verbose_name=gettext_lazy('Banned until'),
                                         null=True, blank=True,
@@ -488,7 +490,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                 return False
             else:
                 # user banned for a specific period of time
-                if self.banned_until >= datetime.utcnow():
+                if self.banned_until >= dj_timezone.now():
                     return False
                 else:
                     # period of time gone, reset status
@@ -566,7 +568,7 @@ class UserPage(models.Model):
 
 @receiver(user_logged_in)
 def update_user_flags(sender, request, user, **kwargs):
-    user.last_login = datetime.utcnow()
+    user.last_login = dj_timezone.now()
     user.save(update_fields=['last_login'])
     tz = user.settings.get('timezone')
     if tz and tz != settings.TIME_ZONE:

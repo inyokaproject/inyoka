@@ -4,23 +4,28 @@
 
     Test Ikhaya views.
 
-    :copyright: (c) 2012-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import datetime
 import zoneinfo
+from unittest.mock import patch
 
 import feedparser
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory
+from django.utils import timezone as dj_timezone
 from django.utils.dateparse import parse_datetime
 from freezegun import freeze_time
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Report, Suggestion
-from inyoka.ikhaya.views import event_delete, events
+from inyoka.ikhaya.views import detail, event_delete, event_edit, events, index
+from inyoka.portal.models import PrivateMessage, PrivateMessageEntry, Subscription
 from inyoka.portal.user import User
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient, TestCase
@@ -40,12 +45,11 @@ class TestViews(TestCase):
 
         self.cat = Category.objects.create(name="Categrory")
         self.article = Article.objects.create(author=self.admin, subject="Subject",
-                            text="Text", pub_date=datetime.datetime.today().date(),
-                            pub_time=datetime.datetime.now().time(), category=self.cat)
+                            text="Text", category=self.cat)
         self.comment = Comment.objects.create(article=self.article, text="Text",
-                            author=self.user, pub_date=datetime.datetime.now())
+                            author=self.user, pub_date=dj_timezone.now())
         self.report = Report.objects.create(article=self.article, text="Text",
-                            author=self.user, pub_date=datetime.datetime.now())
+                            author=self.user, pub_date=dj_timezone.now())
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
@@ -110,11 +114,11 @@ class TestViews(TestCase):
         gravatar_url_part = 'https://www.gravatar.com/avatar/ca39ffdca4bd97c3a6c29a4c8f29b7dc'
 
         a = Article.objects.create(author=self.admin, subject="Subject 2",
-                            text="Text 3", pub_date=datetime.datetime.today().date(),
-                            pub_time=datetime.datetime.now().time(), category=self.cat)
+                                   text="Text 3", category=self.cat,
+                                   )
         for u in (user_w, user_wo, user_g):
             Comment.objects.create(article=a, text="Comment by %s" % u.username,
-                            author=u, pub_date=datetime.datetime.now())
+                            author=u, pub_date=dj_timezone.now())
 
         response = self.client.get("/%s/%s" % (a.stamp, a.slug), follow=True)
         self.assertContains(response, avatar_url, count=1)
@@ -128,65 +132,1251 @@ class TestViews(TestCase):
 
     def test_add_event_without_data(self):
         response = self.client.post('/event/suggest/', {'confirm': True})
-        self.assertContains(response, 'date<ul class="errorlist">', 1)
-        self.assertContains(response, 'name<ul class="errorlist">', 1)
-        self.assertContains(response, 'errorlist', 3)
+        self.assertContains(response, 'name<ul class="errorlist"', 1)
+        self.assertContains(response, 'start<ul class="errorlist"', 1)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
+        self.assertContains(response, 'errorlist', 7)
 
     def test_add_event_without_name(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'confirm': True})
+        data = {
+            'start_0': '2015-05-01',
+            'start_1': '12:00',
+            'end_0': '2015-05-02',
+            'end_1': '13:00',
+            'confirm': True
+        }
+
+        response = self.client.post('/event/suggest/', data)
         self.assertContains(response, 'name<ul class="errorlist"', 1)
-        self.assertContains(response, 'errorlist', 2)
+        self.assertContains(response, 'errorlist', 3)
 
     def test_add_event_with_name_startdate_enddate(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '12:00',
+            'end_0': '2015-05-02',
+            'end_1': '13:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
         self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddate_before_startdate(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
-        self.assertContains(response, 'enddate<ul class="errorlist">', 1)
-        self.assertContains(response, 'errorlist', 2)
-
-    def test_add_event_with_name_and_startdate(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
-        self.assertEqual(response.status_code, 302)
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-06-01',
+            'start_1': '12:00',
+            'end_0': '2015-05-02',
+            'end_1': '13:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
+        self.assertContains(response, 'errorlist', 3)
 
     def test_add_event_with_name_startdatetime_enddatetime_midnight(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'time': datetime.time(0, 0, 0),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'endtime': datetime.time(0, 0, 0),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '00:00',
+            'end_0': '2015-05-02',
+            'end_1': '00:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
         self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_startdatetime_enddatetime(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'time': datetime.time(10, 0, 0),
-                                                        'enddate': datetime.date(2015, 5, 2),
-                                                        'endtime': datetime.time(11, 0, 0),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '10:00',
+            'end_0': '2015-05-02',
+            'end_1': '11:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
         self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddatetime_before_startdatetime(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
-                                                        'time': datetime.time(10, 0, 0),
-                                                        'enddate': datetime.date(2015, 5, 1),
-                                                        'endtime': datetime.time(9, 0, 0),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
-        self.assertContains(response, 'endtime<ul class="errorlist">', 1)
-        self.assertContains(response, 'errorlist', 2)
+        data = {
+            'name': 'TestEvent',
+            'start_0': '2015-05-01',
+            'start_1': '14:00',
+            'end_0': '2015-05-01',
+            'end_1': '09:00',
+            'confirm': True
+        }
+        response = self.client.post('/event/suggest/', data)
+        self.assertContains(response, 'end<ul class="errorlist"', 1)
+        self.assertContains(response, 'errorlist', 3)
+
+
+class TestIndex(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get('')
+        self.assertEqual(response.status_code, 200)
+
+    def test_annotated_subscription_status__subscription_exists(self):
+        Subscription(user=self.admin, content_object=self.article).save()
+
+        response = self.client.get('')
+        self.assertEqual(len(response.context['articles']), 1)
+        self.assertTrue(response.context['articles'][0].subscribed)
+
+    def test_annotated_subscription_status__no_subscription_exists(self):
+        # no subscription exists
+
+        response = self.client.get('')
+        self.assertEqual(len(response.context['articles']), 1)
+        self.assertFalse(response.context['articles'][0].subscribed)
+
+    def test_annotated_subscription_status__anonymous(self):
+        self.article.public = True
+        self.article.save()
+
+        self.client.logout()
+
+        response = self.client.get('')
+        self.assertEqual(len(response.context['articles']), 1)
+        self.assertFalse(response.context['articles'][0].subscribed)
+
+    def test_queries_needed(self):
+        # use a normal user to prevent some queries for e.g. report numbers
+        self.client.login(username='user', password='user')
+
+        self.article.public = True
+        self.article.save()
+
+        Article.objects.create(
+            author=self.user,
+            subject="a2Subject",
+            intro="a2Intro",
+            text="a2Text",
+            publication_datetime=datetime.datetime(2005,2, 10,
+                                                   12, 0,
+                                                   tzinfo=datetime.timezone.utc),
+            category=self.cat,
+            public=True,
+        )
+
+        with self.assertNumQueries(10):
+            self.client.get('')
+
+        # second request -> cache populated
+        with self.assertNumQueries(5):
+            self.client.get('')
+
+    def test_month(self):
+        article2 = Article.objects.create(author=self.admin, subject="a2Subject",
+                                              intro="a2Intro", text="a2Text",
+                                              publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.timezone.utc),
+                                              category=self.cat)
+
+        response = self.client.get('/2005/2/')
+        self.assertContains(response, article2.subject)
+        self.assertNotContains(response, self.article.subject)
+
+    def test_category(self):
+        cat2 = Category.objects.create(name="Categrory2")
+        article2 = Article.objects.create(author=self.admin, subject="a2Subject",
+                                              intro="a2Intro", text="a2Text",
+                                              category=cat2)
+
+        response = self.client.get(f'/category/{self.cat.slug}/')
+        self.assertContains(response, self.article.subject)
+        self.assertNotContains(response, article2.subject)
+
+    def test_second_page(self):
+        for i in range(2, 20):
+            Article.objects.create(author=self.admin, subject=f"a{i}Subject",
+                               intro=f"a{i}Intro", text=f"a{i}Text",
+                               publication_datetime=datetime.datetime(2005, 2, i,12, 0, tzinfo=datetime.timezone.utc),
+                               category=self.cat)
+
+        article_last = Article.objects.create(author=self.admin, subject="aLastSubject",
+                               intro="aLastIntro", text="aLastText",
+                               publication_datetime=datetime.datetime(2004, 5, 1, 13, 0, tzinfo=datetime.timezone.utc),
+                               category=self.cat)
+
+        response = self.client.get('/2/')
+        self.assertContains(response, article_last.subject)
+        self.assertNotContains(response, self.article.subject)
+
+        response = self.client.get(f'/category/{article_last.category.slug}/2/')
+        self.assertContains(response, article_last.subject)
+        self.assertNotContains(response, self.article.subject)
+
+    def test_pagination__with_year_month(self):
+        response = self.client.get(f'/{self.article.local_pub_datetime.year}/{self.article.local_pub_datetime.month}/1/')
+        self.assertContains(response, self.article.subject)
+
+    def test_article_content(self):
+        response = self.client.get('')
+        self.assertContains(response, self.article.subject)
+        self.assertContains(response, self.article.intro)
+        self.assertNotContains(response, self.article.text)
+
+    def test_full_article_content(self):
+        urls = ('/full/',
+                '/full/1/',
+                f'/{self.article.local_pub_datetime.year}/{self.article.local_pub_datetime.month}/full/',
+                f'/category/{self.article.category.slug}/full/',
+                f'/category/{self.article.category.slug}/full/1/',
+                f'/{self.article.local_pub_datetime.year}/{self.article.local_pub_datetime.month}/full/1/',
+                )
+
+        for u in urls:
+            with self.subTest(url=u):
+                response = self.client.get(u)
+                self.assertContains(response, self.article.text, count=1, html=True)
+
+    def test_anonymous_user__no_unpublished_articles(self):
+        article_public = Article.objects.create(author=self.admin, subject="a2Subject",
+                                          intro="a2Intro", text="a2Text",
+                                          publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.timezone.utc),
+                                          category=self.cat,
+                                          public=True)
+
+        factory = RequestFactory()
+        request = factory.get('/')
+        request.user = User.objects.get_anonymous_user()
+        response = index(request)
+        self.assertContains(response, article_public.subject)
+        self.assertNotContains(response, self.article.subject)
+
+    def test_order_of_articles(self):
+        old_public = Article.objects.create(author=self.admin, subject="a2Subject",
+                                                intro="a2Intro", text="a2Text",
+                                                publication_datetime=datetime.datetime(2005, 2, 10,12, 0, tzinfo=datetime.timezone.utc),
+                                                category=self.cat,
+                                                public=True)
+
+        public = Article.objects.create(author=self.admin, subject="aPublicSubject",
+                                          intro="aPublicIntro", text="aPublicText",
+                                          publication_datetime=datetime.datetime(2024, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
+                                          category=self.cat,
+                                          public=True)
+
+        public_same_day = Article.objects.create(author=self.admin, subject="aPublic2Subject",
+                                          intro="aPublic2Intro", text="aPublic2Text",
+                                          publication_datetime=datetime.datetime(2024, 2, 10,20, 0, tzinfo=datetime.timezone.utc),
+                                          category=self.cat,
+                                          public=True)
+
+        updated = Article.objects.create(author=self.admin, subject="aUpdateSubject",
+                                         intro="aUpdateIntro", text="aUpdateText",
+                                         publication_datetime=datetime.datetime(2023, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
+                                         updated=datetime.datetime(2024, 2, 11, 21, 0, tzinfo=datetime.timezone.utc),
+                                         category=self.cat,
+                                         public=True)
+
+        old_draft = Article.objects.create(author=self.admin, subject="aOldDraftSubject",
+                                                intro="aOldDraftIntro", text="aOldDraftText",
+                                                publication_datetime=datetime.datetime(2005, 2, 10, 20, 0, tzinfo=datetime.timezone.utc),
+                                                category=self.cat,
+                                                public=False)
+
+        response = self.client.get('')
+        self.assertListEqual(list(response.context['articles']),
+                              [self.article, old_draft, updated, public_same_day, public, old_public])
+
+
+class TestArticleDetail(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_existing_article_status_code(self):
+        response = self.client.get('/1785/5/8/goo/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_user_views_unpublished_article(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_anonymous_user_http_post_not_allowed(self):
+        factory = RequestFactory()
+        request = factory.post(f'/{self.article.stamp}/{self.article.slug}/', {})
+        request.user = User.objects.get_anonymous_user()
+
+        self.article.refresh_from_db() # force UTC for datetimes
+        with self.assertRaises(PermissionDenied):
+            detail(request,
+                   self.article.publication_datetime.year,
+                   self.article.publication_datetime.month,
+                   self.article.publication_datetime.day,
+                   self.article.slug,
+                   )
+
+    def test_comments_disabled__no_http_post_possible(self):
+        self.article.comments_enabled = False
+        self.article.save()
+
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/', {})
+        self.assertEqual(response.status_code, 403)
+
+    def test_preview_rendered(self):
+        canary_text = 'canary6718'
+
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/', {'preview': True, 'text': canary_text})
+        self.assertContains(response, canary_text, count=2, html=True)
+
+    def test_post_new_comment(self):
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/',
+                                    {'text': 'my great new text'}, follow=True)
+
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/a1subject/#comment_1')
+        self.assertEqual(Comment.objects.count(), 1)
+        self.assertEqual(Comment.objects.get().text, 'my great new text')
+
+
+class TestArticleDelete(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/delete/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_existing_article__status_code(self):
+        response = self.client.get('/1785/5/8/goo/delete/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_valid_month__status_code(self):
+        response = self.client.get('/1785/a/8/goo/delete/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_user___no_permission_http_403(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/delete/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_unpublish(self):
+        self.article.public = True
+        self.article.save()
+
+        self.client.post(f'/{self.article.stamp}/{self.article.slug}/delete/', data={'unpublish': True})
+
+        self.article.refresh_from_db()
+        self.assertFalse(self.article.public)
+
+    def test_cancel(self):
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/delete/', data={'cancel': True}, follow=True)
+        self.assertContains(response, 'was canceled', count=1)
+
+    def test_delete(self):
+        self.client.post(f'/{self.article.stamp}/{self.article.slug}/delete/', data={})
+        self.assertEqual(Article.objects.count(), 0)
+
+
+class TestArticleEdit(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/edit/', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_existing_article__status_code(self):
+        response = self.client.get('/1785/5/8/goo/edit/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_valid_month__status_code(self):
+        response = self.client.get('/1785/a/8/goo/edit/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_lock(self):
+        # request as admin
+        self.client.get(f'/{self.article.stamp}/{self.article.slug}/edit/')
+
+        # both admin and user should be able to edit articles
+        self.user.is_superuser = True
+        self.user.save()
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/edit/')
+        self.assertContains(response, 'edited by “admin”!', count=1)
+
+    def test_suggestion__http_post(self):
+        suggestion = Suggestion.objects.create(author=self.admin,
+                                                    title='SugTitle',
+                                                    intro='SugIntro',
+                                                    text='SugText',
+                                                    notes='SugNotes',
+                                                    )
+
+        data = {
+            'author': self.admin.username,
+            'subject': 'aNewSubject',
+            'intro': 'aNewIntro',
+            'text': 'aNewText',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
+            'category': self.cat.pk,
+            'send': True,
+        }
+        self.client.post(f'/article/new/{suggestion.id}/', data=data)
+
+        self.assertEqual(Article.objects.count(), 2)
+        self.assertEqual(Suggestion.objects.count(), 0)
+
+    def test_suggestion__http_get(self):
+        suggestion = Suggestion.objects.create(author=self.admin,
+                                                    title='SugTitle',
+                                                    intro='SugIntro',
+                                                    text='SugText',
+                                                    notes='SugNotes',
+                                                    )
+        response = self.client.get(f'/article/new/{suggestion.id}/')
+        self.assertContains(response, suggestion.title, count=1)
+        self.assertContains(response, suggestion.text, count=1)
+        self.assertContains(response, suggestion.intro, count=1)
+
+    def test_edit_article__not_public(self):
+        data = {
+            'author': self.admin.username,
+            'subject': self.article.subject,
+            'intro': 'aNewIntro',
+            'text': 'aNewText',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
+            'category': self.cat.pk,
+            'send': True,
+        }
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/edit/',
+                                    data=data,
+                                    follow=True)
+        self.assertContains(response, 'was saved', count=1)
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/2024/12/31/{self.article.slug}/')
+
+    def test_edit_article__not_public__slug_changed(self):
+        data = {
+            'author': self.admin.username,
+            'subject': 'aNewSubject',
+            'intro': 'aNewIntro',
+            'text': 'aNewText',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
+            'category': self.cat.pk,
+            'send': True,
+        }
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/edit/',
+                                    data=data,
+                                    follow=True)
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/2024/12/31/anewsubject/')
+
+    def test_edit_article__public__http_get(self):
+        self.article.public = True
+        self.article.save()
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/edit/',
+                                   follow=True)
+        self.assertNotContains(response, 'slug')
+
+    def test_edit_article__public__http_post(self):
+        self.article.public = True
+        self.article.save()
+
+        data = {
+            'author': self.admin.username,
+            'subject': 'aNewSubject',
+            'intro': 'aNewIntro',
+            'text': 'aNewText',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
+            'category': self.cat.pk,
+            'send': True,
+        }
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/edit/',
+                                    data=data,
+                                    follow=True)
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/a1subject/')
+
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.slug, 'a1subject')
+        self.assertEqual(self.article.subject, 'aNewSubject')
+
+    def test_preview(self):
+        response = self.client.post('/article/new/', data={'preview': True, 'intro': 'ArticlePrevIntro', 'text': 'ArticlePrevText'})
+        self.assertContains(response, 'ArticlePrevIntro', count=2)
+        self.assertContains(response, 'ArticlePrevText', count=2)
+
+    def test_create_new_article(self):
+        data = {
+            'author': self.admin.username,
+            'subject': 'aNewSubject',
+            'intro': 'aNewIntro',
+            'text': 'aNewText',
+            'publication_datetime_0': '2024-12-31',
+            'publication_datetime_1': '23:55:00',
+            'category': self.cat.pk,
+            'send': True,
+        }
+        response = self.client.post('/article/new/', data=data, follow=True)
+
+        self.assertEqual(Article.objects.count(), 2)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/2024/12/31/anewsubject/edit/')
+
+    def test_create_new_article__http_get(self):
+        response = self.client.get('/article/new/', follow=True)
+
+        self.assertContains(response, 'name="slug"', count=1)
+        self.assertNotContains(response, 'name="updated"')
+
+
+class TestArticleSubscribe(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_subscribe(self):
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/subscribe/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Subscription.objects.count(), 1)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/{self.article.slug}/')
+
+    def test_not_existing_article__status_code(self):
+        response = self.client.get('/1785/5/8/goo/subscribe/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_valid_month__status_code(self):
+        response = self.client.get('/1785/a/8/goo/subscribe/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_user__http_403(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/subscribe/')
+        self.assertEqual(response.status_code, 403)
+
+
+class TestArticleUnsubscribe(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_unsubscribe(self):
+        Subscription(user=self.admin, content_object=self.article).save()
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/unsubscribe/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Subscription.objects.count(), 0)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/{self.article.slug}/')
+
+    def test_not_existing_article__status_code(self):
+        response = self.client.get('/1785/5/8/goo/unsubscribe/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_valid_month__status_code(self):
+        response = self.client.get('/1785/a/8/goo/unsubscribe/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_user__no_permission_needed(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/unsubscribe/', follow=True)
+        # target status code 403 is OK, as the user can only unsubscribe, but not view the article
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/{self.article.slug}/', target_status_code=403)
+
+
+class TestReportNew(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/new_report/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_existing_article_status_code(self):
+        response = self.client.get('/1785/5/8/goo/new_report/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_user_report_unpublished_article(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/new_report/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_preview_rendered(self):
+        canary_text = 'canary6718'
+
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/new_report/', {'preview': True, 'text': canary_text})
+        self.assertContains(response, canary_text, count=2, html=True)
+
+    def test_post_new_report(self):
+        response = self.client.post(f'/{self.article.stamp}/{self.article.slug}/new_report/',
+                                    {'send': True, 'text': 'my great new text'}, follow=True)
+
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/a1subject/reports/')
+        self.assertEqual(Report.objects.count(), 1)
+        self.assertEqual(Report.objects.get().text, 'my great new text')
+        self.assertEqual(Report.objects.get().article, self.article)
+
+
+class TestReports(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/reports/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_not_existing_article_status_code(self):
+        response = self.client.get('/1785/5/8/goo/reports/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_user_report_unpublished_article(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/reports/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_reports_shown(self):
+        unsolved_report = Report.objects.create(
+            article=self.article,
+            text="unsolvedReport",
+            author=self.user,
+            pub_date=dj_timezone.now(),
+            solved=False,
+        )
+        solved_report = Report.objects.create(
+            article=self.article,
+            text="solved_report",
+            author=self.admin,
+            pub_date=dj_timezone.now(),
+            solved=True,
+        )
+
+        response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/reports/')
+        self.assertContains(response, unsolved_report.text)
+        self.assertContains(response, solved_report.text)
+
+
+class TestReportList(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_unsolved_report_shown(self):
+        unsolved_report = Report.objects.create(
+            article=self.article,
+            text="unsolvedReport",
+            author=self.user,
+            pub_date=dj_timezone.now(),
+            solved=False,
+        )
+
+        response = self.client.get('/reports/')
+        self.assertContains(response, unsolved_report.text)
+
+    def test_solved_report_not_shown(self):
+        solved_report = Report.objects.create(
+            article=self.article,
+            text="solved_report",
+            author=self.admin,
+            pub_date=dj_timezone.now(),
+            solved=True,
+        )
+
+        response = self.client.get('/reports/')
+        self.assertNotContains(response, solved_report.text)
+
+    def test_deleted_report_not_shown(self):
+        deleted_report = Report.objects.create(
+            article=self.article,
+            text="del_report",
+            author=self.admin,
+            pub_date=dj_timezone.now(),
+            deleted=True,
+        )
+
+        response = self.client.get('/reports/')
+        self.assertNotContains(response, deleted_report.text)
+
+    def test_user__permission_missing(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get('/reports/')
+        self.assertEqual(response.status_code, 403)
+
+
+class TestCommentEdit(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Categrory")
+        self.article = Article.objects.create(author=self.admin, subject="a1Subject",
+                                              intro="a1Intro", text="a1Text",
+                                              category=self.cat)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+        self.comment = Comment.objects.create(article=self.article, text="Text",
+                                              author=self.user,
+                                              pub_date=dj_timezone.now(),)
+
+    def test_not_existing_comment(self):
+        response = self.client.get('/comment/1337/edit/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_user__is_comment_author__permission_missing(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/comment/{self.comment.id}/edit/', follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/a1subject/', target_status_code=403)
+
+    def test_user__permission_missing(self):
+        self.comment.author = self.admin
+        self.comment.save()
+
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/comment/{self.comment.id}/edit/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_status_code(self):
+        response = self.client.get(f'/comment/{self.comment.id}/edit/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_comment(self):
+        response = self.client.post(f'/comment/{self.comment.id}/edit/', data={'text': 'newCommentText'}, follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/a1subject/#comment_1')
+
+        self.comment.refresh_from_db()
+        self.assertEqual(self.comment.text, 'newCommentText')
+
+
+class TestArchive(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Category")
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_no_article(self):
+        response = self.client.get('/archive/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_months(self):
+        for i in range(1, 12):
+            Article.objects.create(author=self.admin, subject=f"a{i}Subject",
+                                   intro=f"a{i}Intro", text=f"a{i}Text",
+                                   publication_datetime=datetime.datetime(2005, i, 2, 12, 0, tzinfo=datetime.timezone.utc),
+                                   category=self.cat,
+                                   public=True,
+                                   )
+
+        Article.objects.create(author=self.user, subject="aLastSubject",
+                               intro="aLastIntro", text="aLastText",
+                               publication_datetime=datetime.datetime(2004, 5, 12, 13, 0, tzinfo=datetime.timezone.utc),
+                               category=self.cat,
+                               public=True,
+                               )
+
+        response = self.client.get('/archive/')
+        self.assertEqual(list(response.context['months']),
+                         [datetime.date(2004, 5, 1),
+                          datetime.date(2005, 1, 1),
+                          datetime.date(2005, 2, 1),
+                          datetime.date(2005, 3, 1),
+                          datetime.date(2005, 4, 1),
+                          datetime.date(2005, 5, 1),
+                          datetime.date(2005, 6, 1),
+                          datetime.date(2005, 7, 1),
+                          datetime.date(2005, 8, 1),
+                          datetime.date(2005, 9, 1),
+                          datetime.date(2005, 10, 1),
+                          datetime.date(2005, 11, 1),
+                          ]
+                         )
+
+
+class TestSuggestionAssign(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Category")
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+        self.suggestion = Suggestion.objects.create(author=self.admin,
+                                                    title='SugTitle',
+                                                    intro='SugIntro',
+                                                    text='SugText',
+                                                    notes='SugNotes',
+                                                    )
+
+    def test_not_existing_suggestion(self):
+        response = self.client.get(f'/suggest/1337/assign/{self.admin}/', follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+        self.assertContains(response, 'does not exist', count=1)
+
+    def test_no_permission(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/suggest/{self.suggestion.id}/assign/{self.admin}/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_assignee(self):
+        self.suggestion.owner = self.admin
+        self.suggestion.save()
+
+        self.client.get(f'/suggest/{self.suggestion.id}/assign/-/')
+
+        self.suggestion.refresh_from_db()
+        self.assertEqual(self.suggestion.owner, None)
+
+    def test_assign_yourself(self):
+        self.client.get(
+            f'/suggest/{self.suggestion.id}/assign/{self.admin}/')
+
+        self.suggestion.refresh_from_db()
+        self.assertEqual(self.suggestion.owner, self.admin)
+
+    def test_assign_other_user_fails(self):
+        self.client.get(
+            f'/suggest/{self.suggestion.id}/assign/{self.user}/')
+
+        self.suggestion.refresh_from_db()
+        self.assertEqual(self.suggestion.owner, None)
+
+
+class TestSuggestDelete(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user('admin', 'admin@inyoka.test', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Category")
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+        self.suggestion = Suggestion.objects.create(author=self.admin,
+                                                    title='SugTitle',
+                                                    intro='SugIntro',
+                                                    text='SugText',
+                                                    notes='SugNotes',
+                                                    )
+
+    def test_status_code(self):
+        response = self.client.get(f'/suggest/{self.suggestion.id}/delete/', follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+
+    def test_not_existing_suggestion__http_get(self):
+        response = self.client.get('/suggest/1337/delete/', follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+        self.assertContains(response, 'does not exist', count=1)
+
+    def test_not_existing_suggestion__http_post(self):
+        response = self.client.post('/suggest/1337/delete/', data={}, follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+        self.assertContains(response, 'does not exist', count=1)
+
+    def test_no_permission(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(f'/suggest/{self.suggestion.id}/delete/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_cancel(self):
+        response = self.client.post(f'/suggest/{self.suggestion.id}/delete/',
+                                   data={'cancel': True},
+                                   follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+        self.assertEqual(Suggestion.objects.count(), 1)
+
+    def test_delete(self):
+        response = self.client.post(f'/suggest/{self.suggestion.id}/delete/',
+                                   data={},
+                                   follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+        self.assertEqual(Suggestion.objects.count(), 0)
+
+    def test_delete__private_message_send(self):
+        response = self.client.post(f'/suggest/{self.suggestion.id}/delete/',
+                                   data={'note': 'SuggestionNoteRejected'},
+                                   follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+        self.assertEqual(Suggestion.objects.count(), 0)
+
+        self.assertEqual(PrivateMessage.objects.count(), 1)
+        self.assertEqual(PrivateMessageEntry.objects.count(), 2)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'inyokaproject.org: New private message from admin: Article suggestion rejected')
+
+
+class TestSuggestEdit(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user('admin', 'admin@inyoka.test', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Category")
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_status_code(self):
+        response = self.client.get('/suggest/new/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_no_permission(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get('/suggest/new/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_preview(self):
+        response = self.client.post('/suggest/new/',
+                                    data={'text': 'SugPreviewText', 'preview': True})
+        self.assertContains(response, 'SugPreviewText', count=2)
+
+    def test_submit_suggestion(self):
+        response = self.client.post('/suggest/new/',
+                                    data={'title': 'SugTitle',
+                                            'intro': 'SugIntro',
+                                            'text': 'SugText',
+                                            'notes': 'SugNotes',
+                                          }, follow=True)
+        self.assertRedirects(response, href('ikhaya'))
+
+        self.assertEqual(Suggestion.objects.count(), 1)
+        suggestion = Suggestion.objects.get()
+        self.assertEqual(suggestion.author, self.admin)
+
+    @patch('inyoka.ikhaya.views.send_new_suggestion_notifications')
+    def test_submit_suggestion__notification_submitted(self, mock):
+        self.client.post('/suggest/new/',
+                                    data={'title': 'SugTitle',
+                                            'intro': 'SugIntro',
+                                            'text': 'SugText',
+                                            'notes': 'SugNotes',
+                                          }, follow=True)
+
+        suggestion = Suggestion.objects.get()
+        mock.assert_called_once_with(self.admin.pk, suggestion.pk)
+
+
+class TestSuggestions(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user('admin', 'admin@inyoka.test', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Category")
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+        self.suggestion = Suggestion.objects.create(author=self.admin,
+                                                    title='SugTitle',
+                                                    intro='SugIntro',
+                                                    text='SugText',
+                                                    notes='SugNotes',
+                                                    )
+
+    def test_content(self):
+        response = self.client.get('/suggestions/')
+        self.assertContains(response, 'SugTitle')
+
+    def test_no_permission(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get('/suggestions/')
+        self.assertEqual(response.status_code, 403)
+
+
+class TestSubscribe(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user('admin', 'admin@inyoka.test', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Category")
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_subscription_created(self):
+        response = self.client.get('/suggestions/subscribe/', follow=True)
+        self.assertContains(response, 'Notifications on new suggestions')
+
+        # if no exception is raised, it exists
+        Subscription.objects.get_for_user(self.admin, None, ['ikhaya', 'suggestion'])
+
+    def test_subscription_already_exists(self):
+        ct = ContentType.objects.get_by_natural_key(*['ikhaya', 'suggestion'])
+        Subscription(user=self.admin, content_type=ct).save()
+
+        response = self.client.get('/suggestions/subscribe/', follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+
+    def test_no_permission(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get('/suggestions/subscribe/')
+        self.assertEqual(response.status_code, 403)
+
+
+class TestUnsubscribe(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user('admin', 'admin@inyoka.test', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+
+        self.cat = Category.objects.create(name="Category")
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_subscription_removed(self):
+        ct = ContentType.objects.get_by_natural_key(*['ikhaya', 'suggestion'])
+        Subscription(user=self.admin, content_type=ct).save()
+
+        response = self.client.get('/suggestions/unsubscribe/', follow=True)
+        self.assertContains(response, 'No notifications on suggestions')
+
+        with self.assertRaises(Subscription.DoesNotExist):
+            Subscription.objects.get_for_user(self.admin, None, ['ikhaya', 'suggestion'])
+
+    def test_subscription_not_existing(self):
+        with self.assertRaises(Subscription.DoesNotExist):
+            Subscription.objects.get_for_user(self.admin, None, ['ikhaya', 'suggestion'])
+
+        response = self.client.get('/suggestions/unsubscribe/', follow=True)
+        self.assertRedirects(response, href('ikhaya', 'suggestions'))
+
+        with self.assertRaises(Subscription.DoesNotExist):
+            Subscription.objects.get_for_user(self.admin, None, ['ikhaya', 'suggestion'])
+
+    def test_no_permission(self):
+        self.client.login(username='user', password='user')
+
+        response = self.client.get('/suggestions/unsubscribe/')
+        self.assertEqual(response.status_code, 403)
 
 
 class TestEventView(TestCase):
@@ -233,10 +1423,11 @@ class TestEventDelete(TestCase):
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='test', password='test')
 
+        now = datetime.datetime.now(datetime.timezone.utc)
         self.event = Event.objects.create(
             name='Event',
-            date=datetime.datetime.utcnow().date() + datetime.timedelta(days=0),
-            enddate=datetime.datetime.utcnow().date() + datetime.timedelta(days=1),
+            start=now,
+            end=now + datetime.timedelta(days=1),
             author=self.user,
             visible=False
         )
@@ -277,6 +1468,124 @@ class TestEventDelete(TestCase):
     def test_event_delete__cancel(self):
         response = self.client.post(f'/event/{self.event.id}/delete/', data={'cancel': 'cancel'}, follow=True)
         self.assertContains(response, 'Canceled.')
+
+
+class TestEventEdit(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = User.objects.register_user('test', 'test@example.test', password='test', send_mail=False)
+
+        group = Group.objects.create(name='test_event_group')
+        assign_perm('portal.change_event', group)
+        assign_perm('portal.add_event', group)
+        group.user_set.add(self.user)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='test', password='test')
+
+        now = dj_timezone.now()
+        self.event = Event.objects.create(
+            name='Event',
+            start=now,
+            end=now + datetime.timedelta(days=1),
+            author=self.user,
+            visible=False
+        )
+
+    def test_status_code__new_event__http_get(self):
+        response = self.client.get('/event/new/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_status_code__edit_event__http_get(self):
+        response = self.client.get(f'/event/{self.event.id}/edit/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_anonymous_no_permission(self):
+        request = self.factory.get('')
+        request.user = User.objects.get_anonymous_user()
+
+        with self.assertRaises(PermissionDenied):
+            event_edit(request)
+
+    def test_user_no_add_permission(self):
+        group =Group.objects.get(name='test_event_group')
+        remove_perm('portal.add_event', group)
+
+        request = self.factory.get('')
+        request.user = self.user
+
+        with self.assertRaises(PermissionDenied):
+            event_edit(request)
+
+    def test_modify_event__http_post(self):
+        data = {
+            'name': 'EventEdited',
+            'start_0': '2016-01-16',
+            'start_1': '12:00',
+            'end_0': '2016-01-16',
+            'end_1': '13:00',
+        }
+        self.client.post(f'/event/{self.event.id}/edit/', data=data, follow=True)
+
+        self.event.refresh_from_db()
+        self.assertEqual(self.event.name, data['name'])
+
+    def test_new_event__http_post(self):
+        data = {
+            'name': 'New Event',
+            'start_0': '2016-01-16',
+            'start_1': '12:00',
+            'end_0': '2016-01-16',
+            'end_1': '13:00',
+        }
+        response = self.client.post('/event/new/', data=data)
+        self.assertEqual(Event.objects.count(), 2)
+
+        e = Event.objects.exclude(pk=self.event.pk).get()
+        self.assertEqual(e.name, data['name'])
+
+        # dont fetch response, as on different subdomain
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/calendar/2016/01/16/new-event/', fetch_redirect_response=False)
+
+    def test_copy_event__http_get(self):
+        self.event.visible = True
+        self.event.location_town = 'Bärlin (sic)'
+        self.event.save()
+
+        response = self.client.get(f'/event/new/?copy_from={self.event.id}')
+        self.assertContains(response, 'name="name" value="Event"')
+        self.assertContains(response, 'Bärlin')
+
+    def test_copy_event_to_existing_event__http_get(self):
+        """
+        The copy_from parameter can not only be used for new events, it can also
+        populate the form fields of an existing event
+        """
+        self.event.location_town = 'Bärlin (sic)'
+        self.event.save()
+
+        event2 = Event.objects.create(
+            name='SecondEvent',
+            start=dj_timezone.now(),
+            end=dj_timezone.now(),
+            author=self.user,
+            visible=True
+        )
+
+        response = self.client.get(f'/event/{event2.id}/edit/?copy_from={self.event.id}')
+        self.assertContains(response, 'name="name" value="Event"')
+        self.assertContains(response, 'Bärlin')
+
+    def test_copy_event__not_existing(self):
+        response = self.client.get('/event/new/?copy_from=1337')
+        self.assertContains(response, 'because it does not exist')
+
+    def test_copy_event__text_parameter(self):
+        response = self.client.get('/event/new/?copy_from=<script>console.log("foo")</script>')
+        self.assertContains(response, 'is not a number')
 
 
 class TestServices(TestCase):
@@ -327,10 +1636,7 @@ class TestArticleFeeds(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
-        now = self.now
-        today = now.date()
-        time_now = now.time()
+        self.now = dj_timezone.now().replace(microsecond=0)
 
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
@@ -339,10 +1645,9 @@ class TestArticleFeeds(TestCase):
 
         self.cat = Category.objects.create(name="Category")
         self.article = Article.objects.create(author=self.admin, subject="Subject",
-                            text="Text", pub_date=today,
-                            pub_time=time_now, category=self.cat, public=True)
+                            text="Text", category=self.cat, public=True)
         self.comment = Comment.objects.create(article=self.article, text="Text",
-                            author=self.user, pub_date=now)
+                            author=self.user, pub_date=self.now)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
 
@@ -357,16 +1662,12 @@ class TestArticleFeeds(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get('/feeds/full/50/')
 
     def test_multiple_articles(self):
-        today = self.now.date()
-        time_now = self.now.time()
-
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
-                            text="Text 2", pub_date=today,
-                            pub_time=time_now, category=self.cat, public=True)
+                            text="Text 2", category=self.cat, public=True)
 
         response = self.client.get('/feeds/full/10/')
         self.assertIn(self.article.subject, response.content.decode())
@@ -469,9 +1770,7 @@ class TestArticleCategoryFeeds(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
-        self.today = self.now.date()
-        self.time_now = self.now.time()
+        self.now = dj_timezone.now().replace(microsecond=0)
 
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
@@ -480,8 +1779,8 @@ class TestArticleCategoryFeeds(TestCase):
 
         self.cat = Category.objects.create(name="Test Category")
         self.article = Article.objects.create(author=self.admin, subject="Subject",
-                            text="Text", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True)
+                            text="Text", category=self.cat, public=True,
+                            publication_datetime=self.now)
 
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
 
@@ -498,13 +1797,13 @@ class TestArticleCategoryFeeds(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_queries(self):
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             self.client.get(f'/feeds/{self.cat.slug}/full/50/')
 
     def test_multiple_articles(self):
         self.article = Article.objects.create(author=self.admin, subject="Subject 2",
-                            text="Text 2", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True)
+                            text="Text 2", category=self.cat, public=True,
+                            publication_datetime=self.now)
 
         response = self.client.get(f'/feeds/{self.cat.slug}/full/10/')
         self.assertIn(self.article.subject, response.content.decode())
@@ -516,8 +1815,8 @@ class TestArticleCategoryFeeds(TestCase):
         response = self.client.get(f'/feeds/{self.cat.slug}/full/10/')
 
         Article.objects.create(author=self.admin, subject="Another article in another category",
-                               text="Text 2", pub_date=self.today,
-                               pub_time=self.time_now, category=Category.objects.create(name="Another"), public=True)
+                               text="Text 2", category=Category.objects.create(name="Another"), public=True,
+                               publication_datetime=self.now)
 
         self.maxDiff = None
         self.assertXMLEqual(response.content.decode(),
@@ -556,7 +1855,7 @@ class TestCommentsFeed(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.now = dj_timezone.now().replace(microsecond=0)
         self.today = self.now.date()
         self.time_now = self.now.time()
 
@@ -567,8 +1866,7 @@ class TestCommentsFeed(TestCase):
 
         self.cat = Category.objects.create(name="Test Category")
         self.article = Article.objects.create(author=self.admin, subject="Article Subject",
-                            text="Text", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True)
+                            text="Text", category=self.cat, public=True)
 
         self.comment = Comment.objects.create(article=self.article, text="Text",
                             author=self.user, pub_date=self.now)
@@ -639,7 +1937,7 @@ class TestCommentsPerArticleFeed(TestCase):
     def setUp(self):
         super().setUp()
 
-        self.now = datetime.datetime.now().replace(microsecond=0)
+        self.now = dj_timezone.now().replace(microsecond=0)
         self.today = self.now.date()
         self.time_now = self.now.time()
 
@@ -650,8 +1948,7 @@ class TestCommentsPerArticleFeed(TestCase):
 
         self.cat = Category.objects.create(name="Test Category")
         self.article = Article.objects.create(author=self.admin, subject="Article Subject",
-                            text="Text", pub_date=self.today,
-                            pub_time=self.time_now, category=self.cat, public=True, id=1)
+                            text="Text", category=self.cat, public=True, id=1)
 
         self.comment = Comment.objects.create(article=self.article, text="Text",
                             author=self.user, pub_date=self.now)
@@ -712,3 +2009,52 @@ class TestCommentsPerArticleFeed(TestCase):
   </entry>
 </feed>
 ''')
+
+
+class TestCategoryEdit(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user('test', 'test@inyoka.test', password='test', send_mail=False)
+
+        group = Group.objects.create(name='edit_category')
+        assign_perm('ikhaya.change_category', group)
+        group.user_set.add(self.user)
+
+        self.client.login(username='test', password='test')
+
+        self.client.defaults['HTTP_HOST'] = f'ikhaya.{settings.BASE_DOMAIN_NAME}'
+
+    def test_category_new__get__status_code(self):
+        response = self.client.get('/category/new/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_category_new__post__redirect(self):
+        data = {
+            'name': 'foo'
+        }
+
+        response = self.client.post('/category/new/', data=data, follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/category/foo/edit/')
+        self.assertEqual(Category.objects.count(), 1)
+
+    def test_category_edit__get__status_code(self):
+        c = Category.objects.create(name='new')
+        c.refresh_from_db()
+
+        response = self.client.get(f'/category/{c.slug}/edit/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_category_edit__post__redirect(self):
+        c = Category.objects.create(name='new')
+        c.refresh_from_db()
+
+        data = {
+            'name': 'foo'
+        }
+
+        response = self.client.post(f'/category/{c.slug}/edit/', data=data, follow=True)
+        self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/category/new/edit/')

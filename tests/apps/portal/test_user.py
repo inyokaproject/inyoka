@@ -4,16 +4,17 @@
 
     Test some user model functions
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.utils import timezone as dj_timezone
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
@@ -55,7 +56,7 @@ class TestUserModel(TestCase):
                                                  'ban@example.com',
                                                  'pwd',
                                                  False)
-        banned_user.banned_until = datetime.utcnow() - timedelta(days=5)
+        banned_user.banned_until = datetime.now(timezone.utc) - timedelta(days=5)
         deactivate_user(banned_user)
         banned_user.refresh_from_db()
 
@@ -169,21 +170,18 @@ class TestUserHasContent(TestCase):
         self.assertTrue(self.user.has_content())
 
     def test_ikhaya_comment(self):
-        now = datetime.now()
         category = Category.objects.create(name='test_category')
         other_user = User.objects.register_user(
             'other_user',
             'example2@example.com',
             'pwd', False)
         article = Article.objects.create(
-            pub_date=now.date(),
-            pub_time=now.time(),
             author=other_user,
             category=category)
         Comment.objects.create(
             author=self.user,
             article=article,
-            pub_date=now)
+            pub_date=dj_timezone.now())
 
         self.assertTrue(self.user.has_content())
 
@@ -201,12 +199,11 @@ class TestUserHasContent(TestCase):
         """
         Test privatemessage as sender and receiver.
         """
-        now = datetime.now()
         other_user = User.objects.register_user(
             'other_user',
             'example2@example.com',
             'pwd', False)
-        pm = PrivateMessage(author=self.user, pub_date=now)
+        pm = PrivateMessage(author=self.user, pub_date=dj_timezone.now())
         pm.send([other_user])
 
         self.assertTrue(self.user.has_content())
@@ -223,8 +220,8 @@ class TestUserHasContent(TestCase):
         self.assertTrue(self.user.has_content())
 
     def test_event(self):
-        now = datetime.now()
-        Event.objects.create(author=self.user, date=now.date())
+        now = dj_timezone.now()
+        Event.objects.create(author=self.user, start=now, end=now)
 
         self.assertTrue(self.user.has_content())
 

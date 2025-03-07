@@ -1,15 +1,15 @@
 """
     inyoka.planet.tasks
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~
 
     The ``sync`` function should be called periodically to check for new
-    articles.  It checks whether the last syncronization of a blog is more
+    articles.  It checks whether the last synchronization of a blog is more
     than ``PLANET_SYNC_TIME`` ago and updates them.
 
     It'd be ideal if ``sync`` was called every 30 minutes.
 
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -19,12 +19,12 @@ import urllib
 
 # And further patch it so feedparser works :/
 import xml.sax
-from datetime import datetime
+from datetime import datetime, timezone
 from time import time
 
 import feedparser
 from celery import shared_task
-from dateutil.parser import parse as dateutil_parse
+from django.utils import timezone as dj_timezone
 from django.utils.encoding import force_str
 from django.utils.html import escape
 
@@ -39,7 +39,7 @@ make_parser = xml.sax.make_parser
 xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
 
-# set a default timeout. Otherwise fetching some feeds might cause the script
+# set a default timeout. Otherwise, fetching some feeds might cause the script
 # to block forever
 socket.setdefaulttimeout(20.0)
 
@@ -52,22 +52,19 @@ def nl2p(s):
     return '\n'.join('<p>%s</p>' % p for p in _par_re.split(s))
 
 
-def dateutilDateHandler(aDateString):
-    return dateutil_parse(aDateString).utctimetuple()
-
-
-feedparser.registerDateHandler(dateutilDateHandler)
-
-
 @shared_task
 def sync():
+    _sync()
+
+
+def _sync():
     """
-    Performs a synchronization. Articles that are already syncronized aren't
+    Performs a synchronization. Articles that are already synchronized aren't
     touched anymore.
     """
     for blog in Blog.objects.filter(active=True):
         logger.debug('syncing blog %s' % blog.name)
-        # parse the feed. feedparser.parse will never given an exception
+        # parse the feed. feedparser.parse will never give an exception
         # but the bozo bit might be defined.
         try:
             feed = feedparser.parse(blog.feed_url)
@@ -137,8 +134,8 @@ def sync():
                 continue
 
             # convert the time tuples to datetime objects.
-            pub_date = datetime(*pub_date[:6])
-            updated = datetime(*updated[:6])
+            pub_date = datetime(*pub_date[:6], tzinfo=timezone.utc)
+            updated = datetime(*updated[:6], tzinfo=timezone.utc)
 
             # get the blog author or fall back to blog default.
             author = entry.get('author') or blog_author
@@ -168,5 +165,5 @@ def sync():
                 logger.debug(' synced entry %r' % guid)
             except Exception as exc:
                 logger.debug(' Error on entry %r: %r' % (guid, exc))
-        blog.last_sync = datetime.utcnow()
+        blog.last_sync = dj_timezone.now()
         blog.save()

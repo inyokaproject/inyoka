@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-11-17 13:35+0100\n"
+"POT-Creation-Date: 2025-01-21 22:24+0100\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -70,8 +70,8 @@ msgstr "Artikel"
 msgid "Article suggestion"
 msgstr "Artikelvorschlag"
 
-msgid "Article suggestion deleted"
-msgstr "Artikelvorschlag gelöscht"
+msgid "Article suggestion rejected"
+msgstr "Artikelvorschlag abgelehnt"
 
 msgid "Article suggestions"
 msgstr "Artikelvorschläge"
@@ -123,9 +123,6 @@ msgstr "Kommentare - Einleitung"
 msgid "Concerns article “<a href=\"%(link)s\">%(article)s</a>”"
 msgstr "Betrifft Artikel „<a href=\"%(link)s\">%(article)s</a>“"
 
-msgid "Coordinates:"
-msgstr "Koordinaten:"
-
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -137,12 +134,6 @@ msgstr "Aktuelle Artikel"
 
 msgid "Date"
 msgstr "Datum"
-
-msgid "Date (from):"
-msgstr "Datum (von):"
-
-msgid "Date (to):"
-msgstr "Datum (bis):"
 
 msgid "Degree of latitude"
 msgstr "Breitengrad"
@@ -164,7 +155,7 @@ msgstr "Löschen des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde abg
 msgid "Describe here briefly the discovered mistake. Please make sure that the mistake was not <a href=\"%(link)s\">already reported</a>."
 msgstr "Bitte beschreibe hier kurz die im Artikel gefundenen Fehler. Bitte achte darauf, dass der Fehler nicht bereits <a href=\"%(link)s\">gemeldet wurde</a>."
 
-msgid "Description:"
+msgid "Description"
 msgstr "Beschreibung"
 
 msgid "Display event?"
@@ -214,6 +205,9 @@ msgstr "Bearbeite Artikel „<a href=\"%(link)s\" title=\"Artikel anzeigen\">%(a
 msgid "Edit comment"
 msgstr "Kommentar bearbeiten"
 
+msgid "End date"
+msgstr "Enddatum"
+
 msgid "Entire archive"
 msgstr "Ganzes Archiv"
 
@@ -225,9 +219,6 @@ msgstr "Erläuterung für den Autor des Vorschlages:"
 
 msgid "Full"
 msgstr "Komplett"
-
-msgid "General"
-msgstr "Allgemein"
 
 msgid "Headline"
 msgstr "Überschrift"
@@ -270,20 +261,11 @@ msgstr "Bilder können in dem Artikelvorschlag leider nicht direkt eingebunden w
 msgid "Last change"
 msgstr "Letzte Änderung"
 
-msgid "Last update"
-msgstr "Letzte Aktualisierung"
-
 msgid "Last update:"
 msgstr "Letzte Aktualisierung:"
 
-msgid "Latitude:"
-msgstr "Breitengrad:"
-
 msgid "Leave this field empty if the suggestion should be deleted without an explanation."
 msgstr "Lasse dieses Feld leer, wenn du den Vorschlag ohne eine Erläuterung löschen möchtest."
-
-msgid "Longitude:"
-msgstr "Längengrad:"
 
 msgid "Mark as solved"
 msgstr "Als gelöst markieren"
@@ -293,9 +275,6 @@ msgstr "Als ungelöst markieren"
 
 msgid "Name"
 msgstr "Name"
-
-msgid "Name:"
-msgstr "Name:"
 
 msgid "New Article"
 msgstr "Neuer Artikel"
@@ -341,11 +320,17 @@ msgstr "Du wirst über neue Vorschläge benachrichtigt."
 msgid "Notify me about new article suggestions"
 msgstr "Benachrichtige mich bei neuen Artikelvorschlägen"
 
+msgid "Parameter \"copy_from\" is not a number."
+msgstr "Parameter \"copy_from\" beinhaltet keine Nummer."
+
 msgid "Preview"
 msgstr "Vorschau"
 
 msgid "Public"
 msgstr "Veröffentlicht"
+
+msgid "Publication time"
+msgstr "Veröffentlichungszeit"
 
 #, python-format
 msgid "Published by <a href=\"%(link)s\">%(author)s</a>"
@@ -396,6 +381,9 @@ msgstr "Gelöst"
 
 msgid "Sorry, editing comments is disabled for now."
 msgstr "Entschuldigung. Das Editieren von Kommentaren ist derzeit deaktiviert."
+
+msgid "Start date"
+msgstr "Startdatum"
 
 msgid "Submit"
 msgstr "Speichern"
@@ -451,9 +439,6 @@ msgstr "Der Artikel „%(title)s“ wurde gelöscht."
 msgid "The article “{title}” was saved."
 msgstr "Der Artikel „{title}“ wurde gespeichert."
 
-msgid "The comment was edited successfully."
-msgstr "Der Kommentar wurde erfolgreich bearbeitet."
-
 msgid "The comment was hidden."
 msgstr "Der Kommentar wurde verborgen."
 
@@ -465,9 +450,6 @@ msgstr "Der Kommentar wurde gespeichert."
 
 msgid "The end date must occur after the start date."
 msgstr "Das Enddatum muss nach dem Startdatum liegen."
-
-msgid "The end time must occur after the start time."
-msgstr "Die Endzeit muss nach der Startzeit liegen."
 
 msgid "The event has been saved. A team member will review it soon."
 msgstr "Die Veranstaltung wurde gespeichert. Ein Teammitglied wird sie demnächst prüfen."
@@ -533,26 +515,14 @@ msgstr "Dieser Artikel ist für reguläre Benutzer unsichtbar."
 msgid "This suggestion does not exist."
 msgstr "Dieser Vorschlag existiert nicht."
 
-msgid "Time"
-msgstr "Zeit"
-
-msgid "Time (from):"
-msgstr "Zeit (von):"
-
-msgid "Time (to):"
-msgstr "Zeit (bis):"
-
-msgid "Time:"
-msgstr "Zeit:"
-
 msgid "Title"
 msgstr "Titel"
 
 msgid "To refer to another comment, you can write <code>@commentnumber</code>.<br />Clicking on “reply” will automatically insert this code."
 msgstr "Um dich auf einen anderen Kommentar zu beziehen, kannst du <code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch eingefügt, wenn du bei einem Beitrag auf „Antworten“ klickst."
 
-msgid "Town:"
-msgstr "Stadt:"
+msgid "Town"
+msgstr "Stadt"
 
 msgid "Unique URL-part for the article. If not given, the slug will be generated from title."
 msgstr "Eindeutiger URL-Teil für den Artikel. Wird automatisch anhand des Titels generiert, wenn nicht ausgefüllt."
@@ -569,8 +539,8 @@ msgstr "Abbestellen"
 msgid "Unsubscribe comments"
 msgstr "Kommentare abbestellen"
 
-msgid "Venue:"
-msgstr "Veranstaltungsort:"
+msgid "Venue"
+msgstr "Veranstaltungsort"
 
 msgid "Write comment"
 msgstr "Kommentar schreiben"
@@ -580,6 +550,12 @@ msgstr "XHTML Auszeichnung"
 
 msgid "You cannot assign suggestions to others."
 msgstr "Es ist nicht möglich Vorschläge anderen Benutzern zuzuweisen."
+
+msgid "You must specify a location latitude."
+msgstr "Ein Breitengrad muss angegeben werden."
+
+msgid "You must specify a location longitude."
+msgstr "Ein Längengrad muss angegeben werden."
 
 msgid "You will no longer be notified of new comments for this article."
 msgstr "Du wirst über neue Kommentare zu diesem Artikel nicht mehr benachrichtigt."

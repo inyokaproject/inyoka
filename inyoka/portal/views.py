@@ -5,7 +5,7 @@
     All views for the portal including the user control panel, private messages,
     static pages and the login/register.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import csv
@@ -32,11 +32,13 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.middleware.csrf import REASON_NO_CSRF_COOKIE, REASON_NO_REFERER
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
-from django.utils import timezone
+from django.utils import timezone as dj_timezone
 from django.utils.dates import MONTHS, WEEKDAYS
+from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
+from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.views.decorators.http import require_POST, require_safe
 from icalendar import Calendar as iCal
 from icalendar import Event as iEvent
@@ -223,6 +225,8 @@ def whoisonline(request):
     }
 
 
+@sensitive_variables("data")
+@sensitive_post_parameters()
 @templated('portal/register.html')
 def register(request):
     """Register a new user."""
@@ -270,6 +274,7 @@ def register(request):
     }
 
 
+@sensitive_variables("activation_key")
 def activate(request, action='', username='', activation_key=''):
     """Activate a user with the activation key send via email."""
     try:
@@ -331,6 +336,7 @@ class InyokaPasswordResetView(SuccessMessageMixin, PasswordResetView):
     success_url = href('portal', 'login')
     success_message = _('An email with further instructions was sent to you.')
 
+    @method_decorator(sensitive_post_parameters())
     def dispatch(self, *args, **kwargs):
         if self.request.user.is_authenticated:
             messages.error(self.request, _('You are already logged in.'))
@@ -350,6 +356,8 @@ class InyokaPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmVi
     template_name = 'portal/set_new_password.html'
 
 
+@sensitive_post_parameters()
+@sensitive_variables("data")
 @templated('portal/login.html')
 def login(request):
     """Login dialog that supports permanent logins"""
@@ -514,6 +522,7 @@ def usercp(request):
     }
 
 
+@sensitive_post_parameters('email')
 @login_required
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
@@ -560,7 +569,7 @@ def usercp_settings(request):
             for key, value in data.items():
                 request.user.settings[key] = data[key]
                 if key == 'timezone':
-                    timezone.activate(data[key])
+                    dj_timezone.activate(data[key])
                     request.session['django_timezone'] = data[key]
             request.user.save(update_fields=['settings'])
             messages.success(request, _('Your settings were successfully changed.'))
@@ -575,7 +584,7 @@ def usercp_settings(request):
             'notifications': settings.get('notifications', [c[0] for c in
                                                     NOTIFICATION_CHOICES]),
             'ubuntu_version': ubuntu_version,
-            'timezone': timezone.get_current_timezone(),
+            'timezone': dj_timezone.get_current_timezone(),
             'hide_avatars': settings.get('hide_avatars', False),
             'hide_signatures': settings.get('hide_signatures', False),
             'hide_profile': settings.get('hide_profile', False),
@@ -651,6 +660,8 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
 usercp_subscriptions = UserCPSubscriptions.as_view()
 
 
+@sensitive_post_parameters('password_confirmation')
+@sensitive_variables('check')
 @login_required
 @templated('portal/usercp/deactivate.html')
 def usercp_deactivate(request):
@@ -695,6 +706,7 @@ def user_edit(request, username):
     }
 
 
+@sensitive_post_parameters('email')
 @login_required
 @permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_profile.html')
@@ -742,7 +754,7 @@ def user_edit_settings(request, username):
         'notifications': user.settings.get('notifications',
             [c[0] for c in NOTIFICATION_CHOICES]),
         'ubuntu_version': ubuntu_version,
-        'timezone': timezone.get_current_timezone(),
+        'timezone': dj_timezone.get_current_timezone(),
         'hide_avatars': user.settings.get('hide_avatars', False),
         'hide_signatures': user.settings.get('hide_signatures', False),
         'hide_profile': user.settings.get('hide_profile', False),
@@ -834,6 +846,8 @@ def user_edit_groups(request, username):
     }
 
 
+@sensitive_post_parameters()
+@sensitive_variables('data')
 @login_required
 @permission_required('portal.add_user', raise_exception=True)
 @templated('portal/user_new.html')
@@ -988,7 +1002,7 @@ def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
     # he can only send one pm every 5 minutes
     form_class = PrivateMessageForm
-    if (not request.user.post_count and request.user.date_joined > (datetime.utcnow() - timedelta(days=7))):
+    if (not request.user.post_count and request.user.date_joined > (dj_timezone.now() - timedelta(days=7))):
         form_class = PrivateMessageFormProtected
     preview = None
     form = form_class()
@@ -1066,7 +1080,7 @@ def privmsg_new(request, username=None):
                 msg.author = request.user
                 msg.subject = d['subject']
                 msg.text = d['text']
-                msg.pub_date = datetime.utcnow()
+                msg.pub_date = dj_timezone.now()
                 msg.send(list(recipients))
                 # send notification
                 for recipient in recipients:
@@ -1376,7 +1390,7 @@ def calendar_month(request, year, month):
         'days': days,
         'year': year,
         'month': month,
-        'today': datetime.utcnow().date(),
+        'today': dj_timezone.localdate(),
         'MONTHS': MONTHS,
         'WEEKDAYS': WEEKDAYS,
     }
@@ -1388,8 +1402,8 @@ def calendar_overview(request):
 
     return {
         'events': events,
-        'year': datetime.utcnow().year,
-        'month': datetime.utcnow().month,
+        'year': dj_timezone.now().year,
+        'month': dj_timezone.now().month,
         'MONTHS': MONTHS,
         'WEEKDAYS': WEEKDAYS,
     }
@@ -1399,13 +1413,15 @@ def calendar_overview(request):
 def calendar_detail(request, slug):
     try:
         event = Event.objects.get(slug=slug)
-        if not event.visible:
-            if request.user.has_perm('portal.change_event'):
-                messages.info(request, _('This event is not visible for regular users.'))
-            else:
-                raise Http404()
     except Event.DoesNotExist:
         raise Http404()
+
+    if not event.visible:
+        if request.user.has_perm('portal.change_event'):
+            messages.info(request, _('This event is not visible for regular users.'))
+        else:
+            raise Http404()
+
     return {
         'google_link': google_calendarize(event),
         'ical_link': href('portal', 'calendar', slug, 'ics'),
@@ -1420,28 +1436,19 @@ def calendar_ical(request, slug):
 
     try:
         event = Event.objects.get(slug=slug)
-        if not event.visible and not request.user.has_perm('portal.change_event'):
-            raise Http404()
-
     except Event.DoesNotExist:
         raise Http404()
 
+    if not event.visible and not request.user.has_perm('portal.change_event'):
+        raise Http404()
+
     cal = iCal()
-    current_time = datetime.now().time()
-
-    start = datetime.combine(event.date, event.time or current_time)
-
-    if event.enddate:
-        end = datetime.combine(event.enddate, event.endtime or current_time)
-    else:
-        end = start
-
     ievent = iEvent()
     ievent.add('summary', event.name)
     ievent.add('uid', slug)
-    ievent.add('dtstamp', datetime.utcnow())
-    ievent.add('dtstart', start)
-    ievent.add('dtend', end)
+    ievent.add('dtstamp', dj_timezone.now())
+    ievent.add('dtstart', event.start)
+    ievent.add('dtend', event.end)
     if event.description:
         ievent.add('description', event.description)
 
@@ -1458,6 +1465,7 @@ def calendar_ical(request, slug):
     return response
 
 
+@sensitive_post_parameters('token')
 @templated('portal/confirm.html')
 def confirm(request, action):
     if action == 'reactivate_user' and request.user.is_authenticated:

@@ -4,19 +4,18 @@
 
     Database models for Ikhaya.
 
-    :copyright: (c) 2007-2024 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
-from operator import attrgetter, itemgetter
+from datetime import timezone
 from typing import Optional
 from urllib.parse import urlencode
 
-from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.db.models import Q
-from django.utils.html import escape
+from django.db.models import Q, UniqueConstraint
+from django.db.models.functions import Coalesce, TruncDate
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext_lazy
 
 from inyoka.portal.models import StaticFile
@@ -24,20 +23,13 @@ from inyoka.portal.user import User
 from inyoka.utils.database import (
     InyokaMarkupField,
     LockableObject,
+    TruncDateUtc,
     find_next_increment,
 )
 from inyoka.utils.dates import datetime_to_timezone
-from inyoka.utils.decorators import deferred
 from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
-
-
-def _get_not_cached_articles(keys, cache_values):
-    """Return a tuple of (dates, slugs) for all keys in cache_values that are None"""
-    not_cached = [(x[1], x[2]) for x in keys if x[0] not in cache_values]
-    dates, slugs = list(map(itemgetter(0), not_cached)), list(map(itemgetter(1), not_cached))
-    return dates, slugs
 
 
 class ArticleManager(models.Manager):
@@ -47,74 +39,51 @@ class ArticleManager(models.Manager):
         self._public = public
         self._all = all
 
+    def annotate_publication_date_utc(self):
+        """
+        Adds a publication date in UTC for every article.
+        In contrast, the default publication datetime is in the local timezone.
+        """
+        q = super().get_queryset()
+        q = q.annotate(publication_date_utc=TruncDate('publication_datetime', tzinfo=timezone.utc))
+        return q
+
     def get_queryset(self):
         q = super().get_queryset()
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
-                q = q.filter(Q(pub_date__lt=datetime.utcnow().date()) |
-                             Q(pub_date=datetime.utcnow().date(),
-                               pub_time__lte=datetime.utcnow().time()))
+                q = q.filter(publication_datetime__lte=dj_timezone.now())
             else:
-                q = q.filter(Q(pub_date__gt=datetime.utcnow().date()) |
-                             Q(pub_date=datetime.utcnow().date(),
-                               pub_time__gte=datetime.utcnow().time()))
+                q = q.filter(publication_datetime__gte=dj_timezone.now())
         return q
 
-    def get_cached(self, keys):
-        """Get some articles from the cache. `keys` must be a list with
-        (pub_date, slug) pairs. Missing entries from the cache are
-        automatically fetched from the database. This method should be
-        also used for retrieving single objects.
+    def get_by_date_and_slug(self, year: int, month: int, day: int, slug: str):
+        """Get one article by date and slug.
+
+        The componentes of the passed date are assumed to be in UTC.
         """
-        keys = [('ikhaya/article/%s/%s' % x, x[0], x[1]) for x in keys]
-        cache_values = cache.get_many(list(map(itemgetter(0), keys)))
-        dates, slugs = _get_not_cached_articles(keys, cache_values)
-
         related = ('author', 'category', 'icon', 'category__icon')
-        objects = Article.objects.filter(slug__in=slugs, pub_date__in=dates) \
-                         .select_related(*related).defer('author__forum_read_status').order_by()
-        new_cache_values = {}
-        for article in objects:
-            key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
-            new_cache_values[key] = article
-        if new_cache_values:
-            # cache for 24 hours
-            cache.set_many(new_cache_values, 24 * 60)
-        cache_values.update(new_cache_values)
-        articles = [_f for _f in list(cache_values.values()) if _f]
-        unpublished = list(sorted([a for a in articles if not a.public],
-                                  key=attrgetter('updated'), reverse=True))
-        published = list(sorted([a for a in articles if a not in unpublished],
-                                key=attrgetter('updated'), reverse=True))
-        return unpublished + published
+        query = Article.objects.annotate_publication_date_utc().select_related(*related)
+        article = query.get(slug=slug,
+                            publication_date_utc__year=year,
+                            publication_date_utc__month=month,
+                            publication_date_utc__day=day)
+        return article
 
-    def get_latest_articles(self, category=None, count=10):
+    def get_latest_articles(self, category: Optional[str]=None, count: int=10):
         """Return `count` lastest articles for the category `category` or for
         all categories if None.
 
         :param category: Takes the slug of the category or None
         :param count: maximum retrieve this many articles. Defaults to 10
-        :type category: str or None
-        :type count: int
-
         """
-        key = 'ikhaya/latest_articles'
-        if category is not None:
-            key = 'ikhaya/latest_articles/%s' % category
+        related = ('author', 'category', 'icon', 'category__icon')
+        articles = Article.published.select_related(*related).order_by(Coalesce("updated", "publication_datetime").desc())
+        if category:
+            articles = articles.filter(category__slug=category)
 
-        articles = cache.get(key)
-        if articles is None:
-            articles = Article.published.order_by('-updated') \
-                                        .values_list('pub_date', 'slug')
-            if category:
-                articles = articles.filter(category__slug=category)
-
-            maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_article'])
-            articles = list(articles[:maxcount])
-            cache.set(key, articles, 1200)
-
-        return self.get_cached(articles[:count])
+        return articles[:count]
 
 
 class SuggestionManager(models.Manager):
@@ -144,9 +113,13 @@ class CommentManager(models.Manager):
 class EventManager(models.Manager):
 
     def get_upcoming(self, count=10):
-        return self.get_queryset().order_by('date').filter(Q(visible=True) & (
-            (Q(enddate__gte=datetime.utcnow()) & Q(date__lte=datetime.utcnow())) |
-            (Q(date__gte=datetime.utcnow()))))[:count]
+        q = self.get_queryset().order_by('start').filter(Q(start__gte=dj_timezone.now()) | (Q(start__lte=dj_timezone.now()) & Q(end__gte=dj_timezone.now())), visible=True)
+
+        if count is None:
+            # don't limit number of items returned, if None was passed
+            return q
+
+        return q[:count]
 
 
 class Category(models.Model):
@@ -186,10 +159,12 @@ class Article(models.Model, LockableObject):
     objects = ArticleManager(all=True)
     published = ArticleManager(public=True)
 
-    pub_date = models.DateField(gettext_lazy('Date'), db_index=True)
-    pub_time = models.TimeField(gettext_lazy('Time'))
+    publication_datetime = models.DateTimeField(gettext_lazy('Publication time'), default=dj_timezone.now)
     updated = models.DateTimeField(gettext_lazy('Last change'), blank=True,
-                null=True, db_index=True)
+                null=True, db_index=True,
+                help_text=gettext_lazy('If you keep this field empty, the '
+                                       'publication date will be used.')
+    )
     author = models.ForeignKey(User, related_name='article_set',
                                verbose_name=gettext_lazy('Author'), on_delete=models.CASCADE)
     subject = models.CharField(gettext_lazy('Headline'), max_length=180)
@@ -222,27 +197,33 @@ class Article(models.Model, LockableObject):
     def article_icon(self):
         return self.icon or self.category.icon
 
-    @deferred
-    def pub_datetime(self):
-        return datetime.combine(self.pub_date, self.pub_time)
-
     @property
     def local_pub_datetime(self):
-        return datetime_to_timezone(self.pub_datetime).replace(tzinfo=None)
+        return datetime_to_timezone(self.publication_datetime)
 
     @property
     def local_updated(self):
-        return datetime_to_timezone(self.updated).replace(tzinfo=None)
+        return datetime_to_timezone(self.updated)
 
     @property
     def hidden(self):
         """
         This returns a boolean whether this article is not visible for normal
         users.
-        Article that are not published or whose pub_date is in the future
+        Article that are not published or whose publication date is in the future
         aren't shown for a normal user.
         """
-        return not self.public or self.pub_datetime > datetime.utcnow()
+        return not self.public or self.publication_datetime > dj_timezone.now()
+
+    @property
+    def is_updated(self) -> bool:
+        """
+        Returns whether this article has an update (f.e. a addition was made or a big mistake fixed)
+        """
+        if not self.updated:
+            return False
+
+        return self.updated > self.publication_datetime
 
     @property
     def comments(self):
@@ -251,8 +232,8 @@ class Article(models.Model, LockableObject):
 
     @property
     def stamp(self):
-        """Return the year/month/day part of an article url"""
-        return self.pub_date.strftime('%Y/%m/%d')
+        """Return the year/month/day part of an article url. Slugs are always in UTC."""
+        return self.publication_datetime.astimezone(timezone.utc).strftime('%Y/%m/%d')
 
     def get_absolute_url(self, action='show', **query):
         if action == 'comments':
@@ -286,33 +267,17 @@ class Article(models.Model, LockableObject):
         return self.subject
 
     def save(self, *args, **kwargs):
-        """
-        This increases the edit count by 1.
-        """
-        if self.text is None or self.intro is None:
-            # might happen, because cached objects are setting text and
-            # intro to None to save some space
-            raise ValueError('text and intro must not be null')
-
-        # We need a local pubdt variable due to caching of self.pub_datetime
-        pubdt = datetime.combine(self.pub_date, self.pub_time)
-        if not self.updated or self.updated < pubdt:
-            self.updated = pubdt
-            if kwargs.get("update_fields") is not None:
-                kwargs["update_fields"] = {"updated"}.union(kwargs["update_fields"])
-
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
-                slugify(self.subject), pub_date=self.pub_date)
+                                            slugify(self.subject),
+                                            publication_datetime__date=self.publication_datetime,
+                                            )
         else:
             self.slug = slugify(self.slug)
 
         super().save(*args, **kwargs)
 
         cache.delete('ikhaya/archive')
-        cache.delete(f'ikhaya/article_text/{self.id}')
-        cache.delete(f'ikhaya/article_intro/{self.id}')
-        cache.delete(f'ikhaya/article/{self.slug}')
 
     def delete(self):
         """
@@ -325,8 +290,9 @@ class Article(models.Model, LockableObject):
     class Meta:
         verbose_name = gettext_lazy('Article')
         verbose_name_plural = gettext_lazy('Articles')
-        ordering = ['-pub_date', '-pub_time', 'author']
-        unique_together = ('pub_date', 'slug')
+        constraints = [
+            UniqueConstraint(TruncDateUtc('publication_datetime'), 'slug', name='unique_pub_date_slug'),
+        ]
         permissions = (
             ('view_unpublished_article', 'Can view unpublished articles'),
             ('suggest_article', 'Can suggest articles'),
@@ -358,7 +324,7 @@ class Suggestion(models.Model):
     objects = SuggestionManager()
 
     author = models.ForeignKey(User, related_name='suggestion_set', on_delete=models.CASCADE)
-    pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
+    pub_date = models.DateTimeField(gettext_lazy('Date'), default=dj_timezone.now)
     title = models.CharField(gettext_lazy('Title'), max_length=100)
     text = InyokaMarkupField(verbose_name=gettext_lazy('Text'), application='ikhaya')
     intro = InyokaMarkupField(verbose_name=gettext_lazy('Introduction'), application='ikhaya')
@@ -418,23 +384,23 @@ class Comment(models.Model):
 class Event(models.Model):
     objects = EventManager()
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(gettext_lazy('Name'), max_length=50)
     slug = models.SlugField(unique=True, max_length=100, db_index=True)
     changed = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    date = models.DateField(db_index=True)
-    time = models.TimeField(blank=True, null=True)  # None -> whole day
-    enddate = models.DateField(blank=True, null=True)  # None
-    endtime = models.TimeField(blank=True, null=True)  # None -> whole day
-    description = InyokaMarkupField(blank=True, application='ikhaya')
+
+    start = models.DateTimeField(gettext_lazy('Start date'), db_index=True)
+    end = models.DateTimeField(gettext_lazy('End date'))
+
+    description = InyokaMarkupField(verbose_name=gettext_lazy('Description'), blank=True, application='ikhaya')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    location = models.CharField(max_length=128, blank=True)
-    location_town = models.CharField(max_length=56, blank=True)
+    location = models.CharField(gettext_lazy('Venue'), max_length=128, blank=True)
+    location_town = models.CharField(gettext_lazy('Town'), max_length=56, blank=True)
     location_lat = models.FloatField(gettext_lazy('Degree of latitude'),
                                      blank=True, null=True)
     location_long = models.FloatField(gettext_lazy('Degree of longitude'),
                                       blank=True, null=True)
-    visible = models.BooleanField(default=False)
+    visible = models.BooleanField(gettext_lazy('Display event?'), default=False)
 
     def __str__(self):
         return self.name
@@ -450,27 +416,14 @@ class Event(models.Model):
         }[action])
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            name = self.date.strftime('%Y/%m/%d/') + slugify(self.name)
+        if not self.slug or not self.visible:
+            name = self.start.astimezone().strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
 
         super().save(*args, **kwargs)
 
         cache.delete(f'ikhaya/event/{self.id}')
         cache.delete('ikhaya/event_count')
-
-    def friendly_title(self, with_html_link=False):
-        s_location = '<span class="location">%s</span>' % (
-            self.location_town and ' in %s' % self.location_town or '')
-        summary = '<span class="summary">%s</span>' % escape(self.name)
-        if with_html_link:
-            ret = '<a href="%s" class="event_link">%s</a>%s' % (
-                escape(self.get_absolute_url()),
-                summary,
-                s_location)
-        else:
-            ret = summary + s_location
-        return '<span class="vevent">%s</span>' % ret
 
     @property
     def natural_coordinates(self):
@@ -502,19 +455,6 @@ class Event(models.Model):
         query_parameter = urlencode(query_parameter)
 
         return f'https://www.openstreetmap.org/?{query_parameter}'
-
-    def _construct_datetimes(self, day, time):
-        if not day:
-            day = datetime.utcnow().date()
-        return datetime_to_timezone(datetime.combine(day, time))
-
-    @property
-    def startdatetime(self):
-        return self._construct_datetimes(self.date, self.time)
-
-    @property
-    def enddatetime(self):
-        return self._construct_datetimes(self.enddate or self.date, self.endtime)
 
     class Meta:
         db_table = 'portal_event'
