@@ -20,6 +20,7 @@ import urllib
 # And further patch it so feedparser works :/
 import xml.sax
 from datetime import datetime, timezone
+from http.client import IncompleteRead
 from time import time
 
 import feedparser
@@ -68,7 +69,7 @@ def _sync():
         # but the bozo bit might be defined.
         try:
             feed = feedparser.parse(blog.feed_url)
-        except (LookupError, urllib.error.URLError, socket.timeout, ConnectionError, ssl.SSLError) as e:
+        except (LookupError, urllib.error.URLError, socket.timeout, ConnectionError, ssl.SSLError, IncompleteRead) as e:
             logger.debug('%s on %s' % (repr(e), blog.feed_url))
             continue
 
