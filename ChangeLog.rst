@@ -24,6 +24,31 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+Unreleased 1.42.3 (2025-MM-DD)
+==============================
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+* Reworked ``MetaFilter`` in wiki to yield more accurate results
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+*  Planet, sync task: Skip blog on ``IncompleteRead``
+
+🔒 Security
+-----------
+
 
 1.42.2 (2025-03-07)
 ===================
