@@ -96,7 +96,7 @@
       <dd style="display: none"><input type="submit" value="Absenden" name="send"></dd>
 
       {%- if (isnewtopic or isfirstpost) and can_create_poll %}
-        <details {% if poll_form.errors %}open{% endif %}>
+        <details {% if poll_form.errors or polls %}open{% endif %}>
         <summary>{% trans %}Polls{% endtrans %}</summary>
         {%- if polls %}
           <dd>{% trans %}Existing polls:{% endtrans %}
@@ -126,7 +126,7 @@
       {%- endif %}
 
       {%- if can_attach %}
-      <details {% if attach_form.errors %}open{% endif %}>
+      <details {% if attach_form.errors or attachments %}open{% endif %}>
        <summary>{% trans %}Attachments{% endtrans %}</summary>
       <dd>
         {%- if attachments %}
