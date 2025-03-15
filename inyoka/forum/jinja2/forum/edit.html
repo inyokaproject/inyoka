@@ -94,8 +94,10 @@
         <dd class="license_note">{{ storage['license_note_rendered'] }}</dd>
       {%- endif %}
       <dd style="display: none"><input type="submit" value="Absenden" name="send"></dd>
+
       {%- if (isnewtopic or isfirstpost) and can_create_poll %}
-        <dt class="collapse{% if poll_form.errors %} has_errors{% endif %}">Umfragen:</dt>
+        <details {% if poll_form.errors %}open{% endif %}>
+        <summary>{% trans %}Polls{% endtrans %}</summary>
         {%- if polls %}
           <dd>{% trans %}Existing polls:{% endtrans %}
             <ul>
@@ -120,9 +122,12 @@
         <dd>{% trans duration=poll_form.duration %}Duration of the poll: {{ duration }} days{% endtrans %} {{ poll_form.duration.errors }}</dd>
         <dd class="note">{% trans %}Leave that feel empty for an endless duration{% endtrans %}</dd>
         <dd><input type="submit" name="add_poll" value="{% trans %}Add poll{% endtrans %}"></dd>
+        </details>
       {%- endif %}
+
       {%- if can_attach %}
-      <dt class="collapse{% if attach_form.errors %} has_errors{% endif %}">{% trans %}Attachments:{% endtrans %}</dt>
+      <details {% if attach_form.errors %}open{% endif %}>
+       <summary>{% trans %}Attachments{% endtrans %}</summary>
       <dd>
         {%- if attachments %}
           <ul>
@@ -144,9 +149,10 @@
           Overwrite existing attachment with the same name.{%- endtrans %}</label></p>
         <p><input type="submit" value="{% trans %}upload attachment{% endtrans %}" name="attach"></p>
       </dd>
+        </details>
       {%- endif %}
+
       {%- if can_sticky and (isnewtopic or isfirstpost) %}
-      <dt>Optionen:</dt>
       <dd>{{ form.sticky }} <label for="id_sticky">{% trans %}Mark topic as “Important:”{% endtrans %}</label></dd>
       {%- endif %}
     </dl>

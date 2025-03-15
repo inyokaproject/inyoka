@@ -8,14 +8,7 @@
  * :license: BSD, see LICENSE for more details.
  */
 
-$(function () { /* collapsable elements for the input forms */
-  $('dt.collapse').each(function () {
-    $(this).nextWhile('dd').addClass('collapse_enabled').toggle($(this).hasClass('has_errors'));
-    $(this).click(function () {
-      $(this).toggleClass('collapsed').nextWhile('dd').toggle();
-    }).addClass('collapse_enabled collapsed');
-  });
-
+$(function () {
   /* poll helpers */
   (function () {
     $('#id_add_option').click(function addReply() {
