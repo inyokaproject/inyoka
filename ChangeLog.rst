@@ -34,6 +34,8 @@ Unreleased 1.42.3 (2025-MM-DD)
 ----------
 
 * Reworked ``MetaFilter`` in wiki to yield more accurate results
+* Use HTML ``<summary>`` and ``<details>`` instead of own JS collapse
+* Remove ``python-dateutil`` as direct dependency of Inyoka (still needed by dependencies ``celery`` and ``icalendar``)
 
 🗑 Deprecations
 --------------
