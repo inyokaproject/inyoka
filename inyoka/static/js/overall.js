@@ -239,60 +239,6 @@ $(document).ready(function () {
     });
   })();
 
-  // Add a version switcher to the `PPA` template.
-  (function () {
-    const SHORT_NOTATION_VERSIONS = ['karmic', 'lucid', 'maverick'];
-
-    function set_version(dom) {
-      const link = $(dom);
-      const group = link.parent().parent();
-      const version = link.text().toLowerCase();
-      group.find('.ppa-code').remove();
-      const sel = group.find('.selector');
-
-      link.addClass('active').siblings('a').removeClass('active');
-
-      sel.after('<pre class="ppa-code">' + group.data('long_notation_text').replace(/VERSION/, version) + '</div></pre>');
-      if ($.inArray(version, SHORT_NOTATION_VERSIONS) > -1) {
-        sel.after('<p class="ppa-code">Für die <strong>sources.list</strong>:</p>');
-        sel.after('<p class="ppa-code">' + group.data('short_notation_text') + '</p>');
-      }
-      return false;
-    }
-
-    $('.ppa-list-outer').each(function () {
-      const $this = $(this);
-      let versions = [],
-          version;
-      const classes = this.className.split(/\s+/);
-      for (let i = 0; i < classes.length; i++) {
-        if (classes[i].match(/^ppa-version-/)) {
-          version = classes[i].slice(12);
-          versions.push(version);
-        }
-      }
-
-      $this.data('short_notation_text', $this.find('.ppa-list-short-code .contents p').html());
-      $this.data('long_notation_text', $this.find('.ppa-list-long-code .contents pre').html());
-
-      $this.children('.contents').remove();
-      const sel = $('<p class="selector">').appendTo($this);
-      sel.prepend('<strong>Version: </strong>');
-      function set_version_callback() {
-        return set_version(this);
-      }
-
-      let latest_link;
-      for (let i = 0; i < versions.length; i++) {
-        version = versions[i];
-        latest_link = $('<a href="#">').text(version.substr(0, 1).toUpperCase() + version.substr(1))
-                                       .click(set_version_callback).appendTo(sel).after('<span class="linklist"> | </span>');
-      }
-      latest_link.next('.linklist').remove(); // remove last |
-      set_version(latest_link[0]);
-    });
-  })();
-
   // Add a version switcher to the `Fremdquelle` template.
   (function () {
     function set_version(link) {
