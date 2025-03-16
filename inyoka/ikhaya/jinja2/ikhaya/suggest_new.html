@@ -13,7 +13,6 @@
 {% set scripts = ['WikiEditor'] %}
 {% set styles = ['editor'] %}
 {% block ikhaya_content %}
-<div class="content_sidebar_bk">
   <h2>{% trans %}Suggest new article{% endtrans %}</h2>
   <p>
     {% trans %}If you want to suggest a new article please submit your article below.{% endtrans %}
@@ -39,7 +38,6 @@
     <div class="preview">{{ preview }}</div>
   </div>
   {%- endif %}
-</div>
 {% endblock %}
 
 {% block additional_scripts %}
