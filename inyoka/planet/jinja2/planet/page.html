@@ -15,15 +15,6 @@
 {% set navi_type  = 'sidebar' %}
 {% set styles = styles|default([]) + ['planet'] %}
 
-{%- block html_head %}
-  {{ super() }}
-  <script>
-    /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ request.user.settings.planet_sidebar_hidden and 'true' or 'false' }};
-    /*]]>*/
-  </script>
-{%- endblock %}
-
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_planet">{% trans %}Planet{% endtrans %}</h3>

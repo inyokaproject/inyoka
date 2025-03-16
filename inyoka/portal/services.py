@@ -68,22 +68,6 @@ def get_captcha(request):
 
 
 @dispatcher.register()
-def toggle_sidebar(request):
-    if not request.user.is_authenticated:
-        return False
-    component = request.GET.get('component')
-    if component not in ('ikhaya', 'planet', 'admin'):
-        component = 'portal'
-    component = '_'.join([component, 'sidebar_hidden'])
-    if request.GET.get('hide') == 'true':
-        request.user.settings[component] = True
-    else:
-        request.user.settings.pop(component, None)
-    request.user.save(update_fields=['settings'])
-    return True
-
-
-@dispatcher.register()
 def hide_global_message(request):
     if request.user.is_authenticated:
         request.user.settings['global_message_hidden'] = time.time()

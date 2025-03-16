@@ -14,15 +14,6 @@
 {% set active_app = 'ikhaya' %}
 {% set navi_type  = 'sidebar' %}
 
-{%- block html_head %}
-  {{ super() }}
-  <script>
-    /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ request.user.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
-    /*]]>*/
-  </script>
-{%- endblock %}
-
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_about_ikhaya">{% trans %}About Ikhaya{% endtrans %}</h3>

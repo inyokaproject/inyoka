@@ -132,28 +132,6 @@ $(document).ready(function () {
     }
   })();
 
-  // add a sidebar toggler if there is a sidebar
-  (function () {
-    const sidebar = $('.navi_sidebar');
-    if (!sidebar.length) return;
-    const togglebutton = $('<button class="navi_toggle" aria-label="Navigation ausblenden">↑</button>').click(function () {
-      $('.content').toggleClass('content_sidebar');
-      sidebar.toggle();
-      if (sidebar.is(':visible')) {
-        this.innerText = "↑";
-      } else {
-        this.innerText = "↓";
-      }
-
-      if ($IS_LOGGED_IN) $.get('/?__service__=portal.toggle_sidebar', {
-        hide: !sidebar.is(':visible'),
-        component: window.location.hostname.split('.')[0]
-      });
-
-      return false;
-    }).insertAfter('.breadcrumb.-top > ol');
-    if ($SIDEBAR_HIDDEN) togglebutton.click();
-  })();
 
   // use javascript to deactivate the submit button on click
   // we don't make the elements really disabled because then
