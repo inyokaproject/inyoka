@@ -49,7 +49,6 @@ dependencies = [
   "pip-tools",
   "psycopg2",
   "pygments",
-  "python-dateutil",
   "python-magic",
   "requests",
   "sentry-sdk",
