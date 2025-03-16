@@ -50,7 +50,7 @@
     <div class="text">
       {{ article.get_text() }}
     </div>
-    <p class="meta admin_link_hover">
+    <p class="meta">
       {% trans link=article.author|url, author=article.author.username|e -%}
         Published by <a href="{{ link }}">{{ author }}</a>
       {%- endtrans %} |
@@ -78,7 +78,7 @@
         {%- for comment in comments %}
           {%- if comment.deleted and not can_admin_comment %}
           {%- else %}
-            <tr id="comment_{{ loop.index }}" class="admin_link_hover{% if comment.deleted %} hidden{% endif %}">
+            <tr id="comment_{{ loop.index }}" class="{% if comment.deleted %}hidden{% endif %}">
               {{ user_column(comment.author) }}
               <td class="comment{% if comment.author == request.user %} -own{% endif %}">
                 <div class="commentinfo">

@@ -63,7 +63,7 @@
   {%- elif user.is_deleted or user.is_banned %}
     {% trans name=user.username|e %}{{ name }} is not available.{% endtrans %}
   {%- else %}
-    <table class="userinfo admin_link_hover">
+    <table class="userinfo">
       <tr>
         <th>{% trans %}Name{% endtrans %}</th>
         <td>{{ user.username|e }}</td>

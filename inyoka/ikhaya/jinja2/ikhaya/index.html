@@ -55,7 +55,7 @@
           {% else %}
             <div class="text">{{ article.get_intro() }}</div>
           {% endif %}
-          <p class="meta admin_link_hover">
+          <p class="meta">
             {% trans link=article.author|url, author=article.author.username|e -%}
               Published by <a href="{{ link }}">{{ author }}</a>
             {%- endtrans %} |

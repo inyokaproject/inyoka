@@ -18,7 +18,7 @@
     <tbody>
       {%- for rev in revisions %}
         <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
-          <td class="post admin_link_hover">
+          <td class="post">
             <div class="postinfo">
               <div class="linklist">
                 <a href="{{ rev|url('restore') }}" class="action action_review admin_link">{% trans %}Restore{% endtrans %}</a>

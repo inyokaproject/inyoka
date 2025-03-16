@@ -25,7 +25,7 @@
   {%- trans title=event.name|e %}Event “{{ title }}”{% endtrans -%}
 </h3>
 
-<table class="vevent admin_link_hover">
+<table class="vevent">
   <tr><th>{% trans %}Date{% endtrans %}</th><td>
     {{ _('from') }} {{ event.start|datetime }}
     {{ _('to') }} {{ event.end|datetime }}

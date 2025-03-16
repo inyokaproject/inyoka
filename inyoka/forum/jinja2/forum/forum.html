@@ -48,7 +48,7 @@
 {% endblock %}
 
 {% block forum_content %}
-  <table class="forum admin_link_hover">
+  <table class="forum">
     <thead>
       <tr><th colspan="5" class="category">{{ forum.name|e }}
         {%- if request.user.has_perm('forum.change_forum') -%}

@@ -36,12 +36,12 @@
     </ul>
 
     {%- if blogs %}
-      <h3 class="navi_blogs admin_link_hover">
+      <h3 class="navi_blogs">
         {% trans %}Blogs{% endtrans %}
       </h3>
       <ul>
         {%- for blog in blogs %}
-          <li class="admin_link_hover">
+          <li>
             {%- if request.user.has_perm('planet.change_blog') -%}
               <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
             {%- endif -%}
@@ -51,7 +51,7 @@
       </ul>
     {%- endif %}
     {%- if request.user.has_perm('planet.add_blog') %}
-      <h3 class="navi_blogs admin_link_hover">
+      <h3 class="navi_blogs">
         {% trans %}Configuration{% endtrans %}
       </h3>
       <ul>

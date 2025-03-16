@@ -1214,12 +1214,12 @@ select.firstletterselect {
   margin-top: -11px;
 }
 
-.admin_link_js a, a.admin_link_js, .admin_link a, a.admin_link {
+.admin_link a, a.admin_link {
   color: @admin_text !important;
   display: relative;
 }
 
-.admin_link.right, .admin_link_js.right {
+.admin_link.right {
   float: right;
   margin: 0 5px 0 0;
   height: 16px;
@@ -1237,7 +1237,7 @@ select.firstletterselect {
     margin-left: 16px;
 
     a {
-      border-right: 0px;
+      border-right: 0;
       display: block;
       float: left;
       color: #D4D4D4;
@@ -1270,13 +1270,6 @@ select.firstletterselect {
       }
       &:hover {
         background: #E4E4E4;
-      }
-      &#admin_layer_button.highlight {
-        background: @orange_d_light;
-
-        &:hover {
-          background: @grey_dark;
-        }
       }
       &:last-child {
         border-right: none;

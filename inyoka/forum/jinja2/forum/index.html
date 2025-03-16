@@ -32,7 +32,7 @@
 
 {% block forum_content %}
   {%- if categories %}
-    <table class="forum{% if is_index %} category_box{% endif %} admin_link_hover">
+    <table class="forum{% if is_index %} category_box{% endif %}">
       {%- for category, forums in forum_hierarchy %}
         <tr class="head" id="category-{{ category.id }}">
           <th colspan="5"><a href="{{ category|url

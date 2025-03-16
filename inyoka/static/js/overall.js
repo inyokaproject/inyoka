@@ -274,45 +274,6 @@ $(document).ready(function () {
     });
   })();
 
-  // the following lines add the JavaScript administration layer. Therefor we first remove
-  // css legacy support (hover tags and icons will be visible) and add each element a JS class.
-  // Later, each click on `#admin_layer_button` will iterate through all tags with `admin_link_js`
-  // class and toggle their visibility.
-  const result = /admin_menu\=([01])/.exec(document.cookie);
-  let menu_status = (result != null) ? Number(result[1]) : 1;
-  if (menu_status === 1) {
-    $('.admin_link').removeClass('admin_link').addClass('admin_link_js').show();
-    $('#admin_layer_button').addClass('highlight');
-  } else {
-    $('.admin_link').removeClass('admin_link').addClass('admin_link_js').hide();
-  }
-  $('.admin_link_hover').removeClass('admin_link_hover');
-  $('#admin_layer_button').click(function () {
-    $('.admin_link_js').each(function() {
-      if ($(this).css('display') !== 'none') {
-        $(this).fadeOut("fast", function () {$(this).hide();});
-      } else {
-        $(this).fadeIn("fast", function () {$(this).show();});
-      }
-    });
-    menu_status = (menu_status === 0) ? 1 : 0;
-    if (menu_status === 1) {
-      $('#admin_layer_button').addClass('highlight');
-    } else {
-      $('#admin_layer_button').removeClass('highlight');
-    }
-    let admin_cookie = new Date();
-    const admin_cookie_expires = admin_cookie.getTime() + (365 * 24 * 60 * 60 * 1000);
-    admin_cookie.setTime(admin_cookie_expires);
-    const exp = "expires=" + admin_cookie.toGMTString();
-    let dom;
-    if ($BASE_DOMAIN_NAME.indexOf(":") > 0) {
-      dom = "domain=." + $BASE_DOMAIN_NAME.substring(0, $BASE_DOMAIN_NAME.indexOf(":"));
-    } else {
-      dom = "domain=." + $BASE_DOMAIN_NAME;
-    }
-    document.cookie = "admin_menu=" + menu_status + "; " + exp + "; " + dom + "; path=/";
-  });
 
   // Quick Table Search
   // https://css-tricks.com/complete-guide-table-element/#article-header-id-25
