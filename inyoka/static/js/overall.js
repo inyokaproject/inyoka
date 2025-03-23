@@ -162,7 +162,7 @@ $(document).ready(function () {
     }
 
     // check if checkbox values changed
-    for (const element of document.querySelectorAll('input[type="checkbox"]')) {
+    for (const element of document.querySelectorAll(':not(.splitinfo) input[type="checkbox"]')) {
       if (element.checked !== element.defaultChecked) {
         _show_dialog();
         // abort on first changed input field
