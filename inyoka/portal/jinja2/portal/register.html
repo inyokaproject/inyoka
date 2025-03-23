@@ -18,6 +18,7 @@
   <form action="" method="post" class="-horizontal">
     {{ csrf_input }}
     {{ form.non_field_errors() }}
+    {{ form.media }}
     <dl>
       {{ render_form(form, ['username', 'password', 'confirm_password',
                             'email'], inline=true)}}
