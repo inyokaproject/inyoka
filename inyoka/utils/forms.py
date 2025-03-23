@@ -267,6 +267,11 @@ class HiddenCaptchaField(forms.Field):
 class ImageCaptchaWidget(TextInput):
     template_name = 'forms/widgets/image_captcha.html'
 
+    class Media:
+        css = {
+            "all": ["style/captcha.css"],
+        }
+
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         context['widget']['captcha_url'] = href('portal', __service__='portal.get_captcha',
