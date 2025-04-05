@@ -12,17 +12,17 @@ license = { file = "LICENSE" }
 authors = [
   { name = "Inyoka Team" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Framework :: Django",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: BSD License",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Message Boards",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary",
@@ -34,7 +34,7 @@ dependencies = [
   "beautifulsoup4",
   "celery[redis]",
   "defusedxml",
-  "django[argon2]<5",
+  "django[argon2]<6",
   "django-filter",
   "django-guardian",
   "django-hosts",
@@ -61,7 +61,7 @@ optional-dependencies.dev = [
   "coverage",
   "django-codemod",
   "django-debug-toolbar",
-  "django-test-migrations",
+  "django-test-migrations @ https://github.com/wemake-services/django-test-migrations/archive/f0523aaf62483caf1bc88dc95f125f149ddba925.zip", # temporary workaround until it is released with fix for django 5.2
   "django-upgrade",
   "freezegun",
   "responses",

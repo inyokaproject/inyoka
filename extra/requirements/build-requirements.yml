@@ -43,13 +43,6 @@ x-environment:
 
 services:
 
-  py39:
-    << : *default-django
-    image: docker.io/library/python:3.9-slim-bookworm
-    environment:
-      << : *default-environment
-      PYTHON_VERSION: '3.9'
-
   py310:
     << : *default-django
     image: docker.io/library/python:3.10-slim-bookworm

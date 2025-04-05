@@ -69,7 +69,7 @@ def _sync():
         # but the bozo bit might be defined.
         try:
             feed = feedparser.parse(blog.feed_url)
-        except (LookupError, urllib.error.URLError, socket.timeout, ConnectionError, ssl.SSLError, IncompleteRead) as e:
+        except (LookupError, urllib.error.URLError, TimeoutError, ConnectionError, ssl.SSLError, IncompleteRead) as e:
             logger.debug('%s on %s' % (repr(e), blog.feed_url))
             continue
 
