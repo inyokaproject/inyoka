@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 
+from inyoka.portal.user import User
 from inyoka.utils.decorators import patch_wrapper
 
 
@@ -73,5 +74,6 @@ def permission_denied_view(request, exception=None):
 
 
 def bad_request_view(request, exception=None):
+    request.user = User.objects.get_anonymous_user()
     return render(request, 'errors/400.html', {'request': request}, status=400)
 

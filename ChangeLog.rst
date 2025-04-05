@@ -27,6 +27,11 @@ Inyoka Changelog
 Unreleased 1.42.3 (2025-MM-DD)
 ==============================
 
+Deployment notes
+----------------
+
+#. Update requirements
+
 ✨ New features
 ---------------
 
@@ -38,6 +43,7 @@ Unreleased 1.42.3 (2025-MM-DD)
 * Remove ``python-dateutil`` as direct dependency of Inyoka (still needed by dependencies ``celery`` and ``icalendar``)
 * Captcha: Fix spacing of renew button
 * Modernize javascript: Use const and let, refactor & remove unused logic
+* Use django 5.2 and celery 5.5
 
 🗑 Deprecations
 --------------
@@ -54,6 +60,7 @@ Unreleased 1.42.3 (2025-MM-DD)
 
 * Planet, sync task: Skip blog on ``IncompleteRead``
 * Forum: Dont show a dialog to prevent leaving the page, if the split-checkbox is ticked
+* Use AnonymousUser for bad request template to avoid an exception
 
 🔒 Security
 -----------
