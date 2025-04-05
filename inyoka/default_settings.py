@@ -409,6 +409,7 @@ PASSWORD_HASHERS = (
 )
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+FORMS_URLFIELD_ASSUME_HTTPS = True
 
 TEMPLATES = [
     {
