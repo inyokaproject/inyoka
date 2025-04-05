@@ -37,6 +37,7 @@ Unreleased 1.42.3 (2025-MM-DD)
 * Use HTML ``<summary>`` and ``<details>`` instead of own JS collapse
 * Remove ``python-dateutil`` as direct dependency of Inyoka (still needed by dependencies ``celery`` and ``icalendar``)
 * Captcha: Fix spacing of renew button
+* Modernize javascript: Use const and let, refactor & remove unused logic
 
 🗑 Deprecations
 --------------
@@ -44,10 +45,15 @@ Unreleased 1.42.3 (2025-MM-DD)
 🔥 Removals
 -----------
 
+* Ikhaya: Remove assign/unassgin functionality via JavaScript (now uses only server side implementation)
+* Remove ability to toggle admin links
+* Remove sidebar hide functionality
+
 🐛 Fixes
 --------
 
-*  Planet, sync task: Skip blog on ``IncompleteRead``
+* Planet, sync task: Skip blog on ``IncompleteRead``
+* Forum: Dont show a dialog to prevent leaving the page, if the split-checkbox is ticked
 
 🔒 Security
 -----------

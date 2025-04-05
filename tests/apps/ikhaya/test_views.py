@@ -1588,46 +1588,6 @@ class TestEventEdit(TestCase):
         self.assertContains(response, 'is not a number')
 
 
-class TestServices(TestCase):
-
-    client_class = InyokaClient
-    url = "/?__service__=ikhaya.change_suggestion_assignment"
-
-    def test_post_misses_username(self):
-        response = self.client.post(self.url, data={"suggestion": 1})
-        self.assertEqual(response.status_code, 400)
-
-    def test_post_misses_suggestion_id(self):
-        response = self.client.post(self.url, data={"username": "foo"})
-        self.assertEqual(response.status_code, 400)
-
-    def test_set_owner(self):
-        user = User.objects.register_user('test', 'test@example.local', password='test', send_mail=False)
-        suggestion = Suggestion.objects.create(author=user, title='title', text='text', intro='intro', notes='notes')
-        self.assertIsNone(suggestion.owner)
-
-        self.client.post(self.url, data={"username": user.username, "suggestion": suggestion.id})
-        suggestion.refresh_from_db()
-        self.assertEqual(suggestion.owner_id, user.id)
-
-        self.client.post(self.url, data={"username": "-", "suggestion": suggestion.id})
-        suggestion.refresh_from_db()
-        self.assertIsNone(suggestion.owner)
-
-    def test_invalid_owner(self):
-        suggestion = Suggestion.objects.create(
-            author=User.objects.get_anonymous_user(), title='title', text='text', intro='intro', notes='notes')
-
-        response = self.client.post(self.url, data={"username": "foo", "suggestion": suggestion.id})
-        self.assertEqual(response.status_code, 404)
-
-    def test_invalid_suggestion(self):
-        user = User.objects.register_user('test', 'test@example.local', password='test', send_mail=False)
-
-        response = self.client.post(self.url, data={"username": user.username, "suggestion": 4242})
-        self.assertEqual(response.status_code, 404)
-
-
 @freeze_time("2023-12-09T23:55:04Z")
 class TestArticleFeeds(TestCase):
 

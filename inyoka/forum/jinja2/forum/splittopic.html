@@ -50,7 +50,7 @@
     <h3>{% trans %}Preview{% endtrans %}</h3>
     <p>{% trans %}The following posts will be split off:{% endtrans %}</p>
 
-    <table class="topic admin_link_hover">
+    <table class="topic">
       <tbody>
         {%- for post in posts %}
           <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>

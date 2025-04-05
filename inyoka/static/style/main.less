@@ -751,19 +751,6 @@ table.syntaxtable {
   margin: 0;
 }
 
-button.navi_toggle {
-  border: thin solid transparent;
-  background: none;
-  cursor: pointer;
-  width: 1.2em;
-  font-size: 2.2em;
-
-  &:hover, &:focus {
-    background-color: @navi_toggle-hover-background;
-    border-color: @navi_toggle-hover-border_color;
-  }
-}
-
 .navi_sidebar {
   .container {
     background-repeat: repeat-x;
@@ -784,9 +771,6 @@ button.navi_toggle {
     a {
       color: #333;
     }
-  }
-  h3:first-of-type {
-    margin-top: 0;
   }
 
   .export {
@@ -1201,7 +1185,7 @@ select.firstletterselect {
 .status_unsolved:before {
   content: url('../img/forum_unsolved.png');
 }
-.thirdpartyrepo-outer .selector a.active,.ppa-list-outer .selector a.active {
+.thirdpartyrepo-outer .selector a.active {
   font-weight: bold;
 }
 
@@ -1214,16 +1198,12 @@ select.firstletterselect {
   margin-top: -11px;
 }
 
-.admin_link_js a, a.admin_link_js, .admin_link a, a.admin_link {
+.admin_link a, a.admin_link {
   color: @admin_text !important;
   display: relative;
 }
 
-.admin_link {
-  display: none;
-}
-
-.admin_link.right, .admin_link_js.right {
+.admin_link.right {
   float: right;
   margin: 0 5px 0 0;
   height: 16px;
@@ -1241,7 +1221,7 @@ select.firstletterselect {
     margin-left: 16px;
 
     a {
-      border-right: 0px;
+      border-right: 0;
       display: block;
       float: left;
       color: #D4D4D4;
@@ -1274,13 +1254,6 @@ select.firstletterselect {
       }
       &:hover {
         background: #E4E4E4;
-      }
-      &#admin_layer_button.highlight {
-        background: @orange_d_light;
-
-        &:hover {
-          background: @grey_dark;
-        }
       }
       &:last-child {
         border-right: none;

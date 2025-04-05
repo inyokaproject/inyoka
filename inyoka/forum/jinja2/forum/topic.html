@@ -78,7 +78,7 @@
   </span>
   {%- if can_moderate %}
     <br>
-    <span class="linklist admin_link_hover">
+    <span class="linklist">
       <a href="{{ topic|url('split') }}"
          class="action action_split admin_link">{% trans %}Split{% endtrans %}</a> |
       <a href="{{ topic|url('move') }}"
@@ -114,7 +114,7 @@
 {% endblock %}
 
 {% block forum_content %}
-  <div class="topic_box admin_link_hover">
+  <div class="topic_box">
     <h2>{{ topic.title|e }}</h2>
     <div class="topic_box_content">
       <div class="pagination pagination_right">{{ rendered_pagination }}</div>
@@ -206,7 +206,7 @@
     </form>
   {%- endif %}
 
-  <table class="topic admin_link_hover">
+  <table class="topic">
     <tbody>
       {%- for post in posts if not (post.hidden and not can_moderate and not post.author == request.user) %}
         <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
@@ -351,7 +351,7 @@
     </tbody>
   </table>
 
-  <div class="topic_box admin_link_hover">
+  <div class="topic_box">
     <div class="topic_box_content">
       <div class="pagination pagination_right">{{ rendered_pagination }}</div>
       {{ topic_actions() }}
