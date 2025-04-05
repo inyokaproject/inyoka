@@ -466,7 +466,8 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                 self.event_set.exists() or
                 self.suggestion_set.exists() or
                 self.owned_suggestion_set.exists() or
-                self.subscription_set.exists())
+                self.subscription_set.exists() or
+                self.blog_set.exists())
 
     @property
     def post_count(self):
