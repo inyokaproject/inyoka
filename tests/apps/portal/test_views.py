@@ -221,6 +221,15 @@ class TestViews(TestCase):
         response = self.client.get('/inyoka/')
         self.assertContains(response, 'Inyoka', status_code=200)
 
+    def test_invalid_post_as_anonymous(self):
+        self.client.logout()
+        response = self.client.post('/',
+                                    data={},
+                                    content_type="multipart/form-data;", # should include a boundary
+        )
+        self.assertEqual(response.status_code, 400)
+
+
 class TestAuthViews(TestCase):
 
     client_class = InyokaClient
