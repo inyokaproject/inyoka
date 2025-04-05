@@ -36,7 +36,7 @@ def check_for_user_record():
 @shared_task
 def clean_expired_users():
     """
-    Deletes all never activated Users, except system users. An user will be
+    Deletes all never activated Users, except system users. A user will be
     deleted after ACTIVATION_HOURS (default 48h).
     """
     expired_datetime = datetime.fromtimestamp(time()) - timedelta(hours=settings.ACTIVATION_HOURS)
@@ -53,6 +53,9 @@ def clean_expired_users():
 
 @shared_task
 def clean_inactive_users():
+    _clean_inactive_users()
+
+def _clean_inactive_users():
     """
     Deletes Users with no content and a last login more than
     USER_INACTIVE_DAYS (default one year) ago.
