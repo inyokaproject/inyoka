@@ -35,7 +35,7 @@ class Blog(models.Model):
     blog_url = models.URLField(gettext_lazy('URL of the blog'))
     feed_url = models.URLField(gettext_lazy('URL of the feed'))
     user = models.ForeignKey(User, verbose_name=gettext_lazy('User'),
-                             blank=True, null=True, on_delete=models.CASCADE)
+                             blank=True, null=True, on_delete=models.PROTECT)
     icon = models.ImageField(gettext_lazy('Icon'), upload_to='planet/icons', blank=True)
     last_sync = models.DateTimeField(blank=True, null=True)
     active = models.BooleanField(gettext_lazy('Index the blog'), default=True)
