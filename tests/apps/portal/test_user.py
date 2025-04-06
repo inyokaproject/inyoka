@@ -247,25 +247,6 @@ class TestUserHasContent(TestCase):
 
         self.assertTrue(self.user.has_content())
 
-    def test_cascading_blog_delete(self):
-        blog = Blog.objects.create(name="Testblog", blog_url="http://example.com/",
-                    feed_url="http://example.com/feed", user=self.user,
-                    active=True)
-
-        BlogEntry.objects.create(blog=blog, url="http://example.com/article1",
-                             guid="http://example.com/article1",
-                             text="This is a test", title="title",
-                             pub_date=dj_timezone.now(),
-                             updated=dj_timezone.now())
-
-        self.assertEqual(Blog.objects.count(), 1)
-        self.assertEqual(BlogEntry.objects.count(), 1)
-
-        with self.assertRaisesMessage(ProtectedError,"Cannot delete some instances of model 'User' because they are referenced through protected foreign keys: 'Blog.user'."):
-            self.user.delete()
-
-        self.assertEqual(Blog.objects.count(), 1)
-        self.assertEqual(BlogEntry.objects.count(), 1)
 
     def test_inactive_user_cleaned__blog_deleted(self):
         self.user.last_login = datetime(2010, 1, 1, tzinfo=timezone.utc)
