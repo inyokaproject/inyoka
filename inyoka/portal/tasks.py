@@ -14,6 +14,7 @@ from celery import shared_task
 from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
+from django.utils import timezone as dj_timezone
 
 from inyoka.portal.models import PrivateMessageEntry
 from inyoka.portal.user import User
@@ -60,7 +61,7 @@ def _clean_inactive_users():
     Deletes Users with no content and a last login more than
     USER_INACTIVE_DAYS (default one year) ago.
     """
-    inactive_datetime = datetime.fromtimestamp(time()) - timedelta(days=settings.USER_INACTIVE_DAYS)
+    inactive_datetime = dj_timezone.now() - timedelta(days=settings.USER_INACTIVE_DAYS)
 
     for user in (User.objects
                      .filter(last_login__lte=inactive_datetime)
