@@ -36,6 +36,9 @@ def check_for_user_record():
 
 @shared_task
 def clean_expired_users():
+    _clean_expired_users()
+
+def _clean_expired_users():
     """
     Deletes all never activated Users, except system users. A user will be
     deleted after ACTIVATION_HOURS (default 48h).

@@ -13,7 +13,7 @@ from django.utils import timezone as dj_timezone
 
 from inyoka.planet.models import Blog
 from inyoka.planet.models import Entry as BlogEntry
-from inyoka.portal.tasks import _clean_inactive_users
+from inyoka.portal.tasks import _clean_expired_users, _clean_inactive_users
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 
@@ -58,3 +58,27 @@ class TestCleanInactiveUsers(TestCase):
         _clean_inactive_users()
 
         self.assertFalse(User.objects.filter(username=self.user.username).exists())
+
+
+class TestCleanExpiredUsers(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.create(
+            username='testing',
+            email='example@example.com',
+            date_joined=datetime(2010, 1, 1, tzinfo=timezone.utc),
+        )
+
+    def test_clean_expired_users__user_deleted(self):
+        _clean_expired_users()
+
+        self.assertFalse(User.objects.filter(username=self.user.username).exists())
+
+    def test_clean_expired_users__ignores_activated_user(self):
+        self.user.status = User.STATUS_ACTIVE
+        self.user.save()
+
+        _clean_expired_users()
+
+        self.assertTrue(User.objects.filter(username=self.user.username).exists())
