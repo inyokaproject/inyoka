@@ -62,12 +62,10 @@ def _clean_inactive_users():
     USER_INACTIVE_DAYS (default one year) ago.
     """
     inactive_datetime = dj_timezone.now() - timedelta(days=settings.USER_INACTIVE_DAYS)
+    user_query = (User.objects.filter(last_login__lte=inactive_datetime)
+                  .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
 
-    for user in (User.objects
-                     .filter(last_login__lte=inactive_datetime)
-                     .exclude(username__in={
-                         settings.ANONYMOUS_USER_NAME,
-                         settings.INYOKA_SYSTEM_USER})):
+    for user in user_query:
         if not user.has_content():
             logger.info(f'Deleting inactive User {user.username}')
             user.delete()
