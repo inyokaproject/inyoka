@@ -7,7 +7,7 @@
     :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from time import time
 
 from celery import shared_task
@@ -44,7 +44,7 @@ def _clean_expired_users():
     deleted after ACTIVATION_HOURS (default 48h).
     """
     expired_datetime = dj_timezone.now() - timedelta(hours=settings.ACTIVATION_HOURS)
-    user_query = (User.objects.filter(status=0).filter(date_joined__lte=expired_datetime)
+    user_query = (User.objects.filter(status=User.STATUS_INACTIVE).filter(date_joined__lte=expired_datetime)
                      .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
 
     for user in user_query:
