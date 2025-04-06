@@ -43,7 +43,7 @@ def _clean_expired_users():
     Deletes all never activated Users, except system users. A user will be
     deleted after ACTIVATION_HOURS (default 48h).
     """
-    expired_datetime = datetime.fromtimestamp(time()) - timedelta(hours=settings.ACTIVATION_HOURS)
+    expired_datetime = dj_timezone.now() - timedelta(hours=settings.ACTIVATION_HOURS)
 
     for user in (User.objects.filter(status=0)
                      .filter(date_joined__lte=expired_datetime)
