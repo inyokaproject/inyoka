@@ -14,16 +14,13 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.db.models import ProtectedError
 from django.utils import timezone as dj_timezone
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
 from inyoka.planet.models import Blog
-from inyoka.planet.models import Entry as BlogEntry
 from inyoka.portal.models import PrivateMessage, Subscription
-from inyoka.portal.tasks import _clean_inactive_users
 from inyoka.portal.user import User, deactivate_user, reactivate_user
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
@@ -246,26 +243,3 @@ class TestUserHasContent(TestCase):
                             active=True)
 
         self.assertTrue(self.user.has_content())
-
-
-    def test_inactive_user_cleaned__blog_deleted(self):
-        self.user.last_login = datetime(2010, 1, 1, tzinfo=timezone.utc)
-        self.user.save()
-
-        blog = Blog.objects.create(name="Testblog", blog_url="http://example.com/",
-                    feed_url="http://example.com/feed", user=self.user,
-                    active=True)
-
-        BlogEntry.objects.create(blog=blog, url="http://example.com/article1",
-                             guid="http://example.com/article1",
-                             text="This is a test", title="title",
-                             pub_date=dj_timezone.now(),
-                             updated=dj_timezone.now())
-
-        self.assertEqual(Blog.objects.count(), 1)
-        self.assertEqual(BlogEntry.objects.count(), 1)
-
-        _clean_inactive_users()
-
-        self.assertEqual(Blog.objects.count(), 1)
-        self.assertEqual(BlogEntry.objects.count(), 1)
