@@ -61,6 +61,7 @@ Deployment notes
 * Planet, sync task: Skip blog on ``IncompleteRead``
 * Forum: Dont show a dialog to prevent leaving the page, if the split-checkbox is ticked
 * Use AnonymousUser for bad request template to avoid an exception
+* Make ikhaya article suggestions deleteable again
 
 🔒 Security
 -----------

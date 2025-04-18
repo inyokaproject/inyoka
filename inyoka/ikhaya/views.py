@@ -17,7 +17,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Exists, OuterRef, Value
 from django.db.models.functions import Coalesce
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils import timezone as dj_timezone
 from django.utils.dates import MONTHS
@@ -648,7 +648,7 @@ def suggest_delete(request, suggestion):
             messages.error(request, _('This suggestion does not exist.'))
             return HttpResponseRedirect(href('ikhaya', 'suggestions'))
         messages.info(request,
-            render(request, 'ikhaya/suggest_delete.html', {'s': s}))
+            render_to_string('ikhaya/suggest_delete.html', context={'s': s}, request=request))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
