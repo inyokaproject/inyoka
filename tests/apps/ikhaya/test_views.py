@@ -1199,6 +1199,10 @@ class TestSuggestDelete(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'inyokaproject.org: New private message from admin: Article suggestion rejected')
 
+    def test_form_shown(self):
+        response = self.client.get(f'/suggest/{self.suggestion.id}/delete/', follow=True)
+        self.assertContains(response, f'/suggest/{self.suggestion.id}/delete/" method="post">', count=1)
+
 
 class TestSuggestEdit(TestCase):
 
