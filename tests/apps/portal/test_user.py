@@ -7,7 +7,6 @@
     :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unittest
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
@@ -152,21 +151,15 @@ class TestUserHasContent(TestCase):
 
         self.assertTrue(self.user.has_content())
 
-    @unittest.skip("Django Bug")
     def test_ikhaya_article(self):
         """
         Tests a user that is an author of an Ikhaya article
         """
-        # There seems to be a Bug in django, that user.article_set does not
-        # work.
-        now = datetime.now()
         category = Category.objects.create(name='test_category')
-
         Article.objects.create(
-            pub_date=now.date(),
-            pub_time=now.time(),
             author=self.user,
-            category=category)
+            category=category,
+        )
 
         self.assertTrue(self.user.has_content())
 
