@@ -24,13 +24,14 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-Unreleased 1.42.3 (2025-MM-DD)
+Unreleased 1.52.0 (2025-MM-DD)
 ==============================
 
 Deployment notes
 ----------------
 
 #. Update requirements
+#. Execute database migrations
 
 ✨ New features
 ---------------
@@ -62,6 +63,7 @@ Deployment notes
 * Forum: Dont show a dialog to prevent leaving the page, if the split-checkbox is ticked
 * Use AnonymousUser for bad request template to avoid an exception
 * Make ikhaya article suggestions deleteable again
+* Prevent to delete blog including posts, if linked user is deleted
 
 🔒 Security
 -----------
