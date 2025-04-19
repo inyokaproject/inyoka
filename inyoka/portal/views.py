@@ -275,7 +275,7 @@ def register(request):
 
 
 @sensitive_variables("activation_key")
-def activate(request, action='', username='', activation_key=''):
+def activate(request, username='', activation_key=''):
     """Activate a user with the activation key send via email."""
     try:
         user = User.objects.get(username__iexact=username)
@@ -294,31 +294,17 @@ def activate(request, action='', username='', activation_key=''):
             _('You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
 
-    if action == 'delete':
-        if check_activation_key(user, activation_key):
-            if not user.is_active:
-                messages.success(request, _('Your account was anonymized.'))
-            else:
-                messages.error(request,
-                    _('The account of “%(username)s” was already activated.') %
-                    {'username': escape(username)})
-        else:
-            messages.error(request, _('Your activation key is invalid.'))
-        return HttpResponseRedirect(href('portal'))
-    elif action == 'activate':
-        if check_activation_key(user, activation_key) and user.is_inactive:
-            user.status = User.STATUS_ACTIVE
-            user.save()
-            user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
-            messages.success(request,
-                _('Your account was successfully activated. You can now '
-                  'login.'))
-            return HttpResponseRedirect(redirect)
-        else:
-            messages.error(request, _('Your activation key is invalid.'))
-            return HttpResponseRedirect(href('portal'))
+    if check_activation_key(user, activation_key) and user.is_inactive:
+        user.status = User.STATUS_ACTIVE
+        user.save()
+        user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
+        messages.success(request,
+            _('Your account was successfully activated. You can now '
+              'login.'))
+        return HttpResponseRedirect(redirect)
     else:
-        raise Http404()
+        messages.error(request, _('Your activation key is invalid.'))
+        return HttpResponseRedirect(href('portal'))
 
 class InyokaPasswordResetView(SuccessMessageMixin, PasswordResetView):
     """

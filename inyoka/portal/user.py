@@ -443,9 +443,6 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         elif action == 'activate':
             return href('portal', 'activate',
                         self.username, gen_activation_key(self), **query)
-        elif action == 'activate_delete':
-            return href('portal', 'delete',
-                        self.username, gen_activation_key(self), **query)
         elif action == 'admin':
             return href('portal', 'user', self.username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
