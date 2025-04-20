@@ -86,8 +86,8 @@ class Captcha:
         return image
 
     def get_response(self, size=None):
-        response = HttpResponse(content_type='image/png')
-        self.render_image(size=None).save(response, 'PNG')
+        response = HttpResponse(content_type='image/webp')
+        self.render_image(size=size).save(response, 'WebP')
         return response
 
 
