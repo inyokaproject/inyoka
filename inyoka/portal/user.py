@@ -13,6 +13,7 @@ import secrets
 import string
 from json import dumps, loads
 
+from django.apps import apps
 from django.conf import settings
 from django.conf import settings as inyoka_settings
 from django.contrib.auth.models import (
@@ -460,13 +461,14 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                 self.comment_set.exists() or
                 self.privatemessageentry_set.exists() or
                 self.wiki_revisions.exists() or
-                self.article_set.exists() or
+                apps.get_model('ikhaya.Article').objects.filter(author=self).exists() or
                 # Pastebin
                 self.entry_set.exists() or
                 self.event_set.exists() or
                 self.suggestion_set.exists() or
                 self.owned_suggestion_set.exists() or
-                self.subscription_set.exists())
+                self.subscription_set.exists() or
+                self.blog_set.exists())
 
     @property
     def post_count(self):
