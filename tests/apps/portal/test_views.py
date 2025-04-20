@@ -1585,6 +1585,22 @@ class TestActivate(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.status, User.STATUS_ACTIVE)
 
+    def test_get__activate__already_active(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_ACTIVE
+        self.user.save()
+        response = self.client.get(f'/activate/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
+
+    def test_get__activate__user_banned(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_BANNED
+        self.user.save()
+        response = self.client.get(f'/activate/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
+
     def test_get__activate__invalid_key(self):
         response = self.client.get('/activate/user/test_key/', follow=True)
         self.assertContains(response,
