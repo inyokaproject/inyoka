@@ -7,11 +7,13 @@
     :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import logging
 import re
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core import mail
+from django.core.cache import cache
 from django.http import Http404
 from django.test import Client, RequestFactory
 from django.test.utils import override_settings
@@ -33,6 +35,7 @@ from inyoka.portal.models import (
 )
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
+from inyoka.utils.forms import CaptchaField
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key
@@ -420,16 +423,23 @@ class TestAuthViews(TestCase):
     def test_register(self):
         """Test the process of registering a new account.
 
-        Checks if an email will be generated to activate the new account.
+        Checks if an email is send to activate the new account.
         """
+        logging.debug(self.client.session.session_key) # otherwise, None in CaptchaField
+
+        self.client.get('/register/') # fill cache with captcha
+
+        captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
         postdata = {
-            'username': 'apollo13', 'password': 'secret',
-            'confirm_password': 'secret', 'email': 'apollo13@example.com',
-            'terms_of_usage': '1', 'captcha_1': ''
+            'username': 'apollo13',
+            'password': 'secret',
+            'confirm_password': 'secret',
+            'email': 'apollo13@example.com',
+            'terms_of_usage': '1',
+            'captcha_0': captcha.solution,
+            'captcha_1': ''
         }
 
-        response = self.client.get('/', {'__service__': 'portal.get_captcha'})
-        postdata['captcha_0'] = response._captcha_solution
         self.assertEqual(0, len(mail.outbox))
         with translation.override('en-us'):
             self.client.post('/register/', postdata)
@@ -450,8 +460,116 @@ class TestAuthViews(TestCase):
 
     def test_register_contains_captcha(self):
         """The captcha is rendered via an own `ImageCaptchaWidget`"""
+        logging.debug(self.client.session.session_key) # otherwise, None in CaptchaField
+
         response = self.client.get('/register/')
-        self.assertContains(response, "__service__=portal.get_captcha")
+        self.assertContains(response, '<img src="data:image/')
+
+    def test_register__renew_captcha(self):
+        """
+        The captcha should change, if the user requested so via a button.
+        """
+        regex = '<img src="(?P<encoded_img>data:image.*)" class'
+
+        logging.debug(self.client.session.session_key) # otherwise, None in CaptchaField
+        self.client.get('/register/') # session changes after first request, but is stable afterwards...
+
+        response = self.client.get('/register/')
+        base64_img = re.search(regex, response.content.decode(), re.MULTILINE).group('encoded_img')
+        solution1 = response.context['form'].fields['captcha'].captcha.solution
+
+        postdata = {
+            'renew_captcha': '1',
+        }
+        response = self.client.post('/register/', postdata)
+        base64_img_2 = re.search(regex, response.content.decode(), re.MULTILINE).group('encoded_img')
+        solution2 = response.context['form'].fields['captcha'].captcha.solution
+
+        with self.subTest('captcha solution differs'):
+            self.assertNotEqual(solution1, solution2)
+        with self.subTest('image differs'):
+            self.assertNotEqual(base64_img, base64_img_2)
+
+    def test_register__two_get_same_captcha_solution(self):
+        """
+        If the captcha was not used, display the same captcha for the same session.
+        """
+        logging.debug(self.client.session.session_key)
+        self.client.get('/register/') # session changes after first request, but is stable afterwards...
+
+        response = self.client.get('/register/')
+        solution1 = response.context['form'].fields['captcha'].captcha.solution
+
+        response = self.client.get('/register/')
+        solution2 = response.context['form'].fields['captcha'].captcha.solution
+
+        self.assertEqual(solution1, solution2)
+
+    def test_register__new_captcha_after_successful_submission(self):
+        """
+        The same captcha should be only usable for one registration.
+        After a person successfully registered, display a different captcha.
+        """
+        logging.debug(self.client.session.session_key)
+        self.client.get('/register/') # session changes after first request, but is stable afterwards...
+
+        captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
+        solution1 = captcha.solution
+        postdata = {
+            'username': 'apollo13',
+            'password': 'secret',
+            'confirm_password': 'secret',
+            'email': 'apollo13@example.com',
+            'terms_of_usage': '1',
+            'captcha_0': solution1,
+            'captcha_1': ''
+        }
+        self.client.post('/register/', postdata)
+
+        response = self.client.get('/register/')
+        solution2 = response.context['form'].fields['captcha'].captcha.solution
+
+        self.assertNotEqual(solution1, solution2)
+
+    def test_register__wrong_captcha(self):
+        logging.debug(self.client.session.session_key)
+        postdata = {
+            'captcha_0': 'foobar',
+        }
+        response = self.client.post('/register/', postdata)
+
+        self.assertFormError(response.context['form'], 'captcha', errors=['The entered CAPTCHA was incorrect.'])
+
+    def test_register__bot_field(self):
+        """
+        If the second captcha field is filled with content, display a message
+        that the user was classified as a bot.
+        """
+        logging.debug(self.client.session.session_key)
+
+        captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
+        postdata = {
+            'password': 'secret',
+            'confirm_password': 'secret',
+            'captcha_0': captcha.solution,
+            'captcha_1': 'foobar',
+        }
+        response = self.client.post('/register/', postdata)
+
+        self.assertFormError(response.context['form'], None, errors=[])
+        self.assertFormError(response.context['form'], 'captcha', errors=['You have entered an invisible field and were therefore classified as a bot.'])
+
+    def test_register__missing_captcha(self):
+        logging.debug(self.client.session.session_key)
+
+        postdata = {
+            'password': 'secret',
+            'confirm_password': 'secret',
+        }
+        response = self.client.post('/register/', postdata)
+
+        self.assertFormError(response.context['form'], None, errors=[])
+        self.assertFormError(response.context['form'], 'captcha', errors=['This field is required.'])
 
     def test_lost_password(self):
         """Test the “lost password” feature.
@@ -601,6 +719,8 @@ class TestRegister(TestCase):
         super().setUp()
         self.url = '/register/'
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+
+        logging.debug(self.client.session.session_key) # otherwise, None in CaptchaField
 
     def test_get_status_code(self):
         response = self.client.get(self.url)

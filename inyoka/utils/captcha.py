@@ -10,13 +10,14 @@
     :copyright: (c) by Micah Dowty.
     :license: BSD, see LICENSE for more details.
 """
+import base64
 import colorsys
+import io
 import math
 import random
 from os import listdir
 from os.path import abspath, dirname, join, pardir
 
-from django.http import HttpResponse
 from PIL import Image, ImageChops, ImageColor, ImageDraw, ImageFont
 
 resource_path = abspath(join(dirname(__file__), pardir, 'res'))
@@ -85,10 +86,11 @@ class Captcha:
             image = layer.render(image)
         return image
 
-    def get_response(self, size=None):
-        response = HttpResponse(content_type='image/webp')
-        self.render_image(size=size).save(response, 'WebP')
-        return response
+    def get_base64_image(self, size=None) -> str:
+        buffer = io.BytesIO()
+        self.render_image(size=size).save(buffer, 'WebP')
+        img_base64 = base64.b64encode(buffer.getvalue()).decode()
+        return f"data:image/webp;base64,{img_base64}"
 
 
 class Layer:

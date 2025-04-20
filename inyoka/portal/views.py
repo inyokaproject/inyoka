@@ -241,8 +241,8 @@ def register(request):
         return HttpResponseRedirect(redirect)
 
     if request.method == 'POST' and 'renew_captcha' not in request.POST:
-        form = RegisterForm(request.POST)
-        form.captcha_solution = request.session.get('captcha_solution')
+        form = RegisterForm(session=request.session, data=request.POST)
+
         if form.is_valid():
             data = form.cleaned_data
 
@@ -263,11 +263,15 @@ def register(request):
                           'username': escape(user.username),
                           'email': escape(user.email)})
 
-            # clean up request.session
-            request.session.pop('captcha_solution', None)
+            form.fields['captcha'].delete_cached_captcha()  # remove used captcha
             return HttpResponseRedirect(redirect)
     else:
-        form = RegisterForm()
+        if request.method == 'POST' and 'renew_captcha' in request.POST:
+            form = RegisterForm(session=request.session)
+            form.fields['captcha'].delete_cached_captcha()
+            # intentionally generate new form in next step, to prevent reusing captcha in local form variable
+
+        form = RegisterForm(session=request.session)
 
     return {
         'form': form,
