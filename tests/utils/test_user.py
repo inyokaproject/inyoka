@@ -5,13 +5,12 @@
     :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.conf import settings
 from django.test.utils import override_settings
 from freezegun import freeze_time
 
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
-from inyoka.utils.user import gen_activation_key, check_activation_key
+from inyoka.utils.user import check_activation_key, gen_activation_key
 
 
 class TestUtilsUser(TestCase):
