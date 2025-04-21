@@ -799,10 +799,12 @@ def user_edit_status(request, username):
             messages.success(request,
                 _('The state of “%(username)s” was successfully changed.')
                 % {'username': escape(user.username)})
+
     if not user.is_inactive:
         activation_link = None
     else:
         activation_link = user.get_absolute_url('activate')
+
     return {
         'user': user,
         'form': form,
