@@ -597,12 +597,12 @@ class TestRegister(TestCase):
         self.client.login(username='user', password='user')
 
         next = 'http://google.at'
-        response = self.client.get('/register/', {'next': next}, follow=True)
+        response = self.client.get(self.url, {'next': next}, follow=True)
         # We don't allow redirects to external pages!
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
 
         next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
-        response = self.client.get('/register/', {'next': next}, follow=True)
+        response = self.client.get(self.url, {'next': next}, follow=True)
         # But internal redirects are fine.
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
 
@@ -612,7 +612,7 @@ class TestRegister(TestCase):
         self.client.login(username='user', password='user')
 
         with translation.override('en-us'):
-            response = self.client.get('/register/', follow=True)
+            response = self.client.get(self.url, follow=True)
         self.assertContains(response, 'You are already logged in.')
 
     def test_register(self):
@@ -620,7 +620,7 @@ class TestRegister(TestCase):
 
         Checks if an email is sent to activate the new account.
         """
-        self.client.get('/register/') # fill cache with captcha
+        self.client.get(self.url) # fill cache with captcha
 
         captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
         postdata = {
@@ -635,7 +635,7 @@ class TestRegister(TestCase):
 
         self.assertEqual(0, len(mail.outbox))
         with translation.override('en-us'):
-            self.client.post('/register/', postdata)
+            self.client.post(self.url, postdata)
         self.assertEqual(1, len(mail.outbox))
         subject = mail.outbox[0].subject
         self.assertIn('Activation of the user “apollo13”', subject)
@@ -647,13 +647,13 @@ class TestRegister(TestCase):
         """
         with override_settings(INYOKA_DISABLE_REGISTRATION=True):
             with translation.override('en-us'):
-                response = self.client.get('/register/', follow=True)
+                response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, href('portal'))
         self.assertContains(response, 'User registration is currently disabled.')
 
     def test_contains_captcha(self):
         """The captcha is rendered via an own `ImageCaptchaWidget`"""
-        response = self.client.get('/register/')
+        response = self.client.get(self.url)
         self.assertContains(response, '<img src="data:image/')
 
     def test__renew_captcha(self):
@@ -662,16 +662,16 @@ class TestRegister(TestCase):
         """
         regex = '<img src="(?P<encoded_img>data:image.*)" class'
 
-        self.client.get('/register/') # session changes after first request, but is stable afterwards...
+        self.client.get(self.url) # session changes after first request, but is stable afterwards...
 
-        response = self.client.get('/register/')
+        response = self.client.get(self.url)
         base64_img = re.search(regex, response.content.decode(), re.MULTILINE).group('encoded_img')
         solution1 = response.context['form'].fields['captcha'].captcha.solution
 
         postdata = {
             'renew_captcha': '1',
         }
-        response = self.client.post('/register/', postdata)
+        response = self.client.post(self.url, postdata)
         base64_img_2 = re.search(regex, response.content.decode(), re.MULTILINE).group('encoded_img')
         solution2 = response.context['form'].fields['captcha'].captcha.solution
 
@@ -684,12 +684,12 @@ class TestRegister(TestCase):
         """
         If the captcha was not used, display the same captcha for the same session.
         """
-        self.client.get('/register/') # session changes after first request, but is stable afterwards...
+        self.client.get(self.url) # session changes after first request, but is stable afterwards...
 
-        response = self.client.get('/register/')
+        response = self.client.get(self.url)
         solution1 = response.context['form'].fields['captcha'].captcha.solution
 
-        response = self.client.get('/register/')
+        response = self.client.get(self.url)
         solution2 = response.context['form'].fields['captcha'].captcha.solution
 
         self.assertEqual(solution1, solution2)
@@ -699,7 +699,7 @@ class TestRegister(TestCase):
         The same captcha should be only usable for one registration.
         After a person successfully registered, display a different captcha.
         """
-        self.client.get('/register/') # session changes after first request, but is stable afterwards...
+        self.client.get(self.url) # session changes after first request, but is stable afterwards...
 
         captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
         solution1 = captcha.solution
@@ -712,9 +712,9 @@ class TestRegister(TestCase):
             'captcha_0': solution1,
             'captcha_1': ''
         }
-        self.client.post('/register/', postdata)
+        self.client.post(self.url, postdata)
 
-        response = self.client.get('/register/')
+        response = self.client.get(self.url)
         solution2 = response.context['form'].fields['captcha'].captcha.solution
 
         self.assertNotEqual(solution1, solution2)
@@ -723,7 +723,7 @@ class TestRegister(TestCase):
         postdata = {
             'captcha_0': 'foobar',
         }
-        response = self.client.post('/register/', postdata)
+        response = self.client.post(self.url, postdata)
 
         self.assertFormError(response.context['form'], 'captcha', errors=['The entered CAPTCHA was incorrect.'])
 
@@ -739,7 +739,7 @@ class TestRegister(TestCase):
             'captcha_0': captcha.solution,
             'captcha_1': 'foobar',
         }
-        response = self.client.post('/register/', postdata)
+        response = self.client.post(self.url, postdata)
 
         self.assertFormError(response.context['form'], None, errors=[])
         self.assertFormError(response.context['form'], 'captcha', errors=['You have entered an invisible field and were therefore classified as a bot.'])
@@ -749,7 +749,7 @@ class TestRegister(TestCase):
             'password': 'secret',
             'confirm_password': 'secret',
         }
-        response = self.client.post('/register/', postdata)
+        response = self.client.post(self.url, postdata)
 
         self.assertFormError(response.context['form'], None, errors=[])
         self.assertFormError(response.context['form'], 'captcha', errors=['This field is required.'])
