@@ -1359,14 +1359,14 @@ class TestResendActivationMail(TestCase):
         self.client.login(username='user', password='user')
 
     def test_get__no_permission(self):
-        response = self.client.get('/users/resend_activation_mail/?user=user')
+        response = self.client.get('/users/resend_activation_mail/user/')
         self.assertEqual(response.status_code, 403)
 
     def test_get(self):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         assign_perm('portal.change_user', registered_group)
 
-        response = self.client.get('/users/resend_activation_mail/?user=user', follow=True)
+        response = self.client.get('/users/resend_activation_mail/user/', follow=True)
         self.assertContains(response, 'was already activated')
 
     def test_get__not_activated_user(self):
@@ -1376,7 +1376,7 @@ class TestResendActivationMail(TestCase):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         assign_perm('portal.change_user', registered_group)
 
-        response = self.client.get('/users/resend_activation_mail/?user=user', follow=True)
+        response = self.client.get('/users/resend_activation_mail/user/', follow=True)
         self.assertContains(response, 'The email with the activation key was resent.')
         self.assertEqual(len(mail.outbox), 1)
 

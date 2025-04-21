@@ -34,7 +34,7 @@ urlpatterns = [
     path('user/<str:username>/edit/groups/', views.user_edit_groups),
     path('user/<str:username>/edit/status/', views.user_edit_status),
     path('user/<str:username>/mail/', views.user_mail),
-    path('users/resend_activation_mail/', views.admin_resend_activation_mail),
+    path('users/resend_activation_mail/<str:username>/', views.admin_resend_activation_mail),
     path('groups/', views.grouplist),
     path('groups/<int:page>/', views.grouplist),
     path('group/new/', views.group_new),

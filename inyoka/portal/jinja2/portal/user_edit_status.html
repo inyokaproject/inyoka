@@ -37,7 +37,7 @@
         </div>
         {%- if activation_link %}
           <div class="note">
-            <a href="{{ href('portal', 'users', 'resend_activation_mail', user=user, next=CURRENT_URL) }}">{% trans %}Resend activation mail{% endtrans %}</a>
+            <a href="{{ href('portal', 'users', 'resend_activation_mail', user) }}">{% trans %}Resend activation mail{% endtrans %}</a>
           </div>
           <div class="note">
             {% trans %} Activation link:{% endtrans %}

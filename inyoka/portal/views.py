@@ -870,8 +870,9 @@ def user_new(request):
 
 @login_required
 @permission_required('portal.change_user', raise_exception=True)
-def admin_resend_activation_mail(request):
-    user = User.objects.get(username__iexact=request.GET.get('user'))
+def admin_resend_activation_mail(request, username: str):
+    user = User.objects.get(username__iexact=username)
+
     if not user.is_inactive:
         messages.error(request,
             _('The account of “%(username)s” was already activated.')
@@ -880,7 +881,8 @@ def admin_resend_activation_mail(request):
         send_activation_mail(user)
         messages.success(request,
             _('The email with the activation key was resent.'))
-    return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
+
+    return HttpResponseRedirect(href('portal', 'user', user.username, 'edit', 'status'))
 
 
 @login_required
