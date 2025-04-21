@@ -844,7 +844,7 @@ class Post(models.Model, LockableObject):
         return href('forum', 'post', self.id, action)
 
     @staticmethod
-    def url_for_post(id, paramstr=None):
+    def url_for_post(id: int) -> str: # TODO allow to pass Post object to save query?
         post = Post.objects.get(id=id)
         position, slug = post.position, post.topic.slug
         page = max(0, position) // POSTS_PER_PAGE + 1
@@ -852,9 +852,9 @@ class Post(models.Model, LockableObject):
         url_parts = ['forum', 'topic', slug]
         if page != 1:
             url_parts.append(str(page))
-        url = href(*url_parts)
+        url = href(*url_parts, _anchor=f'post-{id}')
 
-        return ''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
+        return url
 
     def edit(self, text, is_plaintext=False):
         """

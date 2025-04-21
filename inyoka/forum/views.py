@@ -1039,9 +1039,8 @@ def reported_topics_subscription(request, mode):
 def post(request, post_id):
     """Redirect to the "real" post url (see `PostManager.url_for_post`)"""
     try:
-        url = Post.url_for_post(int(post_id),
-            paramstr=request.GET and request.GET.urlencode())
-    except (Topic.DoesNotExist, Post.DoesNotExist):
+        url = Post.url_for_post(int(post_id))
+    except Post.DoesNotExist:
         raise Http404()
     return HttpResponseRedirect(url)
 
@@ -1091,13 +1090,16 @@ def last_post(request, topic_slug):
     Redirect to the last post of the given topic.
     """
     try:
-        last = Topic.objects.values_list('last_post', flat=True)\
-                            .get(slug=topic_slug)
-        params = request.GET and request.GET.urlencode()
-        url = Post.url_for_post(last, paramstr=params)
-        return HttpResponseRedirect(url)
-    except (Post.DoesNotExist, Topic.DoesNotExist):
+        last_post_id = Topic.objects.values_list('last_post', flat=True).get(slug=topic_slug)
+    except Topic.DoesNotExist:
         raise Http404()
+
+    try:
+        url = Post.url_for_post(last_post_id)
+    except Post.DoesNotExist:
+        raise Http404()
+
+    return HttpResponseRedirect(url)
 
 
 @templated('forum/movetopic.html')

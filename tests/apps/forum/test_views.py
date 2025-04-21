@@ -1564,6 +1564,45 @@ class TestWelcomeMessageView(TestCase):
         self.assertFalse(self.forum_no_welcome.welcome_read_users.filter(pk=self.user.pk).exists())
 
 
+class TestLastPost(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.forum = Forum.objects.create(slug='f-slug')
+
+        self.topic = Topic.objects.create(title='A test Topic', author=self.user, forum=self.forum)
+        self.post = Post.objects.create(text='Post 1', author=self.user, topic=self.topic, position=0)
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered_group, self.forum)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.force_login(user=self.user)
+
+    def test_last_post(self):
+        response = self.client.get(f'/topic/{self.topic.slug}/last_post/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{self.post.id}')
+
+    def test_last_post__two_posts(self):
+        post2 = Post.objects.create(text='Post 2', author=self.user, topic=self.topic, position=1)
+        response = self.client.get(f'/topic/{self.topic.slug}/last_post/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{post2.id}')
+
+    def test_not_existing_topic(self):
+        response = self.client.get('/topic/not_existing_topic_slug23/last_post/', follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_number_queries(self):
+        with self.assertNumQueries(26):
+            self.client.get(f'/topic/{self.topic.slug}/last_post/', follow=True)
+
+
 class TestMarkRead(TestCase):
 
     def setUp(self) -> None:
