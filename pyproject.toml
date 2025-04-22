@@ -61,7 +61,7 @@ optional-dependencies.dev = [
   "coverage",
   "django-codemod",
   "django-debug-toolbar",
-  "django-test-migrations @ https://github.com/wemake-services/django-test-migrations/archive/f0523aaf62483caf1bc88dc95f125f149ddba925.zip", # temporary workaround until it is released with fix for django 5.2
+  "django-test-migrations",
   "django-upgrade",
   "freezegun",
   "responses",
