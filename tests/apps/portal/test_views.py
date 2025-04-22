@@ -1351,6 +1351,7 @@ class TestMemberList(TestCase):
         response = self.client.post('/users/', {'user': 'barfoobaz158'}, follow=True)
         self.assertContains(response, 'The user “barfoobaz158” does not exist.')
 
+
 class TestResendActivationMail(TestCase):
     client_class = InyokaClient
 
@@ -1369,6 +1370,13 @@ class TestResendActivationMail(TestCase):
         response = self.client.get('/users/resend_activation_mail/user/', follow=True)
         self.assertContains(response, 'was already activated')
 
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/users/resend_activation_mail/user_not_existing', follow=True)
+        self.assertEqual(response.status_code, 404)
+
     def test_get__not_activated_user(self):
         self.user.status = User.STATUS_INACTIVE
         self.user.save()
@@ -1379,6 +1387,7 @@ class TestResendActivationMail(TestCase):
         response = self.client.get('/users/resend_activation_mail/user/', follow=True)
         self.assertContains(response, 'The email with the activation key was resent.')
         self.assertEqual(len(mail.outbox), 1)
+
 
 class TestUserNewView(TestCase):
     client_class = InyokaClient

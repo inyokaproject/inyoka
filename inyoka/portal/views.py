@@ -871,7 +871,7 @@ def user_new(request):
 @login_required
 @permission_required('portal.change_user', raise_exception=True)
 def admin_resend_activation_mail(request, username: str):
-    user = User.objects.get(username__iexact=username)
+    user = get_object_or_404(User, username__iexact=username)
 
     if not user.is_inactive:
         messages.error(request,
