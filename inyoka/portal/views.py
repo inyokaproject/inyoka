@@ -444,7 +444,8 @@ def user_mail(request, username):
             messages.success(request,
                 _('The email to “%(username)s” was sent successfully.')
                 % {'username': escape(username)})
-            return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
+            return HttpResponseRedirect(
+                href('portal', 'user', user.username, 'edit', 'status'))
         else:
             generic.trigger_fix_errors_message(request)
     else:

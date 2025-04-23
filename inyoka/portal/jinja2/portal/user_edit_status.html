@@ -30,7 +30,7 @@
           Member since: {{ date }}
         {%- endtrans %}</div>
         <div class="note">
-          {% trans link=href('portal', 'user', user.username, 'mail', next=CURRENT_URL),
+          {% trans link=href('portal', 'user', user.username, 'mail'),
                    name=user.username -%}
             <a href="{{ link }}">Send an email</a> to {{ name }}
           {%- endtrans %}
