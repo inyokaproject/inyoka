@@ -495,11 +495,7 @@ def unsubscribe_user(request, username):
                     'action_url': request.build_absolute_uri(),
                 })
 
-    # redirect the user to the page he last watched
-    if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
-        return HttpResponseRedirect(request.GET['next'])
-    else:
-        return HttpResponseRedirect(url_for(user))
+    return HttpResponseRedirect(url_for(user))
 
 
 @login_required
