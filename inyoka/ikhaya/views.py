@@ -64,7 +64,7 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import flash_message
-from inyoka.utils.urls import href, is_safe_domain, url_for
+from inyoka.utils.urls import href, url_for
 
 
 def context_modifier(request, context):
@@ -377,9 +377,9 @@ def article_subscribe(request, year, month, day, slug):
             _('Notifications on new comments to this article will be sent '
               'to you.'))
 
-    redirect = is_safe_domain(request.GET.get('next', '')) and \
-        request.GET['next'] or url_for(article)
-    return HttpResponseRedirect(redirect)
+    if request.GET.get('next') == 'index':
+        return HttpResponseRedirect(href('ikhaya'))
+    return HttpResponseRedirect(url_for(article))
 
 
 @login_required
@@ -399,10 +399,9 @@ def article_unsubscribe(request, year, month, day, slug):
             _('You will no longer be notified of new comments for this '
               'article.'))
 
-    redirect = is_safe_domain(request.GET.get('next', '')) and \
-        request.GET['next'] or url_for(article)
-
-    return HttpResponseRedirect(redirect)
+    if request.GET.get('next') == 'index':
+        return HttpResponseRedirect(href('ikhaya'))
+    return HttpResponseRedirect(url_for(article))
 
 
 @login_required
