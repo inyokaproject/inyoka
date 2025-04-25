@@ -291,7 +291,7 @@ def activate(request, username='', activation_key=''):
 
     redirect = is_safe_domain(request.GET.get('next', ''))
     if not redirect:
-        redirect = href('portal', 'login', username=user.username)
+        redirect = href('portal', 'login')
 
     if request.user.is_authenticated:
         messages.error(request,
