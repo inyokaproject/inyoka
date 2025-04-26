@@ -8,8 +8,7 @@ Es wurde ein Benutzerkonto registriert, und diese E-Mail-Adresse ({{ user.email 
 Das oben angesprochene Benutzerkonto ist im Moment inaktiv. Du kannst es erst benutzen, wenn du es durch Klicken auf folgenden Link aktiviert hast:
 {{ user.get_absolute_url('activate') }}
 
-Solltest du dieses Benutzerkonto nicht registriert haben, kannst du es unter folgendem Link wieder löschen:
-{{ user.get_absolute_url('activate_delete') }}
+Der Link ist {{ ACTIVATION_HOURS }} Stunden gültig. Danach wird ein inaktives Benutzerkonto gelöscht.
 
 Aus Sicherheitsgründen schicken wir Dir Dein Passwort in dieser E-Mail nicht mit und speichern dieses auch nicht im Klartext in unserer Datenbank. Wenn Du es vergisst, können wir Dir also nur ein neues schicken.
 

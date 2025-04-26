@@ -173,15 +173,14 @@ def reset_email(id, email):
 
 @sensitive_variables('message')
 def send_activation_mail(user):
-    """send an activation mail"""
     message = render_to_string('mails/activation_mail.txt', {
         'user': user,
-        'email': user.email,
-        'activation_key': gen_activation_key(user)
+        'ACTIVATION_HOURS': settings.ACTIVATION_HOURS,
     })
     subject = _('%(sitename)s – Activation of the user “%(name)s”') % {
         'sitename': settings.BASE_DOMAIN_NAME,
-        'name': user.username}
+        'name': user.username,
+    }
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
@@ -442,9 +441,6 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                         self.username, **query)
         elif action == 'activate':
             return href('portal', 'activate',
-                        self.username, gen_activation_key(self), **query)
-        elif action == 'activate_delete':
-            return href('portal', 'delete',
                         self.username, gen_activation_key(self), **query)
         elif action == 'admin':
             return href('portal', 'user', self.username, 'edit', *args, **query)

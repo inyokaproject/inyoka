@@ -62,7 +62,7 @@ urlpatterns = [
     path('whoisonline/', views.whoisonline),
     path('inyoka/', views.about_inyoka),
     path('register/', views.register),
-    re_path(r'^(?P<action>activate|delete)/(?P<username>[^/]+)/(?P<activation_key>.*?)/$', views.activate),
+    re_path(r'^activate/(?P<username>[^/]+)/(?P<activation_key>.*?)/$', views.activate),
     re_path(r'^confirm/(?P<action>reactivate_user|set_new_email|reset_email)/$', views.confirm),
     path('lost_password/', views.InyokaPasswordResetView.as_view()),
     re_path(r'^lost_password/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', views.InyokaPasswordResetConfirmView.as_view()),

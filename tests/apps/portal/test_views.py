@@ -1566,31 +1566,13 @@ class TestActivate(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
 
     def test_get__not_existing_user(self):
-        response = self.client.get('/delete/foobarbaz_user/test_key/', follow=True)
+        response = self.client.get('/activate/foobarbaz_user/test_key/', follow=True)
         self.assertContains(response, 'does not exist.')
 
     def test_get__logged_in(self):
         self.client.login(username='user', password='user')
-        response = self.client.get('/delete/user/test_key/', follow=True)
+        response = self.client.get('/activate/user/test_key/', follow=True)
         self.assertContains(response, 'You cannot enter an activation key when you are logged in.')
-
-    def test_get__delete__already_deleted(self):
-        key = gen_activation_key(self.user)
-        self.user.status = User.STATUS_INACTIVE
-        self.user.save()
-        response = self.client.get(f'/delete/user/{key}/', follow=True)
-        self.assertContains(response,'Your account was anonymized.')
-
-    def test_get__delete__already_active(self):
-        key = gen_activation_key(self.user)
-        response = self.client.get(f'/delete/user/{key}/', follow=True)
-        self.assertContains(response,
-                            'was already activated.')
-
-    def test_get__delete__invalid_key(self):
-        response = self.client.get('/delete/user/test_key/', follow=True)
-        self.assertContains(response,
-                            'Your activation key is invalid.')
 
     def test_get__activate(self):
         key = gen_activation_key(self.user)
@@ -1599,6 +1581,25 @@ class TestActivate(TestCase):
         response = self.client.get(f'/activate/user/{key}/', follow=True)
         self.assertContains(response,
                             'Your account was successfully activated.')
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, User.STATUS_ACTIVE)
+
+    def test_get__activate__already_active(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_ACTIVE
+        self.user.save()
+        response = self.client.get(f'/activate/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
+
+    def test_get__activate__user_banned(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_BANNED
+        self.user.save()
+        response = self.client.get(f'/activate/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
 
     def test_get__activate__invalid_key(self):
         response = self.client.get('/activate/user/test_key/', follow=True)
