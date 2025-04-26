@@ -9,14 +9,11 @@
     :license: BSD, see LICENSE for more details.
 """
 import time
-from hashlib import md5
 
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db.models.functions import Length
 
 from inyoka.portal.user import User
-from inyoka.utils.captcha import Captcha
 from inyoka.utils.services import SimpleDispatcher
 
 MIN_AUTOCOMPLETE_CHARS = 3
@@ -53,18 +50,6 @@ def get_group_autocompletion(request):
                               .order_by(Length('name').asc())\
                               .values_list('name', flat=True)[:MAX_AUTOCOMPLETE_ITEMS]
     return list(groupnames)
-
-
-@dispatcher.register()
-def get_captcha(request):
-    captcha = Captcha()
-    h = md5(settings.SECRET_KEY.encode())
-    h.update(captcha.solution.encode())
-    request.session['captcha_solution'] = h.hexdigest()
-    response = captcha.get_response()
-    # Save the solution for easier testing
-    response._captcha_solution = captcha.solution
-    return response
 
 
 @dispatcher.register()

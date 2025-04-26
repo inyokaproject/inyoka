@@ -137,9 +137,9 @@ class RegisterForm(forms.Form):
 
     Validates that the requested username is not already in use, and
     requires the password to be entered twice to catch typos.
-    The user also needs to confirm our terms of usage and there are some
-    techniques for bot catching included e.g a CAPTCHA and a hidden captcha
-    for bots that just fill out everything.
+    The user also needs to confirm our terms of usage, and there are some
+    techniques for bot catching included e.g. a CAPTCHA and a hidden captcha
+    for bots that just fill everything.
     """
     username = forms.CharField(label=gettext_lazy('Username'), max_length=20)
     email = EmailField(label=gettext_lazy('E-mail'),
@@ -152,10 +152,14 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(render_value=False))
     confirm_password = forms.CharField(label=gettext_lazy('Confirm password'),
         widget=forms.PasswordInput(render_value=False))
-    captcha = CaptchaField(label=gettext_lazy('CAPTCHA'))
+    # captcha see __init__
     terms_of_usage = forms.BooleanField()
 
     use_required_attribute = False
+
+    def __init__(self, session=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['captcha'] = CaptchaField(session=session, label=gettext_lazy('CAPTCHA'))
 
     def clean_username(self):
         """
