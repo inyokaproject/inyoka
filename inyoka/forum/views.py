@@ -1091,7 +1091,7 @@ def last_post(request, topic_slug):
     Redirect to the last post of the given topic.
     """
     try:
-        last_post = Topic.objects.get(slug=topic_slug).last_post
+        last_post = Topic.objects.select_related('last_post__topic').get(slug=topic_slug).last_post
     except Topic.DoesNotExist:
         raise Http404()
 

@@ -1716,7 +1716,7 @@ class TestLastPost(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_number_queries(self):
-        with self.assertNumQueries(26):
+        with self.assertNumQueries(24):
             self.client.get(f'/topic/{self.topic.slug}/last_post/', follow=True)
 
 
