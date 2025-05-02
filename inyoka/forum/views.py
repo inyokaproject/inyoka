@@ -1051,12 +1051,12 @@ def first_unread_post(request, topic_slug):
     Redirect the user to the first unread post of a topic.
     """
     try:
-        unread = Topic.objects.only('id', 'forum__id').get(slug=topic_slug)
+        topic = Topic.objects.only('id', 'forum__id').get(slug=topic_slug)
     except Topic.DoesNotExist:
         raise Http404()
 
-    data = request.user._readstatus.data.get(unread.forum.id, [None, []])
-    query = Post.objects.filter(topic=unread)
+    data = request.user._readstatus.data.get(topic.forum.id, [None, []])
+    query = Post.objects.filter(topic=topic)
 
     last_pid, ids = data
     if last_pid is not None:
@@ -1066,7 +1066,7 @@ def first_unread_post(request, topic_slug):
         # We need a try/catch here, cause the post don't have to exist
         # any longer.
         try:
-            post_ids = Post.objects.filter(topic=unread, id__in=ids) \
+            post_ids = Post.objects.filter(topic=topic, id__in=ids) \
                                    .values_list('id', flat=True)
             post_id = max(post_ids)
         except ValueError:
