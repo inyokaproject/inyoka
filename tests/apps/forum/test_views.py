@@ -1643,7 +1643,7 @@ class TestFirstUnreadPost(TestCase):
                              f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{post2.id}')
 
     def test_number_queries(self):
-        with self.assertNumQueries(27):
+        with self.assertNumQueries(26):
             self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
 
     def test_subforum(self):

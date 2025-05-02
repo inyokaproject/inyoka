@@ -1051,7 +1051,7 @@ def first_unread_post(request, topic_slug):
     Redirect the user to the first unread post of a topic.
     """
     try:
-        topic = Topic.objects.only('id', 'forum__id').get(slug=topic_slug)
+        topic = Topic.objects.only('id', 'forum__id').select_related('forum').get(slug=topic_slug)
     except Topic.DoesNotExist:
         raise Http404()
 
