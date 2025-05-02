@@ -1075,7 +1075,7 @@ def first_unread_post(request, topic_slug):
             query = query.filter(id__gt=post_id)
 
     try:
-        first_unread_post = query.order_by('position')[0]
+        first_unread_post = query.select_related('topic').order_by('position')[0]
     except IndexError:
         # No new post, this also means the user called first_unread himself
         # as the icon won't show up in that case, hence we just return to
