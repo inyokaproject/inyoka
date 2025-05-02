@@ -1039,7 +1039,7 @@ def reported_topics_subscription(request, mode):
 def post(request, post_id):
     """Redirect to the "real" post url (see `Post.url_for_post`)"""
     try:
-        post = Post.objects.get(id=int(post_id))
+        post = Post.objects.select_related('topic').get(id=int(post_id))
     except Post.DoesNotExist:
         raise Http404()
 
