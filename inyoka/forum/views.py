@@ -1037,17 +1037,18 @@ def reported_topics_subscription(request, mode):
 
 
 def post(request, post_id):
-    """Redirect to the "real" post url (see `PostManager.url_for_post`)"""
+    """Redirect to the "real" post url (see `Post.url_for_post`)"""
     try:
-        url = Post.url_for_post(int(post_id))
+        post = Post.objects.get(id=int(post_id))
     except Post.DoesNotExist:
         raise Http404()
-    return HttpResponseRedirect(url)
+
+    return HttpResponseRedirect(post.url_for_post())
 
 
 def first_unread_post(request, topic_slug):
     """
-    Redirect the user to the first unread post in a special topic.
+    Redirect the user to the first unread post of a topic.
     """
     try:
         unread = Topic.objects.only('id', 'forum__id').get(slug=topic_slug)
@@ -1081,7 +1082,7 @@ def first_unread_post(request, topic_slug):
         # page one of the topic.
         redirect = href('forum', 'topic', topic_slug)
     else:
-        redirect = Post.url_for_post(first_unread_post.id)
+        redirect = first_unread_post.url_for_post()
     return HttpResponseRedirect(redirect)
 
 
@@ -1090,16 +1091,11 @@ def last_post(request, topic_slug):
     Redirect to the last post of the given topic.
     """
     try:
-        last_post_id = Topic.objects.values_list('last_post', flat=True).get(slug=topic_slug)
+        last_post = Topic.objects.get(slug=topic_slug).last_post
     except Topic.DoesNotExist:
         raise Http404()
 
-    try:
-        url = Post.url_for_post(last_post_id)
-    except Post.DoesNotExist:
-        raise Http404()
-
-    return HttpResponseRedirect(url)
+    return HttpResponseRedirect(last_post.url_for_post())
 
 
 @templated('forum/movetopic.html')

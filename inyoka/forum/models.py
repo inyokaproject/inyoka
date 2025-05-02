@@ -840,19 +840,16 @@ class Post(models.Model, LockableObject):
         if action == 'show':
             return href('forum', 'post', self.id)
         if action == 'fullurl':
-            return Post.url_for_post(self.id)
+            return self.url_for_post()
         return href('forum', 'post', self.id, action)
 
-    @staticmethod
-    def url_for_post(id: int) -> str: # TODO allow to pass Post object to save query?
-        post = Post.objects.get(id=id)
-        position, slug = post.position, post.topic.slug
-        page = max(0, position) // POSTS_PER_PAGE + 1
+    def url_for_post(self) -> str:
+        page = max(0, self.position) // POSTS_PER_PAGE + 1
 
-        url_parts = ['forum', 'topic', slug]
+        url_parts = ['forum', 'topic', self.topic.slug]
         if page != 1:
             url_parts.append(str(page))
-        url = href(*url_parts, _anchor=f'post-{id}')
+        url = href(*url_parts, _anchor=f'post-{self.id}')
 
         return url
 
