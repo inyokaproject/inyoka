@@ -1,6 +1,7 @@
 name: Inyoka CI
-
 on: [push, pull_request]
+permissions:
+  contents: read
 
 
 jobs:
