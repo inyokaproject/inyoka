@@ -291,7 +291,7 @@ def activate(request, username='', activation_key=''):
 
     redirect = is_safe_domain(request.GET.get('next', ''))
     if not redirect:
-        redirect = href('portal', 'login', username=user.username)
+        redirect = href('portal', 'login')
 
     if request.user.is_authenticated:
         messages.error(request,
@@ -444,7 +444,8 @@ def user_mail(request, username):
             messages.success(request,
                 _('The email to “%(username)s” was sent successfully.')
                 % {'username': escape(username)})
-            return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
+            return HttpResponseRedirect(
+                href('portal', 'user', user.username, 'edit', 'status'))
         else:
             generic.trigger_fix_errors_message(request)
     else:
@@ -495,11 +496,7 @@ def unsubscribe_user(request, username):
                     'action_url': request.build_absolute_uri(),
                 })
 
-    # redirect the user to the page he last watched
-    if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
-        return HttpResponseRedirect(request.GET['next'])
-    else:
-        return HttpResponseRedirect(url_for(user))
+    return HttpResponseRedirect(url_for(user))
 
 
 @login_required
@@ -799,10 +796,12 @@ def user_edit_status(request, username):
             messages.success(request,
                 _('The state of “%(username)s” was successfully changed.')
                 % {'username': escape(user.username)})
+
     if not user.is_inactive:
         activation_link = None
     else:
         activation_link = user.get_absolute_url('activate')
+
     return {
         'user': user,
         'form': form,
@@ -868,8 +867,9 @@ def user_new(request):
 
 @login_required
 @permission_required('portal.change_user', raise_exception=True)
-def admin_resend_activation_mail(request):
-    user = User.objects.get(username__iexact=request.GET.get('user'))
+def admin_resend_activation_mail(request, username: str):
+    user = get_object_or_404(User, username__iexact=username)
+
     if not user.is_inactive:
         messages.error(request,
             _('The account of “%(username)s” was already activated.')
@@ -878,7 +878,8 @@ def admin_resend_activation_mail(request):
         send_activation_mail(user)
         messages.success(request,
             _('The email with the activation key was resent.'))
-    return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
+
+    return HttpResponseRedirect(href('portal', 'user', user.username, 'edit', 'status'))
 
 
 @login_required

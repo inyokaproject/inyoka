@@ -26,7 +26,6 @@ from inyoka.utils.database import (
     find_next_increment,
 )
 from inyoka.utils.dates import datetime_to_timezone
-from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 
@@ -242,13 +241,6 @@ class Article(models.Model, LockableObject):
             query['_anchor'] = 'comment_%d' % self.comment_count
             return href('ikhaya', self.stamp, self.slug, **query)
         if action in ('subscribe', 'unsubscribe'):
-            if current_request:
-                current = current_request.build_absolute_uri()
-                if self.get_absolute_url() not in current:
-                    # We may be at the ikhaya index page.
-                    if 'next' not in query:
-                        query['next'] = current_request.build_absolute_uri()
-                    return href('ikhaya', self.stamp, self.slug, action, **query)
             return href('ikhaya', self.stamp, self.slug, action, **query)
 
         links = {

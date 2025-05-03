@@ -74,9 +74,9 @@
 
               {% if request.user.is_authenticated %}
                 {%- if article.subscribed %}
-                  (<a href="{{ article|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>)
+                  (<a href="{{ article|url('unsubscribe', next='index') }}">{% trans %}Unsubscribe{% endtrans %}</a>)
                 {%- else %}
-                  (<a href="{{ article|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a>)
+                  (<a href="{{ article|url('subscribe', next='index') }}">{% trans %}Subscribe{% endtrans %}</a>)
                 {%- endif %}
               {%- endif %}
             {%- endif %}

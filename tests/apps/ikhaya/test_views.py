@@ -742,6 +742,13 @@ class TestArticleSubscribe(TestCase):
         response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/subscribe/')
         self.assertEqual(response.status_code, 403)
 
+    def test_redirect_index(self):
+        """If there is a special GET parameter, the redirect-target should change."""
+        response = self.client.get(
+            f'/{self.article.stamp}/{self.article.slug}/subscribe/?next=index', follow=True)
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/')
+
 
 class TestArticleUnsubscribe(TestCase):
 
@@ -786,6 +793,16 @@ class TestArticleUnsubscribe(TestCase):
         response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/unsubscribe/', follow=True)
         # target status code 403 is OK, as the user can only unsubscribe, but not view the article
         self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/{self.article.slug}/', target_status_code=403)
+
+    def test_redirect_index(self):
+        """If there is a special GET parameter, the redirect-target should change."""
+        Subscription(user=self.admin, content_object=self.article).save()
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        response = self.client.get(
+            f'/{self.article.stamp}/{self.article.slug}/unsubscribe/?next=index', follow=True)
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/')
 
 
 class TestReportNew(TestCase):

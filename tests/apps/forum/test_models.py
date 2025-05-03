@@ -135,19 +135,16 @@ class TestPostModel(ForumTestCase):
         post = Post(text='test1', author=self.user, topic=self.topic)
         post.save()
 
-        self.assertEqual(Post.url_for_post(post.pk),
+        self.assertEqual(post.url_for_post(),
                          'http://forum.inyoka.local/topic/topic/#post-%s' % post.pk)
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post_multiple_pages(self):
         posts = self.addPosts(45)
-        last_post_id = list(posts)[-1].pk
+        last_post = list(posts)[-1]
 
-        self.assertEqual(Post.url_for_post(last_post_id),
-                         'http://forum.inyoka.local/topic/topic/4/#post-%s' % last_post_id)
-
-    def test_url_for_post_not_existing_post(self):
-        self.assertRaises(Post.DoesNotExist, Post.url_for_post, 250000913)
+        self.assertEqual(last_post.url_for_post(),
+                         'http://forum.inyoka.local/topic/topic/4/#post-%s' % last_post.id)
 
     def test_rendered_get_text(self):
         post = Post(text="'''test'''")

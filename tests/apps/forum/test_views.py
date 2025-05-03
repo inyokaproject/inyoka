@@ -35,6 +35,7 @@ from inyoka.forum.models import (
     PollOption,
     Post,
     Topic,
+    mark_all_forums_read,
 )
 from inyoka.portal.user import User
 from inyoka.portal.utils import UbuntuVersion
@@ -1562,6 +1563,161 @@ class TestWelcomeMessageView(TestCase):
             views.WelcomeMessageView.as_view()(request, slug='f-slug-no-welcome')
 
         self.assertFalse(self.forum_no_welcome.welcome_read_users.filter(pk=self.user.pk).exists())
+
+
+class TestPostView(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.forum = Forum.objects.create(slug='f-slug')
+
+        self.topic = Topic.objects.create(title='A test Topic', author=self.user, forum=self.forum)
+        self.post = Post.objects.create(text='Post 1', author=self.user, topic=self.topic, position=0)
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered_group, self.forum)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.force_login(user=self.user)
+
+    def test_post(self):
+        response = self.client.get(f'/post/{self.post.id}/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{self.post.id}')
+
+    def test_not_existing_post(self):
+        response = self.client.get('/post/1337/', follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_number_queries(self):
+        with self.assertNumQueries(24):
+            self.client.get(f'/post/{self.post.id}/', follow=True)
+
+
+class TestFirstUnreadPost(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.forum = Forum.objects.create(slug='f-slug')
+        self.topic = Topic.objects.create(title='A test Topic', author=self.user, forum=self.forum)
+        self.post = Post.objects.create(text='Post 1', author=self.user, topic=self.topic, position=0)
+
+        self.registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', self.registered_group, self.forum)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.force_login(user=self.user)
+
+
+
+    def test_not_existing_topic(self):
+        response = self.client.get('/topic/not_existing_topic_slug23/first_unread/', follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_redirect_unread_post(self):
+        response = self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{self.post.id}')
+
+    def test_redirect_no_new_post(self):
+        mark_all_forums_read(self.user)
+
+        response = self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/')
+
+    def test_redirect_new_post(self):
+        mark_all_forums_read(self.user)
+        post2 = Post.objects.create(text='Post 2', author=self.user,
+                                    topic=self.topic, position=1)
+
+        response = self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{post2.id}')
+
+    def test_number_queries(self):
+        with self.assertNumQueries(25):
+            self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
+
+    def test_subforum(self):
+        subforum = Forum.objects.create(name='Public forum', parent=self.forum)
+        assign_perm('forum.view_forum', self.registered_group, subforum)
+
+        topic2 = Topic.objects.create(title='Another Topic', author=self.user,
+                                      forum=subforum)
+        Post.objects.create(text='Post Sub', author=self.user, topic=topic2, position=0)
+
+        mark_all_forums_read(self.user)
+
+        Post.objects.create(text='Post Sub2', author=self.user, topic=topic2, position=1)
+
+        self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
+
+    def test_invalid_post_id_in_readstatus(self):
+        self.user._readstatus.data = {self.forum.id: (9422976, {9470994})}
+        self.user.forum_read_status = self.user._readstatus.serialize()
+        self.user.save(update_fields=('forum_read_status',))
+
+        response = self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/')
+
+    def test_topic_partly_read(self):
+        post1 = Post.objects.create(topic=self.topic, author=self.user, position=1)
+        post2 = Post.objects.create(topic=self.topic, author=self.user, position=2)
+        Post.objects.create(topic=self.topic, author=self.user, position=3)
+
+        self.user._readstatus.data = {self.forum.id: [None, {post1.id}]}
+        self.user.forum_read_status = self.user._readstatus.serialize()
+        self.user.save(update_fields=('forum_read_status',))
+
+        response = self.client.get(f'/topic/{self.topic.slug}/first_unread/', follow=True)
+        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{post2.id}')
+
+class TestLastPost(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.forum = Forum.objects.create(slug='f-slug')
+
+        self.topic = Topic.objects.create(title='A test Topic', author=self.user, forum=self.forum)
+        self.post = Post.objects.create(text='Post 1', author=self.user, topic=self.topic, position=0)
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered_group, self.forum)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.force_login(user=self.user)
+
+    def test_last_post(self):
+        response = self.client.get(f'/topic/{self.topic.slug}/last_post/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{self.post.id}')
+
+    def test_last_post__two_posts(self):
+        post2 = Post.objects.create(text='Post 2', author=self.user, topic=self.topic, position=1)
+        response = self.client.get(f'/topic/{self.topic.slug}/last_post/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/#post-{post2.id}')
+
+    def test_not_existing_topic(self):
+        response = self.client.get('/topic/not_existing_topic_slug23/last_post/', follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_number_queries(self):
+        with self.assertNumQueries(24):
+            self.client.get(f'/topic/{self.topic.slug}/last_post/', follow=True)
 
 
 class TestMarkRead(TestCase):
