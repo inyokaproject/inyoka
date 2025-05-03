@@ -17,7 +17,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.db.models import F, Q
+from django.db.models import F, Max, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -1063,15 +1063,8 @@ def first_unread_post(request, topic_slug):
         query = query.filter(id__gt=last_pid)
 
     if ids:
-        # We need a try/catch here, cause the post don't have to exist
-        # any longer.
-        try:
-            post_ids = Post.objects.filter(topic=topic, id__in=ids) \
-                                   .values_list('id', flat=True)
-            post_id = max(post_ids)
-        except ValueError:
-            pass
-        else:
+        post_id = Post.objects.filter(topic=topic, id__in=ids).aggregate(max_id=Max('id'))['max_id']
+        if post_id: # the post doesn't have to exist any longer.
             query = query.filter(id__gt=post_id)
 
     try:
