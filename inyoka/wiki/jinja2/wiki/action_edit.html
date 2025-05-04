@@ -33,7 +33,7 @@
       {{ form.revision }}
       <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}">
       <input type="submit" value="{% trans %}Save{% endtrans %}">
-      <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}">
+      <a href="{{ page|url }}" class="link-as-button cancel">{% trans %}Cancel{% endtrans %}</a>
     </div>
     {{ form.errors.note }}
   </form>

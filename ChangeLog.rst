@@ -64,6 +64,7 @@ Deployment notes
 * Use AnonymousUser for bad request template to avoid an exception
 * Make ikhaya article suggestions deleteable again
 * Prevent to delete blog including posts, if linked user is deleted
+* Wiki: Do not require a change comment to press the cancel button (For this, the button is replaced by a link to the wiki page)
 
 🔒 Security
 -----------
