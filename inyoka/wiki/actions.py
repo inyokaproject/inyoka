@@ -491,7 +491,6 @@ def do_edit(request, name, rev=None):
         return do_attach_edit(request, name=page.name)
 
     preview = None
-    rev = page.rev.id
 
     if request.method == 'POST':
         form = PageEditForm(user=request.user,
