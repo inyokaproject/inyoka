@@ -40,8 +40,10 @@
           {% trans %}Overwrite existing attachments with same name:{% endtrans %}
         </label>
       </p>
-      <p><input type="submit" value="{% trans %}Upload attachments{% endtrans %}">
-         <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}"></p>
+      <p>
+        <input type="submit" value="{% trans %}Upload attachments{% endtrans %}">
+        <a href="{{ page|url }}" class="link-as-button cancel">{% trans %}Cancel{% endtrans %}</a>
+      </p>
     </form>
 
     <h2>{% trans %}Existing attachments{% endtrans %}</h2>

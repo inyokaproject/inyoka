@@ -39,7 +39,7 @@
       </p>
       <p>
         <input type="submit" value="{% trans %}Edit attachment{% endtrans %}">
-        <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}">
+        <a href="{{ page|url }}" class="link-as-button cancel">{% trans %}Cancel{% endtrans %}</a>
       </p>
     </form>
   </div>
