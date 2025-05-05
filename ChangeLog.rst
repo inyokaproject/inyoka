@@ -42,6 +42,7 @@ Unreleased 1.52.1 (2025-MM-DD)
 
 🐛 Fixes
 --------
+* Create a wiki index page via a databse migration, if it does not exist already
 
 🔒 Security
 -----------
