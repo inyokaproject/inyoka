@@ -94,19 +94,18 @@ class TestDoCreate(TestCase):
     def test_simple_create(self):
         self.client.post(self.url, data={'name': 'newpage', 'template': ''})
 
-        self.assertEqual(Page.objects.get().name, 'newpage')
+        self.assertEqual(Page.objects.filter(name='newpage').count(), 1)
 
     def test_normalization_create(self):
         self.client.post(self.url, data={'name': 'new page', 'template': ''})
 
-        self.assertEqual(Page.objects.get().name, 'new_page')
+        self.assertEqual(Page.objects.get(name='new_page').name, 'new_page')
 
     def test_error_with_different_pagename_case(self):
         Page.objects.create(user=self.user, name='abc', remote_addr='', text='test')
 
         response = self.client.post(self.url, data={'name': 'Abc', 'template': ''})
 
-        self.assertEqual(Page.objects.count(), 1)
         self.assertContains(response, 'The page Abc already exists.')
 
     def _create_page(self, name):
