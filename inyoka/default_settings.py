@@ -447,7 +447,7 @@ COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two days
 ANONYMOUS_USER_NAME = 'anonymous'
 
 # disable guardian monkey patching, for custom user model support
-GUARDIAN_MONKEY_PATCH = False
+GUARDIAN_MONKEY_PATCH_USER = False
 
 SMILIES = OrderedDict([
     (':?:', '❓'),  # has to come before :?
