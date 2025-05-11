@@ -72,6 +72,7 @@ Deployment notes
 * Rework captcha: the captcha image is now send via HTML (inline, base64 decoded) Instead of storing the solution into the session (for Inyoka by default a cookie), the solution is saved in the server-side cache.
 * Use django's signer for the activation key (it still used sha1. Furthermore, the key had no time expiration.)
 * Fix redirect of some views
+* Update requirements (at least the dependency ``Django`` includes a known security fix)
 
 
 1.42.2 (2025-03-07)

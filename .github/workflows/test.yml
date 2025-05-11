@@ -12,6 +12,7 @@ jobs:
       DEFAULT_BRANCH: 'refs/heads/staging'
       REQUIREMENTS_FILE: extra/requirements/linux-py${{ matrix.python-version }}-development.txt
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.13', '3.12', '3.11', '3.10']
         database: ['postgresql', 'sqlite']
