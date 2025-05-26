@@ -46,7 +46,6 @@ dependencies = [
   "jinja2",
   "lxml[html-clean]",
   "pillow",
-  "pip-tools",
   "psycopg2",
   "pygments",
   "python-magic",
@@ -71,6 +70,7 @@ optional-dependencies.dev = [
   "sphinx",
   "sphinx-rtd-theme",
   "ruff",
+  "uv",
 ]
 urls.Changelog = "https://github.com/inyokaproject/inyoka/blob/master/ChangeLog.rst"
 urls.Homepage = "https://inyokaproject.org/"
