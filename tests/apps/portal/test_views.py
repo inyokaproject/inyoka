@@ -549,6 +549,13 @@ class TestRegister(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
+    def test_get_no_cookie(self):
+        session_cookie = settings.SESSION_COOKIE_NAME
+        self.client.cookies[session_cookie] = ""
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 400)
+
     def post_username(self, form_username):
         User.objects.create(username=self.username)
 
