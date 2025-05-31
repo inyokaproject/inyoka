@@ -19,6 +19,7 @@ from django import forms
 from django.conf import settings
 from django.core import validators
 from django.core.cache import cache
+from django.core.exceptions import BadRequest
 from django.forms import DateInput, MultipleChoiceField, SplitDateTimeWidget, TimeInput
 from django.forms.widgets import TextInput
 from django.utils.translation import gettext as _
@@ -370,8 +371,12 @@ class CaptchaField(forms.MultiValueField):
         Returns a unique checksum for the current session.
         It is used for a unique cache key.
         """
+        session_key = self.session.session_key
+        if not session_key:
+            raise BadRequest
+
         session_hash = hashlib.sha256()
-        session_hash.update(self.session.session_key.encode())
+        session_hash.update(session_key.encode())
         return session_hash.hexdigest()
 
     def delete_cached_captcha(self) -> None:
