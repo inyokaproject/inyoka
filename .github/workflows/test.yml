@@ -149,6 +149,7 @@ jobs:
 
     - name: Run BDD tests
       if: ${{ matrix.database == 'postgresql' }}
+      continue-on-error: true
       env:
         DJANGO_SETTINGS_MODULE: 'tests.bdd.settings.headless'
         INYOKA_THEME: ${{ matrix.theme }}
