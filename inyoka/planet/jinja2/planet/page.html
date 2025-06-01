@@ -15,15 +15,6 @@
 {% set navi_type  = 'sidebar' %}
 {% set styles = styles|default([]) + ['planet'] %}
 
-{%- block html_head %}
-  {{ super() }}
-  <script>
-    /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ request.user.settings.planet_sidebar_hidden and 'true' or 'false' }};
-    /*]]>*/
-  </script>
-{%- endblock %}
-
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_planet">{% trans %}Planet{% endtrans %}</h3>
@@ -36,12 +27,12 @@
     </ul>
 
     {%- if blogs %}
-      <h3 class="navi_blogs admin_link_hover">
+      <h3 class="navi_blogs">
         {% trans %}Blogs{% endtrans %}
       </h3>
       <ul>
         {%- for blog in blogs %}
-          <li class="admin_link_hover">
+          <li>
             {%- if request.user.has_perm('planet.change_blog') -%}
               <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
             {%- endif -%}
@@ -51,7 +42,7 @@
       </ul>
     {%- endif %}
     {%- if request.user.has_perm('planet.add_blog') %}
-      <h3 class="navi_blogs admin_link_hover">
+      <h3 class="navi_blogs">
         {% trans %}Configuration{% endtrans %}
       </h3>
       <ul>

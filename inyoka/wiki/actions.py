@@ -491,16 +491,13 @@ def do_edit(request, name, rev=None):
         return do_attach_edit(request, name=page.name)
 
     preview = None
-    rev = page.rev.id
 
     if request.method == 'POST':
         form = PageEditForm(user=request.user,
                             name=name,
                             data=request.POST.copy())
-        if 'cancel' in request.POST:
-            messages.info(request, _('Editing of this page was canceled.'))
-            return HttpResponseRedirect(url_for(page))
-        elif 'preview' in request.POST:
+
+        if 'preview' in request.POST:
             ctx = RenderContext(request, wiki_page=page)
             tt = request.POST.get('text', '')
             preview = parse(tt).render(ctx, 'html')
@@ -911,13 +908,6 @@ def do_attach(request, name):
         'form': AddAttachmentForm()
     }
     if request.method == 'POST':
-        if request.POST.get('cancel'):
-            messages.info(request, _('Canceled.'))
-            if page and page.metadata.get('redirect'):
-                url = url_for(page, action='show_no_redirect')
-            else:
-                url = url_for(page)
-            return HttpResponseRedirect(url)
         form = AddAttachmentForm(request.POST, request.FILES)
         if not form.is_valid():
             context['form'] = form

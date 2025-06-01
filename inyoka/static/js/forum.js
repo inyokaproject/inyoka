@@ -8,38 +8,30 @@
  * :license: BSD, see LICENSE for more details.
  */
 
-$(function () { /* collapsable elements for the input forms */
-  $('dt.collapse').each(function () {
-    $(this).nextWhile('dd').addClass('collapse_enabled').toggle($(this).hasClass('has_errors'));
-    $(this).click(function () {
-      $(this).toggleClass('collapsed').nextWhile('dd').toggle();
-    }).addClass('collapse_enabled collapsed');
+/* this function is used by the index template */
+function hideForumCategories(hidden_categories) {
+  $('table.category_box tr.head').each(function () {
+    if ($.inArray(parseInt(this.id.substr(9), 10), hidden_categories) >= 0) {
+      $(this).nextUntil('tr.head').hide();
+      $('a.collapse', this).addClass('collapsed');
+    }
   });
+}
 
-  /* poll helpers */
-  (function () {
-    $('#id_add_option').click(function addReply() {
-      count = $('.newtopic_polls_replies').length;
-      $($('.newtopic_polls_replies')[count - 1]).after('<dd class="newtopic_polls_replies collapse_enabled">Antwort ' + (count + 1) + ': <input type="text" name="options" value="" /></dd>');
-      $('#id_add_option').remove();
-      $($('.newtopic_polls_replies')[count]).append(' <input type="submit" name="add_option" value="Weitere Antwort" ' + 'id="id_add_option" />');
-      $('#id_add_option').click(addReply);
-      return false;
-    });
-  })();
+$(function () {
 
   /* expand and collapse button for categories */
   (function () {
-    var toggleState = {};
+    let toggleState = {};
     $('<a href="#" class="collapse" />').click(function () {
-      var head = $(this).parent().parent();
+      const head = $(this).parent().parent();
       head.nextUntil('tr.head').toggle();
       $(this).toggleClass('collapsed');
       $('table.category_box tr.head').each(function () {
         toggleState[this.id.substr(9)] = $('a.collapsed', this).length > 0;
       });
-      var hidden = [];
-      for (var state in toggleState) {
+      let hidden = [];
+      for (const state in toggleState) {
         if (toggleState[state]) hidden.push(state);
       }
       $.get('/', {
@@ -48,16 +40,6 @@ $(function () { /* collapsable elements for the input forms */
       });
       return false;
     }).prependTo('table.category_box tr.head th');
-
-    /* this function is used by the index template */
-    hideForumCategories = function (hidden_categories) {
-      $('table.category_box tr.head').each(function () {
-        if ($.inArray(parseInt(this.id.substr(9), 10), hidden_categories) >= 0) {
-          $(this).nextUntil('tr.head').hide();
-          $('a.collapse', this).addClass('collapsed');
-        }
-      });
-    };
   })();
 
   /* Display some more information about the ubuntu version */
@@ -98,13 +80,12 @@ $(function () { /* collapsable elements for the input forms */
     // Bind events so that we can update the user session
     // properly on interaction.
     $('.splitinfo input').on('click', function() {
-      var self = $(this);
-      var topic = location.href.slice(location.href.indexOf('/topic/') + 7);
+      let self = $(this);
+      let topic = location.href.slice(location.href.indexOf('/topic/') + 7);
       topic = topic.substring(0, topic.indexOf('/'));
 
-      post = self.attr('value');
-      type = self.attr('type');
-      other = $('.splitinfo input[name="' + (type == 'radio' ? 'select' : 'start') + '"]');
+      const type = self.attr('type');
+      let other = $('.splitinfo input[name="' + (type === 'radio' ? 'select' : 'start') + '"]');
 
       if (self.is(':checked')) {
         other.removeAttr('checked');
@@ -114,14 +95,14 @@ $(function () { /* collapsable elements for the input forms */
         self.removeAttr('checked');
       }
 
-      var url = '/?__service__=forum.mark_topic_split_point';
-      if (self.attr('type') == 'radio') {
+      const url = '/?__service__=forum.mark_topic_split_point';
+      if (self.attr('type') === 'radio') {
         $.getJSON(url, {
           post: self.attr('value'),
           from_here: true,
           topic: topic
         });
-      } else if (self.attr('type') == 'checkbox') {
+      } else if (self.attr('type') === 'checkbox') {
         $.getJSON(url, {
           post: self.attr('value'),
           topic: topic

@@ -8,7 +8,6 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import timezone
-from typing import Optional
 from urllib.parse import urlencode
 
 from django.core.cache import cache
@@ -27,7 +26,6 @@ from inyoka.utils.database import (
     find_next_increment,
 )
 from inyoka.utils.dates import datetime_to_timezone
-from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 
@@ -71,7 +69,7 @@ class ArticleManager(models.Manager):
                             publication_date_utc__day=day)
         return article
 
-    def get_latest_articles(self, category: Optional[str]=None, count: int=10):
+    def get_latest_articles(self, category: str | None=None, count: int=10):
         """Return `count` lastest articles for the category `category` or for
         all categories if None.
 
@@ -243,13 +241,6 @@ class Article(models.Model, LockableObject):
             query['_anchor'] = 'comment_%d' % self.comment_count
             return href('ikhaya', self.stamp, self.slug, **query)
         if action in ('subscribe', 'unsubscribe'):
-            if current_request:
-                current = current_request.build_absolute_uri()
-                if self.get_absolute_url() not in current:
-                    # We may be at the ikhaya index page.
-                    if 'next' not in query:
-                        query['next'] = current_request.build_absolute_uri()
-                    return href('ikhaya', self.stamp, self.slug, action, **query)
             return href('ikhaya', self.stamp, self.slug, action, **query)
 
         links = {
@@ -443,7 +434,7 @@ class Event(models.Model):
         return '%s;%s' % (self.location_lat, self.location_long)
 
     @property
-    def coordinates_url(self) -> Optional[str]:
+    def coordinates_url(self) -> str | None:
         """Create a link to openstreetmap that shows details to a provided location"""
         if not self.location_long or not self.location_lat:
             return None

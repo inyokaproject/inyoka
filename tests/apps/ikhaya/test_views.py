@@ -742,6 +742,13 @@ class TestArticleSubscribe(TestCase):
         response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/subscribe/')
         self.assertEqual(response.status_code, 403)
 
+    def test_redirect_index(self):
+        """If there is a special GET parameter, the redirect-target should change."""
+        response = self.client.get(
+            f'/{self.article.stamp}/{self.article.slug}/subscribe/?next=index', follow=True)
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/')
+
 
 class TestArticleUnsubscribe(TestCase):
 
@@ -786,6 +793,16 @@ class TestArticleUnsubscribe(TestCase):
         response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/unsubscribe/', follow=True)
         # target status code 403 is OK, as the user can only unsubscribe, but not view the article
         self.assertRedirects(response, f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/{self.article.stamp}/{self.article.slug}/', target_status_code=403)
+
+    def test_redirect_index(self):
+        """If there is a special GET parameter, the redirect-target should change."""
+        Subscription(user=self.admin, content_object=self.article).save()
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        response = self.client.get(
+            f'/{self.article.stamp}/{self.article.slug}/unsubscribe/?next=index', follow=True)
+        self.assertRedirects(response,
+                             f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/')
 
 
 class TestReportNew(TestCase):
@@ -1199,6 +1216,10 @@ class TestSuggestDelete(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'inyokaproject.org: New private message from admin: Article suggestion rejected')
 
+    def test_form_shown(self):
+        response = self.client.get(f'/suggest/{self.suggestion.id}/delete/', follow=True)
+        self.assertContains(response, f'/suggest/{self.suggestion.id}/delete/" method="post">', count=1)
+
 
 class TestSuggestEdit(TestCase):
 
@@ -1586,46 +1607,6 @@ class TestEventEdit(TestCase):
     def test_copy_event__text_parameter(self):
         response = self.client.get('/event/new/?copy_from=<script>console.log("foo")</script>')
         self.assertContains(response, 'is not a number')
-
-
-class TestServices(TestCase):
-
-    client_class = InyokaClient
-    url = "/?__service__=ikhaya.change_suggestion_assignment"
-
-    def test_post_misses_username(self):
-        response = self.client.post(self.url, data={"suggestion": 1})
-        self.assertEqual(response.status_code, 400)
-
-    def test_post_misses_suggestion_id(self):
-        response = self.client.post(self.url, data={"username": "foo"})
-        self.assertEqual(response.status_code, 400)
-
-    def test_set_owner(self):
-        user = User.objects.register_user('test', 'test@example.local', password='test', send_mail=False)
-        suggestion = Suggestion.objects.create(author=user, title='title', text='text', intro='intro', notes='notes')
-        self.assertIsNone(suggestion.owner)
-
-        self.client.post(self.url, data={"username": user.username, "suggestion": suggestion.id})
-        suggestion.refresh_from_db()
-        self.assertEqual(suggestion.owner_id, user.id)
-
-        self.client.post(self.url, data={"username": "-", "suggestion": suggestion.id})
-        suggestion.refresh_from_db()
-        self.assertIsNone(suggestion.owner)
-
-    def test_invalid_owner(self):
-        suggestion = Suggestion.objects.create(
-            author=User.objects.get_anonymous_user(), title='title', text='text', intro='intro', notes='notes')
-
-        response = self.client.post(self.url, data={"username": "foo", "suggestion": suggestion.id})
-        self.assertEqual(response.status_code, 404)
-
-    def test_invalid_suggestion(self):
-        user = User.objects.register_user('test', 'test@example.local', password='test', send_mail=False)
-
-        response = self.client.post(self.url, data={"username": user.username, "suggestion": 4242})
-        self.assertEqual(response.status_code, 404)
 
 
 @freeze_time("2023-12-09T23:55:04Z")

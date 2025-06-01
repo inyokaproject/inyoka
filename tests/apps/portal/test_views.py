@@ -7,11 +7,13 @@
     :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import logging
 import re
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core import mail
+from django.core.cache import cache
 from django.http import Http404
 from django.test import Client, RequestFactory
 from django.test.utils import override_settings
@@ -33,6 +35,7 @@ from inyoka.portal.models import (
 )
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
+from inyoka.utils.forms import CaptchaField
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key
@@ -221,6 +224,15 @@ class TestViews(TestCase):
         response = self.client.get('/inyoka/')
         self.assertContains(response, 'Inyoka', status_code=200)
 
+    def test_invalid_post_as_anonymous(self):
+        self.client.logout()
+        response = self.client.post('/',
+                                    data={},
+                                    content_type="multipart/form-data;", # should include a boundary
+        )
+        self.assertEqual(response.status_code, 400)
+
+
 class TestAuthViews(TestCase):
 
     client_class = InyokaClient
@@ -382,68 +394,6 @@ class TestAuthViews(TestCase):
         # But internal redirects are fine.
         self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
 
-    def test_register_safe_redirects(self):
-        """External redirects are not allowed after visiting the register page.
-
-        For convenience, users will be redirected to the page they came from
-        when they visited the register page, but this does not include external
-        pages. This test makes sure that such a redirect will fail while
-        internal ones should work.
-        """
-        self.client.login(username='user', password='user')
-        next = 'http://google.at'
-        response = self.client.get('/register/', {'next': next}, follow=True)
-        # We don't allow redirects to external pages!
-        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
-
-        next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
-        response = self.client.get('/register/', {'next': next}, follow=True)
-        # But internal redirects are fine.
-        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
-
-    def test_register_as_authenticated_user(self):
-        """Logged in users shall not be able to register a new account."""
-        self.client.login(username='user', password='user')
-        with translation.override('en-us'):
-            response = self.client.get('/register/', follow=True)
-        self.assertContains(response, 'You are already logged in.')
-
-    def test_register(self):
-        """Test the process of registering a new account.
-
-        Checks if an email will be generated to activate the new account.
-        """
-        postdata = {
-            'username': 'apollo13', 'password': 'secret',
-            'confirm_password': 'secret', 'email': 'apollo13@example.com',
-            'terms_of_usage': '1', 'captcha_1': ''
-        }
-
-        response = self.client.get('/', {'__service__': 'portal.get_captcha'})
-        postdata['captcha_0'] = response._captcha_solution
-        self.assertEqual(0, len(mail.outbox))
-        with translation.override('en-us'):
-            self.client.post('/register/', postdata)
-        self.assertEqual(1, len(mail.outbox))
-        subject = mail.outbox[0].subject
-        self.assertIn('Activation of the user “apollo13”', subject)
-
-    def test_register_deactivated(self):
-        """Test the process of registering a new account.
-
-        Checks that a disabled registration doesn't allow registering new users.
-        """
-        with override_settings(INYOKA_DISABLE_REGISTRATION=True):
-            with translation.override('en-us'):
-                response = self.client.get('/register/', follow=True)
-        self.assertRedirects(response, href('portal'))
-        self.assertContains(response, 'User registration is currently disabled.')
-
-    def test_register_contains_captcha(self):
-        """The captcha is rendered via an own `ImageCaptchaWidget`"""
-        response = self.client.get('/register/')
-        self.assertContains(response, "__service__=portal.get_captcha")
-
     def test_lost_password(self):
         """Test the “lost password” feature.
 
@@ -593,9 +543,18 @@ class TestRegister(TestCase):
         self.url = '/register/'
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
+        logging.debug(self.client.session.session_key) # otherwise, None in CaptchaField
+
     def test_get_status_code(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+
+    def test_get_no_cookie(self):
+        session_cookie = settings.SESSION_COOKIE_NAME
+        self.client.cookies[session_cookie] = ""
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 400)
 
     def post_username(self, form_username):
         User.objects.create(username=self.username)
@@ -632,6 +591,175 @@ class TestRegister(TestCase):
 
         self.assertEqual(form.errors['username'],
                          ['Please do not enter an email address as username.'])
+
+    def test_safe_redirects(self):
+        """External redirects are not allowed after visiting the register page.
+
+        For convenience, users will be redirected to the page they came from
+        when they visited the register page, but this does not include external
+        pages. This test makes sure that such a redirect will fail while
+        internal ones should work.
+        """
+        User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+        next = 'http://google.at'
+        response = self.client.get(self.url, {'next': next}, follow=True)
+        # We don't allow redirects to external pages!
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
+
+        next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get(self.url, {'next': next}, follow=True)
+        # But internal redirects are fine.
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
+
+    def test_as_authenticated_user(self):
+        """Logged-in users shall not be able to register a new account."""
+        User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+        with translation.override('en-us'):
+            response = self.client.get(self.url, follow=True)
+        self.assertContains(response, 'You are already logged in.')
+
+    def test_register(self):
+        """Test the process of registering a new account.
+
+        Checks if an email is sent to activate the new account.
+        """
+        self.client.get(self.url) # fill cache with captcha
+
+        captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
+        postdata = {
+            'username': 'apollo13',
+            'password': 'secret',
+            'confirm_password': 'secret',
+            'email': 'apollo13@example.com',
+            'terms_of_usage': '1',
+            'captcha_0': captcha.solution,
+            'captcha_1': ''
+        }
+
+        self.assertEqual(0, len(mail.outbox))
+        with translation.override('en-us'):
+            self.client.post(self.url, postdata)
+        self.assertEqual(1, len(mail.outbox))
+        subject = mail.outbox[0].subject
+        self.assertIn('Activation of the user “apollo13”', subject)
+
+    def test_register_deactivated(self):
+        """Test the process of registering a new account.
+
+        Checks that a disabled registration doesn't allow registering new users.
+        """
+        with override_settings(INYOKA_DISABLE_REGISTRATION=True):
+            with translation.override('en-us'):
+                response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, href('portal'))
+        self.assertContains(response, 'User registration is currently disabled.')
+
+    def test_contains_captcha(self):
+        """The captcha is rendered via an own `ImageCaptchaWidget`"""
+        response = self.client.get(self.url)
+        self.assertContains(response, '<img src="data:image/')
+
+    def test__renew_captcha(self):
+        """
+        The captcha should change if the user requested so via a button.
+        """
+        regex = '<img src="(?P<encoded_img>data:image.*)" class'
+
+        self.client.get(self.url) # session changes after first request, but is stable afterwards...
+
+        response = self.client.get(self.url)
+        base64_img = re.search(regex, response.content.decode(), re.MULTILINE).group('encoded_img')
+        solution1 = response.context['form'].fields['captcha'].captcha.solution
+
+        postdata = {
+            'renew_captcha': '1',
+        }
+        response = self.client.post(self.url, postdata)
+        base64_img_2 = re.search(regex, response.content.decode(), re.MULTILINE).group('encoded_img')
+        solution2 = response.context['form'].fields['captcha'].captcha.solution
+
+        with self.subTest('captcha solution differs'):
+            self.assertNotEqual(solution1, solution2)
+        with self.subTest('image differs'):
+            self.assertNotEqual(base64_img, base64_img_2)
+
+    def test_two_get_same_captcha_solution(self):
+        """
+        If the captcha was not used, display the same captcha for the same session.
+        """
+        self.client.get(self.url) # session changes after first request, but is stable afterwards...
+
+        response = self.client.get(self.url)
+        solution1 = response.context['form'].fields['captcha'].captcha.solution
+
+        response = self.client.get(self.url)
+        solution2 = response.context['form'].fields['captcha'].captcha.solution
+
+        self.assertEqual(solution1, solution2)
+
+    def test_new_captcha_after_successful_submission(self):
+        """
+        The same captcha should be only usable for one registration.
+        After a person successfully registered, display a different captcha.
+        """
+        self.client.get(self.url) # session changes after first request, but is stable afterwards...
+
+        captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
+        solution1 = captcha.solution
+        postdata = {
+            'username': 'apollo13',
+            'password': 'secret',
+            'confirm_password': 'secret',
+            'email': 'apollo13@example.com',
+            'terms_of_usage': '1',
+            'captcha_0': solution1,
+            'captcha_1': ''
+        }
+        self.client.post(self.url, postdata)
+
+        response = self.client.get(self.url)
+        solution2 = response.context['form'].fields['captcha'].captcha.solution
+
+        self.assertNotEqual(solution1, solution2)
+
+    def test__wrong_captcha(self):
+        postdata = {
+            'captcha_0': 'foobar',
+        }
+        response = self.client.post(self.url, postdata)
+
+        self.assertFormError(response.context['form'], 'captcha', errors=['The entered CAPTCHA was incorrect.'])
+
+    def test_bot_field(self):
+        """
+        If the second captcha field is filled with content, display a message
+        that the user was classified as a bot.
+        """
+        captcha = cache.get(CaptchaField(self.client.session)._session_cache_key())
+        postdata = {
+            'password': 'secret',
+            'confirm_password': 'secret',
+            'captcha_0': captcha.solution,
+            'captcha_1': 'foobar',
+        }
+        response = self.client.post(self.url, postdata)
+
+        self.assertFormError(response.context['form'], None, errors=[])
+        self.assertFormError(response.context['form'], 'captcha', errors=['You have entered an invisible field and were therefore classified as a bot.'])
+
+    def test__missing_captcha(self):
+        postdata = {
+            'password': 'secret',
+            'confirm_password': 'secret',
+        }
+        response = self.client.post(self.url, postdata)
+
+        self.assertFormError(response.context['form'], None, errors=[])
+        self.assertFormError(response.context['form'], 'captcha', errors=['This field is required.'])
 
 
 class TestPasswordChangeView(TestCase):
@@ -1230,6 +1358,7 @@ class TestMemberList(TestCase):
         response = self.client.post('/users/', {'user': 'barfoobaz158'}, follow=True)
         self.assertContains(response, 'The user “barfoobaz158” does not exist.')
 
+
 class TestResendActivationMail(TestCase):
     client_class = InyokaClient
 
@@ -1238,15 +1367,22 @@ class TestResendActivationMail(TestCase):
         self.client.login(username='user', password='user')
 
     def test_get__no_permission(self):
-        response = self.client.get('/users/resend_activation_mail/?user=user')
+        response = self.client.get('/users/resend_activation_mail/user/')
         self.assertEqual(response.status_code, 403)
 
     def test_get(self):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         assign_perm('portal.change_user', registered_group)
 
-        response = self.client.get('/users/resend_activation_mail/?user=user', follow=True)
+        response = self.client.get('/users/resend_activation_mail/user/', follow=True)
         self.assertContains(response, 'was already activated')
+
+    def test_get__not_existing_user(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_user', registered_group)
+
+        response = self.client.get('/users/resend_activation_mail/user_not_existing', follow=True)
+        self.assertEqual(response.status_code, 404)
 
     def test_get__not_activated_user(self):
         self.user.status = User.STATUS_INACTIVE
@@ -1255,9 +1391,10 @@ class TestResendActivationMail(TestCase):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         assign_perm('portal.change_user', registered_group)
 
-        response = self.client.get('/users/resend_activation_mail/?user=user', follow=True)
+        response = self.client.get('/users/resend_activation_mail/user/', follow=True)
         self.assertContains(response, 'The email with the activation key was resent.')
         self.assertEqual(len(mail.outbox), 1)
+
 
 class TestUserNewView(TestCase):
     client_class = InyokaClient
@@ -1557,31 +1694,13 @@ class TestActivate(TestCase):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
 
     def test_get__not_existing_user(self):
-        response = self.client.get('/delete/foobarbaz_user/test_key/', follow=True)
+        response = self.client.get('/activate/foobarbaz_user/test_key/', follow=True)
         self.assertContains(response, 'does not exist.')
 
     def test_get__logged_in(self):
         self.client.login(username='user', password='user')
-        response = self.client.get('/delete/user/test_key/', follow=True)
+        response = self.client.get('/activate/user/test_key/', follow=True)
         self.assertContains(response, 'You cannot enter an activation key when you are logged in.')
-
-    def test_get__delete__already_deleted(self):
-        key = gen_activation_key(self.user)
-        self.user.status = User.STATUS_INACTIVE
-        self.user.save()
-        response = self.client.get(f'/delete/user/{key}/', follow=True)
-        self.assertContains(response,'Your account was anonymized.')
-
-    def test_get__delete__already_active(self):
-        key = gen_activation_key(self.user)
-        response = self.client.get(f'/delete/user/{key}/', follow=True)
-        self.assertContains(response,
-                            'was already activated.')
-
-    def test_get__delete__invalid_key(self):
-        response = self.client.get('/delete/user/test_key/', follow=True)
-        self.assertContains(response,
-                            'Your activation key is invalid.')
 
     def test_get__activate(self):
         key = gen_activation_key(self.user)
@@ -1590,6 +1709,25 @@ class TestActivate(TestCase):
         response = self.client.get(f'/activate/user/{key}/', follow=True)
         self.assertContains(response,
                             'Your account was successfully activated.')
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.status, User.STATUS_ACTIVE)
+
+    def test_get__activate__already_active(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_ACTIVE
+        self.user.save()
+        response = self.client.get(f'/activate/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
+
+    def test_get__activate__user_banned(self):
+        key = gen_activation_key(self.user)
+        self.user.status = User.STATUS_BANNED
+        self.user.save()
+        response = self.client.get(f'/activate/user/{key}/', follow=True)
+        self.assertContains(response,
+                            'Your activation key is invalid.')
 
     def test_get__activate__invalid_key(self):
         response = self.client.get('/activate/user/test_key/', follow=True)

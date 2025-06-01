@@ -17,7 +17,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.db.models import F, Q
+from django.db.models import F, Max, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -1037,52 +1037,45 @@ def reported_topics_subscription(request, mode):
 
 
 def post(request, post_id):
-    """Redirect to the "real" post url (see `PostManager.url_for_post`)"""
+    """Redirect to the "real" post url (see `Post.url_for_post`)"""
     try:
-        url = Post.url_for_post(int(post_id),
-            paramstr=request.GET and request.GET.urlencode())
-    except (Topic.DoesNotExist, Post.DoesNotExist):
+        post = Post.objects.select_related('topic').get(id=int(post_id))
+    except Post.DoesNotExist:
         raise Http404()
-    return HttpResponseRedirect(url)
+
+    return HttpResponseRedirect(post.url_for_post())
 
 
 def first_unread_post(request, topic_slug):
     """
-    Redirect the user to the first unread post in a special topic.
+    Redirect the user to the first unread post of a topic.
     """
     try:
-        unread = Topic.objects.only('id', 'forum__id').get(slug=topic_slug)
+        topic = Topic.objects.only('id', 'forum__id').select_related('forum').get(slug=topic_slug)
     except Topic.DoesNotExist:
         raise Http404()
 
-    data = request.user._readstatus.data.get(unread.forum.id, [None, []])
-    query = Post.objects.filter(topic=unread)
+    data = request.user._readstatus.data.get(topic.forum.id, [None, []])
+    query = Post.objects.filter(topic=topic)
 
     last_pid, ids = data
     if last_pid is not None:
         query = query.filter(id__gt=last_pid)
 
     if ids:
-        # We need a try/catch here, cause the post don't have to exist
-        # any longer.
-        try:
-            post_ids = Post.objects.filter(topic=unread, id__in=ids) \
-                                   .values_list('id', flat=True)
-            post_id = max(post_ids)
-        except ValueError:
-            pass
-        else:
+        post_id = Post.objects.filter(topic=topic, id__in=ids).aggregate(max_id=Max('id'))['max_id']
+        if post_id: # the post doesn't have to exist any longer.
             query = query.filter(id__gt=post_id)
 
     try:
-        first_unread_post = query.order_by('position')[0]
+        first_unread_post = query.select_related('topic').order_by('position')[0]
     except IndexError:
         # No new post, this also means the user called first_unread himself
         # as the icon won't show up in that case, hence we just return to
         # page one of the topic.
         redirect = href('forum', 'topic', topic_slug)
     else:
-        redirect = Post.url_for_post(first_unread_post.id)
+        redirect = first_unread_post.url_for_post()
     return HttpResponseRedirect(redirect)
 
 
@@ -1091,13 +1084,11 @@ def last_post(request, topic_slug):
     Redirect to the last post of the given topic.
     """
     try:
-        last = Topic.objects.values_list('last_post', flat=True)\
-                            .get(slug=topic_slug)
-        params = request.GET and request.GET.urlencode()
-        url = Post.url_for_post(last, paramstr=params)
-        return HttpResponseRedirect(url)
-    except (Post.DoesNotExist, Topic.DoesNotExist):
+        last_post = Topic.objects.select_related('last_post__topic').get(slug=topic_slug).last_post
+    except Topic.DoesNotExist:
         raise Http404()
+
+    return HttpResponseRedirect(last_post.url_for_post())
 
 
 @templated('forum/movetopic.html')

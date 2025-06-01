@@ -13,6 +13,7 @@ import secrets
 import string
 from json import dumps, loads
 
+from django.apps import apps
 from django.conf import settings
 from django.conf import settings as inyoka_settings
 from django.contrib.auth.models import (
@@ -172,15 +173,14 @@ def reset_email(id, email):
 
 @sensitive_variables('message')
 def send_activation_mail(user):
-    """send an activation mail"""
     message = render_to_string('mails/activation_mail.txt', {
         'user': user,
-        'email': user.email,
-        'activation_key': gen_activation_key(user)
+        'ACTIVATION_HOURS': settings.ACTIVATION_HOURS,
     })
     subject = _('%(sitename)s – Activation of the user “%(name)s”') % {
         'sitename': settings.BASE_DOMAIN_NAME,
-        'name': user.username}
+        'name': user.username,
+    }
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
@@ -442,9 +442,6 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         elif action == 'activate':
             return href('portal', 'activate',
                         self.username, gen_activation_key(self), **query)
-        elif action == 'activate_delete':
-            return href('portal', 'delete',
-                        self.username, gen_activation_key(self), **query)
         elif action == 'admin':
             return href('portal', 'user', self.username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
@@ -460,13 +457,14 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                 self.comment_set.exists() or
                 self.privatemessageentry_set.exists() or
                 self.wiki_revisions.exists() or
-                self.article_set.exists() or
+                apps.get_model('ikhaya.Article').objects.filter(author=self).exists() or
                 # Pastebin
                 self.entry_set.exists() or
                 self.event_set.exists() or
                 self.suggestion_set.exists() or
                 self.owned_suggestion_set.exists() or
-                self.subscription_set.exists())
+                self.subscription_set.exists() or
+                self.blog_set.exists())
 
     @property
     def post_count(self):

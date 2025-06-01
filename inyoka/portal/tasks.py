@@ -7,13 +7,14 @@
     :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from time import time
 
 from celery import shared_task
 from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
+from django.utils import timezone as dj_timezone
 
 from inyoka.portal.models import PrivateMessageEntry
 from inyoka.portal.user import User
@@ -35,37 +36,39 @@ def check_for_user_record():
 
 @shared_task
 def clean_expired_users():
+    _clean_expired_users()
+
+def _clean_expired_users():
     """
-    Deletes all never activated Users, except system users. An user will be
+    Deletes all never activated Users, except system users. A user will be
     deleted after ACTIVATION_HOURS (default 48h).
     """
-    expired_datetime = datetime.fromtimestamp(time()) - timedelta(hours=settings.ACTIVATION_HOURS)
+    expired_datetime = dj_timezone.now() - timedelta(hours=settings.ACTIVATION_HOURS)
+    user_query = (User.objects.filter(status=User.STATUS_INACTIVE).filter(date_joined__lte=expired_datetime)
+                     .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
 
-    for user in (User.objects.filter(status=0)
-                     .filter(date_joined__lte=expired_datetime)
-                     .exclude(username__in={
-                         settings.ANONYMOUS_USER_NAME,
-                         settings.INYOKA_SYSTEM_USER})):
+    for user in user_query:
         if not user.has_content():
-            logger.info('Deleting expired User %s' % user.username)
+            logger.info(f'Deleting expired User {user.username}')
             user.delete()
 
 
 @shared_task
 def clean_inactive_users():
+    _clean_inactive_users()
+
+def _clean_inactive_users():
     """
     Deletes Users with no content and a last login more than
     USER_INACTIVE_DAYS (default one year) ago.
     """
-    inactive_datetime = datetime.fromtimestamp(time()) - timedelta(days=settings.USER_INACTIVE_DAYS)
+    inactive_datetime = dj_timezone.now() - timedelta(days=settings.USER_INACTIVE_DAYS)
+    user_query = (User.objects.filter(last_login__lte=inactive_datetime)
+                  .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
 
-    for user in (User.objects
-                     .filter(last_login__lte=inactive_datetime)
-                     .exclude(username__in={
-                         settings.ANONYMOUS_USER_NAME,
-                         settings.INYOKA_SYSTEM_USER})):
+    for user in user_query:
         if not user.has_content():
-            logger.info('Deleting inactive User %s' % user.username)
+            logger.info(f'Deleting inactive User {user.username}')
             user.delete()
 
 

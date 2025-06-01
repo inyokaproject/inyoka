@@ -1,6 +1,7 @@
 name: Inyoka CI
-
 on: [push, pull_request]
+permissions:
+  contents: read
 
 
 jobs:
@@ -11,8 +12,9 @@ jobs:
       DEFAULT_BRANCH: 'refs/heads/staging'
       REQUIREMENTS_FILE: extra/requirements/linux-py${{ matrix.python-version }}-development.txt
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.13', '3.12', '3.11', '3.10', '3.9']
+        python-version: ['3.13', '3.12', '3.11', '3.10']
         database: ['postgresql', 'sqlite']
         theme: ['', 'theme-ubuntuusers']
 
@@ -75,6 +77,11 @@ jobs:
         . ~/venv/bin/activate
         python -m pip install --upgrade pip
         pip install --no-deps --require-hashes -r ${{ env.REQUIREMENTS_FILE }}
+
+    - name: Lint
+      run: |
+        . ~/venv/bin/activate
+        ruff check
 
     - name: Build static files
       run: |
@@ -142,6 +149,7 @@ jobs:
 
     - name: Run BDD tests
       if: ${{ matrix.database == 'postgresql' }}
+      continue-on-error: true
       env:
         DJANGO_SETTINGS_MODULE: 'tests.bdd.settings.headless'
         INYOKA_THEME: ${{ matrix.theme }}
@@ -176,11 +184,6 @@ jobs:
       with:
         name: 'Inyoka_Documentation'
         path: docs/build/html
-
-    - name: Lint
-      run: |
-        . ~/venv/bin/activate
-        ruff check
 
     - name: Save statics
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_docs }}

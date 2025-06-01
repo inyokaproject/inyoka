@@ -24,6 +24,53 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+1.52.0 (2025-06-01)
+===================
+
+Deployment notes
+----------------
+
+#. Update requirements
+#. Execute database migrations
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+* Reworked ``MetaFilter`` in wiki to yield more accurate results
+* Use HTML ``<summary>`` and ``<details>`` instead of own JS collapse
+* Remove ``python-dateutil`` as direct dependency of Inyoka (still needed by dependencies ``celery`` and ``icalendar``)
+* Captcha: Fix spacing of renew button
+* Modernize javascript: Use const and let, refactor & remove unused logic
+* Use django 5.2 and celery 5.5
+
+🔥 Removals
+-----------
+
+* Ikhaya: Remove assign/unassgin functionality via JavaScript (now uses only server side implementation)
+* Remove ability to toggle admin links
+* Remove sidebar hide functionality
+
+🐛 Fixes
+--------
+
+* Planet, sync task: Skip blog on ``IncompleteRead``
+* Forum: Dont show a dialog to prevent leaving the page, if the split-checkbox is ticked
+* Use AnonymousUser for bad request template to avoid an exception
+* Make ikhaya article suggestions deleteable again
+* Prevent to delete blog including posts, if linked user is deleted
+* Wiki: Do not require a change comment to press the cancel button (For this, the button is replaced by a link to the wiki page)
+
+🔒 Security
+-----------
+
+* Rework captcha: the captcha image is now send via HTML (inline, base64 decoded) Instead of storing the solution into the session (for Inyoka by default a cookie), the solution is saved in the server-side cache.
+* Use django's signer for the activation key (it still used sha1. Furthermore, the key had no time expiration.)
+* Fix redirect of some views
+* Update requirements (at least the dependency ``Django`` includes a known security fix)
+
 
 1.42.2 (2025-03-07)
 ===================

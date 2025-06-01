@@ -17,7 +17,7 @@ from itertools import groupby
 from operator import attrgetter, itemgetter
 from os import path
 from time import time
-from typing import List, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -179,7 +179,7 @@ class ForumManager(models.Manager):
         return forums
 
     @staticmethod
-    def update_last_post(forums: List["Forum"],
+    def update_last_post(forums: list["Forum"],
                          exclude_topic: Optional["Topic"] = None,
                          exclude_post: Optional["Post"] = None) -> None:
         """
@@ -228,7 +228,7 @@ class TopicManager(models.Manager):
                    .select_related(*related).order_by(*order)
 
     def get_latest(self, forum: Optional["Forum"] = None,
-                   count: Optional[int] = 10,
+                   count: int | None = 10,
                    user: Optional["User"] = None) -> "QuerySet":
         """
         Returns a queryset of the last-updated topics in this forum (and potential sub forums).
@@ -840,21 +840,18 @@ class Post(models.Model, LockableObject):
         if action == 'show':
             return href('forum', 'post', self.id)
         if action == 'fullurl':
-            return Post.url_for_post(self.id)
+            return self.url_for_post()
         return href('forum', 'post', self.id, action)
 
-    @staticmethod
-    def url_for_post(id, paramstr=None):
-        post = Post.objects.get(id=id)
-        position, slug = post.position, post.topic.slug
-        page = max(0, position) // POSTS_PER_PAGE + 1
+    def url_for_post(self) -> str:
+        page = max(0, self.position) // POSTS_PER_PAGE + 1
 
-        url_parts = ['forum', 'topic', slug]
+        url_parts = ['forum', 'topic', self.topic.slug]
         if page != 1:
             url_parts.append(str(page))
-        url = href(*url_parts)
+        url = href(*url_parts, _anchor=f'post-{self.id}')
 
-        return ''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
+        return url
 
     def edit(self, text, is_plaintext=False):
         """

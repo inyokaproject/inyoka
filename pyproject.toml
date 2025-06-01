@@ -12,17 +12,17 @@ license = { file = "LICENSE" }
 authors = [
   { name = "Inyoka Team" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Framework :: Django",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: BSD License",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Message Boards",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary",
@@ -34,7 +34,7 @@ dependencies = [
   "beautifulsoup4",
   "celery[redis]",
   "defusedxml",
-  "django[argon2]<5",
+  "django[argon2]<6",
   "django-filter",
   "django-guardian",
   "django-hosts",
@@ -49,7 +49,6 @@ dependencies = [
   "pip-tools",
   "psycopg2",
   "pygments",
-  "python-dateutil",
   "python-magic",
   "requests",
   "sentry-sdk",

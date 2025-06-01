@@ -7,7 +7,6 @@
     :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unittest
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
@@ -19,6 +18,7 @@ from django.utils import timezone as dj_timezone
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
+from inyoka.planet.models import Blog
 from inyoka.portal.models import PrivateMessage, Subscription
 from inyoka.portal.user import User, deactivate_user, reactivate_user
 from inyoka.utils.test import TestCase
@@ -151,21 +151,15 @@ class TestUserHasContent(TestCase):
 
         self.assertTrue(self.user.has_content())
 
-    @unittest.skip("Django Bug")
     def test_ikhaya_article(self):
         """
         Tests a user that is an author of an Ikhaya article
         """
-        # There seems to be an Bug in django, that user.article_set does not
-        # work.
-        now = datetime.now()
         category = Category.objects.create(name='test_category')
-
         Article.objects.create(
-            pub_date=now.date(),
-            pub_time=now.time(),
             author=self.user,
-            category=category)
+            category=category,
+        )
 
         self.assertTrue(self.user.has_content())
 
@@ -233,5 +227,12 @@ class TestUserHasContent(TestCase):
         forum = Forum.objects.create(user_count_posts=False)
         topic = Topic.objects.create(forum=forum, author=other_user)
         Subscription.objects.create(user=self.user, content_object=topic)
+
+        self.assertTrue(self.user.has_content())
+
+    def test_blog(self):
+        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
+                            feed_url="http://example.com/feed", user=self.user,
+                            active=True)
 
         self.assertTrue(self.user.has_content())

@@ -4,15 +4,14 @@
 
     Several utilities to work with users.
 
-    Some parts are ported from the django auth-module.
-
     :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import hashlib
 import re
+from datetime import timedelta
 
 from django.conf import settings
+from django.core import signing
 
 _username_re = re.compile(r'^[@_\-\.a-z0-9äöüß]{1,30}$', re.I | re.U)
 
@@ -24,31 +23,30 @@ def is_valid_username(name):
 
 def gen_activation_key(user):
     """
-    It's calculated using a sha1 hash of the user id, the username,
-    the users email and our secret key and shortened to ensure the
-    activation link has less than 80 chars.
+    Using django's signer, the activation key is calculated with user id and the username.
 
     :Parameters:
         user
-            An user object from the user the key
-            will be generated for.
+            The user object the activation key is generated for.
     """
-    return hashlib.sha1(('%d%s%s%s' % (
-        user.id, user.username,
-        settings.SECRET_KEY,
-        user.email,
-    )).encode('utf8')).hexdigest()
+    key = signing.dumps({'user_id': user.id, 'username': user.username}, salt='inyoka.activate', compress=True)
+    return key
 
 
-def check_activation_key(user, key):
+def check_activation_key(user, key) -> bool:
     """
-    Check if an activation key is correct
+    Check if an activation key is valid for the given user.
 
     :Parameters:
         user
-            An user object a new key will be generated for.
-            (For checking purposes)
+            The user object for checking purposes.
         key
             The key that needs to be checked for the *user*.
     """
-    return key == gen_activation_key(user)
+
+    try:
+        user_details = signing.loads(key, salt='inyoka.activate', max_age=timedelta(hours=settings.ACTIVATION_HOURS))
+    except signing.BadSignature:
+        return False
+
+    return user_details['user_id'] == user.id and user_details['username'] == user.username

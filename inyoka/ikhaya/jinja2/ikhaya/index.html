@@ -55,7 +55,7 @@
           {% else %}
             <div class="text">{{ article.get_intro() }}</div>
           {% endif %}
-          <p class="meta admin_link_hover">
+          <p class="meta">
             {% trans link=article.author|url, author=article.author.username|e -%}
               Published by <a href="{{ link }}">{{ author }}</a>
             {%- endtrans %} |
@@ -74,9 +74,9 @@
 
               {% if request.user.is_authenticated %}
                 {%- if article.subscribed %}
-                  (<a href="{{ article|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>)
+                  (<a href="{{ article|url('unsubscribe', next='index') }}">{% trans %}Unsubscribe{% endtrans %}</a>)
                 {%- else %}
-                  (<a href="{{ article|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a>)
+                  (<a href="{{ article|url('subscribe', next='index') }}">{% trans %}Subscribe{% endtrans %}</a>)
                 {%- endif %}
               {%- endif %}
             {%- endif %}

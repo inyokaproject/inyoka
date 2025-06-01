@@ -40,7 +40,7 @@
               {% do article_index.pop() %}
               {% do article_index.append(current_article_id + 1) %}
             {% endif %}
-            <article class="article admin_link_hover" id="article_{{ current_article_id }}">
+            <article class="article" id="article_{{ current_article_id }}">
               <div class="head">
                 <a href="{{ article.blog|url|e }}">
                   <img

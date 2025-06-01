@@ -8,27 +8,27 @@
     :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import hashlib
+import logging
 import re
-import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from hashlib import md5
-from random import randrange
 
 from django import forms
 from django.conf import settings
 from django.core import validators
+from django.core.cache import cache
+from django.core.exceptions import BadRequest
 from django.forms import DateInput, MultipleChoiceField, SplitDateTimeWidget, TimeInput
 from django.forms.widgets import TextInput
 from django.utils.translation import gettext as _
 
 from inyoka.markup.base import StackExhaused, parse
-from inyoka.utils.local import current_request
+from inyoka.utils.captcha import Captcha
 from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
-from inyoka.utils.urls import href
 
 
 def clear_surge_protection(request, form):
@@ -249,6 +249,9 @@ class SlugField(forms.CharField):
 
 
 class HiddenCaptchaField(forms.Field):
+    """
+    A hidden field intended to catch some bots that simply fill every field with some content.
+    """
     widget = forms.HiddenInput
 
     def __init__(self, *args, **kwargs):
@@ -265,60 +268,127 @@ class HiddenCaptchaField(forms.Field):
 
 
 class ImageCaptchaWidget(TextInput):
+    """
+    A text input where users enter the captcha value of the associated captcha image.
+    The Latter is also rendered in this class.
+    """
     template_name = 'forms/widgets/image_captcha.html'
+
+    class Media:
+        css = {
+            "all": ["style/captcha.css"],
+        }
+
+    def __init__(self, captcha_img, *args, **kwargs):
+        self.captcha_img = captcha_img
+        super().__init__(*args, **kwargs)
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
-        context['widget']['captcha_url'] = href('portal', __service__='portal.get_captcha',
-                                                rnd=randrange(1, sys.maxsize))
+        context['widget']['captcha_img'] = self.captcha_img
         return context
 
 
 class ImageCaptchaField(forms.Field):
-    widget = ImageCaptchaWidget
+    """
+    Field that checks if the entered value fits the captcha solution.
+    """
 
-    def __init__(self, *args, **kwargs):
-        forms.Field.__init__(self, *args, **kwargs)
+    def __init__(self, captcha_solution, *args, **kwargs):
+        self.solution = captcha_solution
+
+        super().__init__(*args, **kwargs)
 
     def clean(self, value):
         value = super().clean(value)
-        solution = current_request.session.get('captcha_solution')
-        if value:
-            h = md5(settings.SECRET_KEY.encode())
-            if value:
-                h.update(value.encode())
-            if h.hexdigest() == solution:
-                return True
+
+        if value and value == self.solution:
+            return True
         raise forms.ValidationError(_('The entered CAPTCHA was incorrect.'))
 
 
 class CaptchaWidget(forms.MultiWidget):
-    def __init__(self, attrs=None):
-        # The HiddenInput is a honey-pot
-        widgets = ImageCaptchaWidget, forms.HiddenInput
+    """
+    Custom widget for CaptchaField.
+    """
+    def __init__(self, captcha_img, attrs=None):
+        """
+        Pass a `captcha_img` from the parent captcha field to the widget.
+
+        The HiddenInput is a honey-pot.
+        """
+        widgets = ImageCaptchaWidget(captcha_img), forms.HiddenInput
         super().__init__(widgets, attrs)
 
     def decompress(self, value):
+        """
+        Decompress always defaults to empty, as the user should enter the captcha
+        (like a password) and the hidden input should always be empty.
+        """
         return [None, None]
 
 
 class CaptchaField(forms.MultiValueField):
-    widget = CaptchaWidget
+    """
+    Allows adding a captcha to a form. It consists of two fields:
 
-    def __init__(self, *args, **kwargs):
-        kwargs['required'] = True
-        self.only_anonymous = kwargs.pop('only_anonymous', False)
-        fields = (ImageCaptchaField(), HiddenCaptchaField())
+     * a field to insert the value of the captcha. It also includes the captcha image.
+     * a hidden field intended to catch some bots that simply fill every field with some content.
+
+    Instantiate a `CaptchaField` in the `__init__` of the form, because this field needs
+    the current user session as an init-parameter.
+    """
+
+    def __init__(self, session, *args, **kwargs) -> None:
+        self.session = session
+        self.captcha = cache.get_or_set(self._session_cache_key(), Captcha)
+        logging.debug(f'captcha solution {self.captcha.solution}')
+
+        self.widget = CaptchaWidget(captcha_img=self.captcha.get_base64_image())
+        kwargs['require_all_fields'] = False # HiddenCaptchaField is not required
+        fields = (
+            ImageCaptchaField(captcha_solution=self.captcha.solution),
+            HiddenCaptchaField(),
+        )
         super().__init__(fields, *args, **kwargs)
 
-    def compress(self, data_list):
-        pass  # CaptchaField doesn't have a useful value to return.
+    def compress(self, data_list) -> bool:
+        """
+        Returns, whether the captcha was filled valid. If all fields are valid,
+        both should return `True`.
 
-    def clean(self, value):
-        if current_request.user.is_authenticated and self.only_anonymous:
-            return [None, None]
-        value[1] = False  # Prevent being caught by validators.EMPTY_VALUES
-        return super().clean(value)
+        In case of an error, `ImageCaptchaField` and `HiddenCaptchaField` raise
+        a `ValidationError` themselves.
+        """
+        return all(data_list)
+
+    def _session_cache_key(self) -> str:
+        """Returns a unique cache key. The key is scoped to the portal."""
+        return f'/portal/captcha/{self._session_hash()}'
+
+    def _session_hash(self) -> str:
+        """
+        Returns a unique checksum for the current session.
+        It is used for a unique cache key.
+        """
+        session_key = self.session.session_key
+        if not session_key:
+            raise BadRequest
+
+        session_hash = hashlib.sha256()
+        session_hash.update(session_key.encode())
+        return session_hash.hexdigest()
+
+    def delete_cached_captcha(self) -> None:
+        """
+        Allows views to rotate the captcha (e.g., if it was successfully used or
+        the user requests another one).
+
+        This will just remove the captcha of the associated session. Thus, on the next
+        request a new captcha is created.
+        """
+        cache.delete(self._session_cache_key())
+        self.captcha = None
 
 
 class TopicField(forms.CharField):

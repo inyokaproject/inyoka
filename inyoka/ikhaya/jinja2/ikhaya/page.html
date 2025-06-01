@@ -14,21 +14,12 @@
 {% set active_app = 'ikhaya' %}
 {% set navi_type  = 'sidebar' %}
 
-{%- block html_head %}
-  {{ super() }}
-  <script>
-    /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ request.user.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
-    /*]]>*/
-  </script>
-{%- endblock %}
-
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_about_ikhaya">{% trans %}About Ikhaya{% endtrans %}</h3>
     {{ ikhaya_description_rendered|default('', True) }}
 
-    <h3 class="navi_new_article admin_link_hover">{% trans %}Suggest{% endtrans %}</h3>
+    <h3 class="navi_new_article">{% trans %}Suggest{% endtrans %}</h3>
     <ul>
       {% if request.user.has_perm('ikhaya.suggest_article') %}
         <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>
@@ -59,13 +50,13 @@
       {% endif -%}
     </ul>
     {% if categories or request.user.has_perm('ikhaya.change_category') %}
-      <h3 class="navi_categories admin_link_hover{% if not categories %} admin_link{% endif %}">{% trans %}Categories{% endtrans %}</h3>
+      <h3 class="navi_categories{% if not categories %} admin_link{% endif %}">{% trans %}Categories{% endtrans %}</h3>
       <ul>
         {%- if request.user.has_perm('ikhaya.change_category') -%}
           <li class="admin_link"><a href="{{ href('ikhaya', 'category', 'new') }}">{% trans %}Add category{% endtrans %}</a></li>
         {%- endif -%}
         {%- for category in categories -%}
-          <li class="admin_link_hover">
+          <li>
             {%- if request.user.has_perm('ikhaya.change_category') -%}
               <a class="admin_link" href="{{ href('ikhaya', 'category', category.slug, 'edit') }}"><img src="{{ href('static', 'img/icons/edit.svg') }}" height="16px" width="16px"></a>
             {%- endif -%}
