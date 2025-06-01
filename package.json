@@ -1,7 +1,7 @@
 {
   "name": "inyoka",
   "title": "Inyoka theme",
-  "version": "1.42.2",
+  "version": "1.52.0",
   "description": "Inyoka Theme",
   "main": "index.js",
   "scripts": {
