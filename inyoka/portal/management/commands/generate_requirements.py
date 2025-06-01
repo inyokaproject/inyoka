@@ -3,56 +3,42 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This module provides a command to the Django ``manage.py`` file to create
-    requirement-files with the help of pip-tools.
+    requirement-files.
 
     :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import argparse
 import os
-import platform
+import re
 import subprocess
-import sys
+from importlib.metadata import metadata
 
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    help = "Create or update requirement files. The packages can be installed with pip-sync"
+    help = "Create or update requirement files. The packages can be installed with pip, pip-sync or uv pip"
     stage_dev = 'development'
     stage_prod = 'production'
     stages = (stage_prod, stage_dev)
     requirements_path = 'extra/requirements'
 
     def add_arguments(self, parser):
-        upgrade_action = 'extend'
-        parser.add_argument('--upgrade', action=upgrade_action, nargs='*', type=str, default=argparse.SUPPRESS,
+        parser.add_argument('--upgrade', action='extend', nargs='*', type=str,
                             dest='upgrade_packages', help='Define one or more packages that should be upgraded. '
-                                                          'If only the option is given, all packages are upgraded.')
+                                                          'By default, all packages are upgraded.')
 
     def _get_requirements_path(self, stage: str) -> str:
-        py_major, py_minor, _ = platform.python_version_tuple()
-        file = f'{sys.platform}-py{py_major}.{py_minor}-{stage}.txt'
+        file = f'{stage}.txt'
         full_path = os.path.join(self.requirements_path, file)
-
         return full_path
 
-    def remove_requirements_files(self) -> None:
-        """
-        If nothing should be upgraded, remove the requirement-files of the current environment.
-        Thus, preexisting requirement-files are no more a constraint for pip-tools.
-        """
-        for s in self.stages:
-            try:
-                os.remove(self._get_requirements_path(s))
-            except FileNotFoundError:
-                continue
 
     def generate_requirements_file(self, stage: str, upgrade_all: bool = False, upgrade_packages: list = []) -> None:
         full_path = self._get_requirements_path(stage)
 
-        program_name = 'pip-compile'
-        arguments = ['--verbose', '--allow-unsafe', '--generate-hashes', '--strip-extras', '--resolver', 'backtracking', '--output-file', full_path, "pyproject.toml"]
+        program_name = 'uv'
+        arguments = ['pip', 'compile', '--python-version', self._minimum_python(), '--universal', '--generate-hashes', '--output-file', full_path, "pyproject.toml"]
 
         if upgrade_all and upgrade_packages:
             raise ValueError("Both upgrade_all and upgrade_packages are given. That's invalid")
@@ -64,12 +50,9 @@ class Command(BaseCommand):
         if stage == self.stage_dev:
             arguments += ['--extra', 'dev']
 
-        custom_env = os.environ
-        custom_env["CUSTOM_COMPILE_COMMAND"] = "python manage.py generate_requirements"
-
         print('Generating', full_path)
         try:
-            subprocess.run([program_name] + arguments, check=True, env=custom_env,
+            subprocess.run([program_name] + arguments, check=True,
                            capture_output=True)
         except subprocess.CalledProcessError as e:
             print('stdout')
@@ -78,17 +61,20 @@ class Command(BaseCommand):
             print('stderr')
             print(e.stderr.decode())
 
-    def handle(self, *args, **options):
-        upgrade_all = False
-        upgrade_packages = []
-        if hasattr(options, 'upgrade_packages'):
-            if len(options.upgrade_packages) == 0:
-                upgrade_all = True
-            else:
-                upgrade_packages = options.upgrade_packages
+    def _minimum_python(self) -> str:
+        minimum =  metadata('inyoka')['Requires-Python']
+        minimum = re.search(">=(?P<version>[^,]*).*", minimum)['version']
 
-        if not upgrade_all and not upgrade_packages:
-            self.remove_requirements_files()
+        if not minimum:
+            raise ValueError("Could not parse minimum python version for inyoka")
+        return minimum
+
+    def handle(self, *args, **options):
+        upgrade_all = True
+        upgrade_packages = []
+        if hasattr(options, 'upgrade_packages') and len(options.upgrade_packages) > 0:
+            upgrade_packages = options.upgrade_packages
+            upgrade_all = False
 
         for s in self.stages:
             self.generate_requirements_file(s, upgrade_all, upgrade_packages)

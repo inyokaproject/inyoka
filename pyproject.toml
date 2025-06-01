@@ -8,7 +8,9 @@ dynamic = ["version"]
 description = "All-in-one portal software with Forum, Wiki, Planet, News and Calendar"
 readme = "README.rst"
 keywords = [ "calendar", "django", "forum", "news", "planet", "wiki" ]
-license = { file = "LICENSE" }
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license-and-license-files
+license = "BSD-3-Clause"
+license-files = [ "LICENSE" ]
 authors = [
   { name = "Inyoka Team" },
 ]
@@ -46,7 +48,6 @@ dependencies = [
   "jinja2",
   "lxml[html-clean]",
   "pillow",
-  "pip-tools",
   "psycopg2",
   "pygments",
   "python-magic",
@@ -71,6 +72,7 @@ optional-dependencies.dev = [
   "sphinx",
   "sphinx-rtd-theme",
   "ruff",
+  "uv",
 ]
 urls.Changelog = "https://github.com/inyokaproject/inyoka/blob/master/ChangeLog.rst"
 urls.Homepage = "https://inyokaproject.org/"

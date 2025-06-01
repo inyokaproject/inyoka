@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       DEFAULT_BRANCH: 'refs/heads/staging'
-      REQUIREMENTS_FILE: extra/requirements/linux-py${{ matrix.python-version }}-development.txt
+      REQUIREMENTS_FILE: extra/requirements/development.txt
     strategy:
       fail-fast: false
       matrix:
