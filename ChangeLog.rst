@@ -24,8 +24,8 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-Unreleased 1.52.0 (2025-MM-DD)
-==============================
+1.52.0 (2025-06-01)
+===================
 
 Deployment notes
 ----------------
@@ -45,9 +45,6 @@ Deployment notes
 * Captcha: Fix spacing of renew button
 * Modernize javascript: Use const and let, refactor & remove unused logic
 * Use django 5.2 and celery 5.5
-
-🗑 Deprecations
---------------
 
 🔥 Removals
 -----------
