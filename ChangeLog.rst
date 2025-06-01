@@ -33,9 +33,6 @@ Deployment notes
 #. Update requirements
 #. Execute database migrations
 
-✨ New features
----------------
-
 🏗 Changes
 ----------
 
