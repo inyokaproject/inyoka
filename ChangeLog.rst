@@ -46,6 +46,7 @@ Unreleased 1.52.1 (2025-MM-DD)
 
 🔒 Security
 -----------
+* Update requirements (at least the dependency ``Django`` includes a known security fix)
 
 
 1.52.0 (2025-06-01)
