@@ -8,6 +8,7 @@
     :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import logging
 import os
 import re
 import subprocess
@@ -33,23 +34,24 @@ class Command(BaseCommand):
         full_path = os.path.join(self.requirements_path, file)
         return full_path
 
-
-    def generate_requirements_file(self, stage: str, upgrade_all: bool = False, upgrade_packages: list = []) -> None:
+    def generate_requirements_file(self, stage: str, upgrade_packages: list = []) -> None:
         full_path = self._get_requirements_path(stage)
 
         program_name = 'uv'
         arguments = ['pip', 'compile', '--python-version', self._minimum_python(), '--universal', '--generate-hashes', '--output-file', full_path, "pyproject.toml"]
 
-        if upgrade_all and upgrade_packages:
-            raise ValueError("Both upgrade_all and upgrade_packages are given. That's invalid")
-        if upgrade_all:
+        if not upgrade_packages:
+            # upgrade all packages
             arguments.append('--upgrade')
-        for p in upgrade_packages:
-            arguments += ['--upgrade-package', p]
+        else:
+            # only include the defined packages for upgrade
+            for p in upgrade_packages:
+                arguments += ['--upgrade-package', p]
 
         if stage == self.stage_dev:
             arguments += ['--extra', 'dev']
 
+        logging.debug(f'args {arguments}')
         print('Generating', full_path)
         try:
             subprocess.run([program_name] + arguments, check=True,
@@ -70,11 +72,5 @@ class Command(BaseCommand):
         return minimum
 
     def handle(self, *args, **options):
-        upgrade_all = True
-        upgrade_packages = []
-        if hasattr(options, 'upgrade_packages') and len(options.upgrade_packages) > 0:
-            upgrade_packages = options.upgrade_packages
-            upgrade_all = False
-
         for s in self.stages:
-            self.generate_requirements_file(s, upgrade_all, upgrade_packages)
+            self.generate_requirements_file(s, options['upgrade_packages'])
