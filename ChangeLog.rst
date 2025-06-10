@@ -28,11 +28,17 @@ Inyoka Changelog
 Unreleased 1.52.1 (2025-MM-DD)
 =====================
 
+Deployment notes
+----------------
+#. Update requirements
+#. Execute database migrations (``python manage.py migrate``)
+
 ✨ New features
 ---------------
 
 🏗 Changes
 ----------
+* Add Cinnamon and Ubuntu Studio to distro select in Forum
 
 🗑 Deprecations
 --------------
@@ -46,6 +52,7 @@ Unreleased 1.52.1 (2025-MM-DD)
 
 🔒 Security
 -----------
+* Update requirements (at least the dependencies ``Django`` and ``requests`` include a known security fix)
 
 
 1.52.0 (2025-06-01)
