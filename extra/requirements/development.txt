@@ -372,9 +372,9 @@ defusedxml==0.7.1 \
     --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
     --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
     # via inyoka (pyproject.toml)
-django==5.2.3 \
-    --hash=sha256:335213277666ab2c5cac44a792a6d2f3d58eb79a80c14b6b160cd4afc3b75684 \
-    --hash=sha256:c517a6334e0fd940066aa9467b29401b93c37cec2e61365d663b80922542069d
+django==5.2.4 \
+    --hash=sha256:60c35bd96201b10c6e7a78121bd0da51084733efa303cc19ead021ab179cef5e \
+    --hash=sha256:a1228c384f8fa13eebc015196db7b3e08722c5058d4758d20cb287503a540d8f
     # via
     #   inyoka (pyproject.toml)
     #   django-debug-toolbar
