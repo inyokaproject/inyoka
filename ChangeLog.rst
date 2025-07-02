@@ -48,11 +48,11 @@ Deployment notes
 
 🐛 Fixes
 --------
-* Create a wiki index page via a databse migration, if it does not exist already
+* Create a wiki index page via a database migration, if it does not exist already
 
 🔒 Security
 -----------
-* Update requirements (at least the dependencies ``Django`` and ``requests`` include a known security fix)
+* Update requirements (at least the dependencies ``Django``, ``pillow``  and ``requests`` include a known security fix)
 
 
 1.52.0 (2025-06-01)
