@@ -49,6 +49,7 @@ Deployment notes
 🐛 Fixes
 --------
 * Create a wiki index page via a database migration, if it does not exist already
+* Ikhaya, NewEventForm: Fix sever error, if location-longitude or location-lattitude was missing
 
 🔒 Security
 -----------

@@ -260,3 +260,35 @@ class TestNewEventForm(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['location_lat'],
                          ['You must specify a location latitude.'])
+
+    def test_invalid_location_lat(self):
+        data = {
+            'name': 'foo',
+            'start_0': '2022-12-02',
+            'start_1': '11:11:11',
+            'end_0': '2022-12-03',
+            'end_1': '10:10:0',
+            'location_lat': '2023-03-22T15:34:00Z',
+            'location_long': 2,
+        }
+
+        form = self.form_class(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['location_lat'],
+                         ['Enter a number.', 'You must specify a location latitude.'])
+
+    def test_invalid_location_long(self):
+        data = {
+            'name': 'foo',
+            'start_0': '2022-12-02',
+            'start_1': '11:11:11',
+            'end_0': '2022-12-03',
+            'end_1': '10:10:0',
+            'location_lat':  2,
+            'location_long': '2023-03-22T15:34:00Z',
+        }
+
+        form = self.form_class(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['location_long'],
+                         ['Enter a number.', 'You must specify a location longitude.'])
