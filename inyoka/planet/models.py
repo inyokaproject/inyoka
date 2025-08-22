@@ -1,11 +1,11 @@
 """
-    inyoka.planet.models
-    ~~~~~~~~~~~~~~~~~~~~
+inyoka.planet.models
+~~~~~~~~~~~~~~~~~~~~
 
-    Database models for the planet.
+Database models for the planet.
 
-    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
 from django.core.cache import cache
@@ -14,12 +14,10 @@ from django.utils.translation import gettext_lazy
 
 from inyoka.portal.user import User
 from inyoka.utils.clamav import validate_file_infection
-from inyoka.utils.html import striptags
 from inyoka.utils.urls import href
 
 
 class EntryManager(models.Manager):
-
     def get_latest_entries(self, count=10):
         key = 'planet/latest_entries'
         entries = cache.get(key)
@@ -35,8 +33,13 @@ class Blog(models.Model):
     description = models.TextField(gettext_lazy('Description'), blank=True, null=True)
     blog_url = models.URLField(gettext_lazy('URL of the blog'))
     feed_url = models.URLField(gettext_lazy('URL of the feed'))
-    user = models.ForeignKey(User, verbose_name=gettext_lazy('User'),
-                             blank=True, null=True, on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        User,
+        verbose_name=gettext_lazy('User'),
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
     icon = models.ImageField(gettext_lazy('Icon'), upload_to='planet/icons',
                              blank=True, validators=[validate_file_infection])
     last_sync = models.DateTimeField(blank=True, null=True)
@@ -59,17 +62,19 @@ class Blog(models.Model):
         if action == 'show':
             return self.blog_url
         else:
-            return href(*{
-                'edit': ('planet', 'blog', self.id, 'edit'),
-                'delete': ('planet', 'blog', self.id, 'delete')
-            }[action])
+            return href(
+                *{
+                    'edit': ('planet', 'blog', self.id, 'edit'),
+                    'delete': ('planet', 'blog', self.id, 'delete'),
+                }[action]
+            )
 
     class Meta:
         ordering = ('name',)
         verbose_name = 'Blog'
         verbose_name_plural = 'Blogs'
         permissions = (
-            ('suggest_blog','Can suggest Blogs'),
+            ('suggest_blog', 'Can suggest Blogs'),
         )
 
 
@@ -85,22 +90,26 @@ class Entry(models.Model):
     author = models.CharField(max_length=50)
     author_homepage = models.URLField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
-    hidden_by = models.ForeignKey(User, blank=True, null=True,
-                                  related_name='hidden_planet_posts', on_delete=models.CASCADE)
+    hidden_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        related_name='hidden_planet_posts',
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self):
-        return '%s / %s' % (
-            self.blog,
-            self.title
-        )
+        return '%s / %s' % (self.blog, self.title)
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
             return self.url
         else:
-            return href(*{
-                'hide': ('planet', 'hide', self.id),
-            }[action])
+            return href(
+                *{
+                    'hide': ('planet', 'hide', self.id),
+                }[action]
+            )
 
     class Meta:
         verbose_name = gettext_lazy('Entry')
