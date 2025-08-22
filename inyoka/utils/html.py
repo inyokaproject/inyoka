@@ -93,15 +93,6 @@ def replace_entities(string):
         return ''
     return _entity_re.sub(_handle_match, string)
 
-
-def striptags(string):
-    """Remove HTML tags from a string."""
-    if string is None:
-        return ''
-
-    return ' '.join(_strip_re.sub('', replace_entities(string)).split())
-
-
 def parse_html(string, fragment=True):
     """
     Parse a tagsoup into a tree.  Currently this tree is a html5lib simpletree
