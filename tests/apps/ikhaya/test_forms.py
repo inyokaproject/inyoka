@@ -1,12 +1,13 @@
 """
-    tests.apps.ikhaya.test_forms
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests.apps.ikhaya.test_forms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test ikhaya forms.
+Test ikhaya forms.
 
-    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 from datetime import datetime, timedelta, timezone
 
 from freezegun import freeze_time
@@ -48,7 +49,6 @@ class TestEditCommentForm(TestCase):
 
 
 class TestEditArticleForm(TestCase):
-
     form_class = EditArticleForm
 
     def test_clean_slug__valid(self):
@@ -63,14 +63,20 @@ class TestEditArticleForm(TestCase):
             intro='Intro 1',
         )
 
-        form = self.form_class(data={'slug': 'another-slug',
-                                     'publication_datetime_0': '2008-07-18',
-                                     'publication_datetime_1': '03:33:07'})
-        self.assertFalse(form.is_valid()) # fields are missing
+        form = self.form_class(
+            data={
+                'slug': 'another-slug',
+                'publication_datetime_0': '2008-07-18',
+                'publication_datetime_1': '03:33:07',
+            }
+        )
+        self.assertFalse(form.is_valid())  # fields are missing
 
         # check that passed datetime is valid
         self.assertNotIn('publication_datetime', form.errors.keys())
-        self.assertEqual(form.cleaned_data['publication_datetime'], article.publication_datetime)
+        self.assertEqual(
+            form.cleaned_data['publication_datetime'], article.publication_datetime
+        )
 
         self.assertEqual('another-slug', form.clean_slug())
 
@@ -86,15 +92,21 @@ class TestEditArticleForm(TestCase):
             intro='Intro 1',
         )
 
-        form = self.form_class(data={'slug': article.slug,
-                                     'publication_datetime_0': '2008-07-18',
-                                     'publication_datetime_1': '03:33:07'},
-                               instance=article)
-        self.assertFalse(form.is_valid()) # fields are missing
+        form = self.form_class(
+            data={
+                'slug': article.slug,
+                'publication_datetime_0': '2008-07-18',
+                'publication_datetime_1': '03:33:07',
+            },
+            instance=article,
+        )
+        self.assertFalse(form.is_valid())  # fields are missing
 
         # check that passed datetime is valid
         self.assertNotIn('publication_datetime', form.errors.keys())
-        self.assertEqual(form.cleaned_data['publication_datetime'], article.publication_datetime)
+        self.assertEqual(
+            form.cleaned_data['publication_datetime'], article.publication_datetime
+        )
 
         self.assertEqual(article.slug, form.clean_slug())
         self.assertNotIn('slug', form.errors.keys())
@@ -111,16 +123,24 @@ class TestEditArticleForm(TestCase):
             intro='Intro 1',
         )
 
-        form = self.form_class(data={'slug': article.slug,
-                                     'publication_datetime_0': '2008-07-18',
-                                     'publication_datetime_1': '03:33:07'})
-        self.assertFalse(form.is_valid()) # fields are missing
+        form = self.form_class(
+            data={
+                'slug': article.slug,
+                'publication_datetime_0': '2008-07-18',
+                'publication_datetime_1': '03:33:07',
+            }
+        )
+        self.assertFalse(form.is_valid())  # fields are missing
 
         # check that passed datetime is valid
         self.assertNotIn('publication_datetime', form.errors.keys())
-        self.assertEqual(form.cleaned_data['publication_datetime'], article.publication_datetime)
+        self.assertEqual(
+            form.cleaned_data['publication_datetime'], article.publication_datetime
+        )
 
-        self.assertEqual(['There already exists an article with this slug!'], form.errors['slug'])
+        self.assertEqual(
+            ['There already exists an article with this slug!'], form.errors['slug']
+        )
 
     def test_clean_slug__collision__different_minutes(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
@@ -134,23 +154,28 @@ class TestEditArticleForm(TestCase):
             intro='Intro 1',
         )
 
-        form = self.form_class(data={'slug': article.slug,
-                                     'publication_datetime_0': '2008-07-18',
-                                     'publication_datetime_1': '03:10:00'})
-        self.assertFalse(form.is_valid()) # fields are missing
+        form = self.form_class(
+            data={
+                'slug': article.slug,
+                'publication_datetime_0': '2008-07-18',
+                'publication_datetime_1': '03:10:00',
+            }
+        )
+        self.assertFalse(form.is_valid())  # fields are missing
 
         # check that passed datetime is valid
         self.assertNotIn('publication_datetime', form.errors.keys())
 
-        self.assertEqual(['There already exists an article with this slug!'], form.errors['slug'])
+        self.assertEqual(
+            ['There already exists an article with this slug!'], form.errors['slug']
+        )
 
     def test_clean_slug__different_dates_in_UTC(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
         self.category1 = Category.objects.create(name='Test Category')
         local_timezone = timezone(timedelta(seconds=7200))
         article = Article.objects.create(
-            publication_datetime=datetime(2010, 7, 18, 1, 33, 7,
-                                             tzinfo=local_timezone),
+            publication_datetime=datetime(2010, 7, 18, 1, 33, 7, tzinfo=local_timezone),
             text='Text 1',
             author=self.user,
             subject='Article',
@@ -158,16 +183,19 @@ class TestEditArticleForm(TestCase):
             intro='Intro 1',
         )
 
-        form = self.form_class(data={'slug': article.slug,
-                                     'publication_datetime_0': '2010-07-18',
-                                     'publication_datetime_1': '23:33:00'})
-        self.assertFalse(form.is_valid()) # fields are missing
+        form = self.form_class(
+            data={
+                'slug': article.slug,
+                'publication_datetime_0': '2010-07-18',
+                'publication_datetime_1': '23:33:00',
+            }
+        )
+        self.assertFalse(form.is_valid())  # fields are missing
 
         # check that passed datetime is valid
         self.assertNotIn('publication_datetime', form.errors.keys())
 
         self.assertEqual(article.slug, form.clean_slug())
-
 
     def test_initial_value_updated__published_but_not_updated_article(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
@@ -216,7 +244,6 @@ class TestEditArticleForm(TestCase):
 
 
 class TestNewEventForm(TestCase):
-
     form_class = NewEventForm
 
     def test_valid_form(self):
@@ -243,8 +270,9 @@ class TestNewEventForm(TestCase):
 
         form = self.form_class(data=data)
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['location_long'],
-                         ['You must specify a location longitude.'])
+        self.assertEqual(
+            form.errors['location_long'], ['You must specify a location longitude.']
+        )
 
     def test_missing_location_lat(self):
         data = {
@@ -258,8 +286,9 @@ class TestNewEventForm(TestCase):
 
         form = self.form_class(data=data)
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['location_lat'],
-                         ['You must specify a location latitude.'])
+        self.assertEqual(
+            form.errors['location_lat'], ['You must specify a location latitude.']
+        )
 
     def test_invalid_location_lat(self):
         data = {
@@ -274,8 +303,10 @@ class TestNewEventForm(TestCase):
 
         form = self.form_class(data=data)
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['location_lat'],
-                         ['Enter a number.', 'You must specify a location latitude.'])
+        self.assertEqual(
+            form.errors['location_lat'],
+            ['Enter a number.', 'You must specify a location latitude.'],
+        )
 
     def test_invalid_location_long(self):
         data = {
@@ -284,11 +315,13 @@ class TestNewEventForm(TestCase):
             'start_1': '11:11:11',
             'end_0': '2022-12-03',
             'end_1': '10:10:0',
-            'location_lat':  2,
+            'location_lat': 2,
             'location_long': '2023-03-22T15:34:00Z',
         }
 
         form = self.form_class(data=data)
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['location_long'],
-                         ['Enter a number.', 'You must specify a location longitude.'])
+        self.assertEqual(
+            form.errors['location_long'],
+            ['Enter a number.', 'You must specify a location longitude.'],
+        )
