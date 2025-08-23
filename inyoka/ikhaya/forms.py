@@ -140,10 +140,10 @@ class NewEventForm(forms.ModelForm):
         if cleaned_data.get('end') and cleaned_data.get('start') and cleaned_data['end'] <= cleaned_data['start']:
             self.add_error('end', _('The end date must occur after the start date.'))
 
-        if cleaned_data['location_lat'] and not cleaned_data['location_long']:
+        if cleaned_data.get('location_lat') and not cleaned_data.get('location_long'):
             self.add_error('location_long', _('You must specify a location longitude.'))
 
-        if not cleaned_data['location_lat'] and cleaned_data['location_long']:
+        if not cleaned_data.get('location_lat') and cleaned_data.get('location_long'):
             self.add_error('location_lat', _('You must specify a location latitude.'))
 
         return cleaned_data
