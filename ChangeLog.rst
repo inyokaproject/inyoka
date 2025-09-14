@@ -25,31 +25,25 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 1.52.1 (2025-MM-DD)
-=====================
+1.52.1 (2025-09-14)
+===================
 
 Deployment notes
 ----------------
 #. Update requirements
 #. Execute database migrations (``python manage.py migrate``)
 
-✨ New features
----------------
 
 🏗 Changes
 ----------
 * Add Cinnamon and Ubuntu Studio to distro select in Forum
 
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
 
 🐛 Fixes
 --------
 * Create a wiki index page via a database migration, if it does not exist already
 * Ikhaya, NewEventForm: Fix sever error, if location-longitude or location-lattitude was missing
+* Add missing translations
 
 🔒 Security
 -----------
