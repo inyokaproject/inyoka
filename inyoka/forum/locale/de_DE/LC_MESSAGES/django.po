@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-06-01 22:01+0200\n"
-"PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
+"POT-Creation-Date: 2025-09-14 18:16+0200\n"
+"PO-Revision-Date: 2025-09-14 18:19+0200\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -834,11 +834,17 @@ msgstr "Ubuntu"
 msgid "Ubuntu Budgie"
 msgstr "Ubuntu Budgie"
 
+msgid "Ubuntu Cinnamon"
+msgstr "Ubuntu Cinnamon"
+
 msgid "Ubuntu GNOME"
 msgstr "Ubuntu GNOME"
 
 msgid "Ubuntu MATE"
 msgstr "Ubuntu MATE"
+
+msgid "Ubuntu Studio"
+msgstr "Ubuntu Studio"
 
 msgid "Ubuntu Touch"
 msgstr "Ubuntu Touch"
@@ -999,4 +1005,3 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
-
