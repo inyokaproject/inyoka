@@ -34,6 +34,8 @@ UBUNTU_DISTROS = {
     'mate': gettext_lazy('Ubuntu MATE'),
     'budgie': gettext_lazy('Ubuntu Budgie'),
     'unity': gettext_lazy('Ubuntu Unity'),
+    'cinnamon': gettext_lazy('Ubuntu Cinnamon'),
+    'studio': gettext_lazy('Ubuntu Studio'),
 }
 
 UBUNTU_DISTROS_SELECT_EXCLUDE = (

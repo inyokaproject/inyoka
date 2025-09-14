@@ -17,6 +17,7 @@ from inyoka.wiki.models import Page
 
 
 class TestWikiMacros(TestCase):
+
     def test_attachment_macro(self):
         gm = macros.get_macro
         ct = RenderContext(wiki_page=Page(name='AttachmentTest'))
@@ -130,6 +131,7 @@ class TestWikiMacros(TestCase):
         )
 
         needle = '''<ul>
+        <li><a href="http://wiki.ubuntuusers.local:8080/Wiki/Index/" class="internal">Wiki/Index</a></li>
         <li><a href="http://wiki.ubuntuusers.local:8080/baz/" class="internal">baz</a></li>
         <li><a href="http://wiki.ubuntuusers.local:8080/foo/" class="internal">foo</a></li>
         <li><a href="http://wiki.ubuntuusers.local:8080/linkbaz/" class="internal">linkbaz</a></li>
@@ -153,6 +155,7 @@ class TestWikiMacros(TestCase):
         )
 
         needle = '''<ul>
+        <li><a href="http://wiki.ubuntuusers.local:8080/Wiki/Index/" class="internal">Wiki/Index</a></li>
         <li><a href="http://wiki.ubuntuusers.local:8080/foo/" class="internal">foo</a></li>
         <li><a href="http://wiki.ubuntuusers.local:8080/linkbaz/" class="internal">linkbaz</a></li>
         </ul>'''
@@ -261,6 +264,7 @@ class TestWikiMacros(TestCase):
             )
 
         needle = '''<ul>
+            <li><a href="http://wiki.ubuntuusers.local:8080/Wiki/Index/" class="internal">Wiki/Index</a></li>
             <li><a href="http://wiki.ubuntuusers.local:8080/foo/" class="internal">foo</a></li>
         </ul>
         '''
@@ -413,6 +417,7 @@ class TestWikiMacros(TestCase):
             )
 
         needle = '''<ul>
+        <li><a href="http://wiki.ubuntuusers.local:8080/Wiki/Index/" class="internal">Wiki/Index</a></li>
         <li><a href="http://wiki.ubuntuusers.local:8080/foo/" class="internal">foo</a></li>
         <li><a href="http://wiki.ubuntuusers.local:8080/intbar/" class="internal">intbar</a></li>
         </ul>

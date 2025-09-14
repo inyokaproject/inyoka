@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-21 22:24+0100\n"
+"POT-Creation-Date: 2025-06-01 22:01+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 #, python-format
 msgid "\"%(fingerprint)s\" is not a valid GPG Fingerprint."
@@ -25,9 +25,6 @@ msgstr "\"%(fingerprint)s\" ist kein valider GPG-Fingerprint."
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr "(in %(seconds)s Sekunden gerendert)"
-
-msgid "Admin"
-msgstr "Admin"
 
 msgid "An internal error occurred. The administration was already notified."
 msgstr "Ein interner Fehler ist aufgetreten. Die Administratoren wurden bereits benachrichtigt."
@@ -183,9 +180,6 @@ msgstr "Dieses Thema existiert nicht."
 msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
-msgid "Turn admin links on/off"
-msgstr "Adminlinks ein/aus"
-
 msgid "URL of the topic"
 msgstr "URL des Themas"
 
@@ -263,12 +257,15 @@ msgstr "zehn"
 msgid "twelve"
 msgstr "zwölf"
 
+#, python-brace-format
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
 
+#, python-brace-format
 msgid "{verbose_name} “{object_name}” was successfully changed."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
+#, python-brace-format
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 

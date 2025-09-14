@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-11-17 13:35+0100\n"
+"POT-Creation-Date: 2025-06-01 22:01+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 #, python-format
 msgid " Revision %(new_rev)s "
@@ -133,9 +133,6 @@ msgstr "Aber du kannst dir eine <a href=\"%(link)s\">Liste an Änderungen</a> di
 msgid "Cancel"
 msgstr "Abbrechen"
 
-msgid "Canceled."
-msgstr "Abgebrochen."
-
 msgid "Category"
 msgstr "Kategorie"
 
@@ -205,9 +202,6 @@ msgstr "Änderungskommentar:"
 msgid "Edited by"
 msgstr "Bearbeitet von"
 
-msgid "Editing of this page was canceled."
-msgstr "Bearbeiten der Seite abgebrochen."
-
 msgid "Existing attachments"
 msgstr "Bestehende Anhänge"
 
@@ -250,6 +244,14 @@ msgstr "Index"
 
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
+
+#, python-format
+msgid "Invalid filter key %(key)s. Query: %(query)s"
+msgstr "Ungültiger Filterschlüssel. Suchanfrage: %(query)s"
+
+#, python-format
+msgid "Invalid filter syntax. Query: %(query)s"
+msgstr "Ungültige Filtersyntax. Suchanfrage: %(query)s"
 
 msgid "Link"
 msgstr "Link"
@@ -459,6 +461,7 @@ msgid_plural "The article “<a href=\"%(link)s\">%(article)s</a>” has current
 msgstr[0] "Der Artikel “<a href=\"%(link)s\">%(article)s</a>“ hat eine Revision."
 msgstr[1] "Der Artikel „<a href=\"%(link)s\">%(article)s</a>“ hat %(count)s Revisionen."
 
+#, python-brace-format
 msgid "The article „{name}“ does not exist, you can try to create it now."
 msgstr "Der Artikel „{name}“ existiert nicht, du kannst versuchen ihn jetzt zu erstellen."
 
@@ -497,12 +500,14 @@ msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 msgid "The page %(name)s already exists."
 msgstr "Eine andere Seite mit dem Namen %(name)s existiert bereits."
 
+#, python-brace-format
 msgid "The page <a href=\"{link}\">{name}</a> has been created."
 msgstr "Die Seite „<a href=\"{link}\">{name}</a>“ wurde erstellt."
 
 msgid "The page has been edited."
 msgstr "Die Seite wurde bearbeitet."
 
+#, python-brace-format
 msgid "The page “{name}” was changed"
 msgstr "Die Seite „{name}“ wurde geändert"
 

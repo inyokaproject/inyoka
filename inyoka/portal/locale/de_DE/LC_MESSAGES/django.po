@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-11-24 22:12+0100\n"
+"POT-Creation-Date: 2025-06-01 22:01+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 msgid " Activation link:"
 msgstr "Aktivierungslink:"
@@ -597,9 +597,11 @@ msgstr "Ort neuer Wiki-Seiten"
 msgid "Login"
 msgstr "Anmelden"
 
+#, python-brace-format
 msgid "Login failed because the user is currently banned. You were informed about that. If you don’t agree with the ban or if it is a mistake, please contact <a href=\"{mailto}\">{mail}</a>."
 msgstr "Du konntest nicht angemeldet werden, da der Benutzer derzeit gesperrt ist. Du wurdest darüber weitgehend informiert. Solltest du dem nicht zustimmen oder sollte ein Irrtum vorliegen, so schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>."
 
+#, python-brace-format
 msgid "Login failed because the user is inactive. You probably didn’t click on the link in the activation mail which was sent to you after your registration. If it is still not working, contact us: <a href=\"{mailto}\">{mail}</a>"
 msgstr "Du konntest nicht angemeldet werden, da der Benutzer derzeit inaktiv ist. Das liegt wahrscheinlich daran, dass du den Aktivierungslink in der Bestätigungsmail, die dir nach der Registrierung zugeschickt wurde, nicht aufgerufen hast. Falls es weiterhin nicht funktioniert, schreibe bitte eine Nachricht an <a href=\"{mailto}\">{mail}</a>"
 
@@ -648,6 +650,7 @@ msgstr "Neues Passwort"
 msgid "New private message from %(username)s: %(subject)s"
 msgstr "Neue private Nachricht von %(username)s: %(subject)s"
 
+#, python-brace-format
 msgid "New user name '{newname}' contains invalid characters. Skipping..."
 msgstr "Der neue Benutzername „{newname}“ enthält ungültige Zeichen. Überspringe..."
 
@@ -775,6 +778,7 @@ msgstr "Veröffentlichungsdatum"
 msgid "Renaming users complete."
 msgstr "Umbennen der Benutzer abgeschlossen."
 
+#, python-brace-format
 msgid "Renaming {oldname} to {newname}..."
 msgstr "Benne „{oldname}“ to „{newname}“..."
 
@@ -921,6 +925,7 @@ msgstr "Das eingegebene Passwort ist falsch"
 msgid "The entered token is invalid or has expired."
 msgstr "Das eingegebene Einmalpasswort ist ungültig oder abgelaufen."
 
+#, python-brace-format
 msgid "The given email address is already in use. If you forgot your password, you can <a href=\"{link}\">restore it</a>."
 msgstr "Diese E-Mail-Adresse wird bereits verwendet. Falls du dein Passwort vergessen hast, kannst du es <a href=\"{link}\">wiederherstellen</a>."
 
@@ -1108,9 +1113,11 @@ msgstr "Verwendung:"
 msgid "Use Gravatar"
 msgstr "Gravatar benutzen"
 
+#, python-brace-format
 msgid "User '{oldname}' does not exist. Skipping..."
 msgstr "Den Benutzer „{username}“ gibt es nicht. Überspringe..."
 
+#, python-brace-format
 msgid "User name '{newname}' already exists. Skipping..."
 msgstr "Der Benutzer „{newname}“ existiert bereits. Überspringe..."
 
@@ -1258,9 +1265,6 @@ msgstr "Du warst nicht angemeldet."
 msgid "You will now be notified about activities of “%(username)s”."
 msgstr "Du wirst ab jetzt über Aktivitäten von „%(username)s“ benachrichtigt."
 
-msgid "Your account was anonymized."
-msgstr "Dein Konto wurde anonymisiert."
-
 msgid "Your account was deactivated."
 msgstr "Dein Konto wurde deaktiviert."
 
@@ -1288,6 +1292,7 @@ msgstr "Deine Einstellungen wurden erfolgreich aktualisiert."
 msgid "Your settings were successfully changed."
 msgstr "Deine Einstellungen wurden erfolgreich aktualisiert."
 
+#, python-brace-format
 msgid "Your user name on {sitename} has been changed to “{name}”"
 msgstr "Dein Benutzername auf {sitename} wurde in “{name}” geändert"
 

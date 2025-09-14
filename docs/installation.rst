@@ -51,22 +51,12 @@ Now you can start the installation of inyoka:
 The last command downloads and installs all needed libraries via pip.
 
 .. note::
-   ``development.txt`` and ``production.txt`` are just symlinks to the
-   environment used on ubuntuusers.de. Please check, if you have another
-   python version installed and need to use another requirements file. All
-   available requirements files can be found in ``extra/requirements/``.
-
    If you are interested in how these files are generated, see :ref:`packagemanagement`.
 
-Once the requirements are installed, you can run *optionally*
-
-::
-
-   $ pip-sync extra/requirements/development.txt
-
-``pip-sync`` has the benefit of removing all unneeded packages from the virtualenv.
-``pip`` will leave f.e. old dropped dependencies in the virtualenv. This is especially
-relevant, if you have an old virtualenv and update the packages in it regularly.
+.. note::
+    We recommend to rebuild the virtualenv regularly.
+    Just using ``pip`` in an existing virtualenv can leave f.e. old dropped dependencies in the virtualenv.
+    Alternatively, ``pip-sync`` or ``uv sync`` have the benefit of removing all unneeded packages from the virtualenv.
 
 At the end you need to edit your ``/etc/hosts`` with root privileges and add
 the following line:
