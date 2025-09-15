@@ -42,7 +42,7 @@ And merge it back into staging.
     git checkout master
     git pull --rebase
     git merge staging --no-ff
-    bump-my-version bump minor --dry-run -v # remove dry-run and verbose flags, if good
+    bump-my-version bump patch --dry-run -v # remove dry-run and verbose flags, if good
     git push
     git push -u origin v0.X.Y
 
@@ -79,7 +79,7 @@ Basically, the same as for the theme.
     git add ChangeLog.rst
     git commit -m 'Update date of Changelog'
 
-    bump-my-version bump minor --dry-run -v # remove dry-run and verbose flags, if good
+    bump-my-version bump patch --dry-run -v # remove dry-run and verbose flags, if good
 
 
     git push
