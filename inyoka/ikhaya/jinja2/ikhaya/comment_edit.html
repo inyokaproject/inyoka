@@ -14,7 +14,7 @@
 
 {% block ikhaya_content %}
   <h2>{% trans %}Edit comment{% endtrans %}</h2>
-  <form action="" method="post">
+  <form method="post">
     {{ csrf_input }}
     {{ render_form(form, ['text']) }}
     <input type="submit" value="{% trans %}Submit{% endtrans %}">

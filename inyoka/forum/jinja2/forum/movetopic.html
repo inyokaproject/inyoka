@@ -18,7 +18,7 @@
 {% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
 
 {% block forum_content %}
-  <form action="" method="post" class="new_topic">
+  <form method="post" class="new_topic">
     {{ csrf_input }}
     <h2>{% trans topic=topic.title|e %}Move “{{ topic }}”{% endtrans %}</h2>
     <p>{% trans %}Here you can move a topic into another forum.{% endtrans %}</p>

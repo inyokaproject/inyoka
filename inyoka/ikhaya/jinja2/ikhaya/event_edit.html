@@ -20,7 +20,7 @@
 {% set BREADCRUMBS = tmp_crumb + BREADCRUMBS|d([]) %}
 
 {% block content %}
-<form action="" method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
   {{ csrf_input }}
   {%- if form.errors %}
     <ul>{{ form.errors }}</ul>
