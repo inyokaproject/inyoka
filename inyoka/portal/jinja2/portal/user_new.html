@@ -14,7 +14,7 @@
                       (_('Create user'), href('portal', 'user', 'new'))] + BREADCRUMBS|d([]) %}
 
 {% block content %}
-  <form action="" method="post" id="user_edit_form">
+  <form method="post" id="user_edit_form">
     {{ csrf_input }}
     <h3>{% trans %}Create user{% endtrans %}</h3>
     <dl>

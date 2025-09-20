@@ -12,7 +12,7 @@
 {% set BREADCRUMBS = [(_('Reported topics'), href('forum', 'reported_topics'))] + BREADCRUMBS|d([]) %}
 
 {% block forum_content %}
-<form action="" method="post">
+<form method="post">
   {{ csrf_input }}
  <table>
    <colgroup>

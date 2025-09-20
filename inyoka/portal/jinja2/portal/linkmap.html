@@ -23,7 +23,7 @@
     {% trans %}The tokens <code>attachment</code> and <code>user</code> are hardcoded into Inyoka.{% endtrans %}
   </p>
 
-  <form enctype="multipart/form-data" method="post" action="">
+  <form enctype="multipart/form-data" method="post">
     {{ csrf_input }}
     {{ formset.management_form }}
     {{ formset.non_form_errors() }}

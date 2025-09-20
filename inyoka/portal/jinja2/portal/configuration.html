@@ -14,7 +14,7 @@
 {% set scripts = ['jstableform'] %}
 
 {% block content %}
-<form enctype="multipart/form-data" action="" method="post" id="configuration">
+<form enctype="multipart/form-data" method="post" id="configuration">
   {{ csrf_input }}
   <h3>{% trans %}General settings{% endtrans %}</h3>
   <dl>

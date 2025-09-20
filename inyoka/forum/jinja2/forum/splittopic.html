@@ -14,7 +14,7 @@
                       (topic.title|e, topic|url)] + BREADCRUMBS|d([]) %}
 
 {% block forum_content %}
-  <form action="" method="post" class="new_topic">
+  <form method="post" class="new_topic">
     {{ csrf_input }}
     <h2>{% trans topic=topic.title|e %}Split topic “{{ topic }}”{% endtrans %}</h2>
     <p>
