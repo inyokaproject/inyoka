@@ -1,4 +1,3 @@
-import datetime
 
 from behave import given, step
 from django.conf import settings
@@ -74,8 +73,8 @@ def create_item(context, item, caption):
                                                     author=default_user.username,
                                                     blog=blog,
                                                     text="TEST",
-                                                    pub_date=datetime.datetime.now(),
-                                                    updated=datetime.datetime.now())
+                                                    pub_date='2020-02-20T14:42:00Z',
+                                                    updated='2020-02-21T13:37:42Z')
     else:
         raise ValueError("Unsupported item type")
 

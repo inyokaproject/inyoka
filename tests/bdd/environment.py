@@ -4,7 +4,7 @@ from behave import use_fixture
 from django.conf import settings
 
 from tests.bdd.behave_fixtures import (
-    browser_chrome,
+    browser_firefox,
     django_test_case,
     django_test_runner,
 )
@@ -16,7 +16,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.bdd.settings.headless'
 def before_all(context):
     context.LOG_DIR = "bdd_screenshots"
     use_fixture(django_test_runner, context)
-    use_fixture(browser_chrome, context)
+    use_fixture(browser_firefox, context)
 
 
 def before_scenario(context, scenario):
