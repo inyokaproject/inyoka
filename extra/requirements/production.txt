@@ -266,13 +266,8 @@ django==5.2.6 \
     --hash=sha256:da5e00372763193d73cecbf71084a3848458cecf4cee36b9a1e8d318d114a87b
     # via
     #   inyoka (pyproject.toml)
-    #   django-filter
     #   django-guardian
     #   django-redis
-django-filter==25.1 \
-    --hash=sha256:1ec9eef48fa8da1c0ac9b411744b16c3f4c31176c867886e4c48da369c407153 \
-    --hash=sha256:4fa48677cf5857b9b1347fed23e355ea792464e0fe07244d1fdfb8a806215b80
-    # via inyoka (pyproject.toml)
 django-guardian==3.1.3 \
     --hash=sha256:12b5e66c18c97088b0adfa033ab14be68c321c170fd3ec438898271f00a71699 \
     --hash=sha256:90e28b40eea65c326a3a961908cc300f9e1cd69b74e88d38317a9befa167b71c

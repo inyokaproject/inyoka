@@ -46,7 +46,6 @@ from PIL import Image
 
 from inyoka.forum.models import Forum
 from inyoka.ikhaya.models import Article, Category, Event
-from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (
     NOTIFICATION_CHOICES,
     ConfigurationForm,
@@ -596,25 +595,44 @@ class InyokaPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'portal/usercp/change_password.html'
 
 
-class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
+class UserCPSubscriptions(generic.OrderedListView):
     """This page shows all subscriptions for the current user and allows
     him to manage them.
     """
+    SUPPORTED_SUBSCRIPTION_TYPES = {
+        'topic': _('Topic'),
+        'forum': _('Forum'),
+        'article': _('Ikhaya article'),
+        'page': _('Wiki page'),
+        '': _('All types'),
+    }
+
     template_name = 'portal/usercp/subscriptions.html'
     columns = ('notified',)
     order_by = ['-notified', '-id']
     context_object_name = 'subscriptions'
-    base_link = href('portal', 'usercp', 'subscriptions')
-    filtersets = [SubscriptionFilter]
+    base_link = partial(href, 'portal', 'usercp', 'subscriptions')
     required_login = True
     permission_required = ()
+
+    def get_context_data(self, **kwargs):
+        kwargs['base_link'] = self.base_link
+        kwargs['subscription_types'] = self.SUPPORTED_SUBSCRIPTION_TYPES.items()
+        return kwargs
+
+    def get_base_link(self):
+        if 'content_type' in self.kwargs:
+            return self.base_link(self.kwargs['content_type'])
+
+        return self.base_link()
 
     def get_queryset(self):
         qs = self.request.user.subscription_set.all()
         qs = qs.filter(ubuntu_version__isnull=True)
-        for f in self.filtersets:
-            instance = f(self.request.GET or None, queryset=qs)
-            qs = instance.qs
+
+        if 'content_type' in self.kwargs:
+            qs = qs.filter(content_type__model=self.kwargs['content_type'])
+
         return qs
 
     def post(self, request, *args, **kwargs):

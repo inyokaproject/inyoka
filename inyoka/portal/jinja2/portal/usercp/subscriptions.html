@@ -22,7 +22,15 @@
 
   <h3>{% trans %}Filter{% endtrans %}</h3>
   <div class="container noh3">
-    {{ filtersets[0].form.content_type }}
+    <ul>
+      {% for type, label in subscription_types %}
+        {% if type %}
+          <li><a href="{{ base_link(type) }}">{{ label|e }}</a></li>
+        {% else %}
+          <li><a href="{{ base_link() }}">{{ label|e }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
 {% endblock %}
 
