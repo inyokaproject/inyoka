@@ -1609,6 +1609,17 @@ class TestUserCPSubscriptions(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'You did not yet subscribed to any topics or articles.')
 
+        with self.subTest('link sidebar wiki filter'):
+            self.assertContains(response, f'<a href="http://{settings.BASE_DOMAIN_NAME}/usercp/subscriptions/page/">Wiki page</a>')
+
+    def test_get__filter_by_type(self):
+        response = self.client.get('/usercp/subscriptions/article/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'You did not yet subscribed to any topics or articles.')
+
+        with self.subTest('link sidebar wiki filter'):
+            self.assertContains(response, f'<a href="http://{settings.BASE_DOMAIN_NAME}/usercp/subscriptions/page/">Wiki page</a>')
+
     def _create_subscription(self):
         forum1 = Forum.objects.create(name='Forum 1')
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
