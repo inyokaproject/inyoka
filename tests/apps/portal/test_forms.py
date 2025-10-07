@@ -22,7 +22,7 @@ class TestEditStaticPageForm(TestCase):
     form = EditStaticPageForm
 
     form_edit = form
-    form_create = partial(form, instance=None)
+    form_create = staticmethod(partial(form, instance=None))
 
     def test_create_with_already_existing_key(self):
         StaticPage.objects.create(key='foo', title='foo',

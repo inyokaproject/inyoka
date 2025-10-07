@@ -611,7 +611,7 @@ class UserCPSubscriptions(generic.OrderedListView):
     columns = ('notified',)
     order_by = ['-notified', '-id']
     context_object_name = 'subscriptions'
-    base_link = partial(href, 'portal', 'usercp', 'subscriptions')
+    base_link = staticmethod(partial(href, 'portal', 'usercp', 'subscriptions'))
     required_login = True
     permission_required = ()
 
