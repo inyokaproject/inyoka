@@ -44,7 +44,6 @@ dependencies = [
   "gunicorn",
   "icalendar",
   "jinja2",
-  "lxml",
   "nh3",
   "pillow",
   "psycopg2",
