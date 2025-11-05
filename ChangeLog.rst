@@ -24,7 +24,7 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-Unreleased 1.52.2 (2025-MM-DD)
+Unreleased 1.52.3 (2025-MM-DD)
 =====================
 
 ✨ New features
@@ -44,7 +44,20 @@ Unreleased 1.52.2 (2025-MM-DD)
 
 🔒 Security
 -----------
-* Update requirements (at least the dependencys ``Django`` includes a known security fix)
+* Update requirements
+
+
+1.52.2 (2025-11-05)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+
+🔒 Security
+-----------
+* Update requirements due to high security issue in ``Django``
+
 
 1.52.1 (2025-09-14)
 ===================
