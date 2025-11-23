@@ -91,6 +91,12 @@ class TestNormalizePagename(TestCase):
     def test_normalize_pagename_with_disallowed_chars(self):
         self.assertEqual(normalize_pagename("Foo%Bar?#"), "FooBar")
 
+    def test_normalize_pagename_unicode(self):
+        self.assertEqual(normalize_pagename("FooßBar"), "FooßBar")
+        self.assertEqual(normalize_pagename("FooäöüBar"), "FooäöüBar")
+        self.assertEqual(normalize_pagename("Foo→Bar"), "Foo→Bar")
+        self.assertEqual(normalize_pagename("Foo乸Bar"), "Foo乸Bar")
+
     def test_normalize_pagename_without_strip(self):
         self.assertEqual(normalize_pagename("/Foo Bar", False), "/Foo_Bar")
 
