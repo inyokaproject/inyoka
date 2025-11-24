@@ -70,6 +70,14 @@ class TestViews(TestCase):
         req = self.client.get("/Testpage250/a/log/4", follow=True)
         self.assertEqual(req.status_code, 404)
 
+    def test_log_with_different_case_in_name(self):
+        page_name = 'testPage5'
+        Page.objects.create(page_name, 'rev 0', user=self.admin, note='rev 0')
+
+        url = href('wiki', page_name.upper(), 'a', 'log')
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '/testPage5/a/log/')
+
 
 class TestDoCreate(TestCase):
 
@@ -230,6 +238,19 @@ class TestDoShow(TestCase):
         response = self.client.get(p.get_absolute_url('show'), follow=True)
         self.assertEqual(response.status_code, 404)
 
+    def test_name_with_different_case(self):
+        url = href('wiki', self.page_name.upper())
+
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '/test_page/')
+
+    def test_page_with_space_in_name(self):
+        Page.objects.create('test_Page5', 'rev 0', user=self.user, note='rev 0')
+
+        url = href('wiki', 'test Page5')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
 
 class TestDoMetaExport(TestCase):
 
@@ -239,9 +260,9 @@ class TestDoMetaExport(TestCase):
         super().setUp()
         user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
-        page_name = 'test_page'
-        Page.objects.create(user=user, name=page_name, remote_addr='', text=page_name)
-        self.url = href('wiki', page_name, 'a', 'export', 'meta')
+        self.page_name = 'test_page'
+        Page.objects.create(user=user, name=self.page_name, remote_addr='', text=self.page_name)
+        self.url = href('wiki', self.page_name, 'a', 'export', 'meta')
 
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
@@ -255,6 +276,12 @@ class TestDoMetaExport(TestCase):
     def test_missing_page(self):
         response = self.client.get(href('wiki', 'not_existing', 'a', 'export', 'meta'))
         self.assertEqual(response.status_code, 404)
+
+    def test_name_with_different_case(self):
+        url = href('wiki', self.page_name.upper(), 'a', 'export', 'meta')
+
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '/test_page/a/export/meta/')
 
 
 class TestDoDiff(TestCase):
@@ -405,6 +432,36 @@ class TestArticleRevisionFeed(TestCase):
 
         feed = feedparser.parse(response.content)
         self.assertEqual(len(feed.entries), 2)
+
+    def test_name_with_different_case(self):
+        url = href('wiki', self.page.name.upper(), 'a', 'feed')
+
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '/test_page/a/feed/')
+
+    def test_name_with_space(self):
+        Page.objects.create('First_Steps', 'rev 0', user=self.user, note='rev 0')
+
+        url = href('wiki', 'first steps', 'a', 'feed')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, '/First_Steps/a/feed/')
+
+    def test_name_with_invalid_char(self):
+        Page.objects.create('First_Steps', 'rev 0', user=self.user, note='rev 0')
+
+        url = href('wiki', 'First #Steps', 'a', 'feed')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, '/First_Steps/a/feed/')
+
+    def test_name_with_hierarchy(self):
+        Page.objects.create('First_Steps/barz', 'rev 0', user=self.user, note='rev 0')
+
+        url = href('wiki', 'First Steps/barz', 'a', 'feed')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, '/First_Steps/barz/a/feed/')
 
     def test_page_deleted(self):
         self.page.edit(text='another text', user=self.user, deleted=True)

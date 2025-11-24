@@ -12,8 +12,8 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.shortcuts import redirect
+from django.urls import reverse
 
-from inyoka.utils.urls import url_for
 from inyoka.wiki.exceptions import CaseSensitiveException, CircularRedirectException
 from inyoka.wiki.models import Page
 
@@ -26,7 +26,11 @@ def case_sensitive_redirect(function):
         try:
             return function(request, *args, **kwargs)
         except CaseSensitiveException as e:
-            url = url_for(e.page)
+            kwargs = request.resolver_match.kwargs
+            kwargs['name'] = e.page.name
+
+            url = reverse(request.resolver_match.url_name,
+                          kwargs=kwargs)
             return redirect(url)
     return wrapper
 
