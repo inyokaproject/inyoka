@@ -982,6 +982,8 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                 elif action == 'delete':
                     msg = _('Do you really want to delete the message?')
                     confirm_label = _('Delete')
+                else:
+                    raise Http404('invalid action parameter')
                 flash_message(request, 'confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
