@@ -472,7 +472,7 @@ class TestAuthViews(TestCase):
 
         subject = mail.outbox[0].subject
         self.assertIn('Deactivation of your account “user”', subject)
-        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
+        code = re.search(r'(?im)^ {4}[a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -502,7 +502,7 @@ class TestAuthViews(TestCase):
         # Perform invalid mail change
         subject = mail.outbox[0].subject
         self.assertIn('Confirm email address', subject)
-        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
+        code = re.search(r'(?im)^ {4}[a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -519,7 +519,7 @@ class TestAuthViews(TestCase):
         # Perform invalid mail reset
         subject = mail.outbox[1].subject
         self.assertIn('Email address changed', subject)
-        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
+        code = re.search(r'(?im)^ {4}[a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[1].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
