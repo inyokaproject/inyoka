@@ -27,11 +27,20 @@ Inyoka Changelog
 Unreleased 1.52.4 (2025-MM-DD)
 =====================
 
+Deployment notes
+----------------
+#. Update requirements
+
 ✨ New features
 ---------------
 
 🏗 Changes
 ----------
+
+* Remove empty ``action`` tag on forms, as they were not conformant
+* Reworked subscription filter to remove django filter as dependency.
+* Wiki: preserve the action on case sensitive redirect of pages
+
 
 🗑 Deprecations
 --------------
