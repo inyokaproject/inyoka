@@ -20,7 +20,7 @@
       By using this form you can suggest a new entry for the <a href="{{ link_calendar }}">calendar</a>. A team member will review your suggestion as soon as possible. If you want to change an existing calendar entry please contact the <a href="{{ link_newsteam }}">news team</a>.
     {%- endtrans -%}
   </p>
-  <form action="" method="post" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     {{ csrf_input }}
     {%- if form.errors %}
       <ul>{{ form.errors }}</ul>

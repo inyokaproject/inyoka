@@ -36,7 +36,6 @@ dependencies = [
   "celery[redis]",
   "defusedxml",
   "django[argon2]<6",
-  "django-filter",
   "django-guardian",
   "django-hosts",
   "django-redis",

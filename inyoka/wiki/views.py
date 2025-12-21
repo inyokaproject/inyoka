@@ -23,6 +23,7 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.translation import gettext as _
@@ -35,6 +36,7 @@ from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page, Revision
+from inyoka.wiki.utils import case_sensitive_redirect
 
 
 def index(request):
@@ -220,6 +222,7 @@ class WikiAtomFeed(InyokaAtomFeed):
         return _localtime(rev.change_date)
 
 
+@method_decorator(case_sensitive_redirect, name="__call__")
 class WikiPageAtomFeed(WikiAtomFeed):
     """
     Atom feed with revisions of *one wiki page*.
@@ -239,7 +242,7 @@ class WikiPageAtomFeed(WikiAtomFeed):
 
     def get_object(self, request, *args, **kwargs):
         super().get_object(request, *args, **kwargs)
-        return Page.objects.get_by_name(kwargs['page_name'], exclude_privileged=True)
+        return Page.objects.get_by_name(kwargs['name'], exclude_privileged=True)
 
     def items(self, page):
         return Revision.objects.get_latest_revisions(page.name, self.count)

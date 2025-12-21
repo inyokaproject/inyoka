@@ -12,7 +12,7 @@
 
 class CaseSensitiveException(Exception):
     """
-    Raised when a specific page is requested which does not exist, but an
+    Raised when a specific page is requested which does not exist, but a
     wiki page exist with another case.
     """
     def __init__(self, page, *args, **kwargs):

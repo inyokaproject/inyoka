@@ -1,5 +1,7 @@
 from behave import given, step
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 @given('I am on the "{page_slug}" page')
@@ -16,7 +18,12 @@ def navigate_to_page(context, app, page_slug):
     if page_slug == 'main':
         page_slug = ''
     location = href(app, page_slug)
-    context.browser.get(location)
+
+    driver = context.browser
+    driver.get(location)
+
+    wait = WebDriverWait(driver, 10)
+    wait.until(presence_of_element_located((By.CLASS_NAME, 'license')))
 
 
 @step('I open the "{app}" in {view_type} view')
@@ -38,7 +45,12 @@ def go_to_item(context, app, view_type, item_id):
     else:
         location = href(app, item_id)
 
-    context.browser.get(location)
+    driver = context.browser
+    driver.get(location)
+
+    if view_type != "raw":
+        wait = WebDriverWait(driver, 10)
+        wait.until(presence_of_element_located((By.CLASS_NAME, 'license')))
 
 
 @step("I click on {action}")

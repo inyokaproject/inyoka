@@ -47,7 +47,7 @@
         To be always up to date you can read the <a href="{{ feed_link }}">atom feed</a> or <a href="{{ subscribe_link }}">subscribe</a>.
       {%- endtrans -%}
     </p>
-    <form action="" method="post" class="nosubmitprotect">
+    <form method="post" class="nosubmitprotect">
       {{ csrf_input }}
       <input type="submit" value="{% trans %}Compare{% endtrans %}">
       <input type="hidden" name="action" value="diff">

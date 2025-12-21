@@ -30,7 +30,7 @@
     <h3>{% trans %}New Article{% endtrans %}</h3>
   {% endif %}
 
-  <form action="" method="post" class="ikhaya">
+  <form method="post" class="ikhaya">
     {{ csrf_input }}
     {{ form.errors.__all__ }}
     {%- if article.article_icon %}

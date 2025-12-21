@@ -1,10 +1,11 @@
+import subprocess
+
 import django
 from behave import fixture
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 from django.test.testcases import LiveServerTestCase
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
 
 
 @fixture
@@ -33,13 +34,28 @@ def django_test_case(context):
 
     del context.test_case
 
+@fixture
+def browser_firefox(context):
+    options = webdriver.FirefoxOptions()
+    if settings.HEADLESS:
+        options.add_argument("-headless")
+
+    service = webdriver.FirefoxService(log_output=subprocess.STDOUT)
+
+    context.browser = webdriver.Firefox(options=options, service=service)
+    context.browser.set_window_size(1024, 1900)
+    yield context.browser
+    context.browser.quit()
 
 @fixture
 def browser_chrome(context):
-    options = Options()
+    options = webdriver.ChromeOptions()
     if settings.HEADLESS:
         options.add_argument("--headless=new")
-    context.browser = Chrome(options=options)
+
+    service = webdriver.ChromeService(log_output=subprocess.STDOUT)
+
+    context.browser = webdriver.Chrome(options=options, service=service)
     context.browser.set_window_size(1024, 1900)
     yield context.browser
     context.browser.quit()

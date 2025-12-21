@@ -472,7 +472,7 @@ class TestAuthViews(TestCase):
 
         subject = mail.outbox[0].subject
         self.assertIn('Deactivation of your account “user”', subject)
-        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
+        code = re.search(r'(?im)^ {4}[a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -502,7 +502,7 @@ class TestAuthViews(TestCase):
         # Perform invalid mail change
         subject = mail.outbox[0].subject
         self.assertIn('Confirm email address', subject)
-        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
+        code = re.search(r'(?im)^ {4}[a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[0].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -519,7 +519,7 @@ class TestAuthViews(TestCase):
         # Perform invalid mail reset
         subject = mail.outbox[1].subject
         self.assertIn('Email address changed', subject)
-        code = re.search(r'(?im)^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
+        code = re.search(r'(?im)^ {4}[a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$',
                          mail.outbox[1].body).group(0).strip()
         postdata = {'token': code}
         with translation.override('en-us'):
@@ -815,6 +815,18 @@ class TestPrivMsgViews(TestCase):
         self.assertEqual(response.status_code, 404)
 
         response = self.client.get('/privmsg/42/')
+        self.assertEqual(response.status_code, 404)
+
+
+    def test_invalid_action(self):
+        pm1 = PrivateMessage.objects.create(author=self.user, subject='Subject',
+                                            text='Text', pub_date=dj_timezone.now())
+        PrivateMessageEntry.objects.create(message=pm1, user=self.user,
+                                           read=False,
+                                           folder=PRIVMSG_FOLDERS['sent'][0])
+
+        url = f'http://{settings.BASE_DOMAIN_NAME}/privmsg/sent/{pm1.id}/?action=invalidaction'
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_many(self):
@@ -1608,6 +1620,17 @@ class TestUserCPSubscriptions(TestCase):
         response = self.client.get('/usercp/subscriptions/', follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'You did not yet subscribed to any topics or articles.')
+
+        with self.subTest('link sidebar wiki filter'):
+            self.assertContains(response, f'<a href="http://{settings.BASE_DOMAIN_NAME}/usercp/subscriptions/page/">Wiki page</a>')
+
+    def test_get__filter_by_type(self):
+        response = self.client.get('/usercp/subscriptions/article/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'You did not yet subscribed to any topics or articles.')
+
+        with self.subTest('link sidebar wiki filter'):
+            self.assertContains(response, f'<a href="http://{settings.BASE_DOMAIN_NAME}/usercp/subscriptions/page/">Wiki page</a>')
 
     def _create_subscription(self):
         forum1 = Forum.objects.create(name='Forum 1')

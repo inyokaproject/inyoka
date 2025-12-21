@@ -53,23 +53,6 @@ class EditMixin:
         return self.urlgroup_name or self.context_object_name
 
 
-class FilterMixin:
-    filtersets = []
-
-    def render_to_response(self, context, **kwargs):
-        req = self.request
-        filters = [f(req.GET or None) for f in self.filtersets]
-        context['filtersets'] = filters
-        return base.TemplateResponseMixin.render_to_response(self, context, **kwargs)
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        for f in self.filtersets:
-            instance = f(self.request.GET or None, queryset=qs)
-            qs = instance.qs
-        return qs
-
-
 class PermissionRequiredMixin(_PermissionRequiredMixin):
     raise_exception = True
     login_required = True
@@ -171,6 +154,9 @@ class BaseListView(base.TemplateResponseMixin, list.MultipleObjectMixin, base.Vi
     paginate_by = 25
     base_link = None
 
+    def get_base_link(self):
+        return self.base_link
+
     def get_paginate_by(self, queryset):
         paginate_by = self.kwargs.get('paginate_by') or \
             self.request.GET.get('paginate_by')
@@ -183,7 +169,7 @@ class BaseListView(base.TemplateResponseMixin, list.MultipleObjectMixin, base.Vi
         pagination = Pagination(self.request, queryset, page,
                                 self.get_paginate_by(queryset),
                                 total=cqry.count(),
-                                link=self.base_link)
+                                link=self.get_base_link())
         return pagination
 
     def get_context_data(self, **kwargs):

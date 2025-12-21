@@ -26,7 +26,7 @@
       <a href="{{ href('ikhaya', 'suggestions', 'subscribe') }}" class="action action_subscribe">{% trans %}Notify me about new article suggestions{% endtrans %}</a>
     {%- endif -%}
   </p>
-  <form action="" method="post">
+  <form method="post">
     {{ csrf_input }}
     <div class="suggestionlist">
         {%- for suggestion in suggestions %}

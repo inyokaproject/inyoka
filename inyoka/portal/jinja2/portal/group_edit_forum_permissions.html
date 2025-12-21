@@ -20,7 +20,7 @@
 
   <input type="search" id="table-search" placeholder="Filter by Title">
 
-  <form class="edit-forum-permissions" method="post" action="">
+  <form class="edit-forum-permissions" method="post">
     {{ csrf_input }}
 
     {% set first_field = form.fields[form.fields.keys()|first] %}

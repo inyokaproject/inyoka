@@ -16,7 +16,7 @@
 {% set selected = 'profile' %}
 
 {% block portal_content %}
-  <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
+  <form enctype="multipart/form-data" class="usercp_form" method="post">
     {{ csrf_input }}
     <h3>{% trans %}Avatar settings{% endtrans %}</h3>
     <dl>

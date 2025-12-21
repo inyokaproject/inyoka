@@ -27,7 +27,7 @@
       Describe here briefly the discovered mistake. Please make sure that the mistake was not <a href="{{ link }}">already reported</a>.
     {%- endtrans -%}
   </p>
-  <form action="" method="post" id="new_report">
+  <form method="post" id="new_report">
     {{ csrf_input }}
     {{ form.text }}
     <p>

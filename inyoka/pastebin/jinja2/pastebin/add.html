@@ -14,7 +14,7 @@
 {% set BREADCRUMBS = [(_('New paste'), href('pastebin', 'add'))] + BREADCRUMBS|d([]) %}
 
 {% block paste_content %}
-  <form action="" method="post">
+  <form method="post">
     {{ csrf_input }}
     <dl>
       <dt>{% trans %}About:{% endtrans %}</dt>

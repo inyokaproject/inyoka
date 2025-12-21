@@ -49,6 +49,8 @@ urlpatterns = [
     path('usercp/password/', views.InyokaPasswordChangeView.as_view()),
     path('usercp/subscriptions/', views.usercp_subscriptions),
     path('usercp/subscriptions/<int:page>/', views.usercp_subscriptions),
+    path('usercp/subscriptions/<str:content_type>/', views.usercp_subscriptions),
+    path('usercp/subscriptions/<str:content_type>/<int:page>/', views.usercp_subscriptions),
     path('usercp/deactivate/', views.usercp_deactivate),
     path('privmsg/', views.privmsg),
     path('privmsg/new/', views.privmsg_new),
