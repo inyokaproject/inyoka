@@ -24,15 +24,13 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-Unreleased 1.52.4 (2025-MM-DD)
-=====================
+1.52.4 (2025-12-21)
+===================
 
 Deployment notes
 ----------------
 #. Update requirements
-
-✨ New features
----------------
+#. Execute database migrations (``python manage.py migrate``)
 
 🏗 Changes
 ----------
@@ -40,16 +38,6 @@ Deployment notes
 * Remove empty ``action`` tag on forms, as they were not conformant
 * Reworked subscription filter to remove django filter as dependency.
 * Wiki: preserve the action on case sensitive redirect of pages
-
-
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
-
-🐛 Fixes
---------
 
 🔒 Security
 -----------
