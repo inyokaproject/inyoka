@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy
 
 from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Forum, Topic
+from inyoka.utils.clamav import validate_file_infection
 from inyoka.utils.forms import MultiField, StrippedCharField, TopicField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
@@ -230,11 +231,10 @@ class AddAttachmentForm(forms.Form):
     `description`
         The description of the attachment as textarea.
     """
-    attachment = forms.FileField()
+    attachment = forms.FileField(validators=[validate_file_infection])
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
-    comment = forms.CharField(label=gettext_lazy('Description'), required=False,
-                  widget=forms.TextInput(attrs={'size': '60'}))
+    comment = forms.CharField(label=gettext_lazy('Description'), required=False)
 
     use_required_attribute = False
 

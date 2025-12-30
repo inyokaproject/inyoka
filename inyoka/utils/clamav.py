@@ -235,10 +235,6 @@ def scan_all_media_files() -> None:
     Findings and errors will be added to the python log.
     """
 
-    if not settings.CLAMAV_ENABLE:
-        logger.info('Clamav disabled')
-        return
-
     try:
         with Clamav() as scanner:
             result = list(scanner.multiscan(settings.MEDIA_ROOT))

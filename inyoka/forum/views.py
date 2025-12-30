@@ -386,6 +386,7 @@ def handle_attachments(request, post, att_ids):
         attachments = list(Attachment.objects.filter(id__in=att_ids).all())
     else:
         attachments = []
+
     if 'attach' in request.POST:
         attach_form = AddAttachmentForm(request.POST, request.FILES)
     else:
