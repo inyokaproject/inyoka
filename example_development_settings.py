@@ -33,6 +33,8 @@ LANGUAGE_CODE = 'de-DE'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+CLAMAV_HOST: str = 'localhost'
+
 SECRET_KEY = None
 
 # adapt for your custom theme

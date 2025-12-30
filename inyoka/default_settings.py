@@ -91,6 +91,11 @@ INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
 DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
+CLAMAV_ENABLE: bool = True # disable only on development machines or whether clamav is not available due to f.e. hardware *and* you know your user base
+CLAMAV_PORT: int = 3310 # TCP port
+CLAMAV_HOST: str = 'clamav' # hostname or ip
+CLAMAV_MAX_CHUNK_SIZE: int = 1024  # must be smaller than StreamMaxLength in /etc/clamav/clamd.conf
+
 # Disable portal registration, useful in case of a spam problem
 INYOKA_DISABLE_REGISTRATION = False
 
