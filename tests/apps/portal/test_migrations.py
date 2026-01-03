@@ -4,7 +4,7 @@ tests.apps.portal.test_migrations
 
 Test portal migrations.
 
-:copyright: (c) 2023-2025 by the Inyoka Team, see AUTHORS for more details.
+:copyright: (c) 2023-2026 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
 

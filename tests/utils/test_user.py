@@ -2,7 +2,7 @@
     tests.utils.test_user
     ~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.test.utils import override_settings

@@ -4,7 +4,7 @@
 
     Test planet models.
 
-    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.db.models import ProtectedError

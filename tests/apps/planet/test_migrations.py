@@ -4,7 +4,7 @@ tests.apps.planet.test_migrations
 
 Test planet migrations.
 
-:copyright: (c) 2024-2025 by the Inyoka Team, see AUTHORS for more details.
+:copyright: (c) 2024-2026 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
 
