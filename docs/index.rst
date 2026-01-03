@@ -29,6 +29,7 @@
     release_procedure
     releases/index
     security
+    regular_maintenance
 
 
 .. toctree::

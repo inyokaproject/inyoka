@@ -5,7 +5,7 @@
     This module provides a command to the Django ``manage.py`` file to create
     requirement-files.
 
-    :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import logging
