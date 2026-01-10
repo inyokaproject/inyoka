@@ -71,6 +71,11 @@ jobs:
         cache: 'pip'
         cache-dependency-path: 'extra/requirements/*.txt'
 
+    - name: Install lxml build requirements (for the time being only python 3.14 for lxml 5.4)
+      if: ${{ matrix.python-version == '3.14' }}
+      run: |
+        sudo apt-get update && sudo apt-get install libxml2-dev libxslt-dev python3-dev
+
     - name: Build virtualenv
       run: |
         python -m venv ~/venv
