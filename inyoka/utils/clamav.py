@@ -187,20 +187,6 @@ class Clamav:
         return Clamav.ClamavResult(filename, reason, status)
 
 
-def check_clamav_enabled(func):
-    """Decorator that checks if clamav is disabled. If it is disabled, it returns."""
-
-    def _wrapper(*args):
-        if not settings.CLAMAV_ENABLE:
-            logger.info('Clamav disabled')
-            return None
-
-        return func(*args)
-
-    return _wrapper
-
-
-@check_clamav_enabled
 def validate_file_infection(file: IO[AnyStr]) -> None:
     """
     Validator function that can be used in a django form field.
@@ -211,6 +197,11 @@ def validate_file_infection(file: IO[AnyStr]) -> None:
     - inside a model
       ``document = models.FileField(validators=[validate_file_infection])``
     """
+
+    if not settings.CLAMAV_ENABLE:
+        logger.info('Clamav disabled')
+        return
+
     try:
         with Clamav() as scanner:
             result = scanner.instream(file)
@@ -228,12 +219,15 @@ def validate_file_infection(file: IO[AnyStr]) -> None:
     logger.info(f'clamav result: {result}')
 
 
-@check_clamav_enabled
 def scan_all_media_files() -> None:
     """
     Scans all media files for malware.
     Findings and errors will be added to the python log.
     """
+
+    if not settings.CLAMAV_ENABLE:
+        logger.info('Clamav disabled')
+        return
 
     try:
         with Clamav() as scanner:
