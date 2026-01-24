@@ -1257,6 +1257,8 @@ class Attachment(models.Model):
             Attachment.objects.filter(pk=attachment.pk).update(file=new_name,
                 post=post.pk)
 
+            attachment.file.close()
+
     @property
     def size(self):
         """The size of the attachment in bytes."""

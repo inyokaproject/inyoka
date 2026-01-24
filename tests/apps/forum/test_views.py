@@ -737,14 +737,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         TEST_ATTACHMENT = 'test_attachment.png'
         self.client.login(username='admin', password='admin')
         # Test file upload
-        f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
-        postdata = {
-            'attachment': f,
-            'filename': 'newpost_file_name.png',
-            'comment': 'newpost file comment',
-            'attach': True,
-        }
-        response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=1)
+        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb') as f:
+            postdata = {
+                'attachment': f,
+                'filename': 'newpost_file_name.png',
+                'comment': 'newpost file comment',
+                'attach': True,
+            }
+            response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=1)
         att = Attachment.objects.get()
         self.assertAttachmentInHTML(att, response)
 
@@ -775,26 +775,26 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         TEST_ATTACHMENT2 = 'test_attachment2.png'
         self.client.login(username='admin', password='admin')
         # Test file upload #1
-        f1 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb')
-        postdata = {
-            'attachment': f1,
-            'filename': 'newpost_file_name.png',
-            'comment': 'newpost file comment',
-            'attach': True,
-        }
-        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=1)
+        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb') as f1:
+            postdata = {
+                'attachment': f1,
+                'filename': 'newpost_file_name.png',
+                'comment': 'newpost file comment',
+                'attach': True,
+            }
+            self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=1)
         att1 = Attachment.objects.get()
 
         # Test file upload #2
-        f2 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb')
-        postdata = {
-            'attachment': f2,
-            'filename': 'newpost_second_file.png',
-            'comment': 'newpost comment for file 2',
-            'attachments': str(att1.pk),
-            'attach': True,
-        }
-        response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=2)
+        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb') as f2:
+            postdata = {
+                'attachment': f2,
+                'filename': 'newpost_second_file.png',
+                'comment': 'newpost comment for file 2',
+                'attachments': str(att1.pk),
+                'attach': True,
+            }
+            response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=2)
 
         # Verify that the attachments exist
         att1, att2 = Attachment.objects.all()
@@ -1081,14 +1081,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         TEST_ATTACHMENT = 'test_attachment.png'
         self.client.login(username='admin', password='admin')
         # Test file upload
-        f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
-        postdata = {
-            'attachment': f,
-            'filename': 'newpost_file_name.png',
-            'comment': 'newpost file comment',
-            'attach': True,
-        }
-        response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=1)
+        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb') as f:
+            postdata = {
+                'attachment': f,
+                'filename': 'newpost_file_name.png',
+                'comment': 'newpost file comment',
+                'attach': True,
+            }
+            response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=1)
         att = Attachment.objects.get()
         self.assertAttachmentInHTML(att, response)
 
@@ -1120,26 +1120,26 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         TEST_ATTACHMENT2 = 'test_attachment2.png'
         self.client.login(username='admin', password='admin')
         # Test file upload #1
-        f1 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb')
-        postdata = {
-            'attachment': f1,
-            'filename': 'newpost_file_name.png',
-            'comment': 'newpost file comment',
-            'attach': True,
-        }
-        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=1)
+        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb') as f1:
+            postdata = {
+                'attachment': f1,
+                'filename': 'newpost_file_name.png',
+                'comment': 'newpost file comment',
+                'attach': True,
+            }
+            self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=1)
         att1 = Attachment.objects.get()
 
         # Test file upload #2
-        f2 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb')
-        postdata = {
-            'attachment': f2,
-            'filename': 'newpost_second_file.png',
-            'comment': 'newpost comment for file 2',
-            'attachments': str(att1.pk),
-            'attach': True,
-        }
-        response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=2)
+        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb') as f2:
+            postdata = {
+                'attachment': f2,
+                'filename': 'newpost_second_file.png',
+                'comment': 'newpost comment for file 2',
+                'attachments': str(att1.pk),
+                'attach': True,
+            }
+            response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=2)
 
         # Verify that the attachments exist
         att1, att2 = Attachment.objects.all()

@@ -51,6 +51,7 @@ class TestClamAV(TestCase):
         s = Clamav(host='127.0.0.1', port=1337)
         with self.assertRaisesMessage(ClamdConnectionError, 'Connection refused'):
             s.__enter__()
+        s.__exit__(None, None, None)
 
     def test_invalid_address(self) -> None:
         s = Clamav(host='notexisting.test')
@@ -58,6 +59,7 @@ class TestClamAV(TestCase):
             ClamdConnectionError, 'Name or service not known'
         ):
             s.__enter__()
+        s.__exit__(None, None, None)
 
     @override_settings(CLAMAV_HOST='notexisting.test')
     def test_invalid_address2(self) -> None:
