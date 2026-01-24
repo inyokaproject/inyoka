@@ -1241,7 +1241,7 @@ class Attachment(models.Model):
         :param Post post: The new post object.
         """
         if not att_ids or not post:
-            return False
+            return
 
         attachments = Attachment.objects.filter(id__in=att_ids, post=None).all()
         base_path = dj_timezone.now().strftime('forum/attachments/%S/%W')
