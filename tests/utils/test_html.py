@@ -43,23 +43,27 @@ class TestHTML(TestCase):
 
     def test_cleanup_html_img(self):
         self.user = User.objects.register_user(
-            'testing',
-            'example@example.com',
-            'pwd', False)
-        Blog.objects.create(name="Testblog",
-                            blog_url="http://example.test/",
-                            feed_url="http://example.test/feed",
-                            user=self.user,
-                            active=True
-                            )
+            'testing', 'example@example.com', 'pwd', False
+        )
+        Blog.objects.create(
+            name='Testblog',
+            blog_url='http://example.test/',
+            feed_url='http://example.test/feed',
+            user=self.user,
+            active=True,
+        )
 
         self.assertEqual(
-            cleanup_html('<img src="https://example.test/foo_bar.png">', planet_cleaner()),
+            cleanup_html(
+                '<img src="https://example.test/foo_bar.png">', planet_cleaner()
+            ),
             '<img src="https://example.test/foo_bar.png">',
         )
 
         self.assertEqual(
-            cleanup_html('<img src="https://example.org/foo_bar.png">', planet_cleaner()),
+            cleanup_html(
+                '<img src="https://example.org/foo_bar.png">', planet_cleaner()
+            ),
             '<img>',
         )
 
