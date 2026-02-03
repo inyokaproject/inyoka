@@ -24,6 +24,17 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+1.52.5 (2025-02-03)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+
+🔒 Security
+-----------
+* Update requirements due to high security issue in ``Django``
+
 1.52.4 (2025-12-21)
 ===================
 
