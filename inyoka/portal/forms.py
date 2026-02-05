@@ -49,6 +49,7 @@ from inyoka.portal.user import (
     send_new_email_confirmation,
     set_new_email,
 )
+from inyoka.utils.clamav import validate_file_infection
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
     CaptchaField,
@@ -1084,7 +1085,8 @@ class ConfigurationForm(forms.Form):
         help_text=gettext_lazy('Users cannot use email addresses from these hosts to '
                       'register an account.'))
     team_icon = forms.ImageField(label=gettext_lazy('Global team icon'), required=False,
-        help_text=gettext_lazy('Please note the details on the maximum size below.'))
+        help_text=gettext_lazy('Please note the details on the maximum size below.'),
+        validators=[validate_file_infection])
     wiki_newpage_template = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
         label=gettext_lazy('Default text of new wiki pages'))

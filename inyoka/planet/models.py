@@ -13,6 +13,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy
 
 from inyoka.portal.user import User
+from inyoka.utils.clamav import validate_file_infection
 from inyoka.utils.html import striptags
 from inyoka.utils.urls import href
 
@@ -36,7 +37,8 @@ class Blog(models.Model):
     feed_url = models.URLField(gettext_lazy('URL of the feed'))
     user = models.ForeignKey(User, verbose_name=gettext_lazy('User'),
                              blank=True, null=True, on_delete=models.PROTECT)
-    icon = models.ImageField(gettext_lazy('Icon'), upload_to='planet/icons', blank=True)
+    icon = models.ImageField(gettext_lazy('Icon'), upload_to='planet/icons',
+                             blank=True, validators=[validate_file_infection])
     last_sync = models.DateTimeField(blank=True, null=True)
     active = models.BooleanField(gettext_lazy('Index the blog'), default=True)
 

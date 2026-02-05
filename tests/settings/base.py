@@ -21,6 +21,8 @@ DATABASES = {
     }
 }
 
+CLAMAV_HOST: str = '127.0.0.1'
+
 # debug settings
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 

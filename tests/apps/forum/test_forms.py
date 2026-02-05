@@ -1,5 +1,5 @@
 """
-    tests.apps.portal.test_views
+    tests.apps.forum.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test portal forms.
