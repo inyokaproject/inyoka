@@ -464,10 +464,6 @@ cucumber-tag-expressions==9.0.0 \
     --hash=sha256:36f3eacf49ad24feeb60218db4c51ab114853b3f022f4f3ad790c32b7597faee \
     --hash=sha256:731302c12bd602309596b35e733c1021b517d4948329803c23ca026e26ef4e99
     # via behave
-defusedxml==0.7.1 \
-    --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
-    --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
-    # via inyoka (pyproject.toml)
 django==5.2.11 \
     --hash=sha256:7f2d292ad8b9ee35e405d965fbbad293758b858c34bbf7f3df551aeeac6f02d3 \
     --hash=sha256:e7130df33ada9ab5e5e929bc19346a20fe383f5454acb2cc004508f242ee92c0
