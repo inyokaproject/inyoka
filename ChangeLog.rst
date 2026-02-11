@@ -24,6 +24,18 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+1.52.6 (2025-02-11)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+
+🔒 Security
+-----------
+* Update requirements due to high security issue in ``pillow``
+
+
 1.52.5 (2025-02-03)
 ===================
 
