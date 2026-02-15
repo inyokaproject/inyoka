@@ -39,6 +39,7 @@ def context_modifier(request, context):
     blogs into the context.
     """
     context['blogs'] = Blog.objects.filter(active=True).all()
+    context['planet_description_rendered'] = storage['planet_description_rendered']
 
 
 blog_list = generic.ListView.as_view(default_column='-latest_update',
@@ -68,7 +69,6 @@ def index(request, page=1):
     pagination = Pagination(request, entries, page, 25, href('planet'))
     queryset = pagination.get_queryset()
     return {
-        'planet_description_rendered': storage['planet_description_rendered'],
         'days': group_by_day(queryset),
         'articles': queryset,
         'pagination': pagination,
@@ -111,7 +111,6 @@ def suggest(request):
         form = SuggestBlogForm()
     return {
         'form': form,
-        'planet_description_rendered': storage['planet_description_rendered'],
     }
 
 
