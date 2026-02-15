@@ -443,13 +443,11 @@ class LinkmapManager(models.Manager):
         Returns the basename of the current css file.
         """
         css = '/* linkmap for inter wiki links \n :license: BSD*/'
+        css += 'a.interwiki { padding-left: 20px; }'
 
         token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
         for token in token_with_icons:
-            css += 'a.interwiki-{token} {{' \
-                   'padding-left: 20px; ' \
-                   'background-image: url("{icon_url}"); }}'.format(token=token.token,
-                                                                    icon_url=token.icon.url)
+            css += f'a.interwiki-{token.token} {{ background-image: url("{token.icon.url}"); }}'
 
         md5_css = hashlib.md5(css.encode()).hexdigest()
         path = settings.INYOKA_INTERWIKI_CSS_PATH.format(hash=md5_css)

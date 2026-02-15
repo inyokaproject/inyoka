@@ -99,7 +99,8 @@ class TestLinkmapManager(TestCase):
         self.assertIsNotNone(self.css_file)
 
         with open(self.full_path) as f:
-            css = '/* linkmap for inter wiki links \n :license: BSD*/a.interwiki-example {padding-left: 20px; background-image: url("%s"); }'
+            css = ('/* linkmap for inter wiki links \n :license: BSD*/a.interwiki { padding-left: 20px; }'
+                   'a.interwiki-example { background-image: url("%s"); }')
             self.assertEqual(f.read(), css % href('media', 'example.png'))
 
     def test_generate_css__generates_gzip_file(self):
