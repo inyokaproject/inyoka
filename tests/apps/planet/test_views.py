@@ -1,11 +1,11 @@
 """
-    tests.apps.planet.test_views
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests.apps.planet.test_views
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test planet views.
+Test planet views.
 
-    :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
 
 import datetime
@@ -24,7 +24,6 @@ from inyoka.utils.urls import href
 
 
 class TestViews(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -37,48 +36,70 @@ class TestViews(TestCase):
         self.client.login(username='admin', password='admin')
 
     def test_empty_post_title(self):
-        blog = Blog(name="Testblog", blog_url="http://example.com/",
-                    feed_url="http://example.com/feed", user=self.admin,
-                    active=True)
+        blog = Blog(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
         blog.save()
-        Entry.objects.create(blog=blog, url="http://example.com/article1",
-                             guid="http://example.com/article1",
-                             text="This is a test", title="",
-                             pub_date=dj_timezone.now(),
-                             updated=dj_timezone.now())
-        Entry.objects.create(blog=blog, url="http://example.com/article2",
-                             guid="http://example.com/article2",
-                             text="This is a test", title="I have a title",
-                             pub_date=dj_timezone.now(),
-                             updated=dj_timezone.now())
+        Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article1',
+            guid='http://example.com/article1',
+            text='This is a test',
+            title='',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+        )
+        Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article2',
+            guid='http://example.com/article2',
+            text='This is a test',
+            title='I have a title',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+        )
 
         with translation.override('en-us'):
             response = self.client.post('/feeds/title/10/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No title given", count=1)
+        self.assertContains(response, 'No title given', count=1)
 
         with translation.override('en-us'):
             response = self.client.post('/feeds/short/10/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No title given", count=1)
+        self.assertContains(response, 'No title given', count=1)
 
         with translation.override('en-us'):
             response = self.client.post('/feeds/full/10/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No title given", count=1)
+        self.assertContains(response, 'No title given', count=1)
 
     def test_content_displayed(self):
-        blog = Blog(name="Testblog", blog_url="http://example.com/",
-                    feed_url="http://example.com/feed", user=self.admin,
-                    active=True)
+        blog = Blog(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
         blog.save()
 
         now = dj_timezone.now().replace(microsecond=0)
-        Entry.objects.create(blog=blog, url="http://example.com/article1",
-                             guid="http://example.com/article1",
-                             text="This is a test", title="Test title",
-                             pub_date=now, updated=now,
-                             author='AnonymousAuthor', author_homepage='https://example.com')
+        Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article1',
+            guid='http://example.com/article1',
+            text='This is a test',
+            title='Test title',
+            pub_date=now,
+            updated=now,
+            author='AnonymousAuthor',
+            author_homepage='https://example.com',
+        )
 
         with self.assertNumQueries(3):
             response = self.client.get('/feeds/full/10/')
@@ -126,15 +147,25 @@ class TestViews(TestCase):
         self.assertEqual(entry.author_detail.href, 'https://example.com')
 
     def test_export__foaf(self):
-        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
-                    feed_url="http://example.com/feed", user=self.admin,
-                    active=True)
-        Blog.objects.create(name="Testblog2", blog_url="https://example.test/",
-                            feed_url="https://example.test/feed", user=self.admin,
-                            active=True)
+        Blog.objects.create(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
+        Blog.objects.create(
+            name='Testblog2',
+            blog_url='https://example.test/',
+            feed_url='https://example.test/feed',
+            user=self.admin,
+            active=True,
+        )
 
         response = self.client.get('/blogs/export/foaf/')
-        self.assertXMLEqual(response.content.decode(), f'''<?xml version="1.0"?>
+        self.assertXMLEqual(
+            response.content.decode(),
+            f"""<?xml version="1.0"?>
 <rdf:RDF
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -144,9 +175,9 @@ class TestViews(TestCase):
 >
 <foaf:Group>
 
-  <foaf:name>{ settings.BASE_DOMAIN_NAME } | Planet</foaf:name>
-  <foaf:homepage>http://planet.{ settings.BASE_DOMAIN_NAME }/</foaf:homepage>
-  <rdfs:seeAlso rdf:resource="http://planet.{ settings.BASE_DOMAIN_NAME }/blogs/export/foaf/" />
+  <foaf:name>{settings.BASE_DOMAIN_NAME} | Planet</foaf:name>
+  <foaf:homepage>http://planet.{settings.BASE_DOMAIN_NAME}/</foaf:homepage>
+  <rdfs:seeAlso rdf:resource="http://planet.{settings.BASE_DOMAIN_NAME}/blogs/export/foaf/" />
 
 
   <foaf:member>
@@ -177,21 +208,32 @@ class TestViews(TestCase):
 
 
 </foaf:Group>
-</rdf:RDF>''')
+</rdf:RDF>""",
+        )
 
     def test_export__opml(self):
-        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
-                    feed_url="http://example.com/feed", user=self.admin,
-                    active=True)
-        Blog.objects.create(name="Testblog2", blog_url="https://example.test/",
-                            feed_url="https://example.test/feed", user=self.admin,
-                            active=True)
+        Blog.objects.create(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
+        Blog.objects.create(
+            name='Testblog2',
+            blog_url='https://example.test/',
+            feed_url='https://example.test/feed',
+            user=self.admin,
+            active=True,
+        )
 
         response = self.client.get('/blogs/export/opml/')
-        self.assertXMLEqual(response.content.decode(), f'''<?xml version="1.0" encoding="utf8"?>
+        self.assertXMLEqual(
+            response.content.decode(),
+            f"""<?xml version="1.0" encoding="utf8"?>
 <opml version="1.1">
   <head>
-    <title>{ settings.BASE_DOMAIN_NAME } | Planet</title>
+    <title>{settings.BASE_DOMAIN_NAME} | Planet</title>
   </head>
   <body>
 
@@ -200,19 +242,164 @@ class TestViews(TestCase):
       <outline type="rss" text="Testblog2" htmlUrl="https://example.test/" xmlUrl="https://example.test/feed"/>
 
   </body>
-</opml>''')
+</opml>""",
+        )
 
     def test_export__invalid_format(self):
-        Blog.objects.create(name="Testblog", blog_url="http://example.com/",
-                    feed_url="http://example.com/feed", user=self.admin,
-                    active=True)
+        Blog.objects.create(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
 
         response = self.client.get('/blogs/export/grml/')
         self.assertEqual(response.status_code, 404)
 
+    def test_hide_entry_get(self):
+        blog = Blog(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
+        blog.save()
+
+        entry = Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article1',
+            guid='http://example.com/article1',
+            text='This is a test',
+            title='',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+        )
+
+        response = self.client.get(f'/hide/{entry.id}/', follow=True)
+        self.assertContains(response, 'Are you sure you want to hide the entry?')
+        self.assertRedirects(response, href('planet'))
+
+    def test_hide_entry_post(self):
+        blog = Blog(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
+        blog.save()
+
+        entry = Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article1',
+            guid='http://example.com/article1',
+            text='This is a test',
+            title='',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+        )
+
+        response = self.client.post(f'/hide/{entry.id}/', follow=True)
+        self.assertContains(response, 'was successfully hidden')
+        self.assertRedirects(response, href('planet'))
+
+        entry.refresh_from_db()
+        self.assertTrue(entry.hidden)
+
+    def test_restore_entry(self):
+        blog = Blog(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
+        blog.save()
+
+        entry = Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article1',
+            guid='http://example.com/article1',
+            text='This is a test',
+            title='',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+            hidden=True,
+        )
+
+        response = self.client.post(f'/hide/{entry.id}/', follow=True)
+        self.assertContains(response, 'was successfully restored')
+        self.assertRedirects(response, href('planet'))
+
+        entry.refresh_from_db()
+        self.assertFalse(entry.hidden)
+
+    def test_hide_entry_post__cancel(self):
+        blog = Blog(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.admin,
+            active=True,
+        )
+        blog.save()
+
+        entry = Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article1',
+            guid='http://example.com/article1',
+            text='This is a test',
+            title='',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+        )
+
+        response = self.client.post(
+            f'/hide/{entry.id}/', data={'cancel': True}, follow=True
+        )
+        self.assertContains(response, 'Canceled')
+        self.assertRedirects(response, href('planet'))
+
+
+class TestIndex(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.user.save()
+
+        self.client.defaults['HTTP_HOST'] = 'planet.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='user', password='user')
+
+    def test_hidden_entry_not_shown(self):
+        blog = Blog(
+            name='Testblog',
+            blog_url='http://example.com/',
+            feed_url='http://example.com/feed',
+            user=self.user,
+            active=True,
+        )
+        blog.save()
+
+        Entry.objects.create(
+            blog=blog,
+            url='http://example.com/article1',
+            guid='http://example.com/article1',
+            text='This is a test',
+            title='',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+            hidden=True,
+        )
+
+        response = self.client.get('/')
+        self.assertContains(response, 'No articles were aggregated')
+
 
 class TestSuggestView(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -233,8 +420,12 @@ class TestSuggestView(TestCase):
         self.assertRedirects(response, href('planet'))
 
     def test_submit_suggestion(self):
-        ikhaya_team_member = User.objects.register_user('ikm', 'ikm@inyoka.local', 'ikm', False)
-        ikhaya_team_member2 = User.objects.register_user('ikm2', 'ikm2@inyoka.local', 'ikm2', False)
+        ikhaya_team_member = User.objects.register_user(
+            'ikm', 'ikm@inyoka.local', 'ikm', False
+        )
+        ikhaya_team_member2 = User.objects.register_user(
+            'ikm2', 'ikm2@inyoka.local', 'ikm2', False
+        )
 
         group = Group.objects.get(name__iexact=settings.INYOKA_IKHAYA_GROUP_NAME)
         ikhaya_team_member.groups.add(group)
@@ -253,7 +444,9 @@ class TestSuggestView(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         for m in mail.outbox:
             self.assertIn('was suggested.', m.subject)
-            self.assertIn(m.to[0], [ikhaya_team_member.email, ikhaya_team_member2.email])
+            self.assertIn(
+                m.to[0], [ikhaya_team_member.email, ikhaya_team_member2.email]
+            )
 
     def test_submit_suggestion__no_team_member(self):
         data = {
@@ -264,4 +457,6 @@ class TestSuggestView(TestCase):
 
         response = self.client.post('/suggest/', data=data, follow=True)
         self.assertRedirects(response, href('planet'))
-        self.assertContains(response, 'No user is registered as a planet administrator.')
+        self.assertContains(
+            response, 'No user is registered as a planet administrator.'
+        )

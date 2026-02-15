@@ -80,7 +80,7 @@ EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 _iterables = (tuple, list, set, frozenset)
 verbosity = 0
 
-BeautifulSoup = partial(BeautifulSoup, features='lxml')
+BeautifulSoup = partial(BeautifulSoup, features='html.parser')
 
 
 class DummyRequest:

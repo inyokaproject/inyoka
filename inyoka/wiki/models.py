@@ -93,8 +93,12 @@ from django.db.models.functions import Upper
 from django.template.loader import render_to_string
 from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
-from django.utils.html import escape
-from django.utils.translation import get_language, gettext_lazy, to_locale
+from django.utils.html import escape, strip_tags
+from django.utils.translation import (
+    get_language,
+    gettext_lazy,
+    to_locale,
+)
 from django.utils.translation import gettext as _
 from werkzeug.utils import secure_filename
 
@@ -106,7 +110,6 @@ from inyoka.utils.dates import datetime_to_timezone, format_datetime
 from inyoka.utils.decorators import deferred
 from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.highlight import highlight_code
-from inyoka.utils.html import striptags
 from inyoka.utils.local import local as local_cache
 from inyoka.utils.logger import logger
 from inyoka.utils.text import (
@@ -1372,7 +1375,7 @@ class Revision(models.Model):
         """
         Returns a short, stripped excerpt from the beginning of the article.
         """
-        excerpt = striptags(self.rendered_text)
+        excerpt = strip_tags(self.rendered_text)
         # search for space to not break up single words
         pos = excerpt.find(' ', 200)
         return excerpt[:pos]
