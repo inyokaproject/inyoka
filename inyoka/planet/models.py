@@ -7,8 +7,6 @@ Database models for the planet.
 :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-from django.conf import settings
-from django.core.cache import cache
 from django.db import models
 from django.utils.translation import gettext_lazy
 
@@ -20,12 +18,7 @@ from inyoka.utils.urls import href
 
 class EntryManager(models.Manager):
     def get_latest_entries(self, count=10):
-        key = 'planet/latest_entries'
-        entries = cache.get(key)
-        if entries is None:
-            maxcount = max(settings.AVAILABLE_FEED_COUNTS['planet_feed'])
-            entries = list(Entry.objects.filter(hidden=False)[:maxcount])
-            cache.set(key, entries, 300)
+        entries = Entry.objects.filter(hidden=False)
         return entries[:count]
 
 
