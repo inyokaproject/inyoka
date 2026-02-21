@@ -8,26 +8,28 @@
     :license: BSD, see LICENSE for more details.
 """
 import html
+from itertools import groupby
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
-from django.db.models import Max
+from django.db.models import Max, Window, F, Count
+from django.db.models.functions import Lag, Lead, RowNumber, TruncWeek
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
+from django.template.defaulttags import GroupedResult
 from django.template.loader import render_to_string
 from django.utils.html import escape, smart_urlquote
 from django.utils.translation import gettext as _
+from django.views.generic import WeekArchiveView, ListView
 
 from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
 from inyoka.planet.models import Blog, Entry
 from inyoka.utils import generic
-from inyoka.utils.dates import group_by_day
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.http import does_not_exist_is_404, templated
 from inyoka.utils.mail import send_mail
-from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href
@@ -57,23 +59,55 @@ blog_edit = generic.CreateUpdateView(model=Blog,
 
 
 @templated('planet/index.html', modifier=context_modifier)
-def index(request, page=1):
+def index(request):
     """
-    The index function just returns the 30 latest entries of the planet.
-    The page number is optional.
+    The index function just returns the 25 latest entries of the planet.
     """
     entries = Entry.objects.select_related('blog')
     if not request.user.has_perm('planet.hide_entry'):
         entries = entries.filter(hidden=False)
 
-    pagination = Pagination(request, entries, page, 25, href('planet'))
-    queryset = pagination.get_queryset()
+    MAX_ENTRIES: int = 25
+    entries = entries[:MAX_ENTRIES]
+
+    entries_grouped = [GroupedResult(grouper=key, list=list(val))
+        for key, val in groupby(
+            entries, lambda obj: obj.pub_date.date()
+        )]
+
     return {
-        'days': group_by_day(queryset),
-        'articles': queryset,
-        'pagination': pagination,
-        'page': page,
+        'article_list': entries,
+        'articles_grouped': entries_grouped,
     }
+
+
+class ArchiveIndexView(ListView):
+    template_name = 'planet/archive_index.html'
+
+    def get_queryset(self):
+        # TODO: filter for hidden ones
+
+        entries = (Entry.objects.annotate(week=TruncWeek("pub_date")).values("week")
+                .annotate(count=Count("id")).order_by("-week"))
+
+        return [GroupedResult(grouper=key, list=list(val))
+        for key, val in groupby(
+            entries, lambda obj: obj.get('week').strftime('%G')
+        )]
+
+
+class EntryWeekArchiveView(WeekArchiveView):
+    queryset = Entry.objects.all()
+    date_field = "pub_date"
+    week_format = "%V"
+    year_format = '%G'
+    template_name = 'planet/archive_week.html'
+
+    def grouped_items(self):
+        return [GroupedResult(grouper=key, list=list(val))
+        for key, val in groupby(
+            self.object_list, lambda obj: obj.pub_date.date()
+        )]
 
 
 @login_required
