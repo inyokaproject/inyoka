@@ -4,7 +4,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
@@ -1241,7 +1241,7 @@ class Attachment(models.Model):
         :param Post post: The new post object.
         """
         if not att_ids or not post:
-            return False
+            return
 
         attachments = Attachment.objects.filter(id__in=att_ids, post=None).all()
         base_path = dj_timezone.now().strftime('forum/attachments/%S/%W')
@@ -1256,6 +1256,8 @@ class Attachment(models.Model):
 
             Attachment.objects.filter(pk=attachment.pk).update(file=new_name,
                 post=post.pk)
+
+            attachment.file.close()
 
     @property
     def size(self):

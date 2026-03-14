@@ -1,14 +1,16 @@
 """
-    tests.apps.portal.test_forms
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests.apps.portal.test_forms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test portal forms.
+Test portal forms.
 
-    :copyright: (c) 2012-2025 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 from functools import partial
 from os import path
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -16,6 +18,7 @@ from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
+from tests.utils.test_clamav import EICAR
 
 
 class TestEditStaticPageForm(TestCase):
@@ -25,17 +28,17 @@ class TestEditStaticPageForm(TestCase):
     form_create = staticmethod(partial(form, instance=None))
 
     def test_create_with_already_existing_key(self):
-        StaticPage.objects.create(key='foo', title='foo',
-                                  content='Nobody likes foo?')
+        StaticPage.objects.create(key='foo', title='foo', content='Nobody likes foo?')
 
         title = 'FOO'
-        data = {'key': title, 'title': title,
-                'content': 'Nobody likes foo?'}
+        data = {'key': title, 'title': title, 'content': 'Nobody likes foo?'}
         form = self.form_create(data)
 
         self.assertFalse(form.is_valid())
-        self.assertIn('Another page with this name already exists. Please '
-                      'edit this page.', form.errors['__all__'])
+        self.assertIn(
+            'Another page with this name already exists. Please edit this page.',
+            form.errors['__all__'],
+        )
 
     def test_create_valid_data(self):
         title = 'foo'
@@ -53,53 +56,62 @@ class TestEditStaticPageForm(TestCase):
         self.assertEqual(form.cleaned_data['key'], title)
 
     def test_create_key_with_different_case_to_existing_page(self):
-        StaticPage.objects.create(key='foo', title='foo',
-                                  content='Nobody likes foo?')
+        StaticPage.objects.create(key='foo', title='foo', content='Nobody likes foo?')
 
         title = 'FOO'
         data = {'key': title, 'title': title, 'content': 'Nobody likes foo?'}
         form = self.form_create(data)
 
         self.assertFalse(form.is_valid())
-        self.assertIn('Another page with this name already exists. Please '
-                      'edit this page.', form.errors['__all__'])
+        self.assertIn(
+            'Another page with this name already exists. Please edit this page.',
+            form.errors['__all__'],
+        )
 
     def test_create_title_with_different_case_to_existing_page(self):
-        StaticPage.objects.create(key='foo', title='foo',
-                                  content='Nobody likes foo?')
+        StaticPage.objects.create(key='foo', title='foo', content='Nobody likes foo?')
 
         title = 'FOO'
         data = {'key': '', 'title': title, 'content': 'Nobody likes foo?'}
         form = self.form_create(data)
 
         self.assertFalse(form.is_valid())
-        self.assertIn('Another page with this name already exists. Please '
-                      'edit this page.', form.errors['__all__'])
+        self.assertIn(
+            'Another page with this name already exists. Please edit this page.',
+            form.errors['__all__'],
+        )
 
     def test_edit_only_content(self):
         title = 'foo'
-        page = StaticPage.objects.create(key=title, title=title,
-                                         content='Nobody likes foo?')
-        form = self.form_edit({'key': page.title, 'title': page.title, 'content': 'edited'},
-                              instance=page)
+        page = StaticPage.objects.create(
+            key=title, title=title, content='Nobody likes foo?'
+        )
+        form = self.form_edit(
+            {'key': page.title, 'title': page.title, 'content': 'edited'}, instance=page
+        )
 
         self.assertTrue(form.is_valid())
 
     def test_edit_only_title(self):
         title = 'foo'
-        page = StaticPage.objects.create(key=title, title=title,
-                                         content='Nobody likes foo?')
-        form = self.form_edit({'key': page.title, 'title': 'edited', 'content': page.content},
-                              instance=page)
+        page = StaticPage.objects.create(
+            key=title, title=title, content='Nobody likes foo?'
+        )
+        form = self.form_edit(
+            {'key': page.title, 'title': 'edited', 'content': page.content},
+            instance=page,
+        )
 
         self.assertTrue(form.is_valid())
 
     def test_edit_key_changed(self):
         title = 'foo'
-        page = StaticPage.objects.create(key=title, title=title,
-                                         content='Nobody likes foo?')
-        form = self.form_edit({'key': '123', 'title': page.title, 'content': page.content},
-                              instance=page)
+        page = StaticPage.objects.create(
+            key=title, title=title, content='Nobody likes foo?'
+        )
+        form = self.form_edit(
+            {'key': '123', 'title': page.title, 'content': page.content}, instance=page
+        )
 
         self.assertFalse(form.is_valid())
         self.assertIn('It is not allowed to change this key.', form.errors['key'])
@@ -122,7 +134,9 @@ class TestEditFileForm(TestCase):
     def test_update(self):
         with open(self.path_file1, 'rb') as f:
             upload_object = SimpleUploadedFile(f.name, f.read())
-            file = StaticFile.objects.create(identifier='test_attachment.png', file=upload_object)
+            file = StaticFile.objects.create(
+                identifier='test_attachment.png', file=upload_object
+            )
 
         with open(self.path_file2, 'rb') as picture_new:
             upload_object = SimpleUploadedFile(picture_new.name, picture_new.read())
@@ -134,14 +148,18 @@ class TestEditFileForm(TestCase):
 
     def test_create_file(self):
         with open(self.path_file1, 'rb') as picture_for_upload:
-            upload_object = SimpleUploadedFile(picture_for_upload.name, picture_for_upload.read())
+            upload_object = SimpleUploadedFile(
+                picture_for_upload.name, picture_for_upload.read()
+            )
             form = EditFileForm(files={'file': upload_object})
 
             self.assertTrue(form.is_valid())
 
     def test_create_with_save(self):
         with open(self.path_file1, 'rb') as picture_for_upload:
-            upload_object = SimpleUploadedFile(picture_for_upload.name, picture_for_upload.read())
+            upload_object = SimpleUploadedFile(
+                picture_for_upload.name, picture_for_upload.read()
+            )
             form = EditFileForm(files={'file': upload_object})
             created_object = form.save()
 
@@ -150,7 +168,9 @@ class TestEditFileForm(TestCase):
 
     def test_create_save_commit_false(self):
         with open(self.path_file1, 'rb') as picture_for_upload:
-            upload_object = SimpleUploadedFile(picture_for_upload.name, picture_for_upload.read())
+            upload_object = SimpleUploadedFile(
+                picture_for_upload.name, picture_for_upload.read()
+            )
             form = EditFileForm(files={'file': upload_object})
             form.save(commit=False)
 
@@ -159,20 +179,41 @@ class TestEditFileForm(TestCase):
     def test_create_with_duplicate(self):
         with open(self.path_file1, 'rb') as f:
             upload_object = SimpleUploadedFile(f.name, f.read())
-            StaticFile.objects.create(identifier='test_attachment.png', file=upload_object)
+            StaticFile.objects.create(
+                identifier='test_attachment.png', file=upload_object
+            )
 
             form = EditFileForm(files={'file': upload_object})
             self.assertFalse(form.is_valid())
-            self.assertIn('Another file with this name already exists. Please edit this file.', form.errors['file'])
+            self.assertIn(
+                'Another file with this name already exists. Please edit this file.',
+                form.errors['file'],
+            )
 
     def test_create_with_duplicate_case_insensitive(self):
         with open(self.path_file1, 'rb') as f:
             upload_object = SimpleUploadedFile(f.name, f.read())
-            StaticFile.objects.create(identifier='TEST_attachment.png', file=upload_object)
+            StaticFile.objects.create(
+                identifier='TEST_attachment.png', file=upload_object
+            )
 
             form = EditFileForm(files={'file': upload_object})
             self.assertFalse(form.is_valid())
-            self.assertIn('Another file with this name already exists. Please edit this file.', form.errors['file'])
+            self.assertIn(
+                'Another file with this name already exists. Please edit this file.',
+                form.errors['file'],
+            )
+
+    def test_attachment_contains_eicar(self):
+        """
+        Test that the clamav validator runs on the file field with the eicar test file.
+        """
+        EICAR.seek(0)
+        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        form = EditFileForm(files={'file': upload_object})
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors, {'file': ['File is infected with malware']})
 
 
 class TestLoginForm(TestCase):
@@ -207,7 +248,9 @@ class TestLoginForm(TestCase):
         """
         data = {'username': 'xxxx-xxxxxxx.xxxxxxx@inyoka-test.test', 'password': 'foo'}
 
-        User.objects.register_user('user', email=data['username'], password=data['password'], send_mail=False)
+        User.objects.register_user(
+            'user', email=data['username'], password=data['password'], send_mail=False
+        )
 
         form = self.form(None, data)
 
@@ -215,9 +258,136 @@ class TestLoginForm(TestCase):
         self.assertEqual(form.errors, {})
 
     def test_too_long_email_as_username(self):
-        data = {'username': f"{256 * 'x'}@inyoka.test", 'password': 'foo'}
+        data = {'username': f'{256 * "x"}@inyoka.test', 'password': 'foo'}
 
         form = self.form(None, data)
 
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors,  {'username': ['Ensure this value has at most 254 characters (it has 268).']})
+        self.assertEqual(
+            form.errors,
+            {
+                'username': [
+                    'Ensure this value has at most 254 characters (it has 268).'
+                ]
+            },
+        )
+
+
+class TestConfigurationForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        # globally the storage table would not exist
+        from inyoka.portal.forms import ConfigurationForm
+
+        self.form = ConfigurationForm
+
+    @patch('django.forms.fields.ImageField.to_python')
+    @patch('django.core.validators.validate_image_file_extension', True)
+    @patch('django.core.validators.FileExtensionValidator.__call__', lambda s, x: None)
+    def test_team_icon_contains_eicar(self, mock_method):
+        """
+        Test that the clamav validator runs on the team icon field.
+        We remove the checks for a valid image file with python mocks.
+        """
+        mock_method.return_value = EICAR
+
+        EICAR.seek(0)
+        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        form = self.form(files={'team_icon': upload_object})
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors, {'team_icon': ['File is infected with malware']})
+
+
+class TestLinkMapFormset(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        # globally the storage table would not exist
+        from inyoka.portal.forms import LinkMapFormset
+
+        self.form = LinkMapFormset
+
+    @patch('django.forms.fields.ImageField.to_python')
+    @patch('django.core.validators.validate_image_file_extension', True)
+    @patch('django.core.validators.FileExtensionValidator.__call__', lambda s, x: None)
+    def test_icon_contains_eicar(self, mock_method):
+        """
+        Test that the clamav validator runs on the icon field.
+        We remove the checks for a valid image file with python mocks.
+        """
+        mock_method.return_value = EICAR
+
+        EICAR.seek(0)
+        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        form = self.form(
+            data={
+                'form-TOTAL_FORMS': '1',
+                'form-INITIAL_FORMS': '0',
+                'form-0-url': 'https://test.example',
+                'form-0-token': 'eicartest',
+            },
+            files={'form-0-icon': upload_object},
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors, [{'icon': ['File is infected with malware']}])
+
+
+class TestUserCPProfileForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user(
+            'user', email='foo@test.example', password='foo', send_mail=False
+        )
+
+        # globally the storage table would not exist
+        from inyoka.portal.forms import UserCPProfileForm
+
+        self.form = UserCPProfileForm
+
+    @patch('django.forms.fields.ImageField.to_python')
+    @patch('django.core.validators.validate_image_file_extension', True)
+    @patch('django.core.validators.FileExtensionValidator.__call__', lambda s, x: None)
+    @patch(
+        'inyoka.portal.forms.UserCPProfileForm.clean_avatar',
+        lambda s: s.cleaned_data['avatar'],
+    )
+    def test_avatar_contains_eicar(self, mock_method):
+        """
+        Test that the clamav validator runs on the avatar field.
+        We remove the checks for a valid image file with python mocks.
+        """
+        mock_method.return_value = EICAR
+
+        EICAR.seek(0)
+        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        form = self.form(
+            data={'email': self.user.email},
+            files={'avatar': upload_object},
+            instance=self.user,
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors, {'avatar': ['File is infected with malware']})
+
+    def test_avatar_no_image(self):
+        EICAR.seek(0)
+        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        form = self.form(
+            data={'email': self.user.email},
+            files={'avatar': upload_object},
+            instance=self.user,
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors,
+            {
+                'avatar': [
+                    'Upload a valid image. The file you uploaded was either not an image or a corrupted image.'
+                ]
+            },
+        )

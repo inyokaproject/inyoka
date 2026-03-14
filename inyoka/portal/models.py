@@ -4,7 +4,7 @@
 
     Models for the portal.
 
-    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import glob
@@ -28,6 +28,7 @@ from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
 
+from ..utils.clamav import validate_file_infection
 from .user import User
 
 
@@ -299,7 +300,8 @@ class StaticPage(models.Model):
 class StaticFile(models.Model):
     identifier = models.CharField(gettext_lazy('Identifier'),
         max_length=100, unique=True, db_index=True)
-    file = models.FileField(gettext_lazy('File'), upload_to='portal/files')
+    file = models.FileField(gettext_lazy('File'), upload_to='portal/files',
+                            validators=[validate_file_infection])
     is_ikhaya_icon = models.BooleanField(
         gettext_lazy('Is Ikhaya icon'),
         default=False,
@@ -441,13 +443,11 @@ class LinkmapManager(models.Manager):
         Returns the basename of the current css file.
         """
         css = '/* linkmap for inter wiki links \n :license: BSD*/'
+        css += 'a.interwiki { padding-left: 20px; }'
 
         token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
         for token in token_with_icons:
-            css += 'a.interwiki-{token} {{' \
-                   'padding-left: 20px; ' \
-                   'background-image: url("{icon_url}"); }}'.format(token=token.token,
-                                                                    icon_url=token.icon.url)
+            css += f'a.interwiki-{token.token} {{ background-image: url("{token.icon.url}"); }}'
 
         md5_css = hashlib.md5(css.encode()).hexdigest()
         path = settings.INYOKA_INTERWIKI_CSS_PATH.format(hash=md5_css)
@@ -484,7 +484,8 @@ class Linkmap(models.Model):
     token = models.CharField(gettext_lazy('Token'), max_length=128, unique=True,
                              validators=[token_validator])
     url = models.URLField(gettext_lazy('Link'))
-    icon = models.ImageField(gettext_lazy('Icon'), upload_to='linkmap/icons', blank=True)
+    icon = models.ImageField(gettext_lazy('Icon'), upload_to='linkmap/icons', blank=True,
+                             validators=[validate_file_infection])
 
     objects = LinkmapManager()
 

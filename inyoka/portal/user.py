@@ -5,7 +5,7 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
@@ -40,6 +40,7 @@ from guardian.mixins import GuardianUserMixin
 from guardian.shortcuts import get_perms
 
 from inyoka.utils.cache import QueryCounter
+from inyoka.utils.clamav import validate_file_infection
 from inyoka.utils.database import InyokaMarkupField, JabberField, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
@@ -291,7 +292,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     # profile attributes
     avatar = models.ImageField(gettext_lazy('Avatar'), upload_to=upload_to_avatar,
-                               blank=True, null=True)
+                               blank=True, null=True, validators=[validate_file_infection])
     jabber = JabberField(gettext_lazy('Jabber'), max_length=200, blank=True)
     signature = InyokaMarkupField(verbose_name=gettext_lazy('Signature'), blank=True)
     location = models.CharField(gettext_lazy('Residence'), max_length=200, blank=True)

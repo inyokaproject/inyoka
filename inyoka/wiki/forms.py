@@ -4,7 +4,7 @@
 
     Contains all the forms we use in the wiki.
 
-    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -15,6 +15,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
 from inyoka.markup.base import StackExhaused, parse
+from inyoka.utils.clamav import validate_file_infection
 from inyoka.utils.diff3 import merge
 from inyoka.utils.forms import NativeDateInput, TopicField, UserField
 from inyoka.utils.sessions import SurgeProtectionMixin
@@ -218,7 +219,7 @@ class AddAttachmentForm(forms.Form):
     `note`
         A textfield for the change note.
     """
-    attachment = forms.FileField(required=True)
+    attachment = forms.FileField(required=True, validators=[validate_file_infection])
 
     filename = forms.CharField(max_length=512, required=False,
                 help_text=gettext_lazy('Rename the file after upload'))
@@ -238,7 +239,7 @@ class EditAttachmentForm(forms.Form):
     A form for editing existing Attachments.  For a more detailed
     description, have a look at the AddAttachmentForm.
     """
-    attachment = forms.FileField(required=False)
+    attachment = forms.FileField(required=False, validators=[validate_file_infection])
     text = forms.CharField(label=gettext_lazy('Description of attachment'),
                            widget=forms.Textarea,
                            required=False)

@@ -19,8 +19,6 @@ Development
     * ``--noinput`` will prevent a 'Are you sure?' question
     * With ``--link`` you have to only run ``collectstatic`` again, if a new file was added.
 
-If you want to see some possible locations to improve the JavaScript run ``npm run jshint``.
-
 
 Deployment
 ==========

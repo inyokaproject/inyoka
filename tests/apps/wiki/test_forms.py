@@ -1,47 +1,54 @@
 """
-    tests.wiki.test_forms
-    ~~~~~~~~~~~~~~~~~~~~~
+tests.wiki.test_forms
+~~~~~~~~~~~~~~~~~~~~~
 
-    Test some gravatar url creation features.
+Test wiki forms.
 
-    :copyright: (c) 2011-2025 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2011-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
 
 from functools import partial
 from unittest.mock import patch
 
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from inyoka.portal.user import User
 from inyoka.utils.storage import storage
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
+from tests.utils.test_clamav import EICAR
 
 
 # disable surge protection for this test case
 @patch('inyoka.wiki.forms.NewArticleForm.surge_protection_timeout', None)
 class TestNewArticleForm(TestCase):
-
     def setUp(self):
         super().setUp()
 
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         from inyoka.wiki.forms import (
             NewArticleForm,  # globally the storage table would not exist
         )
+
         self.form = partial(NewArticleForm, user=self.user)
         self.data = {'name': 'new', 'template': ''}
 
         storage['wiki_newpage_root'] = 'prefix'
 
-        self._create_page('ACL',
-                          '#X-Behave: Access-Control-List\n'
-                          '{{{\n'
-                          '[*]\n'
-                          'user=none\n'
-                          '[prefix/*]\n'
-                          'user=all\n'
-                          '}}}')
+        self._create_page(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '[prefix/*]\n'
+            'user=all\n'
+            '}}}',
+        )
 
     def _create_page(self, name, text, **kwargs):
         return Page.objects.create(name, text, user=self.user, note='comment', **kwargs)
@@ -50,8 +57,10 @@ class TestNewArticleForm(TestCase):
         form = self.form(data=self.data)
         form.full_clean()
 
-        self.assertEqual(form.cleaned_data['name'],
-                         storage['wiki_newpage_root'] + '/' + self.data['name'])
+        self.assertEqual(
+            form.cleaned_data['name'],
+            storage['wiki_newpage_root'] + '/' + self.data['name'],
+        )
 
     def test_unprivileged_creates_article(self):
         self._post_form()
@@ -62,12 +71,12 @@ class TestNewArticleForm(TestCase):
 
 
 class TestManageDiscussionForm(TestCase):
-
     def setUp(self):
         super().setUp()
 
         # globally the storage table would not exist
         from inyoka.wiki.forms import ManageDiscussionForm
+
         self.form = ManageDiscussionForm
 
     def test_no_topic(self):
@@ -80,5 +89,40 @@ class TestManageDiscussionForm(TestCase):
         form = self.form(data={'topic': 'not_existing'})
 
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors,
-                         {'topic': ['This topic does not exist.']})
+        self.assertEqual(form.errors, {'topic': ['This topic does not exist.']})
+
+
+class TestAddAttachmentForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        # globally the storage table would not exist
+        from inyoka.wiki.forms import AddAttachmentForm
+
+        self.form = AddAttachmentForm
+
+    def test_attachment_contains_eicar(self):
+        EICAR.seek(0)
+        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors, {'attachment': ['File is infected with malware']})
+
+
+class TestEditAttachmentForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        # globally the storage table would not exist
+        from inyoka.wiki.forms import EditAttachmentForm
+
+        self.form = EditAttachmentForm
+
+    def test_attachment_contains_eicar(self):
+        EICAR.seek(0)
+        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors, {'attachment': ['File is infected with malware']})

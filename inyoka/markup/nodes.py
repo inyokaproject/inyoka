@@ -14,7 +14,7 @@
     a required by the `DeferredNode`.
 
 
-    :copyright: (c) 2007-2025 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -22,13 +22,13 @@ from urllib.parse import quote_plus, urlparse, urlunparse
 
 from django.apps import apps
 from django.conf import settings
-from django.utils.html import escape, format_html, smart_urlquote
+from django.utils.html import escape, format_html, smart_urlquote, strip_tags
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
 from inyoka.markup.machine import NodeCompiler, NodeQueryInterface, NodeRenderer
 from inyoka.markup.utils import debug_repr
-from inyoka.utils.html import build_html_tag, striptags
+from inyoka.utils.html import build_html_tag
 from inyoka.utils.text import get_pagetitle, normalize_pagename, slugify
 from inyoka.utils.urls import href
 
@@ -168,7 +168,7 @@ class HTML(Node):
 
     @property
     def text(self):
-        return striptags(self.html)
+        return strip_tags(self.html)
 
     def prepare_html(self):
         yield self.html
