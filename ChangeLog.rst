@@ -24,7 +24,23 @@ Inyoka Changelog
    🔒 Security
    -----------
 
-1.52.6 (2025-02-11)
+
+1.52.7 (2026-03-14)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+#. Execute database migrations (``python manage.py migrate``)
+
+🔒 Security
+-----------
+* clamav is now used to scan all file uploads. If malware is found, it's rejected and an error shown in the form.
+* In the Planet images, videos and audio are only included from blog domains. This is possible by a library change from lxml to nh3 with an allow list approach.
+* Update requirements (at least the dependencies ``Django``  and ``werkzeug`` include a known security fix)
+
+
+1.52.6 (2026-02-11)
 ===================
 
 Deployment notes
@@ -36,7 +52,7 @@ Deployment notes
 * Update requirements due to high security issue in ``pillow``
 
 
-1.52.5 (2025-02-03)
+1.52.5 (2026-02-03)
 ===================
 
 Deployment notes
