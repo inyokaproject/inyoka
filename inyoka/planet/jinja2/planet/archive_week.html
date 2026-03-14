@@ -14,11 +14,10 @@
 ] + BREADCRUMBS|d([]) %}
 
 {% block planet_content %}
-  {# TODO translation #}
   <h1>
-    {% trans year=week.strftime('%G'), week=week.strftime('%V') %}
+    {% trans year=week.strftime('%G'), week=week.strftime('%V') -%}
       {{ year }} Week {{ week }}
-    {% endtrans %}
+    {%- endtrans %}
   </h1>
 
   <ul>
@@ -35,21 +34,22 @@
     {%- if previous_week -%}
       {{ render_week_archive_link(previous_week, class='prev', label_prefix=_('« Previous:')) }}
     {%- else -%}
-      <span class="disabled prev">« {% trans %}Previous{% endtrans %}</span>
+      <span class="disabled prev">{% trans %}« Previous:{% endtrans %}</span>
     {%- endif -%}
 
     {%- if next_week -%}
       {{ render_week_archive_link(next_week, class='next', label_prefix=_('» Next:')) }}
     {%- else -%}
-      <span class="disabled next">{% trans %}Next{% endtrans %} »</span>
+      <span class="disabled next">{% trans %}» Next:{% endtrans %} »</span>
     {%- endif -%}
   </div>
 
   {% for date, articles in view.grouped_items() %}
     <h2>{{ date|naturalday }}</h2>
+    {% set outer_loop = loop %}
+
     {% for a in articles %}
-      <h3>{{ a.title }}</h3>
-      {{ a.text }} {# TODO unify rendering #}
+      {{ render_article(a, first_entry=(outer_loop.last and loop.last), last_entry=(outer_loop.first and loop.first)) }}
     {% endfor %}
   {% endfor %}
 
