@@ -45,7 +45,7 @@ dependencies = [
   "jinja2",
   "nh3",
   "pillow",
-  "psycopg2",
+  "psycopg[binary]",
   "pygments",
   "python-magic",
   "requests",
