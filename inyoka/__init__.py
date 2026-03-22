@@ -10,4 +10,4 @@
 from .celery_app import app as celery_app  # noqa
 
 # Inyoka version is updated through bumpversion and can stay hardcoded here.
-INYOKA_VERSION = "1.52.7"
+INYOKA_VERSION = "1.52.8"
