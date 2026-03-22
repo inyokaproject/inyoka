@@ -25,6 +25,20 @@ Inyoka Changelog
    -----------
 
 
+1.52.8 (2026-03-22)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+
+🏗 Changes
+----------
+
+* Switch to psycopg3
+* Update requirements
+
+
 1.52.7 (2026-03-14)
 ===================
 
