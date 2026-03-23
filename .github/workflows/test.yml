@@ -168,7 +168,7 @@ jobs:
         __EOF__
         python manage.py collectstatic --noinput
         sudo apt-get update && sudo apt-get install retry
-        retry --times=3 -- timeout 10m coverage run -m behave --tags=-skip
+        retry --times=4 -- timeout 4m coverage run -m behave --tags=-skip
         coverage html -d bdd_coverage
     - name: Save BDD results
       if: ${{ matrix.database == 'postgresql' }}
