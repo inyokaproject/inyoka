@@ -983,6 +983,9 @@ class FeedSelectorForm(forms.Form):
         data['count'] = _feed_count_cleanup(data.get('count', 20))
         return data
 
+    def get_url(self) -> str:
+        raise NotImplementedError()
+
 
 class ForumFeedSelectorForm(FeedSelectorForm):
     topic = TopicField(required=False)
@@ -992,14 +995,37 @@ class ForumFeedSelectorForm(FeedSelectorForm):
         anonymous_user = User.objects.get_anonymous_user()
         self.fields['forum'] = ForumField(user=anonymous_user, required=False)
 
+    def get_url(self) -> str:
+        data = self.cleaned_data
+        href_forum = functools.partial(href, 'forum', 'feeds')
+
+        if data['forum']:
+            return href('forum',data['forum'], data['mode'], data['count'])
+        elif data['topic']:
+            return href('topic', data['topic'], data['mode'], data['count'])
+
+        # fallback: feed for everything in forum
+        return href_forum(data['mode'], data['count'])
 
 class IkhayaFeedSelectorForm(FeedSelectorForm):
     category = forms.ChoiceField(label=gettext_lazy('Category'),
                                  choices=lambda : [('*', _('All'))] + [(c.slug, c.name) for c in Category.objects.all()])
 
+    def get_url(self) -> str:
+        data = self.cleaned_data
+        href_ikhaya = functools.partial(href, 'ikhaya', 'feeds')
+
+        if data['category'] == '*':
+            return href_ikhaya(data['mode'], data['count'])
+
+        return href_ikhaya(data['category'], data['mode'], data['count'])
+
 
 class PlanetFeedSelectorForm(FeedSelectorForm):
-    pass
+
+    def get_url(self) -> str:
+        data = self.cleaned_data
+        return href('planet', 'feeds', data['mode'], data['count'])
 
 
 class WikiFeedSelectorForm(FeedSelectorForm):
@@ -1010,6 +1036,14 @@ class WikiFeedSelectorForm(FeedSelectorForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         del self.fields['mode']
+
+    def get_url(self) -> str:
+        data = self.cleaned_data
+
+        if not data['page']:
+            return href('wiki', '_feed', data['count'])
+
+        return href('wiki', data['page'], 'a', 'feed', data['count'])
 
 
 class EditStaticPageForm(forms.ModelForm):

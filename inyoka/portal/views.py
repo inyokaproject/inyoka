@@ -46,7 +46,7 @@ from icalendar import Event as iEvent
 from PIL import Image
 
 from inyoka.forum.models import Forum
-from inyoka.ikhaya.models import Article, Category, Event
+from inyoka.ikhaya.models import Article, Event
 from inyoka.portal.forms import (
     NOTIFICATION_CHOICES,
     ConfigurationForm,
@@ -110,7 +110,6 @@ from inyoka.utils.storage import storage
 from inyoka.utils.templating import flash_message
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
-from inyoka.wiki.models import Page as WikiPage
 from inyoka.wiki.utils import quote_text
 
 # TODO: move into some kind of config, but as a quick fix for now...
@@ -1318,55 +1317,32 @@ app_feed_forms = {
 
 @templated('portal/feedselector.html')
 def feedselector(request, app=None):
+    supported_apps = app_feed_forms.keys()
+
+    if app not in supported_apps and app is not None:
+        raise BadRequest('invalid app')
+
     forms = {}
-    for fapp in ('forum', 'ikhaya', 'planet', 'wiki'):
-        if app in (fapp, None):
-            args = {'data': request.POST}
-            forms[fapp] = (request.POST and app_feed_forms[fapp](**args)
-                           or app_feed_forms[fapp]())
-        else:
-            forms[fapp] = None
+    if app:
+        forms[app] = app_feed_forms[app]()
+    else:
+        for a in supported_apps:
+            forms[a] = app_feed_forms[a]()
 
     if request.method == 'POST':
         if app is None:
             raise BadRequest('post without a app')
 
-        form = forms[app]
+        form = forms[app] = app_feed_forms[app](request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            if app == 'forum':
-                if data['component'] == '*':
-                    return HttpResponseRedirect(href('forum', 'feeds',
-                           data['mode'], data['count']))
-                if data['component'] == 'forum':
-                    return HttpResponseRedirect(href('forum', 'feeds', 'forum',
-                           data['forum'], data['mode'], data['count']))
-
-            elif app == 'ikhaya':
-                if data['category'] == '*':
-                    return HttpResponseRedirect(href('ikhaya', 'feeds',
-                           data['mode'], data['count']))
-                else:
-                    return HttpResponseRedirect(href('ikhaya', 'feeds',
-                           data['category'], data['mode'], data['count']))
-
-            elif app == 'planet':
-                return HttpResponseRedirect(href('planet', 'feeds',
-                       data['mode'], data['count']))
-
-            elif app == 'wiki':
-                if data['page'] == '*' or not data['page']:
-                    return HttpResponseRedirect(href('wiki', '_feed',
-                           data['count']))
-                else:
-                    return HttpResponseRedirect(href('wiki', data['page'],
-                           'a', 'feed', data['count']))
+            target_url = form.get_url()
+            return HttpResponseRedirect(target_url)
 
     return {
-        'forum_form': forms['forum'],
-        'ikhaya_form': forms['ikhaya'],
-        'planet_form': forms['planet'],
-        'wiki_form': forms['wiki'],
+        'forum_form': forms.get('forum'),
+        'ikhaya_form': forms.get('ikhaya'),
+        'planet_form': forms.get('planet'),
+        'wiki_form': forms.get('wiki'),
     }
 
 

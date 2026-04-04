@@ -1287,6 +1287,10 @@ class TestFeedSelector(TestCase):
         response = self.client.post('/feeds/', {'mode': 'short'})
         self.assertEqual(response.status_code, 400)
 
+    def test_post_invalid_app(self):
+        response = self.client.post('/feeds/bar/', {'mode': 'short'})
+        self.assertEqual(response.status_code, 400)
+
 
 class TestGroupView(TestCase):
     client_class = InyokaClient
