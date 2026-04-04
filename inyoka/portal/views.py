@@ -1327,14 +1327,6 @@ def feedselector(request, app=None):
         else:
             forms[fapp] = None
 
-    if forms['ikhaya'] is not None:
-        forms['ikhaya'].fields['category'].choices = [('*', _('All'))] + \
-            [(c.slug, c.name) for c in Category.objects.all()]
-    if forms['wiki'] is not None:
-        wiki_pages = WikiPage.objects.get_page_list()
-        forms['wiki'].fields['page'].choices = [('*', _('All'))] + \
-            [(p, p) for p in wiki_pages]
-
     if request.method == 'POST':
         if app is None:
             raise BadRequest('post without a app')

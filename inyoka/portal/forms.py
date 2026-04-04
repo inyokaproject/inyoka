@@ -40,6 +40,7 @@ from PIL import Image
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
+from inyoka.ikhaya.models import Category
 from inyoka.portal.models import Linkmap, StaticFile, StaticPage
 from inyoka.portal.user import (
     User,
@@ -993,7 +994,8 @@ class ForumFeedSelectorForm(FeedSelectorForm):
 
 
 class IkhayaFeedSelectorForm(FeedSelectorForm):
-    category = forms.ChoiceField(label=gettext_lazy('Category'))
+    category = forms.ChoiceField(label=gettext_lazy('Category'),
+                                 choices=lambda : [('*', _('All'))] + [(c.slug, c.name) for c in Category.objects.all()])
 
 
 class PlanetFeedSelectorForm(FeedSelectorForm):
