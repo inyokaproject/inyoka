@@ -1335,10 +1335,7 @@ def feedselector(request, app=None):
         forms['ikhaya'].fields['category'].choices = [('*', _('All'))] + \
             [(c.slug, c.name) for c in Category.objects.all()]
     if forms['wiki'] is not None:
-        wiki_pages = cache.get('feedselector/wiki/pages')
-        if not wiki_pages:
-            wiki_pages = WikiPage.objects.get_page_list()
-            cache.set('feedselector/wiki/pages', wiki_pages)
+        wiki_pages = WikiPage.objects.get_page_list()
         forms['wiki'].fields['page'].choices = [('*', _('All'))] + \
             [(p, p) for p in wiki_pages]
 
