@@ -1321,9 +1321,9 @@ def feedselector(request, app=None):
     forms = {}
     for fapp in ('forum', 'ikhaya', 'planet', 'wiki'):
         if app in (fapp, None):
-            args = {'data': request.POST, 'auto_id': 'id_%s_%%s' % fapp}
+            args = {'data': request.POST}
             forms[fapp] = (request.POST and app_feed_forms[fapp](**args)
-                           or app_feed_forms[fapp](auto_id='id_%s_%%s' % fapp))
+                           or app_feed_forms[fapp]())
         else:
             forms[fapp] = None
     if forms['forum'] is not None:
