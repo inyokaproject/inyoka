@@ -1282,6 +1282,10 @@ class TestFeedSelector(TestCase):
         response = self.client.post('/feeds/forum/', {'component': '*', 'count': '8', 'mode': 'short'})
         self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/', fetch_redirect_response=False)
 
+    def test_post_without_app(self):
+        response = self.client.post('/feeds/', {'mode': 'short'})
+        self.assertEqual(response.status_code, 400)
+
 
 class TestGroupView(TestCase):
     client_class = InyokaClient

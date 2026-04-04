@@ -24,6 +24,7 @@ from django.contrib.auth.views import (
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
+from django.core.exceptions import BadRequest
 from django.core.files.storage import default_storage
 from django.db import IntegrityError
 from django.forms.models import model_to_dict
@@ -1342,6 +1343,9 @@ def feedselector(request, app=None):
             [(p, p) for p in wiki_pages]
 
     if request.method == 'POST':
+        if app is None:
+            raise BadRequest('post without a app')
+
         form = forms[app]
         if form.is_valid():
             data = form.cleaned_data
