@@ -1260,6 +1260,7 @@ class TestCalendarMonth(TestCase):
         response = self.client.get('/calendar/1998/0/')
         self.assertEqual(response.status_code, 404)
 
+
 class TestFeedSelector(TestCase):
     client_class = InyokaClient
 
@@ -1279,7 +1280,7 @@ class TestFeedSelector(TestCase):
         self.assertNotContains(response, 'action="/feeds/planet/"')
 
     def test_post(self):
-        response = self.client.post('/feeds/forum/', {'component': '*', 'count': '8', 'mode': 'short'})
+        response = self.client.post('/feeds/forum/', {'count': '11', 'mode': 'short'})
         self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/', fetch_redirect_response=False)
 
     def test_post_without_app(self):

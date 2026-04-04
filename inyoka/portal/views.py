@@ -1326,11 +1326,7 @@ def feedselector(request, app=None):
                            or app_feed_forms[fapp]())
         else:
             forms[fapp] = None
-    if forms['forum'] is not None:
-        anonymous_user = User.objects.get_anonymous_user()
-        forums = [forum for forum in Forum.objects.get_cached() if anonymous_user.has_perm('forum.view_forum', forum)]
-        forms['forum'].fields['forum'].choices = [('', _('Please choose'))] + \
-            [(f.slug, f.name) for f in forums]
+
     if forms['ikhaya'] is not None:
         forms['ikhaya'].fields['category'].choices = [('*', _('All'))] + \
             [(c.slug, c.name) for c in Category.objects.all()]
@@ -1375,7 +1371,6 @@ def feedselector(request, app=None):
                            'a', 'feed', data['count']))
 
     return {
-        'app': app,
         'forum_form': forms['forum'],
         'ikhaya_form': forms['ikhaya'],
         'planet_form': forms['planet'],

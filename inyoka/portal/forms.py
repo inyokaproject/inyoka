@@ -38,6 +38,7 @@ from guardian.shortcuts import assign_perm, get_perms, remove_perm
 from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
+from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
 from inyoka.portal.models import Linkmap, StaticFile, StaticPage
 from inyoka.portal.user import (
@@ -58,7 +59,7 @@ from inyoka.utils.forms import (
     NativeDateInput,
     NativeSplitDateTimeWidget,
     validate_gpgkey,
-    validate_signature,
+    validate_signature, TopicField,
 )
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
@@ -983,15 +984,12 @@ class FeedSelectorForm(forms.Form):
 
 
 class ForumFeedSelectorForm(FeedSelectorForm):
-    component = forms.ChoiceField(initial='forum',
-        choices=(('*', ''), ('forum', ''), ('topic', '')))
-    forum = forms.ChoiceField(required=False)
+    topic = TopicField(required=False)
 
-    def clean_forum(self):
-        data = self.cleaned_data
-        if data.get('component') == 'forum' and not data.get('forum'):
-            raise forms.ValidationError(_('Please select a forum'))
-        return data['forum']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        anonymous_user = User.objects.get_anonymous_user()
+        self.fields['forum'] = ForumField(user=anonymous_user, required=False)
 
 
 class IkhayaFeedSelectorForm(FeedSelectorForm):
@@ -1003,11 +1001,13 @@ class PlanetFeedSelectorForm(FeedSelectorForm):
 
 
 class WikiFeedSelectorForm(FeedSelectorForm):
-    #: `mode` is never used but needs to be overwritten because of that.
-    mode = forms.ChoiceField(required=False)
     page = forms.CharField(label=_('Page name'), required=False,
                            help_text=(gettext_lazy('If not given, the last changes will '
                                         'be displayed.')))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        del self.fields['mode']
 
 
 class EditStaticPageForm(forms.ModelForm):
