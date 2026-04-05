@@ -53,6 +53,7 @@ from inyoka.portal.user import (
 )
 from inyoka.utils.clamav import validate_file_infection
 from inyoka.utils.dates import TIMEZONES
+from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.forms import (
     CaptchaField,
     EmailField,
@@ -970,10 +971,8 @@ class FeedSelectorForm(forms.Form):
                 label=gettext_lazy('Number of entries in the feed'),
                 help_text=gettext_lazy('The number will be round off to keep the server '
                             'load low.'))
-    mode = forms.ChoiceField(initial='short',
-        choices=(('full', gettext_lazy('Full article')),
-                 ('short', gettext_lazy('Only introduction')),
-                 ('title', gettext_lazy('Only title'))),
+    mode = forms.ChoiceField(initial=InyokaAtomFeed.FeedModes.SHORT,
+        choices=InyokaAtomFeed.FeedModes,
         widget=forms.RadioSelect())
 
     def clean_count(self):

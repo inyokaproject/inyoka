@@ -9,17 +9,24 @@
 """
 from django.conf import settings
 from django.contrib.syndication.views import Feed
+from django.db import models
 from django.http import Http404
 from django.utils.feedgenerator import Atom1Feed
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
+from django.utils.translation import gettext as _
 
 from inyoka.utils.urls import href
 
 
 class InyokaAtomFeed(Feed):
     feed_type = Atom1Feed
-    MODES = frozenset(('full', 'short', 'title'))
+
+    class FeedModes(models.TextChoices):
+        FULL = 'full', _('Full article')
+        SHORT = 'short', _('Only introduction')
+        TITLE = 'title', _('Only title')
+
     supports_modes = True
 
     def _check_content_mode(self, kwargs):
@@ -27,7 +34,7 @@ class InyokaAtomFeed(Feed):
             return
 
         self.mode = kwargs.get('mode')
-        if self.mode not in self.MODES:
+        if self.mode not in self.FeedModes.values:
             raise Http404()
 
     def _check_item_count(self, kwargs):
