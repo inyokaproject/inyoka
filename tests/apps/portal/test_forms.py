@@ -13,8 +13,11 @@ from os import path
 from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from guardian.shortcuts import assign_perm
 
-from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm
+from inyoka.forum.models import Forum, Topic, Post
+from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm, \
+    ForumFeedSelectorForm
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
@@ -333,6 +336,48 @@ class TestLinkMapFormset(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors, [{'icon': ['File is infected with malware']}])
+
+
+class TestForumFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user(
+            'user', email='foo@test.example', password='foo', send_mail=False
+        )
+
+        anonymous_user = User.objects.get_anonymous_user()
+
+        self.category = Forum(name='category')
+        self.category.save()
+        self.forum1 = Forum(name='forum1', parent=self.category)
+        self.forum1.save()
+
+        assign_perm('forum.view_forum', anonymous_user, self.category)
+        assign_perm('forum.view_forum', anonymous_user, self.forum1)
+
+        self.topic = Topic.objects.create(title='A test Topic', author=self.user,
+                                     forum=self.forum1)
+        # self.post = Post.objects.create(text='Post 1', author=self.user, topic=self.topic, position=0)
+
+        self.form = ForumFeedSelectorForm
+
+    def test_form_valid(self):
+        form = self.form({'count': 10, 'mode': 'short'})
+        self.assertTrue(form.is_valid())
+
+    def test_both_forum_and_topic__form_invalid(self):
+        form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url(), 'forum': self.forum1.id})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, None, errors=['Only forum or topic can be provided.'])
+
+    def test_with_forum(self):
+        form = self.form({'count': 10, 'mode': 'short', 'forum': self.forum1.id})
+        self.assertTrue(form.is_valid())
+
+    def test_with_topic(self):
+        form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url()})
+        self.assertTrue(form.is_valid())
 
 
 class TestUserCPProfileForm(TestCase):

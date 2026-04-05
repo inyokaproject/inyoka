@@ -992,6 +992,12 @@ class ForumFeedSelectorForm(FeedSelectorForm):
         anonymous_user = User.objects.get_anonymous_user()
         self.fields['forum'] = ForumField(user=anonymous_user, required=False)
 
+    def clean(self):
+        super().clean()
+
+        if self.cleaned_data.get('forum') and self.cleaned_data.get('topic'):
+            raise forms.ValidationError(_('Only forum or topic can be provided.'))
+
     def get_url(self) -> str:
         data = self.cleaned_data
         href_forum = functools.partial(href, 'forum', 'feeds')
@@ -1003,6 +1009,7 @@ class ForumFeedSelectorForm(FeedSelectorForm):
 
         # fallback: feed for everything in forum
         return href_forum(data['mode'], data['count'])
+
 
 class IkhayaFeedSelectorForm(FeedSelectorForm):
     category = forms.ChoiceField(label=gettext_lazy('Category'),
