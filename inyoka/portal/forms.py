@@ -39,7 +39,7 @@ from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
-from inyoka.forum.models import Forum
+from inyoka.forum.models import Forum, Topic
 from inyoka.ikhaya.models import Category
 from inyoka.portal.models import Linkmap, StaticFile, StaticPage
 from inyoka.portal.user import (
@@ -1003,7 +1003,8 @@ class ForumFeedSelectorForm(FeedSelectorForm):
         href_forum = functools.partial(href, 'forum', 'feeds')
 
         if data['forum']:
-            return href_forum('forum',data['forum'], data['mode'], data['count'])
+            forum = Forum.objects.get(id=data['forum'])
+            return href_forum('forum', forum.slug, data['mode'], data['count'])
         elif data['topic']:
             return href_forum('topic', data['topic'], data['mode'], data['count'])
 

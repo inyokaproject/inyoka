@@ -376,7 +376,7 @@ class TestForumFeedSelectorForm(TestCase):
     def test_with_forum(self):
         form = self.form({'count': 10, 'mode': 'short', 'forum': self.forum1.id})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/forum/2/short/10/')
+        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/forum/forum1/short/10/')
 
     def test_with_topic(self):
         form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url()})
