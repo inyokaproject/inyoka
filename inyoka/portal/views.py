@@ -1307,16 +1307,18 @@ def group_edit_forum_permissions(request, name):
     }
 
 
-app_feed_forms = {
-    'forum': ForumFeedSelectorForm,
-    'ikhaya': IkhayaFeedSelectorForm,
-    'planet': PlanetFeedSelectorForm,
-    'wiki': WikiFeedSelectorForm
-}
-
-
 @templated('portal/feedselector.html')
 def feedselector(request, app=None):
+    """
+    If app is None, display forms for all apps to generate a RSS feed.
+    If an app is provided, only display the form of the given app.
+    """
+    app_feed_forms = {
+        'forum': ForumFeedSelectorForm,
+        'ikhaya': IkhayaFeedSelectorForm,
+        'planet': PlanetFeedSelectorForm,
+        'wiki': WikiFeedSelectorForm
+    }
     supported_apps = app_feed_forms.keys()
 
     if app not in supported_apps and app is not None:
