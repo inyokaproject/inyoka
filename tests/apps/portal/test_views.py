@@ -1264,14 +1264,14 @@ class TestCalendarMonth(TestCase):
 class TestFeedSelector(TestCase):
     client_class = InyokaClient
 
-    def setUp(self):
-        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
-        self.client.login(username='user', password='user')
-
     def test_get(self):
         response = self.client.get('/feeds/')
 
         self.assertContains(response, 'Generate feed')
+
+    def test_queries(self):
+        with self.assertNumQueries(9):
+            self.client.get('/feeds/')
 
     def test_get_wiki(self):
         response = self.client.get('/feeds/wiki/')
