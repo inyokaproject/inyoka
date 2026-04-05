@@ -966,9 +966,7 @@ def _feed_count_cleanup(n):
 
 
 class FeedSelectorForm(forms.Form):
-    count = forms.IntegerField(initial=10,
-                widget=forms.TextInput(attrs={'size': 2, 'maxlength': 3,
-                                              'class': 'feed_count'}),
+    count = forms.IntegerField(initial=10, min_value=10, max_value=100,
                 label=gettext_lazy('Number of entries in the feed'),
                 help_text=gettext_lazy('The number will be round off to keep the server '
                             'load low.'))
@@ -976,12 +974,11 @@ class FeedSelectorForm(forms.Form):
         choices=(('full', gettext_lazy('Full article')),
                  ('short', gettext_lazy('Only introduction')),
                  ('title', gettext_lazy('Only title'))),
-        widget=forms.RadioSelect(attrs={'class': 'radioul'}))
+        widget=forms.RadioSelect())
 
-    def clean(self):
-        data = self.cleaned_data
-        data['count'] = _feed_count_cleanup(data.get('count', 20))
-        return data
+    def clean_count(self):
+        count = self.cleaned_data.get('count', 20)
+        return _feed_count_cleanup(count)
 
     def get_url(self) -> str:
         raise NotImplementedError()
