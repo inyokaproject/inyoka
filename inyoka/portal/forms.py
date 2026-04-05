@@ -985,11 +985,11 @@ class FeedSelectorForm(forms.Form):
 
 
 class ForumFeedSelectorForm(FeedSelectorForm):
-    topic = TopicField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         anonymous_user = User.objects.get_anonymous_user()
+        self.fields['topic'] = TopicField(user=anonymous_user, required=False)
         self.fields['forum'] = ForumField(user=anonymous_user, required=False)
 
     def clean(self):
@@ -1003,9 +1003,9 @@ class ForumFeedSelectorForm(FeedSelectorForm):
         href_forum = functools.partial(href, 'forum', 'feeds')
 
         if data['forum']:
-            return href('forum',data['forum'], data['mode'], data['count'])
+            return href_forum('forum',data['forum'], data['mode'], data['count'])
         elif data['topic']:
-            return href('topic', data['topic'], data['mode'], data['count'])
+            return href_forum('topic', data['topic'], data['mode'], data['count'])
 
         # fallback: feed for everything in forum
         return href_forum(data['mode'], data['count'])

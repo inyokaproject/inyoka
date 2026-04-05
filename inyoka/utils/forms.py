@@ -392,7 +392,17 @@ class CaptchaField(forms.MultiValueField):
 
 
 class TopicField(forms.CharField):
+    """Uses a URL or slug of a topic and returns the matching topic object."""
+
     label = _('URL of the topic')
+
+    def __init__(self, user=None, *args, **kwargs) -> None:
+        """
+        If the optional parameter `user` is passed, it is checked,
+        whether the user has permissions to view the topic.
+        """
+        self.user = user
+        super().__init__(*args, **kwargs)
 
     def clean(self, value):
         value = super().clean(value)
@@ -408,7 +418,11 @@ class TopicField(forms.CharField):
 
         from inyoka.forum.models import Topic  # prevent circular import
         try:
-            topic = Topic.objects.get(slug=slug)
+            topic = Topic.objects.select_related('forum').get(slug=slug)
         except Topic.DoesNotExist:
             raise forms.ValidationError(_('This topic does not exist.'))
+
+        if self.user and not self.user.has_perm('forum.view_forum', topic.forum):
+            raise forms.ValidationError(_('This topic does not exist.'))
+
         return topic

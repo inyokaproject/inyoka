@@ -12,6 +12,7 @@ from functools import partial
 from os import path
 from unittest.mock import patch
 
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from guardian.shortcuts import assign_perm
 
@@ -365,6 +366,7 @@ class TestForumFeedSelectorForm(TestCase):
     def test_form_valid(self):
         form = self.form({'count': 10, 'mode': 'short'})
         self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/')
 
     def test_both_forum_and_topic__form_invalid(self):
         form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url(), 'forum': self.forum1.id})
@@ -374,10 +376,59 @@ class TestForumFeedSelectorForm(TestCase):
     def test_with_forum(self):
         form = self.form({'count': 10, 'mode': 'short', 'forum': self.forum1.id})
         self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/forum/2/short/10/')
 
     def test_with_topic(self):
         form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url()})
         self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/topic/A%20test%20Topic/short/10/')
+
+    def test__too_small_count(self):
+        form = self.form({'count': '8', 'mode': 'short'})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'count',
+                             errors=['Ensure this value is greater than or equal to 10.'])
+
+    def test__too_big_count(self):
+        form = self.form({'count': '110', 'mode': 'short'})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'count',
+                             errors=['Ensure this value is less than or equal to 100.'])
+
+    def test_topic_without_permission(self):
+        forum2 = Forum(name='forum2', parent=self.category)
+        forum2.save()
+
+        topic = Topic.objects.create(title='Another test Topic', author=self.user,
+                                          forum=forum2)
+        form = self.form({'count': 10, 'mode': 'short', 'topic': topic.get_absolute_url()})
+        self.assertFormError(form, 'topic', errors=['This topic does not exist.'])
+
+    def test_topic_not_existing(self):
+        form = self.form({'count': 10, 'mode': 'short', 'topic': 'barbaz'})
+        self.assertFormError(form, 'topic', errors=['This topic does not exist.'])
+
+    def test_forum_without_permission(self):
+        forum2 = Forum(name='forum2', parent=self.category)
+        forum2.save()
+
+        form = self.form({'count': 10, 'mode': 'short', 'forum': forum2.id})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(
+            form,
+            'forum',
+            errors=[f'Select a valid choice. {forum2.id} is not one of the available choices.']
+        )
+
+    def test_forum_not_existing(self):
+        form = self.form({'count': 10, 'mode': 'short', 'forum': -5})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(
+            form,
+            'forum',
+            errors=[
+                'Select a valid choice. -5 is not one of the available choices.']
+        )
 
 
 class TestUserCPProfileForm(TestCase):
