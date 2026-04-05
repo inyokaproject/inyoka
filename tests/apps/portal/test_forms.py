@@ -17,8 +17,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from guardian.shortcuts import assign_perm
 
 from inyoka.forum.models import Forum, Topic, Post
+from inyoka.ikhaya.models import Category
 from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm, \
-    ForumFeedSelectorForm
+    ForumFeedSelectorForm, IkhayaFeedSelectorForm, PlanetFeedSelectorForm, \
+    WikiFeedSelectorForm
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
@@ -429,6 +431,67 @@ class TestForumFeedSelectorForm(TestCase):
             errors=[
                 'Select a valid choice. -5 is not one of the available choices.']
         )
+
+class TestIkhayaFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.category1 = Category.objects.create(name='Test Category')
+
+        self.form = IkhayaFeedSelectorForm
+
+    def test_form_valid__all_categories(self):
+        form = self.form({'category': '*', 'mode': 'short', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/short/20/')
+
+    def test_form_valid__one_category(self):
+        form = self.form({'category': self.category1.slug, 'mode': 'short', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/test-category/short/20/')
+
+    def test_form_invalid(self):
+        form = self.form({'mode': 'short', 'count': 20})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'category', errors=['This field is required.'])
+
+
+class TestPlanetFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.form = PlanetFeedSelectorForm
+
+    def test_form_valid(self):
+        form = self.form({'mode': 'short', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://planet.{settings.BASE_DOMAIN_NAME}/feeds/short/20/')
+
+    def test_form_invalid(self):
+        form = self.form({'count': 20})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'mode', errors=['This field is required.'])
+
+class TestWikiFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.form = WikiFeedSelectorForm
+
+    def test_form_valid__with_page(self):
+        form = self.form({'mode': 'title', 'count': 20, 'page': 'baz'})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/baz/a/feed/20/')
+
+    def test_form_valid__no_page(self):
+        form = self.form({'mode': 'title', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/_feed/20/')
+
+    def test_form_invalid(self):
+        form = self.form({})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'count', errors=['This field is required.'])
 
 
 class TestUserCPProfileForm(TestCase):
