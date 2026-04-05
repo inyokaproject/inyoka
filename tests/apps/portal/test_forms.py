@@ -16,11 +16,17 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from guardian.shortcuts import assign_perm
 
-from inyoka.forum.models import Forum, Topic, Post
+from inyoka.forum.models import Forum, Topic
 from inyoka.ikhaya.models import Category
-from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm, \
-    ForumFeedSelectorForm, IkhayaFeedSelectorForm, PlanetFeedSelectorForm, \
-    WikiFeedSelectorForm
+from inyoka.portal.forms import (
+    EditFileForm,
+    EditStaticPageForm,
+    ForumFeedSelectorForm,
+    IkhayaFeedSelectorForm,
+    LoginForm,
+    PlanetFeedSelectorForm,
+    WikiFeedSelectorForm,
+)
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
@@ -385,17 +391,11 @@ class TestForumFeedSelectorForm(TestCase):
         self.assertTrue(form.is_valid())
         self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/topic/A%20test%20Topic/short/10/')
 
-    def test__too_small_count(self):
+    def test_invalid_count(self):
         form = self.form({'count': '8', 'mode': 'short'})
         self.assertFalse(form.is_valid())
         self.assertFormError(form, 'count',
-                             errors=['Ensure this value is greater than or equal to 10.'])
-
-    def test__too_big_count(self):
-        form = self.form({'count': '110', 'mode': 'short'})
-        self.assertFalse(form.is_valid())
-        self.assertFormError(form, 'count',
-                             errors=['Ensure this value is less than or equal to 100.'])
+                             errors=['Select a valid choice. 8 is not one of the available choices.'])
 
     def test_topic_without_permission(self):
         forum2 = Forum(name='forum2', parent=self.category)

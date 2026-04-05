@@ -1280,8 +1280,8 @@ class TestFeedSelector(TestCase):
         self.assertNotContains(response, 'action="/feeds/planet/"')
 
     def test_post(self):
-        response = self.client.post('/feeds/forum/', {'count': '11', 'mode': 'short'})
-        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/', fetch_redirect_response=False)
+        response = self.client.post('/feeds/forum/', {'count': '25', 'mode': 'short'})
+        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/25/', fetch_redirect_response=False)
 
     def test_post_without_app(self):
         response = self.client.post('/feeds/', {'mode': 'short'})

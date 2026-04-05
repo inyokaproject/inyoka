@@ -39,7 +39,7 @@ from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
-from inyoka.forum.models import Forum, Topic
+from inyoka.forum.models import Forum
 from inyoka.ikhaya.models import Category
 from inyoka.portal.models import Linkmap, StaticFile, StaticPage
 from inyoka.portal.user import (
@@ -60,8 +60,9 @@ from inyoka.utils.forms import (
     ForumMulitpleChoiceField,
     NativeDateInput,
     NativeSplitDateTimeWidget,
+    TopicField,
     validate_gpgkey,
-    validate_signature, TopicField,
+    validate_signature,
 )
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
@@ -954,36 +955,29 @@ class PrivateMessageIndexForm(forms.Form):
     delete = forms.MultipleChoiceField()
 
 
-def _feed_count_cleanup(n):
-    COUNTS = (10, 20, 30, 50)
-    if n in COUNTS:
-        return n
-    if n < COUNTS[0]:
-        return COUNTS[0]
-    for i in range(len(COUNTS)):
-        if n < COUNTS[i]:
-            return n - COUNTS[i - 1] < COUNTS[i] - n and COUNTS[i - 1] or COUNTS[i]
-    return COUNTS[-1]
-
-
 class FeedSelectorForm(forms.Form):
-    count = forms.IntegerField(initial=10, min_value=10, max_value=100,
-                label=gettext_lazy('Number of entries in the feed'),
-                help_text=gettext_lazy('The number will be round off to keep the server '
-                            'load low.'))
+    feed_count_key: str # needs to be set in every subclass
+
+    count = forms.TypedChoiceField(
+        coerce=int,
+        label=gettext_lazy('Number of entries in the feed')
+    )
     mode = forms.ChoiceField(initial=InyokaAtomFeed.FeedModes.SHORT,
         choices=InyokaAtomFeed.FeedModes,
         widget=forms.RadioSelect())
 
-    def clean_count(self):
-        count = self.cleaned_data.get('count', 20)
-        return _feed_count_cleanup(count)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['count'].choices = {i: i for i in settings.AVAILABLE_FEED_COUNTS[self.feed_count_key]}
 
     def get_url(self) -> str:
         raise NotImplementedError()
 
 
 class ForumFeedSelectorForm(FeedSelectorForm):
+
+    feed_count_key = 'forum_forum_feed'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1012,6 +1006,8 @@ class ForumFeedSelectorForm(FeedSelectorForm):
 
 
 class IkhayaFeedSelectorForm(FeedSelectorForm):
+    feed_count_key = 'ikhaya_feed_article'
+
     category = forms.ChoiceField(label=gettext_lazy('Category'),
                                  choices=lambda : [('*', _('All'))] + [(c.slug, c.name) for c in Category.objects.all()])
 
@@ -1026,6 +1022,7 @@ class IkhayaFeedSelectorForm(FeedSelectorForm):
 
 
 class PlanetFeedSelectorForm(FeedSelectorForm):
+    feed_count_key = 'planet_feed'
 
     def get_url(self) -> str:
         data = self.cleaned_data
@@ -1033,6 +1030,8 @@ class PlanetFeedSelectorForm(FeedSelectorForm):
 
 
 class WikiFeedSelectorForm(FeedSelectorForm):
+    feed_count_key = 'wiki_feed'
+
     page = forms.CharField(label=_('Page name'), required=False,
                            help_text=(gettext_lazy('If not given, the last changes will '
                                         'be displayed.')))
