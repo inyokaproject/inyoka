@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "Last-Translator: Christoph Volkert <>\n"
-"POT-Creation-Date: 2025-09-14 18:16+0200\n"
+"POT-Creation-Date: 2026-04-05 21:17+0200\n"
 "PO-Revision-Date: 2025-09-14 18:19+0200\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -89,6 +89,9 @@ msgstr "Umfrage hinzufügen"
 
 msgid "Additional answer"
 msgstr "Zusätzliche Antwort"
+
+msgid "All"
+msgstr "Alle"
 
 msgid "All forums were marked as read."
 msgstr "Alle Foren wurden als gelesen markiert."
@@ -1005,3 +1008,4 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
+

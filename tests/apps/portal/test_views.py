@@ -1260,17 +1260,18 @@ class TestCalendarMonth(TestCase):
         response = self.client.get('/calendar/1998/0/')
         self.assertEqual(response.status_code, 404)
 
+
 class TestFeedSelector(TestCase):
     client_class = InyokaClient
-
-    def setUp(self):
-        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
-        self.client.login(username='user', password='user')
 
     def test_get(self):
         response = self.client.get('/feeds/')
 
         self.assertContains(response, 'Generate feed')
+
+    def test_queries(self):
+        with self.assertNumQueries(9):
+            self.client.get('/feeds/')
 
     def test_get_wiki(self):
         response = self.client.get('/feeds/wiki/')
@@ -1279,8 +1280,16 @@ class TestFeedSelector(TestCase):
         self.assertNotContains(response, 'action="/feeds/planet/"')
 
     def test_post(self):
-        response = self.client.post('/feeds/forum/', {'component': '*', 'count': '8', 'mode': 'short'})
-        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/', fetch_redirect_response=False)
+        response = self.client.post('/feeds/forum/', {'count': '25', 'mode': 'short'})
+        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/25/', fetch_redirect_response=False)
+
+    def test_post_without_app(self):
+        response = self.client.post('/feeds/', {'mode': 'short'})
+        self.assertEqual(response.status_code, 400)
+
+    def test_post_invalid_app(self):
+        response = self.client.post('/feeds/bar/', {'mode': 'short'})
+        self.assertEqual(response.status_code, 400)
 
 
 class TestGroupView(TestCase):

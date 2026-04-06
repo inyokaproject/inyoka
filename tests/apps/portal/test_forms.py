@@ -12,9 +12,21 @@ from functools import partial
 from os import path
 from unittest.mock import patch
 
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from guardian.shortcuts import assign_perm
 
-from inyoka.portal.forms import EditFileForm, EditStaticPageForm, LoginForm
+from inyoka.forum.models import Forum, Topic
+from inyoka.ikhaya.models import Category
+from inyoka.portal.forms import (
+    EditFileForm,
+    EditStaticPageForm,
+    ForumFeedSelectorForm,
+    IkhayaFeedSelectorForm,
+    LoginForm,
+    PlanetFeedSelectorForm,
+    WikiFeedSelectorForm,
+)
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
@@ -333,6 +345,153 @@ class TestLinkMapFormset(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors, [{'icon': ['File is infected with malware']}])
+
+
+class TestForumFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user(
+            'user', email='foo@test.example', password='foo', send_mail=False
+        )
+
+        anonymous_user = User.objects.get_anonymous_user()
+
+        self.category = Forum(name='category')
+        self.category.save()
+        self.forum1 = Forum(name='forum1', parent=self.category)
+        self.forum1.save()
+
+        assign_perm('forum.view_forum', anonymous_user, self.category)
+        assign_perm('forum.view_forum', anonymous_user, self.forum1)
+
+        self.topic = Topic.objects.create(title='A test Topic', author=self.user,
+                                     forum=self.forum1)
+        # self.post = Post.objects.create(text='Post 1', author=self.user, topic=self.topic, position=0)
+
+        self.form = ForumFeedSelectorForm
+
+    def test_form_valid(self):
+        form = self.form({'count': 10, 'mode': 'short'})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/')
+
+    def test_both_forum_and_topic__form_invalid(self):
+        form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url(), 'forum': self.forum1.id})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, None, errors=['Only forum or topic can be provided.'])
+
+    def test_with_forum(self):
+        form = self.form({'count': 10, 'mode': 'short', 'forum': self.forum1.id})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/forum/forum1/short/10/')
+
+    def test_with_topic(self):
+        form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url()})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/topic/A%20test%20Topic/short/10/')
+
+    def test_invalid_count(self):
+        form = self.form({'count': '8', 'mode': 'short'})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'count',
+                             errors=['Select a valid choice. 8 is not one of the available choices.'])
+
+    def test_topic_without_permission(self):
+        forum2 = Forum(name='forum2', parent=self.category)
+        forum2.save()
+
+        topic = Topic.objects.create(title='Another test Topic', author=self.user,
+                                          forum=forum2)
+        form = self.form({'count': 10, 'mode': 'short', 'topic': topic.get_absolute_url()})
+        self.assertFormError(form, 'topic', errors=['This topic does not exist.'])
+
+    def test_topic_not_existing(self):
+        form = self.form({'count': 10, 'mode': 'short', 'topic': 'barbaz'})
+        self.assertFormError(form, 'topic', errors=['This topic does not exist.'])
+
+    def test_forum_without_permission(self):
+        forum2 = Forum(name='forum2', parent=self.category)
+        forum2.save()
+
+        form = self.form({'count': 10, 'mode': 'short', 'forum': forum2.id})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(
+            form,
+            'forum',
+            errors=[f'Select a valid choice. {forum2.id} is not one of the available choices.']
+        )
+
+    def test_forum_not_existing(self):
+        form = self.form({'count': 10, 'mode': 'short', 'forum': -5})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(
+            form,
+            'forum',
+            errors=[
+                'Select a valid choice. -5 is not one of the available choices.']
+        )
+
+class TestIkhayaFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.category1 = Category.objects.create(name='Test Category')
+
+        self.form = IkhayaFeedSelectorForm
+
+    def test_form_valid__all_categories(self):
+        form = self.form({'category': '*', 'mode': 'short', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/short/20/')
+
+    def test_form_valid__one_category(self):
+        form = self.form({'category': self.category1.slug, 'mode': 'short', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/test-category/short/20/')
+
+    def test_form_invalid(self):
+        form = self.form({'mode': 'short', 'count': 20})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'category', errors=['This field is required.'])
+
+
+class TestPlanetFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.form = PlanetFeedSelectorForm
+
+    def test_form_valid(self):
+        form = self.form({'mode': 'short', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://planet.{settings.BASE_DOMAIN_NAME}/feeds/short/20/')
+
+    def test_form_invalid(self):
+        form = self.form({'count': 20})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'mode', errors=['This field is required.'])
+
+class TestWikiFeedSelectorForm(TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.form = WikiFeedSelectorForm
+
+    def test_form_valid__with_page(self):
+        form = self.form({'mode': 'title', 'count': 20, 'page': 'baz'})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/baz/a/feed/20/')
+
+    def test_form_valid__no_page(self):
+        form = self.form({'mode': 'title', 'count': 20})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/_feed/20/')
+
+    def test_form_invalid(self):
+        form = self.form({})
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'count', errors=['This field is required.'])
 
 
 class TestUserCPProfileForm(TestCase):

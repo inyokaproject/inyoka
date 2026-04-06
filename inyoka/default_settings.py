@@ -212,7 +212,6 @@ CACHES = {
 
 
 AVAILABLE_FEED_COUNTS = {
-    None: (10, 25),
     'ikhaya_feed_article': (10, 20, 25),
     'ikhaya_feed_comment': (10, 20, 25),
     'forum_topic_feed': (10, 20, 25, 50),
