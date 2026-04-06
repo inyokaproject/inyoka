@@ -7,6 +7,7 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import datetime
 import html
 from itertools import groupby
 
@@ -63,9 +64,7 @@ def index(request):
     """
     The index function just returns the 25 latest entries of the planet.
     """
-    entries = Entry.objects.select_related('blog')
-    if not request.user.has_perm('planet.hide_entry'):
-        entries = entries.filter(hidden=False)
+    entries = Entry.objects.filtered_entries(request.user).select_related('blog')
 
     MAX_ENTRIES: int = 25
     entries = entries[:MAX_ENTRIES]
@@ -85,9 +84,8 @@ class ArchiveIndexView(ListView):
     template_name = 'planet/archive_index.html'
 
     def get_queryset(self):
-        # TODO: filter for hidden ones
-
-        entries = (Entry.objects.annotate(week=TruncWeek("pub_date")).values("week")
+        entries = Entry.objects.filtered_entries(self.request.user)
+        entries = (entries.annotate(week=TruncWeek("pub_date")).values("week")
                 .annotate(count=Count("id")).order_by("-week"))
 
         return [GroupedResult(grouper=key, list=list(val))
@@ -97,11 +95,13 @@ class ArchiveIndexView(ListView):
 
 
 class EntryWeekArchiveView(WeekArchiveView):
-    queryset = Entry.objects.all()
     date_field = "pub_date"
     week_format = "%V"
     year_format = '%G'
     template_name = 'planet/archive_week.html'
+
+    def get_queryset(self):
+        return Entry.objects.filtered_entries(self.request.user)
 
     def grouped_items(self):
         return [GroupedResult(grouper=key, list=list(val))

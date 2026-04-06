@@ -7,7 +7,10 @@ Database models for the planet.
 :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
+import datetime
+
 from django.db import models
+from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext_lazy
 
 from inyoka.portal.user import User
@@ -20,6 +23,20 @@ class EntryManager(models.Manager):
     def get_latest_entries(self, count=10):
         entries = Entry.objects.filter(hidden=False)
         return entries[:count]
+
+    def filtered_entries(self, user):
+        entries = self.get_queryset()
+
+        if not user.has_perm('planet.hide_entry'):
+            entries = entries.filter(hidden=False)
+            entries = entries.filter(blog__active=True)
+
+            MAX_YEARS_TO_DISPLAY: int = 5
+            minimum_date = dj_timezone.now() - datetime.timedelta(
+                days=MAX_YEARS_TO_DISPLAY * 365)
+            entries = entries.filter(pub_date__gte=minimum_date)
+
+        return entries
 
 
 class Blog(models.Model):

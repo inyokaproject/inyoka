@@ -16,6 +16,8 @@ from django.contrib.auth.models import Group
 from django.core import mail
 from django.utils import timezone as dj_timezone
 from django.utils import translation
+from freezegun import freeze_time
+from guardian.shortcuts import assign_perm
 
 from inyoka.planet.models import Blog, Entry
 from inyoka.portal.user import User
@@ -363,40 +365,329 @@ class TestViews(TestCase):
         self.assertRedirects(response, href('planet'))
 
 
-class TestIndex(TestCase):
+class IndexMixin:
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
+
         self.user = User.objects.register_user('user', 'user', 'user', False)
         self.user.save()
 
         self.client.defaults['HTTP_HOST'] = 'planet.%s' % settings.BASE_DOMAIN_NAME
-        self.client.login(username='user', password='user')
 
-    def test_hidden_entry_not_shown(self):
-        blog = Blog(
-            name='Testblog',
-            blog_url='http://example.com/',
-            feed_url='http://example.com/feed',
-            user=self.user,
-            active=True,
-        )
+    def _assign_user_privileges(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('planet.hide_entry', registered_group)
+
+    def _create_blog_with_entry(self, adjustments_blog: dict={}, adjustments_entry: dict={}):
+        blog_args = {
+            'name': 'Testblog',
+            'blog_url': 'http://example.com/',
+            'feed_url': 'http://example.com/feed',
+            'user': self.user,
+            'active': True,
+        }
+        blog_args.update((key, adjustments_blog[key]) for key in adjustments_blog.keys())
+
+        blog = Blog(**blog_args)
         blog.save()
 
-        Entry.objects.create(
-            blog=blog,
-            url='http://example.com/article1',
-            guid='http://example.com/article1',
-            text='This is a test',
-            title='',
-            pub_date=dj_timezone.now(),
-            updated=dj_timezone.now(),
-            hidden=True,
-        )
+        entry_args = {
+            'blog': blog,
+            'url': 'http://example.com/article1',
+            'guid': 'http://example.com/article1',
+            'text': 'This is a test',
+            'title': 'testTitle',
+            'pub_date': dj_timezone.now(),
+            'updated': dj_timezone.now(),
+        }
+        entry_args.update((key, adjustments_entry[key]) for key in adjustments_entry.keys())
+
+        Entry.objects.create(**entry_args)
+
+        self.assertEqual(Entry.objects.count(), 1)
+        self.assertEqual(Blog.objects.count(), 1)
+
+
+class TestIndexAnonymous(IndexMixin, TestCase):
+
+    def test_recent_entry_shown(self):
+        self._create_blog_with_entry()
+
+        response = self.client.get('/')
+        self.assertContains(response, 'This is a test')
+
+    def test_no_article(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'No articles were aggregated')
+
+    def test_hidden_entry_not_shown(self):
+        self._create_blog_with_entry(adjustments_entry={'hidden': True})
 
         response = self.client.get('/')
         self.assertContains(response, 'No articles were aggregated')
+
+    def test_entry_from_disabled_blog_not_shown(self):
+        self._create_blog_with_entry(adjustments_blog={'active': False,})
+
+        response = self.client.get('/')
+        self.assertContains(response, 'No articles were aggregated')
+
+    def test_old_entry_not_shown(self):
+        old_datetime = datetime.datetime(2010, 1, 1, 15, 55, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'pub_date': old_datetime,
+            'updated': old_datetime,
+        })
+
+        response = self.client.get('/')
+        self.assertContains(response, 'No articles were aggregated')
+
+
+class TestIndexAuthenticated(TestIndexAnonymous):
+
+    def setUp(self):
+        super().setUp()
+        self.client.login(username='user', password='user')
+
+
+class TestIndexPrivileged(IndexMixin, TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self._assign_user_privileges()
+        self.client.login(username='user', password='user')
+
+    def test_recent_entry_shown(self):
+        self._create_blog_with_entry()
+
+        response = self.client.get('/')
+        self.assertContains(response, 'This is a test')
+
+    def test_no_article(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'No articles were aggregated')
+
+    def test_hidden_entry_shown(self):
+        self._create_blog_with_entry(adjustments_entry={'hidden': True})
+
+        response = self.client.get('/')
+        self.assertContains(response, 'This is a test')
+
+    def test_entry_from_disabled_shown(self):
+        self._create_blog_with_entry(adjustments_blog={'active': False,})
+
+        response = self.client.get('/')
+        self.assertContains(response, 'This is a test')
+
+    def test_old_entry_shown(self):
+        old_datetime = datetime.datetime(2010, 1, 1, 15, 55, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'pub_date': old_datetime,
+            'updated': old_datetime,
+        })
+
+        response = self.client.get('/')
+        self.assertContains(response, 'This is a test')
+
+    def test_hide_button_shown(self):
+        self._create_blog_with_entry()
+
+        response = self.client.get('/')
+        self.assertContains(response, 'Hide')
+
+
+class TestArchiveIndexViewAnonymous(IndexMixin, TestCase):
+
+    def test_no_article(self):
+        response = self.client.get("/archive/")
+        self.assertContains(response, 'No articles were aggregated')
+
+    @freeze_time('2013-1-11 11:11')
+    def test_recent_entry_shown(self):
+        self._create_blog_with_entry()
+
+        response = self.client.get("/archive/")
+        self.assertContains(response, f'http://planet.{settings.BASE_DOMAIN_NAME}/2013/week/2/')
+
+    def test_hidden_entry_not_shown(self):
+        self._create_blog_with_entry(adjustments_entry={'hidden': True})
+
+        response = self.client.get("/archive/")
+        self.assertContains(response, 'No articles were aggregated')
+
+    def test_entry_from_disabled_blog_not_shown(self):
+        self._create_blog_with_entry(adjustments_blog={'active': False,})
+
+        response = self.client.get("/archive/")
+        self.assertContains(response, 'No articles were aggregated')
+
+    def test_old_entry_not_shown(self):
+        old_datetime = datetime.datetime(2010, 1, 1, 15, 55, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'pub_date': old_datetime,
+            'updated': old_datetime,
+        })
+
+        response = self.client.get("/archive/")
+        self.assertContains(response, 'No articles were aggregated')
+
+
+class TestArchiveIndexViewAuthenticated(TestArchiveIndexViewAnonymous):
+
+    def setUp(self):
+        super().setUp()
+        self.client.login(username='user', password='user')
+
+
+class TestArchiveIndexViewPrivileged(IndexMixin, TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self._assign_user_privileges()
+        self.client.login(username='user', password='user')
+
+    def test_no_article(self):
+        response = self.client.get("/archive/")
+        self.assertContains(response, 'No articles were aggregated')
+
+    @freeze_time('2013-1-11 11:11')
+    def test_recent_entry_shown(self):
+        self._create_blog_with_entry()
+
+        response = self.client.get("/archive/")
+        self.assertContains(response, f'http://planet.{settings.BASE_DOMAIN_NAME}/2013/week/2/')
+
+    @freeze_time('2013-1-11 11:11')
+    def test_hidden_entry_shown(self):
+        self._create_blog_with_entry(adjustments_entry={'hidden': True})
+
+        response = self.client.get("/archive/")
+        self.assertContains(response, f'http://planet.{settings.BASE_DOMAIN_NAME}/2013/week/2/')
+
+    @freeze_time('2013-1-11 11:11')
+    def test_entry_from_disabled_blog_shown(self):
+        self._create_blog_with_entry(adjustments_blog={'active': False,})
+
+        response = self.client.get("/archive/")
+        self.assertContains(response, f'http://planet.{settings.BASE_DOMAIN_NAME}/2013/week/2/')
+
+    def test_old_entry_shown(self):
+        old_datetime = datetime.datetime(2010, 1, 1, 15, 55, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'pub_date': old_datetime,
+            'updated': old_datetime,
+        })
+
+        response = self.client.get("/archive/")
+        self.assertContains(response,
+                            f'http://planet.{settings.BASE_DOMAIN_NAME}/2009/week/53/')
+
+
+class BaseTestEntryWeekArchiveView(IndexMixin):
+
+    def test_no_article(self):
+        response = self.client.get("/2020/week/12/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_entry_shown(self):
+        old_datetime = datetime.datetime(2013, 1, 10, 15, 55, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'pub_date': old_datetime,
+            'updated': old_datetime,
+        })
+
+        response = self.client.get("/2013/week/2/")
+        self.assertContains(response, 'testTitle')
+
+        response = self.client.get("/2013/week/1/")
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get("/2013/week/3/")
+        self.assertEqual(response.status_code, 404)
+
+
+@freeze_time('2013-1-11 11:11')
+class TestEntryWeekArchiveViewAnonymous(BaseTestEntryWeekArchiveView, TestCase):
+
+    def test_hidden_entry_not_shown(self):
+        self._create_blog_with_entry(adjustments_entry={'hidden': True})
+
+        response = self.client.get("/2013/week/2/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_entry_from_disabled_blog_not_shown(self):
+        self._create_blog_with_entry(adjustments_blog={'active': False,})
+
+        response = self.client.get("/2013/week/2/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_old_entry_not_shown(self):
+        old_datetime = datetime.datetime(2000, 1, 3, 15, 55, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'pub_date': old_datetime,
+            'updated': old_datetime,
+        })
+
+        with freeze_time('2003-1-11 11:11'):
+            response = self.client.get("/2000/week/1/")
+            self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/2000/week/1/")
+        self.assertEqual(response.status_code, 404)
+
+
+class TestEntryWeekArchiveViewAuthenticated(TestEntryWeekArchiveViewAnonymous):
+
+    def setUp(self):
+        super().setUp()
+        self.client.login(username='user', password='user')
+
+
+@freeze_time('2013-1-11 11:11')
+class TestEntryWeekArchiveViewPrivileged(BaseTestEntryWeekArchiveView, TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self._assign_user_privileges()
+        self.client.login(username='user', password='user')
+
+    def test_hidden_entry_shown(self):
+        """
+        With a privilege the post should still be shown for this user.
+        Thus, it is also possible to unhide it.
+        """
+        self._create_blog_with_entry(adjustments_entry={'hidden': True})
+
+        response = self.client.get("/2013/week/2/")
+        self.assertContains(response, 'This is a test')
+        self.assertContains(response, 'Restore')
+
+    def test_entry_from_disabled_blog_shown(self):
+        """
+        With a privilege the post should still be shown for this user.
+        """
+        self._create_blog_with_entry(adjustments_blog={'active': False,})
+
+        response = self.client.get("/2013/week/2/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_old_entry_shown(self):
+        old_datetime = datetime.datetime(2000, 1, 3, 15, 55, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'pub_date': old_datetime,
+            'updated': old_datetime,
+        })
+
+        response = self.client.get("/2000/week/1/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_hide_button_shown(self):
+        self._create_blog_with_entry()
+
+        response = self.client.get("/2013/week/2/")
+        self.assertContains(response, 'Hide')
 
 
 class TestSuggestView(TestCase):
