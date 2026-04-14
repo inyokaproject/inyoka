@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-06-01 22:01+0200\n"
+"POT-Creation-Date: 2026-04-05 21:17+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -66,8 +66,14 @@ msgstr "Bitte die aufgetretenen Fehler beheben."
 msgid "Event suggestions"
 msgstr "Veranstaltungsvorschläge"
 
+msgid "File is infected with malware"
+msgstr "Datei ist mit Malware infiziert"
+
 msgid "Forbidden (403)"
 msgstr "Unzulässig (403)"
+
+msgid "Full article"
+msgstr "Ganzer Artikel"
 
 msgid ""
 "If you have configured your browser to disable 'Referer' headers,\n"
@@ -103,6 +109,12 @@ msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
 msgid "Old"
 msgstr "Alt"
+
+msgid "Only introduction"
+msgstr "Nur Einleitung"
+
+msgid "Only title"
+msgstr "Nur Titel"
 
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
@@ -150,6 +162,9 @@ msgstr "Rechtschreibfehler"
 
 msgid "Text must not be empty"
 msgstr "Text darf nicht leer sein"
+
+msgid "The attachment could not be checked against malware and thus is not allowed to be uploaded. Please contact the website administrator."
+msgstr "Der Anhang konnte nicht auf Malware überprüft werden und kann deshalb nicht hochgeladen werden. Bitte kontaktiere den Website Administrator."
 
 msgid "The entered CAPTCHA was incorrect."
 msgstr "Die Eingabe des Captchas war nicht korrekt."

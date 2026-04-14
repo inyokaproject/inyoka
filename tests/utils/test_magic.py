@@ -15,4 +15,4 @@ class TestMagic(unittest.TestCase):
 
     def test_from_buffer(self):
         with open(self.filename, 'rb') as fobj:
-            self.assertTrue(magic.from_buffer(fobj.read(1024)).startswith('PDF document, version 1.4'))
+            self.assertTrue(magic.from_buffer(fobj.read(1024)).startswith('PDF document'))

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-06-01 22:01+0200\n"
+"POT-Creation-Date: 2026-04-05 21:17+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -174,6 +174,9 @@ msgstr "Verbotene Hosts für E-Mail-Adressen"
 
 msgid "By default, the email address is not displayed in your public profile. To publish it, you need to check the “show in profile” box."
 msgstr "Standardmäßig wird deine E-Mail-Adresse nicht öffentlich angezeigt. Um sie zu veröffentlichen, aktiviere die \"Im Profil anzeigen\"-Box."
+
+msgid "By providing a topic URL or selecting a forum, the feed is restricted to items inside them."
+msgstr "Sobald eine Themen-URL angegeben oder ein Forum ausgewählt wird, wird der Feed auf diese beschränkt."
 
 msgid "CAPTCHA"
 msgstr "CAPTCHA"
@@ -388,12 +391,6 @@ msgstr "Filter"
 msgid "Folder"
 msgstr "Ordner"
 
-msgid "For a topic"
-msgstr "Für ein Thema:"
-
-msgid "For the following forum:"
-msgstr "Für das folgende Forum:"
-
 msgid "Forum"
 msgstr "Forum"
 
@@ -412,9 +409,6 @@ msgstr "Du wirst ab jetzt nicht mehr über Aktivitäten von „%(username)s“ b
 
 msgid "From:"
 msgstr "Von:"
-
-msgid "Full article"
-msgstr "Ganzer Artikel"
 
 msgid "Full path to the target link page"
 msgstr "Vollständiger Link zur Zielseite"
@@ -476,9 +470,6 @@ msgstr "Signaturen ausblenden"
 msgid "Highlight search"
 msgstr "Suchwörter hervorheben"
 
-msgid "How"
-msgstr "Wie"
-
 msgid "I received a message"
 msgstr "Ich habe eine Nachricht erhalten"
 
@@ -487,6 +478,9 @@ msgstr "Icon"
 
 msgid "Identifier"
 msgstr "Bezeichner"
+
+msgid "If both are empty, you see the feed for all posts."
+msgstr "Wenn beide leer sind, wird ein Feed für alle Posts angezeigt."
 
 msgid "If enabled, less animations are used."
 msgstr "Aktiviert werden weniger Animationen verwendet."
@@ -681,14 +675,11 @@ msgstr "Benachrichtige mich per"
 msgid "Number of entries in the feed"
 msgstr "Anzahl der Einträge im Feed"
 
-msgid "Only introduction"
-msgstr "Nur Einleitung"
+msgid "Only forum or topic can be provided."
+msgstr "Es kann nur ein Forum oder ein Thema angegeben werden."
 
 msgid "Only lowercase letters, - and _ allowed. Numbers as postfix."
 msgstr "Nur Kleinbuchstaben, - und _ erlaubt. Nummern nur als Suffix."
-
-msgid "Only title"
-msgstr "Nur Titel"
 
 msgid "Overview"
 msgstr "Übersicht"
@@ -714,12 +705,6 @@ msgstr "Planet"
 msgid "Please check whether you received an email with the activation key. If not, try to register with another user name or email-address."
 msgstr "Bitte prüfe, ob du eine E-Mail mit Aktivierungsschlüssel bekommen hast. Falls nicht, probiere dich mit einem anderen Nutzernamen oder E-Mail-Adresse anzumelden."
 
-msgid "Please choose"
-msgstr "Bitte auswählen"
-
-msgid "Please click on the link in the topic, there are too much topics to list all of them here."
-msgstr "Bitte im Thema auf den Link klicken, es gibt zu viele Themen um sie alle hier aufzulisten."
-
 msgid "Please do not enter an email address as username."
 msgstr "Bitte gebe nicht eine E-Mail-Adresse als Benutzernamen ein."
 
@@ -735,9 +720,6 @@ msgstr "Bitte beachte, dass die maximale Größe eines Avatars %(width)sx%(heigh
 
 msgid "Please note the details on the maximum size below."
 msgstr "Bitte beachte die untenstehenden Angaben zur Maximalgröße"
-
-msgid "Please select a forum"
-msgstr "Bitte wähle ein Forum aus"
 
 msgid "Please select the groups for this user."
 msgstr "Bitte wähle Gruppen für diesen Benutzer."
@@ -981,9 +963,6 @@ msgstr "Die Nachricht wurde in dein Archiv verschoben."
 msgid "The name “Inyoka” means snake in Zulu. It shows the connection to both its used programming language Python and to the Linux-distribution Ubuntu."
 msgstr "Der Name „Inyoka“ bedeutet Schlange in Zulu. Es zeigt die Verbindung sowohl zur verwendeten Programmiersprache Python als auch zur Linux-Distribution Ubuntu."
 
-msgid "The number will be round off to keep the server load low."
-msgstr "Die Anzahl wird abgerundet, um die Serverlast gering zu halten"
-
 #, python-format
 msgid "The page “%(page)s” was changed successfully."
 msgstr "Die Seite „%(page)s“ wurde erfolgreich bearbeitet."
@@ -1160,9 +1139,6 @@ msgstr "Website"
 
 msgid "Welcome Message"
 msgstr "Willkommensnachricht"
-
-msgid "What"
-msgstr "Was"
 
 msgid "Who is online?"
 msgstr "Wer ist gerade angemeldet?"

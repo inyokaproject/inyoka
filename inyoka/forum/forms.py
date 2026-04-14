@@ -45,19 +45,24 @@ class ForumField(forms.ChoiceField):
                                                    sort=True)
 
         forums = Forum.get_children_recursive(forums)
-        choices = []
+        if self.required:
+            choices = []
+        else:
+            choices = [('-', [('', _('All'))])]
+
         for offset, f in forums:
             if f.is_category:
                 choices.append((f.name, []))
             else:
                 title = f.name[0] + ' ' + ('   ' * offset) + f.name
                 choices[-1][1].append((f.id, title))
+
         self.choices = choices
 
     def to_python(self, value):
         """
         As the choice field just contains forum-ids, we cast it to int.
-        If it is somehow empty, None will be returned.
+        If it is empty, None will be returned.
         """
         if value in self.empty_values:
             return None
