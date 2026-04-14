@@ -24,6 +24,23 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+1.52.9 (2026-04-14)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+
+🏗 Changes
+----------
+
+* Reworked feed selector
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``Django``, ``requests``, ``pillow`` and ``pygments`` include a known security fix)
+
 
 1.52.8 (2026-03-22)
 ===================
