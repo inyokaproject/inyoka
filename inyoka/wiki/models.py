@@ -93,7 +93,7 @@ from django.db.models.functions import Upper
 from django.template.loader import render_to_string
 from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
-from django.utils.html import escape, strip_tags
+from django.utils.html import escape, format_html, strip_tags
 from django.utils.translation import (
     get_language,
     gettext_lazy,
@@ -106,7 +106,7 @@ from inyoka.markup import base as markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
-from inyoka.utils.dates import datetime_to_timezone, format_datetime
+from inyoka.utils.dates import format_datetime
 from inyoka.utils.decorators import deferred
 from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.highlight import highlight_code
@@ -1385,17 +1385,18 @@ class Revision(models.Model):
 
     def revert(self, note=None, user=None, remote_addr=None):
         """Revert this revision and make it the current one."""
-        # no relative date information, because it stays in the note forever
-
-        note = _('%(note)s [Revision from %(date)s restored by %(user)s]' %
-            {'note': note,
-             'date': datetime_to_timezone(self.change_date).strftime(
-                '%d.%m.%Y %H:%M %Z'),
-             'user': self.user.username if self.user else self.remote_addr})
-        new_rev = Revision(page=self.page, text=self.text,
+        note = format_html(
+            _('{note} [Revision {id} from {date} restored]'),
+            note=note,
+            id=self.pk,
+            date=format_datetime(self.change_date),
+        )
+        new_rev = Revision(page=self.page,
+                           text=self.text,
                            user=(user if user.is_authenticated else None),
                            change_date=dj_timezone.now(),
-                           note=note, deleted=False,
+                           note=note,
+                           deleted=False,
                            remote_addr=remote_addr or '127.0.0.1',
                            attachment=self.attachment)
         new_rev.save()
