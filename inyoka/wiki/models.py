@@ -879,8 +879,8 @@ class Page(models.Model):
     @property
     def short_title(self):
         """
-        Like `title` but just the short version of it.  Thus it returns the
-        outermost part (after the last slash).  This is primarly used in the
+        Like `title` but just the short version of it.  Thus, it returns the
+        outermost part (after the last slash).  This is primarily used in the
         `do_show` action.
         """
         return get_pagetitle(self.name, full=False)
@@ -1321,7 +1321,7 @@ class Revision(models.Model):
 
         attachment
             If the page itself holds an attachment this will point to an
-            `Attachment` object.  Otherwise this attribute is `None` and must
+            `Attachment` object.  Otherwise, this attribute is `None` and must
             be ignored.
     """
     objects = RevisionManager()
