@@ -964,7 +964,9 @@ class FeedSelectorForm(forms.Form):
     )
     mode = forms.ChoiceField(initial=InyokaAtomFeed.FeedModes.SHORT,
         choices=InyokaAtomFeed.FeedModes,
-        widget=forms.RadioSelect())
+        widget=forms.RadioSelect(),
+        label=gettext_lazy('Feed mode'),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -982,8 +984,10 @@ class ForumFeedSelectorForm(FeedSelectorForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         anonymous_user = User.objects.get_anonymous_user()
-        self.fields['topic'] = TopicField(user=anonymous_user, required=False)
-        self.fields['forum'] = ForumField(user=anonymous_user, required=False)
+        self.fields['topic'] = TopicField(user=anonymous_user, required=False,
+                                          label=gettext_lazy('Topic'))
+        self.fields['forum'] = ForumField(user=anonymous_user, required=False,
+                                          label=gettext_lazy('Forum'))
 
     def clean(self):
         super().clean()
