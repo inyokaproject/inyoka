@@ -438,7 +438,7 @@ class TestDoRevert(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertEqual(len(response.redirect_chain), 1)
-        self.assertStartsWith(response.redirect_chain[0][0], href('portal', 'login'))
+        self.assertTrue(response.redirect_chain[0][0].startswith(href('portal', 'login')))
 
     def test_post_revert_success(self):
         """Test successful revert to an older revision."""
