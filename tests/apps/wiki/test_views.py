@@ -8,10 +8,12 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime, timedelta, timezone
+from os.path import dirname, join
 from unittest.mock import patch
 
 import feedparser
 from django.conf import settings
+from django.core.files import File
 from django.test.utils import override_settings
 from freezegun import freeze_time
 
@@ -351,6 +353,197 @@ class TestDoDiff(TestCase):
         url = self.page.get_absolute_url('udiff', revision=1, new_revision='a')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+
+class TestDoRevert(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
+
+        self.client.login(username='admin', password='admin')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+        self.page = Page.objects.create(
+            user=self.user, name='test_page', remote_addr='', text='revision 0'
+        )
+
+        self.page.edit(text='revision 1', user=self.user, note='Edit 1')
+        self.page.edit(text='revision 2', user=self.user, note='Edit 2')
+
+        revisions = self.page.revisions.all().order_by('id')
+        self.rev_1 = revisions[0]
+        self.rev_2 = revisions[1]
+        self.rev_3 = revisions[2]
+
+    def test_get_request_shows_form(self):
+        """Test that GET request displays the revert confirmation form."""
+        url = href('wiki', 'test_page', 'a', 'revert', self.rev_2.id)
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, href('wiki', 'test_page', 'a', 'revision', self.rev_2.id))
+        self.assertInHTML('<input type="submit" value="Restore">', response.content.decode())
+
+    def test_post_cancel_revert(self):
+        """Test that POST with cancel parameter aborts the revert."""
+        url = href('wiki', 'test_page', 'a', 'revert', self.rev_2.id)
+        response = self.client.post(
+            url,
+            data={'cancel': 'Cancel'},
+            follow=True
+        )
+
+        self.assertContains(response, 'Revert aborted')
+
+        # Verify page text hasn't changed
+        page = Page.objects.get_by_name('test_page')
+        self.assertEqual(page.rev.text.value, 'revision 2')
+
+    def test_revert_non_existent_page(self):
+        """Test that a non-existent page returns 404."""
+        url = href('wiki', 'non_existent_page', 'a', 'revert', 1)
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_revert_non_existent_revision(self):
+        """Test that a non-existent revision returns 404."""
+        url = href('wiki', 'test_page', 'a', 'revert', 99999)
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_revert_without_permissions(self):
+        """Test that anonymous user without 'manage' privilege sees login."""
+        self.client.logout()
+
+        Page.objects.create(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '}}}',
+            user=self.user,
+            note='init ACL',
+        )
+
+        url = href('wiki', 'test_page', 'a', 'revert', self.rev_1.id)
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTrue(response.redirect_chain[0][0].startswith(href('portal', 'login')))
+
+    def test_post_revert_success(self):
+        """Test successful revert to an older revision."""
+        url = href('wiki', 'test_page', 'a', 'revert', self.rev_1.id)
+        response = self.client.post(
+            url,
+            data={'note': 'Reverting to first revision'},
+            follow=True
+        )
+
+        self.assertContains(response, 'was reverted successfully')
+
+        # Verify page text has been reverted
+        page = Page.objects.get_by_name('test_page')
+        self.assertEqual(page.rev.text.value, 'revision 0')
+
+        self.assertEqual(page.revisions.count(), 4)
+        self.assertIn('Reverting to first revision', page.rev.note)
+
+    def test_post_revert_latest_revision_error(self):
+        """Test that reverting to the latest revision shows an error."""
+        url = href('wiki', 'test_page', 'a', 'revert', self.rev_3.id)
+        response = self.client.post(
+            url,
+            data={'note': 'Try to revert to latest'},
+            follow=True
+        )
+
+        self.assertContains(response, 'Revision is the latest one, revert aborted')
+
+        page = Page.objects.get_by_name('test_page')
+        self.assertEqual(page.revisions.count(), 3)
+
+    def test_revert_with_empty_note(self):
+        """Test revert with empty note parameter."""
+        url = href('wiki', 'test_page', 'a', 'revert', self.rev_1.id)
+        response = self.client.post(
+            url,
+            data={'note': ''},
+            follow=True
+        )
+
+        self.assertContains(response, 'was reverted successfully')
+
+        # Verify new revision exists with empty note (but includes the default message)
+        page = Page.objects.get_by_name('test_page')
+        self.assertEqual(page.rev.text.value, 'revision 0')
+        self.assertIn('restored]', page.rev.note)
+
+    def test_revert_updates_page_last_rev(self):
+        """Test that revert properly updates the page's last_rev."""
+        original_last_rev_id = self.page.last_rev.id
+
+        url = href('wiki', 'test_page', 'a', 'revert', self.rev_1.id)
+        self.client.post(
+            url,
+            data={'note': 'Test revert'},
+            follow=True
+        )
+
+        page_after = Page.objects.get_by_name('test_page')
+        # last_rev should have changed
+        self.assertNotEqual(page_after.last_rev.id, original_last_rev_id)
+
+        # New revision should be the latest
+        latest_rev = page_after.revisions.latest()
+        self.assertEqual(page_after.last_rev.id, latest_rev.id)
+
+    def test_revert_attachment(self):
+        """Test that reverting a revision with attachment preserves the attachment."""
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            attachment = Page.objects.create(
+                user=self.user,
+                text='text',
+                remote_addr=None,
+                name='attachment',
+                note='attachment note',
+                attachment_filename='foo.txt',
+                attachment=File(evil),
+            )
+        attachment.edit(user=self.user)
+        self.assertEqual(attachment.revisions.all().count(), 2)
+
+        revisions = attachment.revisions.all().order_by('id')
+        url = href('wiki', 'attachment', 'a', 'revert', revisions[0].id)
+        response = self.client.post(
+            url,
+            data={'note': 'Revert'},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(attachment.revisions.all().count(), 3)
+
+        page = Page.objects.get_by_name('attachment')
+        self.assertIsNotNone(page.rev.attachment.filename)
+
+    def test_post_revert_with_different_case_in_name__shows_form(self):
+        """Test revert with different case in page name."""
+        url = href('wiki', 'TEST_PAGE', 'a', 'revert', self.rev_1.id)
+        response = self.client.get(url, follow=True)
+
+        self.assertInHTML('<input type="submit" value="Restore">', response.content.decode())
+        self.assertRedirects(response, href('wiki', f'test_page/a/revision/{self.rev_1.id}/'))
 
 
 @freeze_time("2023-12-09T23:55:04Z")
