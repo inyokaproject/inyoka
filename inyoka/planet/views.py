@@ -64,7 +64,7 @@ def index(request):
     """
     The index function just returns the 25 latest entries of the planet.
     """
-    entries = Entry.objects.filtered_entries(request.user).select_related('blog')
+    entries = Entry.objects.filtered_entries(request.user)
 
     MAX_ENTRIES: int = 25
     entries = entries[:MAX_ENTRIES]

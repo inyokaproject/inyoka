@@ -7,6 +7,7 @@ Test planet models.
 :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
+import datetime
 
 from django.conf import settings
 from django.db.models import ProtectedError
@@ -119,3 +120,74 @@ class TestEntryModel(TestCase):
             self.entry.get_absolute_url('hide'),
             f'http://planet.{settings.BASE_DOMAIN_NAME}/hide/{self.entry.id}/',
         )
+
+    def test_filtered_entries__annotation_previous_next(self):
+        entry_same_day = BlogEntry.objects.create(
+            blog=self.blog,
+            url='https://example.test/a2',
+            guid='https://example.test/a2',
+            text='Some test',
+            title='Same title',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+        )
+
+        entry_old = BlogEntry.objects.create(
+            blog=self.blog,
+            url='https://example.test/a5',
+            guid='https://example.test/a5',
+            text='Old test',
+            title='Old title',
+            pub_date=dj_timezone.now() - datetime.timedelta(days=5),
+            updated=dj_timezone.now() - datetime.timedelta(days=5),
+        )
+
+        query_result = BlogEntry.objects.filtered_entries(self.user)
+
+        self.assertEqual(len(query_result), 3)
+
+        self.assertEqual(query_result[0], entry_same_day)
+        self.assertEqual(query_result[0].previous_id, self.entry.id)
+        self.assertEqual(query_result[0].next_id, None)
+
+        self.assertEqual(query_result[1], self.entry)
+        self.assertEqual(query_result[1].previous_id, entry_old.id)
+        self.assertEqual(query_result[1].next_id, entry_same_day.id)
+
+        self.assertEqual(query_result[2], entry_old)
+        self.assertEqual(query_result[2].previous_id, None)
+        self.assertEqual(query_result[2].next_id, self.entry.id)
+
+    def test_filtered_entries__hidden_entry(self):
+        BlogEntry.objects.create( # hidden entry
+            blog=self.blog,
+            url='https://example.test/a2',
+            guid='https://example.test/a2',
+            text='Some test',
+            title='Same title',
+            pub_date=dj_timezone.now(),
+            updated=dj_timezone.now(),
+            hidden=True
+        )
+
+        entry_old = BlogEntry.objects.create(
+            blog=self.blog,
+            url='https://example.test/a5',
+            guid='https://example.test/a5',
+            text='Old test',
+            title='Old title',
+            pub_date=dj_timezone.now() - datetime.timedelta(days=5),
+            updated=dj_timezone.now() - datetime.timedelta(days=5),
+        )
+
+        query_result = BlogEntry.objects.filtered_entries(self.user)
+
+        self.assertEqual(len(query_result), 2)
+
+        self.assertEqual(query_result[0], self.entry)
+        self.assertEqual(query_result[0].previous_id, entry_old.id)
+        self.assertEqual(query_result[0].next_id, None)
+
+        self.assertEqual(query_result[1], entry_old)
+        self.assertEqual(query_result[1].previous_id, None)
+        self.assertEqual(query_result[1].next_id, self.entry.id)

@@ -10,6 +10,8 @@ Database models for the planet.
 import datetime
 
 from django.db import models
+from django.db.models import Window
+from django.db.models.functions import Lag, Lead
 from django.utils import timezone as dj_timezone
 from django.utils.translation import gettext_lazy
 
@@ -35,6 +37,19 @@ class EntryManager(models.Manager):
             minimum_date = dj_timezone.now() - datetime.timedelta(
                 days=MAX_YEARS_TO_DISPLAY * 365)
             entries = entries.filter(pub_date__gte=minimum_date)
+
+        entries = entries.annotate(
+            previous_id=Window(
+                expression=Lead("id"),
+                order_by='-pub_date',
+            ),
+            next_id=Window(
+                expression=Lag("id"),
+                order_by='-pub_date',
+            ),
+        )
+
+        entries = entries.select_related('blog')
 
         return entries
 
