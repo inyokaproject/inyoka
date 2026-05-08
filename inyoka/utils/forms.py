@@ -415,6 +415,7 @@ class TopicField(forms.CharField):
             slug = urllib.parse.urlparse(value)[2].split('/')[2]
         except IndexError:
             slug = urllib.parse.unquote(value)
+            slug = slug.replace('\x00', '')
 
         from inyoka.forum.models import Topic  # prevent circular import
         try:
