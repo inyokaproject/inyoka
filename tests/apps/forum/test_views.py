@@ -27,7 +27,11 @@ from freezegun import freeze_time
 from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum import constants, views
-from inyoka.forum.constants import get_distro_choices, get_version_choices
+from inyoka.forum.constants import (
+    TOPICS_PER_PAGE,
+    get_distro_choices,
+    get_version_choices,
+)
 from inyoka.forum.models import (
     Attachment,
     Forum,
@@ -2186,3 +2190,239 @@ class TestTopicFeed(TestCase):
   </entry>
 </feed>
 ''')
+
+
+class TestPostlistView(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.other_user = User.objects.register_user('other_user', 'other@example.test', 'other', False)
+        self.admin = User.objects.register_user('admin', 'admin@example.test', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        # Create forum hierarchy
+        self.public_category = Forum.objects.create(name='Public category')
+        self.public_forum = Forum.objects.create(name='Public forum', parent=self.public_category)
+        self.private_category = Forum.objects.create(name='Private category')
+        self.private_forum = Forum.objects.create(name='Private forum', parent=self.private_category)
+
+        # Setup permissions
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+
+        for privilege in ('forum.view_forum',):
+            assign_perm(privilege, registered_group, self.public_category)
+            assign_perm(privilege, registered_group, self.public_forum)
+            assign_perm(privilege, registered_group, self.private_category)
+            assign_perm(privilege, registered_group, self.private_forum)
+
+        # Create topics and posts
+        self.public_topic = Topic.objects.create(
+            title='Public Topic', author=self.user, forum=self.public_forum
+        )
+        self.public_post1 = Post.objects.create(
+            text='Public Post 1', author=self.user, topic=self.public_topic, position=0
+        )
+        self.public_post2 = Post.objects.create(
+            text='Public Post 2', author=self.user, topic=self.public_topic, position=1
+        )
+
+        self.private_topic = Topic.objects.create(
+            title='Private Topic', author=self.user, forum=self.private_forum
+        )
+        self.private_post1 = Post.objects.create(
+            text='Private Post 1', author=self.user, topic=self.private_topic, position=0
+        )
+        self.private_post2 = Post.objects.create(
+            text='Private Post 2', author=self.user, topic=self.private_topic, position=1
+        )
+
+        # Create posts from other user
+        self.other_topic = Topic.objects.create(
+            title='Other Topic', author=self.other_user, forum=self.public_forum
+        )
+        self.other_post = Post.objects.create(
+            text='Other Post', author=self.other_user, topic=self.other_topic, position=0
+        )
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_anonymous_user_denied_access(self):
+        """Test that anonymous users cannot access postlist."""
+        response = self.client.get(href('forum', 'author', self.user.username), follow=True)
+
+        self.assertRedirects(response,
+                             f'http://{settings.BASE_DOMAIN_NAME}/login/?next=%2F%2Fforum.{settings.BASE_DOMAIN_NAME}%2Fauthor%2Fuser%2F')
+
+    def test_postlist_own_posts(self):
+        """Test viewing all posts by logged-in user."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        self.assertContains(response, self.public_post1.get_absolute_url())
+        self.assertContains(response, self.private_post1.get_absolute_url())
+
+    def test_postlist_other_user_posts(self):
+        """Test viewing posts by a specific user."""
+        self.client.force_login(user=self.other_user)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        self.assertContains(response, self.public_post1.get_absolute_url())
+        self.assertContains(response, self.private_post1.get_absolute_url())
+
+    def test_postlist_with_topic_slug(self):
+        """Test viewing posts filtered by topic slug."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(
+            href('forum', 'author', self.user.username, 'topic', self.public_topic.slug)
+        )
+
+        self.assertContains(response, 'in topic')
+        self.assertContains(response, self.public_post1.get_absolute_url())
+        self.assertNotContains(response, self.private_post1.get_absolute_url())
+
+    def test_postlist_with_forum_slug(self):
+        """Test viewing posts filtered by forum slug."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(
+            href('forum', 'author', self.user.username, 'forum', self.public_forum.slug)
+        )
+
+        self.assertContains(response, 'in forum')
+        self.assertContains(response, self.public_post1.get_absolute_url())
+        self.assertNotContains(response, self.private_post1.get_absolute_url())
+
+    def test_postlist_hidden_forum_exclusion(self):
+        """Test that posts in hidden forums are excluded."""
+        hidden_forum = Forum.objects.create(name='Hidden forum')
+        hidden_topic = Topic.objects.create(
+            title='Hidden Topic', author=self.user, forum=hidden_forum
+        )
+        hidden_post = Post.objects.create(
+            text='Hidden Post', author=self.user, topic=hidden_topic, position=0
+        )
+
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        self.assertNotContains(response, hidden_post.get_absolute_url())
+
+    def test_postlist_page_2(self):
+        """Test postlist page 2. Thus, create many posts to force pagination"""
+        topic = Topic.objects.create(title='Many Posts', author=self.user, forum=self.public_forum)
+        for i in range(TOPICS_PER_PAGE + 5):
+            Post.objects.create(
+                text=f'Post {i}', author=self.user, topic=topic, position=i
+            )
+
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username, 2))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['pagination'].page, 2)
+
+    def test_postlist_context_title_own_posts(self):
+        """Test title when viewing own posts."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Posts by', response.context['title'])
+        self.assertIsNone(response.context['forum'])
+        self.assertIsNone(response.context['topic'])
+
+    def test_postlist_context_title_topic_filter(self):
+        """Test title when filtered by topic."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(
+            href('forum', 'author', self.user.username, 'topic', self.public_topic.slug)
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('in topic', response.context['title'])
+        self.assertEqual(response.context['topic'], self.public_topic)
+        self.assertIsNone(response.context['forum'])
+
+    def test_postlist_context_title_forum_filter(self):
+        """Test title when filtered by forum."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(
+            href('forum', 'author', self.user.username, 'forum', self.public_forum.slug)
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('in forum', response.context['title'])
+        self.assertEqual(response.context['forum'], self.public_forum)
+        self.assertIsNone(response.context['topic'])
+
+    def test_postlist_moderator_permissions_non_moderator(self):
+        """Test can_moderate returns False for non-moderators."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        self.assertEqual(response.status_code, 200)
+        can_moderate = response.context['can_moderate']
+        self.assertFalse(can_moderate(self.public_post1.topic))
+
+    def test_postlist_moderator_permissions_admin(self):
+        """Test can_moderate returns True for administrators."""
+        assign_perm('forum.moderate_forum', self.admin, self.public_forum)
+        self.client.force_login(user=self.admin)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        self.assertEqual(response.status_code, 200)
+        can_moderate = response.context['can_moderate']
+        self.assertTrue(can_moderate(self.public_post1.topic))
+
+    def test_postlist_nonexistent_topic_slug(self):
+        """Test postlist with non-existent topic slug."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(
+            href('forum', 'author', self.user.username, 'topic', 'nonexistent-slug')
+        )
+
+        self.assertContains(response, 'No topics were found.')
+
+    def test_postlist_nonexistent_forum_slug(self):
+        """Test postlist with non-existent forum slug."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(
+            href('forum', 'author', self.user.username, 'forum', 'nonexistent-slug')
+        )
+
+        self.assertContains(response, 'No topics were found.')
+
+    def test_postlist_empty_results(self):
+        """Test postlist with user that has no posts."""
+        no_posts_user = User.objects.register_user('noposts', 'noposts@example.test', 'noposts', False)
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', no_posts_user.username))
+
+        self.assertContains(response, 'No topics were found.')
+
+    def test_postlist_case_insensitive_username(self):
+        """Test that username lookup is case-insensitive."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username.upper()))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.public_post1.get_absolute_url())
+
+    def test_postlist_template_used(self):
+        """Test that the correct template is used."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        self.assertTemplateUsed(response, 'forum/postlist.html')
+
+    def test_postlist_ordering_by_date_desc(self):
+        """Test that posts are ordered by pub_date descending."""
+        self.client.force_login(user=self.user)
+        response = self.client.get(href('forum', 'author', self.user.username))
+
+        posts = response.context['posts']
+        self.assertCountEqual(posts, [self.private_post2,
+                                      self.private_post1,
+                                      self.public_post2,
+                                      self.public_post1])
