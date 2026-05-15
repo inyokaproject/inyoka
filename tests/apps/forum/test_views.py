@@ -2807,6 +2807,7 @@ class TestPostlistView(TestCase):
         self.other_user = User.objects.register_user(
             'other_user', 'other@example.test', 'other', False
         )
+
         self.admin = User.objects.register_user(
             'admin', 'admin@example.test', 'admin', False
         )
@@ -2814,54 +2815,50 @@ class TestPostlistView(TestCase):
         self.admin.save()
 
         # Create forum hierarchy
-        self.public_category = Forum.objects.create(name='Public category')
-        self.public_forum = Forum.objects.create(
-            name='Public forum', parent=self.public_category
-        )
-        self.private_category = Forum.objects.create(name='Private category')
-        self.private_forum = Forum.objects.create(
-            name='Private forum', parent=self.private_category
-        )
+        self.category = Forum.objects.create(name='category1')
+        self.forum = Forum.objects.create(name='forum1', parent=self.category)
+        self.category2 = Forum.objects.create(name='category2')
+        self.forum2 = Forum.objects.create(name='forum2', parent=self.category2)
 
         # Setup permissions
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
 
         for privilege in ('forum.view_forum',):
-            assign_perm(privilege, registered_group, self.public_category)
-            assign_perm(privilege, registered_group, self.public_forum)
-            assign_perm(privilege, registered_group, self.private_category)
-            assign_perm(privilege, registered_group, self.private_forum)
+            assign_perm(privilege, registered_group, self.category)
+            assign_perm(privilege, registered_group, self.forum)
+            assign_perm(privilege, registered_group, self.category2)
+            assign_perm(privilege, registered_group, self.forum2)
 
         # Create topics and posts
-        self.public_topic = Topic.objects.create(
-            title='Public Topic', author=self.user, forum=self.public_forum
+        self.topic = Topic.objects.create(
+            title='Topic1', author=self.user, forum=self.forum
         )
-        self.public_post1 = Post.objects.create(
-            text='Public Post 1', author=self.user, topic=self.public_topic, position=0
+        self.topic_post1 = Post.objects.create(
+            text='Topic1 Post 1', author=self.user, topic=self.topic, position=0
         )
-        self.public_post2 = Post.objects.create(
-            text='Public Post 2', author=self.user, topic=self.public_topic, position=1
+        self.topic_post2 = Post.objects.create(
+            text='Topic1 Post 2', author=self.user, topic=self.topic, position=1
         )
 
-        self.private_topic = Topic.objects.create(
-            title='Private Topic', author=self.user, forum=self.private_forum
+        self.topic2 = Topic.objects.create(
+            title='Topic2', author=self.user, forum=self.forum2
         )
-        self.private_post1 = Post.objects.create(
-            text='Private Post 1',
+        self.topic2_post1 = Post.objects.create(
+            text='Topic2 Post 1',
             author=self.user,
-            topic=self.private_topic,
+            topic=self.topic2,
             position=0,
         )
-        self.private_post2 = Post.objects.create(
-            text='Private Post 2',
+        self.topic2_post2 = Post.objects.create(
+            text='Topic2 Post 2',
             author=self.user,
-            topic=self.private_topic,
+            topic=self.topic2,
             position=1,
         )
 
         # Create posts from other user
         self.other_topic = Topic.objects.create(
-            title='Other Topic', author=self.other_user, forum=self.public_forum
+            title='Other Topic', author=self.other_user, forum=self.forum
         )
         self.other_post = Post.objects.create(
             text='Other Post',
@@ -2888,38 +2885,38 @@ class TestPostlistView(TestCase):
         self.client.force_login(user=self.user)
         response = self.client.get(href('forum', 'author', self.user.username))
 
-        self.assertContains(response, self.public_post1.get_absolute_url())
-        self.assertContains(response, self.private_post1.get_absolute_url())
+        self.assertContains(response, self.topic_post1.get_absolute_url())
+        self.assertContains(response, self.topic2_post1.get_absolute_url())
 
     def test_postlist_other_user_posts(self):
         """Test viewing posts by a specific user."""
         self.client.force_login(user=self.other_user)
         response = self.client.get(href('forum', 'author', self.user.username))
 
-        self.assertContains(response, self.public_post1.get_absolute_url())
-        self.assertContains(response, self.private_post1.get_absolute_url())
+        self.assertContains(response, self.topic_post1.get_absolute_url())
+        self.assertContains(response, self.topic2_post1.get_absolute_url())
 
     def test_postlist_with_topic_slug(self):
         """Test viewing posts filtered by topic slug."""
         self.client.force_login(user=self.user)
         response = self.client.get(
-            href('forum', 'author', self.user.username, 'topic', self.public_topic.slug)
+            href('forum', 'author', self.user.username, 'topic', self.topic.slug)
         )
 
         self.assertContains(response, 'in topic')
-        self.assertContains(response, self.public_post1.get_absolute_url())
-        self.assertNotContains(response, self.private_post1.get_absolute_url())
+        self.assertContains(response, self.topic_post1.get_absolute_url())
+        self.assertNotContains(response, self.topic2_post1.get_absolute_url())
 
     def test_postlist_with_forum_slug(self):
         """Test viewing posts filtered by forum slug."""
         self.client.force_login(user=self.user)
         response = self.client.get(
-            href('forum', 'author', self.user.username, 'forum', self.public_forum.slug)
+            href('forum', 'author', self.user.username, 'forum', self.forum.slug)
         )
 
         self.assertContains(response, 'in forum')
-        self.assertContains(response, self.public_post1.get_absolute_url())
-        self.assertNotContains(response, self.private_post1.get_absolute_url())
+        self.assertContains(response, self.topic_post1.get_absolute_url())
+        self.assertNotContains(response, self.topic2_post1.get_absolute_url())
 
     def test_postlist_hidden_forum_exclusion(self):
         """Test that posts in hidden forums are excluded."""
@@ -2939,7 +2936,7 @@ class TestPostlistView(TestCase):
     def test_postlist_page_2(self):
         """Test postlist page 2. Thus, create many posts to force pagination"""
         topic = Topic.objects.create(
-            title='Many Posts', author=self.user, forum=self.public_forum
+            title='Many Posts', author=self.user, forum=self.forum
         )
         for i in range(TOPICS_PER_PAGE + 5):
             Post.objects.create(
@@ -2966,24 +2963,24 @@ class TestPostlistView(TestCase):
         """Test title when filtered by topic."""
         self.client.force_login(user=self.user)
         response = self.client.get(
-            href('forum', 'author', self.user.username, 'topic', self.public_topic.slug)
+            href('forum', 'author', self.user.username, 'topic', self.topic.slug)
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('in topic', response.context['title'])
-        self.assertEqual(response.context['topic'], self.public_topic)
+        self.assertEqual(response.context['topic'], self.topic)
         self.assertIsNone(response.context['forum'])
 
     def test_postlist_context_title_forum_filter(self):
         """Test title when filtered by forum."""
         self.client.force_login(user=self.user)
         response = self.client.get(
-            href('forum', 'author', self.user.username, 'forum', self.public_forum.slug)
+            href('forum', 'author', self.user.username, 'forum', self.forum.slug)
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('in forum', response.context['title'])
-        self.assertEqual(response.context['forum'], self.public_forum)
+        self.assertEqual(response.context['forum'], self.forum)
         self.assertIsNone(response.context['topic'])
 
     def test_postlist_moderator_permissions_non_moderator(self):
@@ -2993,17 +2990,17 @@ class TestPostlistView(TestCase):
 
         self.assertEqual(response.status_code, 200)
         can_moderate = response.context['can_moderate']
-        self.assertFalse(can_moderate(self.public_post1.topic))
+        self.assertFalse(can_moderate(self.topic_post1.topic))
 
     def test_postlist_moderator_permissions_admin(self):
         """Test can_moderate returns True for administrators."""
-        assign_perm('forum.moderate_forum', self.admin, self.public_forum)
+        assign_perm('forum.moderate_forum', self.admin, self.forum)
         self.client.force_login(user=self.admin)
         response = self.client.get(href('forum', 'author', self.user.username))
 
         self.assertEqual(response.status_code, 200)
         can_moderate = response.context['can_moderate']
-        self.assertTrue(can_moderate(self.public_post1.topic))
+        self.assertTrue(can_moderate(self.topic_post1.topic))
 
     def test_postlist_nonexistent_topic_slug(self):
         """Test postlist with non-existent topic slug."""
@@ -3039,7 +3036,7 @@ class TestPostlistView(TestCase):
         response = self.client.get(href('forum', 'author', self.user.username.upper()))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.public_post1.get_absolute_url())
+        self.assertContains(response, self.topic_post1.get_absolute_url())
 
     def test_postlist_template_used(self):
         """Test that the correct template is used."""
@@ -3057,9 +3054,9 @@ class TestPostlistView(TestCase):
         self.assertCountEqual(
             posts,
             [
-                self.private_post2,
-                self.private_post1,
-                self.public_post2,
-                self.public_post1,
+                self.topic2_post2,
+                self.topic2_post1,
+                self.topic_post2,
+                self.topic_post1,
             ],
         )
