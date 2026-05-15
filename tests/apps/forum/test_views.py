@@ -883,10 +883,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         )
 
     def test_newtopic_with_file(self):
-        TEST_ATTACHMENT = 'test_attachment.png'
         self.client.login(username='admin', password='admin')
         # Test file upload
-        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb') as f:
+        with open(path.join(path.dirname(__file__), 'test_attachment.png'), 'rb') as f:
             postdata = {
                 'attachment': f,
                 'filename': 'newpost_file_name.png',
@@ -938,11 +937,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         )
 
     def test_newtopic_with_multiple_files(self):
-        TEST_ATTACHMENT1 = 'test_attachment.png'
-        TEST_ATTACHMENT2 = 'test_attachment2.png'
         self.client.login(username='admin', password='admin')
         # Test file upload #1
-        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb') as f1:
+        with open(path.join(path.dirname(__file__), 'test_attachment.png'), 'rb') as f1:
             postdata = {
                 'attachment': f1,
                 'filename': 'newpost_file_name.png',
@@ -955,7 +952,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         att1 = Attachment.objects.get()
 
         # Test file upload #2
-        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb') as f2:
+        with open(
+            path.join(path.dirname(__file__), 'test_attachment2.png'), 'rb'
+        ) as f2:
             postdata = {
                 'attachment': f2,
                 'filename': 'newpost_second_file.png',
@@ -1401,10 +1400,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             text='first post', author=self.admin, position=0, topic=topic
         )
 
-        TEST_ATTACHMENT = 'test_attachment.png'
         self.client.login(username='admin', password='admin')
         # Test file upload
-        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb') as f:
+        with open(path.join(path.dirname(__file__), 'test_attachment.png'), 'rb') as f:
             postdata = {
                 'attachment': f,
                 'filename': 'newpost_file_name.png',
@@ -1454,11 +1452,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             text='first post', author=self.admin, position=0, topic=topic
         )
 
-        TEST_ATTACHMENT1 = 'test_attachment.png'
-        TEST_ATTACHMENT2 = 'test_attachment2.png'
         self.client.login(username='admin', password='admin')
         # Test file upload #1
-        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb') as f1:
+        with open(path.join(path.dirname(__file__), 'test_attachment.png'), 'rb') as f1:
             postdata = {
                 'attachment': f1,
                 'filename': 'newpost_file_name.png',
@@ -1471,7 +1467,9 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         att1 = Attachment.objects.get()
 
         # Test file upload #2
-        with open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb') as f2:
+        with open(
+            path.join(path.dirname(__file__), 'test_attachment2.png'), 'rb'
+        ) as f2:
             postdata = {
                 'attachment': f2,
                 'filename': 'newpost_second_file.png',
@@ -1666,8 +1664,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         )
 
     def test_edit_post_remove_attachments(self):
-        TEST_ATTACHMENT1 = 'test_attachment.png'
-        TEST_ATTACHMENT2 = 'test_attachment2.png'
+        test_attachment1 = 'test_attachment.png'
+        test_attachment2 = 'test_attachment2.png'
         self.client.login(username='admin', password='admin')
 
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
@@ -1681,19 +1679,19 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         basedir = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00')
         if not path.exists(basedir):
             makedirs(basedir)
-        new_file1 = path.join(basedir, TEST_ATTACHMENT1)
-        shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT1), new_file1)
-        new_file2 = path.join(basedir, TEST_ATTACHMENT2)
-        shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT2), new_file2)
+        new_file1 = path.join(basedir, test_attachment1)
+        shutil.copy(path.join(path.dirname(__file__), test_attachment1), new_file1)
+        new_file2 = path.join(basedir, test_attachment2)
+        shutil.copy(path.join(path.dirname(__file__), test_attachment2), new_file2)
 
         att1 = Attachment.objects.create(
-            name=TEST_ATTACHMENT1,
+            name=test_attachment1,
             file=path.relpath(new_file1, start=settings.MEDIA_ROOT),
             mimetype='image/png',
             post=post,
         )
         att2 = Attachment.objects.create(
-            name=TEST_ATTACHMENT2,
+            name=test_attachment2,
             file=path.relpath(new_file2, start=settings.MEDIA_ROOT),
             mimetype='image/png',
             post=post,
