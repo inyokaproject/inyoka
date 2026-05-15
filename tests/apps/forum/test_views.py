@@ -237,7 +237,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         )
         p2 = Post.objects.create(text='Post 1', author=self.user, topic=t2)
 
-        response = self.client.get(
+        self.client.get(
             '/',
             {
                 '__service__': 'forum.mark_topic_split_point',
@@ -248,7 +248,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         response = self.client.get('/topic/a%3A-topic/split/')
         self.assertEqual(response.status_code, 200)  # was 302 before
 
-        response = self.client.get(
+        self.client.get(
             '/',
             {
                 '__service__': 'forum.mark_topic_split_point',
@@ -2854,17 +2854,6 @@ class TestPostlistView(TestCase):
             author=self.user,
             topic=self.topic2,
             position=1,
-        )
-
-        # Create posts from other user
-        self.other_topic = Topic.objects.create(
-            title='Other Topic', author=self.other_user, forum=self.forum
-        )
-        self.other_post = Post.objects.create(
-            text='Other Post',
-            author=self.other_user,
-            topic=self.other_topic,
-            position=0,
         )
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
