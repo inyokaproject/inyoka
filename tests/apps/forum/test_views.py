@@ -3196,6 +3196,7 @@ class TestSolveTopic(TestCase):
         self.assertFalse(self.topic.solved)
         self.assertTrue(self.topic.hidden)
 
+    @override_settings(LOGIN_URL=f'//{settings.BASE_DOMAIN_NAME}/login/')
     def test_solve_topic__anonymous_user__no_permission(self):
         self.client.logout()
 
