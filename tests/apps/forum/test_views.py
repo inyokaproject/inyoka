@@ -3154,6 +3154,21 @@ class TestLockTopic(TestCase):
         self.topic.refresh_from_db()
         self.assertFalse(self.topic.locked)
 
+    @override_settings(LOGIN_URL=f'//{settings.BASE_DOMAIN_NAME}/login/')
+    def test_lock_topic_anonymous_user(self):
+        """Test that anonymous user is redirected to login."""
+        self.client.logout()
+
+        response = self.client.get(
+            url_for(self.topic, action='lock'),
+            follow=True
+        )
+
+        self.assertRedirects(
+            response,
+            f'//{settings.BASE_DOMAIN_NAME}/login/?next=http%3A//forum.ubuntuusers.local%3A8080/topic/test-topic/lock/'
+        )
+
     def test_lock_topic_with_page_parameter(self):
         """Test locking a topic with a page parameter in the URL."""
         self.client.force_login(user=self.admin)

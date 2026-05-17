@@ -765,10 +765,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     }
 
 
+@login_required
 @confirm_action(message=gettext_lazy('Do you want to (un)lock the topic?'),
                 confirm=gettext_lazy('(Un)lock'),
                 cancel=gettext_lazy('Cancel'))
-@login_required
 def lock_topic(request, topic_slug, locked, page=1):
     """Lock/unlock a topic and redirect to it"""
     topic = get_object_or_404(Topic, slug=topic_slug)
