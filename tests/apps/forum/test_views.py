@@ -3049,3 +3049,170 @@ class TestPostlistView(TestCase):
                 self.topic_post1,
             ],
         )
+
+
+class TestSolveTopic(TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.other_user = User.objects.register_user(
+            'other_user', 'other@example.test', 'other', False
+        )
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.category = Forum.objects.create(name='Category')
+        self.forum = Forum.objects.create(name='Forum', parent=self.category)
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered_group, self.category)
+        assign_perm('forum.view_forum', registered_group, self.forum)
+
+        self.topic = Topic.objects.create(
+            title='Test Topic', author=self.user, forum=self.forum
+        )
+        self.post = Post.objects.create(
+            text='Test Post', author=self.user, topic=self.topic, position=0
+        )
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.force_login(user=self.user)
+
+    def test_solve_topic_by_user_without_permission(self):
+        """Test that a user without permission to view forum is denied access."""
+        # Create a private forum that the user has no access to
+        private_forum = Forum.objects.create(name='Private Forum')
+        private_topic = Topic.objects.create(
+            title='Private Topic', author=self.admin, forum=private_forum
+        )
+
+        response = self.client.get(
+            url_for(private_topic, action='solve'),
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 403)
+        private_topic.refresh_from_db()
+        self.assertFalse(private_topic.solved)
+
+    def test_solve_topic_success(self):
+        self.assertEqual(self.topic.solved, False)
+
+        response = self.client.get(
+            url_for(self.topic, action='solve'),
+            follow=True
+        )
+
+        self.assertContains(response, 'was marked as solved')
+        self.assertRedirects(
+            response,
+            f'{url_for(self.topic)}1/'
+        )
+        self.topic.refresh_from_db()
+        self.assertTrue(self.topic.solved)
+
+    def test_unsolve_topic_success(self):
+        self.topic.solved = True
+        self.topic.save()
+
+        response = self.client.get(
+            url_for(self.topic, action='unsolve'),
+            follow=True
+        )
+
+        self.assertContains(response, 'was marked as unsolved')
+        self.assertRedirects(
+            response,
+            f'{url_for(self.topic)}1/'
+        )
+        self.topic.refresh_from_db()
+        self.assertFalse(self.topic.solved)
+
+    def test_solve_topic_with_page_parameter(self):
+        """
+        Test solving a topic with a page parameter in the URL.
+
+        The redirect URL still includes the page parameter when provided
+        (even if the topic has not so many pages).
+        """
+
+        response = self.client.get(
+            'http://forum.{settings.BASE_DOMAIN_NAME}/topic/test-topic/3/solve/',
+            follow=True
+        )
+
+        self.assertEqual(response.redirect_chain, [(f'{url_for(self.topic)}3/', 302)])
+
+        self.topic.refresh_from_db()
+        self.assertTrue(self.topic.solved)
+
+    def test_locked_topic__permission_denied(self):
+        self.topic.locked = True
+        self.topic.save()
+
+        response = self.client.get(
+            url_for(self.topic, action='solve'),
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_solve_locked_topic_by_admin(self):
+        self.topic.locked = True
+        self.topic.save()
+
+        self.client.force_login(user=self.admin)
+
+        response = self.client.get(
+            url_for(self.topic, action='solve'),
+            follow=True
+        )
+
+        self.assertRedirects(
+            response,
+            f'{url_for(self.topic)}1/'
+        )
+        self.topic.refresh_from_db()
+        self.assertTrue(self.topic.solved)
+
+    def test_solve_topic_hidden_topic(self):
+        self.topic.hidden = True
+        self.topic.save()
+
+        response = self.client.get(
+            url_for(self.topic, action='solve'),
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.topic.refresh_from_db()
+        self.assertFalse(self.topic.solved)
+        self.assertTrue(self.topic.hidden)
+
+    @override_settings(LOGIN_URL=f'//{settings.BASE_DOMAIN_NAME}/login/')
+    def test_solve_topic__anonymous_user__no_permission(self):
+        self.client.logout()
+
+        response = self.client.get(
+            url_for(self.topic, action='solve'),
+            follow=True
+        )
+
+        self.assertRedirects(
+            response,
+            f'//{settings.BASE_DOMAIN_NAME}/login/?next=http%3A//forum.ubuntuusers.local%3A8080/topic/test-topic/solve/'
+        )
+
+    def test_not_existing_topic(self):
+        response = self.client.get(
+            f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/test-not-exisitng-topic/solve/',
+            follow=True
+        )
+        self.assertEqual(response.status_code, 404)
