@@ -3051,6 +3051,132 @@ class TestPostlistView(TestCase):
         )
 
 
+class TestLockTopic(TestCase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.other_user = User.objects.register_user(
+            'other_user', 'other@example.test', 'other', False
+        )
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.category = Forum.objects.create(name='Category')
+        self.forum = Forum.objects.create(name='Forum', parent=self.category)
+
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered_group, self.category)
+        assign_perm('forum.view_forum', registered_group, self.forum)
+
+        self.topic = Topic.objects.create(
+            title='Test Topic', author=self.user, forum=self.forum
+        )
+        self.post = Post.objects.create(
+            text='Test Post', author=self.user, topic=self.topic, position=0
+        )
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.force_login(user=self.user)
+
+    def test_get_returns_form(self):
+        response = self.client.get(
+            f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/test-not-exisitng-topic/lock/',
+            follow=True
+        )
+
+        self.assertContains(response, 'form action="http://forum.ubuntuusers.local:8080/topic/test-not-exisitng-topic/lock/"')
+
+    def test_lock_topic_by_admin(self):
+        """Test that admin can lock a topic."""
+        self.assertEqual(self.topic.locked, False)
+        self.client.force_login(user=self.admin)
+
+        response = self.client.post(
+            url_for(self.topic, action='lock'),
+            {'confirm': 'send'},
+            follow=True
+        )
+
+        self.assertContains(response, 'The topic was locked.')
+        self.assertRedirects(
+            response,
+            f'{url_for(self.topic)}1/'
+        )
+        self.topic.refresh_from_db()
+        self.assertTrue(self.topic.locked)
+
+    def test_unlock_topic_by_admin(self):
+        """Test that admin can unlock a topic."""
+        self.topic.locked = True
+        self.topic.save()
+
+        self.client.force_login(user=self.admin)
+
+        response = self.client.post(
+            url_for(self.topic, action='unlock'),
+            {'confirm': 'send'},
+            follow=True
+        )
+
+        self.assertContains(response, 'The topic was unlocked.')
+        self.assertRedirects(
+            response,
+            f'{url_for(self.topic)}1/'
+        )
+        self.topic.refresh_from_db()
+        self.assertFalse(self.topic.locked)
+
+    def test_POST_lock_topic_without_permission(self):
+        """Test that regular user cannot lock a topic."""
+        response = self.client.post(
+            url_for(self.topic, action='lock'),
+            {'confirm': 'send'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.topic.refresh_from_db()
+        self.assertFalse(self.topic.locked)
+
+    def test_lock_topic_with_page_parameter(self):
+        """Test locking a topic with a page parameter in the URL."""
+        self.client.force_login(user=self.admin)
+
+        response = self.client.post(
+            'http://forum.%s/topic/test-topic/3/lock/' % settings.BASE_DOMAIN_NAME,
+            {'confirm': 'send'},
+            follow=True
+        )
+
+        self.assertEqual(response.redirect_chain, [(f'{url_for(self.topic)}3/', 302)])
+        self.topic.refresh_from_db()
+        self.assertTrue(self.topic.locked)
+
+    def test_unlock_topic_with_page_parameter(self):
+        """Test unlocking a topic with a page parameter in the URL."""
+        self.topic.locked = True
+        self.topic.save()
+
+        self.client.force_login(user=self.admin)
+
+        response = self.client.post(
+            'http://forum.%s/topic/test-topic/2/unlock/' % settings.BASE_DOMAIN_NAME,
+            {'confirm': 'send'},
+            follow=True
+        )
+
+        self.assertEqual(response.redirect_chain, [(f'{url_for(self.topic)}2/', 302)])
+        self.topic.refresh_from_db()
+        self.assertFalse(self.topic.locked)
+
+
 class TestSolveTopic(TestCase):
 
     def setUp(self):
