@@ -793,7 +793,7 @@ def solve_topic(request, topic_slug, solved, page=1):
     topic = get_object_or_404(Topic, slug=topic_slug)
     if not request.user.has_perm('forum.view_forum', topic.forum):
         return abort_access_denied(request)
-    if topic.locked and not request.user.has_perm('forum.moderate_forum', topic.forum):
+    if (topic.locked or topic.hidden) and not request.user.has_perm('forum.moderate_forum', topic.forum):
         return abort_access_denied(request)
 
     topic.solved = solved
