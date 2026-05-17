@@ -3093,6 +3093,15 @@ class TestLockTopic(TestCase):
 
         self.assertContains(response, 'form action="http://forum.ubuntuusers.local:8080/topic/test-not-exisitng-topic/lock/"')
 
+    def test_not_existing_topic(self):
+        response = self.client.post(
+            f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/test-not-exisitng-topic/lock/',
+            data={'confirm': '(Un)lock'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 404)
+
     def test_lock_topic_by_admin(self):
         """Test that admin can lock a topic."""
         self.assertEqual(self.topic.locked, False)
