@@ -3208,3 +3208,10 @@ class TestSolveTopic(TestCase):
             response,
             f'//{settings.BASE_DOMAIN_NAME}/login/?next=http%3A//forum.ubuntuusers.local%3A8080/topic/test-topic/solve/'
         )
+
+    def test_not_existing_topic(self):
+        response = self.client.get(
+            f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/test-not-exisitng-topic/solve/',
+            follow=True
+        )
+        self.assertEqual(response.status_code, 404)
