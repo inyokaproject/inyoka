@@ -3154,6 +3154,23 @@ class TestLockTopic(TestCase):
         self.topic.refresh_from_db()
         self.assertFalse(self.topic.locked)
 
+    def test_GET_lock_topic_without_permission(self):
+        """
+        To keep the implementation simple, a form is shown to all logged-in users.
+        But only those with a permission in the forum, can perform the lock action
+        (see test method for POST)
+        """
+        response = self.client.get(
+            url_for(self.topic, action='lock'),
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response,
+                            f'<form action="http://forum.{settings.BASE_DOMAIN_NAME}/topic/test-topic/lock/" method="post">')
+        self.topic.refresh_from_db()
+        self.assertFalse(self.topic.locked)
+
     @override_settings(LOGIN_URL=f'//{settings.BASE_DOMAIN_NAME}/login/')
     def test_lock_topic_anonymous_user(self):
         """Test that anonymous user is redirected to login."""
