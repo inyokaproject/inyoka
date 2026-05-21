@@ -726,7 +726,7 @@ def do_mv_back(request, name):
             # Rename
             if not _rename(request, page, new_name, new_text=text):
                 messages.error(request,
-                    'Beim Verschieben ist ein Fehler aufgereten.')
+                    'Beim Verschieben ist ein Fehler aufgetreten.')
                 return HttpResponseRedirect(url_for(page))
 
             messages.success(request,

@@ -155,7 +155,7 @@ def ischeckbox_filter(input):
 class LazyJSONEncoder(json.JSONEncoder):
     """
     Encode a given object as JSON string, taking care of lazy objects. Lazy
-    objects, such as ``ugettext_lazy()`` will be forced to unicode.
+    objects, such as ``ugettext_lazy()`` will be forced to Unicode.
     """
     def default(self, obj):
         if isinstance(obj, Promise):
@@ -164,7 +164,7 @@ class LazyJSONEncoder(json.JSONEncoder):
 
 
 def json_filter(value):
-    """"A wrapper function that uses the :class:`LazyJSONEncoder`"""
+    """A wrapper function that uses the :class:`LazyJSONEncoder`"""
     return LazyJSONEncoder().encode(value)
 
 
