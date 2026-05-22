@@ -128,7 +128,7 @@ class TestGetAttachment(TestCase):
     def test_no_target_parameter_raises_http404(self):
         """Test that missing target parameter raises Http404."""
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/')
+        request = factory.get('/wiki/_attachment/')
         request.user = self.user
 
         with self.assertRaises(Http404):
@@ -137,7 +137,7 @@ class TestGetAttachment(TestCase):
     def test_empty_target_parameter_raises_http404(self):
         """Test that empty target parameter raises Http404."""
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=')
+        request = factory.get('/wiki/_attachment/?target=')
         request.user = self.user
 
         with self.assertRaises(Http404):
@@ -158,7 +158,7 @@ class TestGetAttachment(TestCase):
         )
 
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=attachment_page')
+        request = factory.get('/wiki/_attachment/?target=attachment_page')
         request.user = self.user
 
         with self.assertRaises(PermissionDenied):
@@ -174,7 +174,7 @@ class TestGetAttachment(TestCase):
         )
 
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=no_attachment')
+        request = factory.get('/wiki/_attachment/?target=no_attachment')
         request.user = self.admin
 
         with self.assertRaises(Http404):
@@ -183,7 +183,7 @@ class TestGetAttachment(TestCase):
     def test_nonexistent_page_raises_http404(self):
         """Test that Http404 is raised when page does not exist."""
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=nonexistent_page')
+        request = factory.get('/wiki/_attachment/?target=nonexistent_page')
         request.user = self.admin
 
         with self.assertRaises(Http404):
@@ -192,7 +192,7 @@ class TestGetAttachment(TestCase):
     def test_successful_redirect_to_attachment(self):
         """Test successful redirect to attachment media URL."""
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=attachment_page')
+        request = factory.get('/wiki/_attachment/?target=attachment_page')
         request.user = self.admin
 
         response = get_attachment(request)
@@ -203,7 +203,7 @@ class TestGetAttachment(TestCase):
     def test_target_normalized(self):
         """Test that target name is normalized before use."""
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=attachment%20page')
+        request = factory.get('/wiki/_attachment/?target=attachment%20page')
         request.user = self.admin
 
         response = get_attachment(request)
@@ -214,7 +214,7 @@ class TestGetAttachment(TestCase):
     def test_case_insensitive_target(self):
         """Test that target parameter is case-insensitive."""
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=ATTACHMENT_PAGE')
+        request = factory.get('/wiki/_attachment/?target=ATTACHMENT_PAGE')
         request.user = self.admin
 
         response = get_attachment(request)
@@ -233,7 +233,7 @@ class TestGetAttachment(TestCase):
     def test_special_characters_in_target(self):
         """Test handling of special characters in target parameter."""
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=attachment page')
+        request = factory.get('/wiki/_attachment/?target=attachment page')
         request.user = self.admin
 
         response = get_attachment(request)
@@ -255,7 +255,7 @@ class TestGetAttachment(TestCase):
         )
 
         factory = RequestFactory()
-        request = factory.get('/wiki/get_attachment/?target=attachment_page')
+        request = factory.get('/wiki/_attachment/?target=attachment_page')
         request.user = User.objects.get_anonymous_user()
 
         with self.assertRaises(PermissionDenied):
