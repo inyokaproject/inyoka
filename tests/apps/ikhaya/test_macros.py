@@ -12,6 +12,8 @@ import os
 import tempfile
 from unittest.mock import Mock, patch
 
+from django.conf import settings
+
 from inyoka.ikhaya.macros import build_ikhaya_picture_node
 from inyoka.markup import nodes
 from inyoka.portal.models import StaticFile
@@ -168,7 +170,11 @@ class TestBuildIkhayaPictureNode(TestCase):
 
         # Should still return a Link wrapping the Image
         self.assertIsInstance(result, nodes.Link)
-        mock_url_for.assert_called()
+        self.assertIsInstance(result.children[0], nodes.Image)
+        self.assertEqual(
+            result.children[0].href,
+            f'//media.{settings.BASE_DOMAIN_NAME}/portal/files/test.png',
+        )
 
     def test_no_thumbnail_when_file_does_not_exist(self):
         """Test that thumbnail is not generated if file doesn't exist on disk."""
@@ -195,8 +201,9 @@ class TestBuildIkhayaPictureNode(TestCase):
 
                         result = build_ikhaya_picture_node(sender, context, 'html')
 
-        # Should return Image without Link (no dimensions)
-        self.assertIsInstance(result, nodes.Link)  # TODO
+        self.assertIsInstance(result, nodes.Link)
+        self.assertIsInstance(result.children[0], nodes.Image)
+        self.assertEqual(result.children[0].href, '/media/portal/files/test.png')
         mock_thumbnail.assert_not_called()
 
     def test_handles_static_file_does_not_exist_exception(self):
