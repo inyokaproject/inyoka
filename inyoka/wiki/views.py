@@ -94,7 +94,7 @@ def get_attachment(request):
 
 
 def fetch_real_target(target, width=None, height=None, force=False):
-    """Return the uri to a image"""
+    """Return the uri to an image"""
 
     if height or width:
         page_filename = Page.objects.attachment_for_page(target)

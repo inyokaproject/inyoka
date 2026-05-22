@@ -91,7 +91,7 @@ def do_show(request, name, rev=None, allow_redirect=True):
     read privilege.  If a page does not exist yet and no revision was provided
     in the URL it will call `do_missing_page` and return that output.
 
-    Otherwise the page from the database is loaded and displayer.  Because it
+    Otherwise, the page from the database is loaded and displayer.  Because it
     does not catch not found exceptions the `views.show_page` function that
     dispatches the actions automatically renders a missing resource.
 
@@ -149,8 +149,8 @@ def do_show(request, name, rev=None, allow_redirect=True):
 @case_sensitive_redirect
 def do_metaexport(request, name):
     """
-    Export metadata as raw text.  This exists mainly for debugging reasons but
-    it could make sense for external scripts too that want to get a quick list
+    Export metadata as raw text.  This exists mainly for debugging reasons, but
+    it could make sense for external scripts, too which want to get a quick list
     of backlinks etc.  Like the `do_show` action this requires read access to
     the page.
     """
@@ -174,7 +174,7 @@ def do_metaexport(request, name):
 @templated('wiki/missing_page.html', status=404, modifier=context_modifier)
 def do_missing_page(request, name, _page=None):
     """
-    Called if a page does not exist yet but it was requested by show.
+    Called if a page does not exist yet, but it was requested by show.
 
     **Template**
         ``'wiki/missing_page.html'``
@@ -659,7 +659,7 @@ def do_mv_discontinued(request, name):
             except Page.DoesNotExist:
                 if not _rename(request, page, new_name, new_text=text):
                     messages.error(request,
-                        'Beim Verschieben ist ein Fehler aufgereten.')
+                        'Beim Verschieben ist ein Fehler aufgetreten.')
                     return HttpResponseRedirect(url_for(page))
             else:
                 messages.error(request,
@@ -812,8 +812,8 @@ def do_backlinks(request, name):
     """
     Display a list of backlinks.
 
-    Because this is part of the pathbar that is displayed for deleted pages
-    it should not fail for deleted pages!  Additionally it probably makes
+    Because this is part of the path bar that is displayed for deleted pages
+    it should not fail for deleted pages!  Additionally, it probably makes
     sense to track pages that link to a deleted page.
     """
     page = Page.objects.get_by_name(name)
@@ -831,7 +831,7 @@ def do_backlinks(request, name):
 def do_export(request, name, format='raw', rev=None):
     """
     Export the given revision or the most recent one to the specified format
-    (raw or html).
+    (raw or HTML).
 
     =============== ======= ==================================================
     Format          Partial Full    Description

@@ -496,7 +496,7 @@ class PageManager(models.Manager):
     def attachment_for_page(self, page_name: str) -> str | None:
         """
         Get the internal filename of the attachment attached to the page
-        provided.  If the page does not exist or it doesn't have an attachment
+        provided.  If the page does not exist, or it doesn't have an attachment
         defined the return value will be `None`.
         """
         try:
