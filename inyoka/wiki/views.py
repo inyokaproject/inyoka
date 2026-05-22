@@ -58,9 +58,10 @@ def get_attachment(request):
         raise PermissionDenied
 
     target = Page.objects.attachment_for_page(target)
-    target = href('media', target)
     if not target:
         raise Http404()
+
+    target = href('media', target)
     return HttpResponseRedirect(target)
 
 
