@@ -13,7 +13,10 @@ from unittest.mock import patch
 
 import feedparser
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.core.files import File
+from django.http import Http404
+from django.test import RequestFactory
 from django.test.utils import override_settings
 from freezegun import freeze_time
 
@@ -23,6 +26,7 @@ from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
+from inyoka.wiki.views import get_attachment
 
 
 class TestViews(TestCase):
@@ -95,6 +99,167 @@ class TestViews(TestCase):
         url = href('wiki', page_name.upper(), 'a', 'log')
         response = self.client.get(url, follow=True)
         self.assertRedirects(response, '/testPage5/a/log/')
+
+
+class TestGetAttachment(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.admin = User.objects.register_user('admin', 'admin@example.test', 'admin', False)
+
+        self.client.login(username='admin', password='admin')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+        # Create a page with an attachment
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            self.page_with_attachment = Page.objects.create(
+                user=self.user,
+                text='text',
+                remote_addr=None,
+                name='attachment_page',
+                note='attachment note',
+                attachment_filename='test.txt',
+                attachment=File(evil),
+            )
+
+    def test_no_target_parameter_raises_http404(self):
+        """Test that missing target parameter raises Http404."""
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/')
+        request.user = self.user
+
+        with self.assertRaises(Http404):
+            get_attachment(request)
+
+    def test_empty_target_parameter_raises_http404(self):
+        """Test that empty target parameter raises Http404."""
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=')
+        request.user = self.user
+
+        with self.assertRaises(Http404):
+            get_attachment(request)
+
+    def test_permission_denied_without_read_privilege(self):
+        """Test that PermissionDenied is raised when user lacks read privilege."""
+        # Create an ACL that denies read access
+        Page.objects.create(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '}}}',
+            user=self.admin,
+            note='init ACL',
+        )
+
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=attachment_page')
+        request.user = self.user
+
+        with self.assertRaises(PermissionDenied):
+            get_attachment(request)
+
+    def test_no_attachment_raises_http404(self):
+        """Test that Http404 is raised when page has no attachment."""
+        Page.objects.create( # page without attachment
+            user=self.user,
+            name='no_attachment',
+            remote_addr='',
+            text='text'
+        )
+
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=no_attachment')
+        request.user = self.admin
+
+        with self.assertRaises(Http404):
+            get_attachment(request)
+
+    def test_nonexistent_page_raises_http404(self):
+        """Test that Http404 is raised when page does not exist."""
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=nonexistent_page')
+        request.user = self.admin
+
+        with self.assertRaises(Http404):
+            get_attachment(request)
+
+    def test_successful_redirect_to_attachment(self):
+        """Test successful redirect to attachment media URL."""
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=attachment_page')
+        request.user = self.admin
+
+        response = get_attachment(request)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+
+    def test_target_normalized(self):
+        """Test that target name is normalized before use."""
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=attachment%20page')
+        request.user = self.admin
+
+        response = get_attachment(request)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+
+    def test_case_insensitive_target(self):
+        """Test that target parameter is case-insensitive."""
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=ATTACHMENT_PAGE')
+        request.user = self.admin
+
+        response = get_attachment(request)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+
+    def test_attachment_href_integration(self):
+        """Test full integration with client."""
+        url = href('wiki', '_attachment', target='attachment_page')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertStartsWith(response.redirect_chain[0][0], f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+
+    def test_special_characters_in_target(self):
+        """Test handling of special characters in target parameter."""
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=attachment page')
+        request.user = self.admin
+
+        response = get_attachment(request)
+        self.assertEqual(response.status_code, 302)
+        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+
+    def test_anonymous_user_without_privilege(self):
+        """Test that anonymous users are properly denied access."""
+        # Create an ACL that denies anonymous access
+        Page.objects.create(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '}}}',
+            user=self.admin,
+            note='init ACL',
+        )
+
+        factory = RequestFactory()
+        request = factory.get('/wiki/get_attachment/?target=attachment_page')
+        request.user = User.objects.get_anonymous_user()
+
+        with self.assertRaises(PermissionDenied):
+            get_attachment(request)
 
 
 class TestTagRelatedViews(TestCase):
