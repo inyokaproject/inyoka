@@ -35,6 +35,22 @@ class TestViews(TestCase):
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
+    def test_index(self):
+        Page.objects.create(settings.WIKI_MAIN_PAGE, 'rev 0', user=self.admin, note='rev 0')
+
+        response = self.client.get('/', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://wiki.{settings.BASE_DOMAIN_NAME}/Welcome/')
+
+    def test_index__redirect_with_GET(self):
+        Page.objects.create(settings.WIKI_MAIN_PAGE, 'rev 0', user=self.admin, note='rev 0')
+
+        response = self.client.get('/?foo=bar', follow=True)
+
+        self.assertRedirects(response,
+                             f'http://wiki.{settings.BASE_DOMAIN_NAME}/Welcome/?foo=bar')
+
     @override_settings(WIKI_REVISIONS_PER_PAGE=5)
     def test_log(self):
         p50 = Page.objects.create('Testpage50', 'rev 0', user=self.admin, note='rev 0')
