@@ -38,7 +38,7 @@ def build_ikhaya_picture_node(sender, context, format, **kwargs):
             if thumb:
                 source = os.path.join(settings.MEDIA_URL, 'portal/thumbnails', thumb.rsplit('/', 1)[1])
             else:
-                # fallback to the orginal file
+                # fallback to the original file
                 source = os.path.join(settings.MEDIA_URL, file.file.name)
         else:
             source = url_for(file)
