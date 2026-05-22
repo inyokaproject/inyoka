@@ -24,7 +24,6 @@ app_name = "wiki"
 urlpatterns = [
     path('', views.index, name='index'),
     path('_image/', views.get_image_resource, name='image-resource'),
-    path('_newpage/', views.redirect_new_page, name='newpage'),
     path('_attachment/', views.get_attachment, name='attachment'),
 
     path('_feed/<int:count>/', cache_page(60 * 5)(views.WikiAtomFeed()), name="feed"),

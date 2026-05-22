@@ -19,21 +19,19 @@ from hashlib import sha1
 from urllib.parse import urljoin
 
 from django.conf import settings
-from django.contrib import messages
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
-from django.utils.html import escape
 from django.utils.translation import gettext as _
 
 from inyoka.utils.dates import _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.http import templated
 from inyoka.utils.imaging import get_thumbnail
-from inyoka.utils.text import join_pagename, normalize_pagename
-from inyoka.utils.urls import href, is_safe_domain, url_for
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.urls import href, url_for
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.utils import case_sensitive_redirect
@@ -45,33 +43,6 @@ def index(request):
         href('wiki', settings.WIKI_MAIN_PAGE) +
         (request.GET and '?' + request.GET.urlencode() or '')
     )
-
-
-def redirect_new_page(request):
-    """Helper for the `NewPage` macro."""
-    template = request.GET.get('template')
-    base = request.GET.get('base', '')
-    page = request.GET.get('page', '')
-    options = {'action': 'edit'}
-    backref = request.headers.get('referer')
-    if not backref or not is_safe_domain(backref):
-        backref = href('wiki', settings.WIKI_MAIN_PAGE)
-
-    if not page:
-        messages.error(request, _('A site name needs to be entered to create this page.'))
-        return HttpResponseRedirect(backref)
-    if base:
-        page = join_pagename(base, "./" + page)
-    try:
-        page = Page.objects.get(name__iexact=page)
-    except Page.DoesNotExist:
-        if template:
-            options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
-                                                template)
-        return HttpResponseRedirect(href('wiki', page, **options))
-    messages.error(request, _('Another site named “%(title)s” already exists.')
-        % {'title': escape(page.title)})
-    return HttpResponseRedirect(backref)
 
 
 def get_attachment(request):
