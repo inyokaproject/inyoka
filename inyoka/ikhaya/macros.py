@@ -34,8 +34,8 @@ def build_ikhaya_picture_node(sender, context, format, **kwargs):
 
     if (width or height) and os.path.exists(file.file.path):
         tt = target.rsplit('.', 1)
-        dimension = '%sx%s' % (width and int(width) or '', height and int(height) or '')
-        target = '%s%s.%s' % (tt[0], dimension, tt[1])
+        dimension = f"{width and int(width) or ''}x{height and int(height) or ''}"
+        target = f'{tt[0]}{dimension}.{tt[1]}'
 
         destination = os.path.join(settings.MEDIA_ROOT, 'portal/thumbnails', target)
         thumb = get_thumbnail(file.file.path, destination, width, height)
