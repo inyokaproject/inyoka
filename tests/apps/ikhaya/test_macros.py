@@ -335,9 +335,8 @@ class TestBuildIkhayaPictureNode(TestCase):
 
     # Verify get_thumbnail was called with correct destination path
     call_args = mock_thumbnail.call_args
-    self.assertIsNotNone(call_args)
     # The destination should contain the dimension string
-    self.assertIn('150x75', str(call_args))
+    self.assertIn('150x75.jpg', call_args[0][1])
 
   def test_width_only_dimension(self):
     """Test thumbnail generation with only width specified."""
