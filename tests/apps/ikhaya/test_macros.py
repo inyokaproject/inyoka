@@ -1,6 +1,6 @@
 """
-inyoka.ikhaya.test_macros
-~~~~~~~~~~~~~~~~~~~~~~~~~
+tests.apps.ikhaya.test_macros
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Tests for inyoka.ikhaya.macros.
 
