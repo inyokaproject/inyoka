@@ -139,9 +139,9 @@ class TestBuildIkhayaPictureNode(TestCase):
         self.assertIsInstance(result, nodes.Link)
         self.assertEqual(mock_thumbnail.call_count, 1)
 
-        # Verify the call arguments
+        # Verify get_thumbnail was called with correct destination path
         call_args = mock_thumbnail.call_args
-        self.assertIn('100x50', str(call_args))
+        self.assertIn('test100x50.png', call_args[0][1])
 
     def test_fallback_to_original_when_thumbnail_generation_fails(self):
         """Test fallback to original file when thumbnail generation returns None."""
@@ -330,7 +330,6 @@ class TestBuildIkhayaPictureNode(TestCase):
 
         # Verify get_thumbnail was called with correct destination path
         call_args = mock_thumbnail.call_args
-        # The destination should contain the dimension string
         self.assertIn('150x75.jpg', call_args[0][1])
 
     def test_width_only_dimension(self):
@@ -366,6 +365,10 @@ class TestBuildIkhayaPictureNode(TestCase):
         self.assertIsInstance(result, nodes.Link)
         mock_thumbnail.assert_called_once()
 
+        # Verify get_thumbnail was called with correct destination path
+        call_args = mock_thumbnail.call_args
+        self.assertIn('test200x.png', call_args[0][1])
+
     def test_height_only_dimension(self):
         """Test thumbnail generation with only height specified."""
         test_file_path = os.path.join(self.temp_dir, 'test.png')
@@ -400,6 +403,10 @@ class TestBuildIkhayaPictureNode(TestCase):
 
         self.assertIsInstance(result, nodes.Link)
         mock_thumbnail.assert_called_once()
+
+        # Verify get_thumbnail was called with correct destination path
+        call_args = mock_thumbnail.call_args
+        self.assertIn('testx100.png', call_args[0][1])
 
     def test_image_attributes_preserved(self):
         """Test that all image attributes are properly set."""
