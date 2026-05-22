@@ -14,22 +14,17 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import os
-from hashlib import sha1
-from urllib.parse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.utils.decorators import method_decorator
-from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 
 from inyoka.utils.dates import _localtime
 from inyoka.utils.feeds import InyokaAtomFeed
 from inyoka.utils.http import templated
-from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, url_for
 from inyoka.wiki.acl import has_privilege
@@ -63,37 +58,6 @@ def get_attachment(request):
 
     target = href('media', target)
     return HttpResponseRedirect(target)
-
-
-def fetch_real_target(target, width=None, height=None, force=False):
-    """Return the uri to an image"""
-
-    if height or width:
-        page_filename = Page.objects.attachment_for_page(target)
-        if page_filename is None:
-            return
-
-        page_filename = force_str(page_filename).encode('utf-8')
-        partial_hash = sha1(page_filename).hexdigest()
-
-        dimension = '%sx%s%s' % (width or '',
-                                 height or '',
-                                 force and '!' or '')
-        hash = '%s%s%s' % (partial_hash, 'i',
-                           dimension.replace('!', 'f'))
-        base_filename = os.path.join('wiki', 'thumbnails', hash[:1],
-                                     hash[:2], hash)
-        thumbnail = get_thumbnail(page_filename.decode(), base_filename, width, height, force)
-
-        target = urljoin(settings.MEDIA_URL, thumbnail)
-    else:
-        target = Page.objects.attachment_for_page(target)
-        if not target:
-            return None
-        target = href('media', target)
-    if not target:
-        return None
-    return target
 
 
 class WikiAtomFeed(InyokaAtomFeed):
