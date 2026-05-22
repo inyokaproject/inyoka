@@ -41,12 +41,10 @@ class TestBuildIkhayaPictureNode(TestCase):
 
     def test_returns_image_node_without_dimensions(self):
         """Test returns Image node when no width/height specified."""
-        # Create temporary file
         test_file_path = os.path.join(self.temp_dir, 'test.png')
         with open(test_file_path, 'wb') as f:
             f.write(b'fake image data')
 
-        # Create StaticFile
         static_file = StaticFile(identifier='test.png', file=test_file_path)
         static_file.file.name = 'portal/files/test.png'
 
@@ -86,9 +84,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'test.png'
         sender.width = None
         sender.height = None
-        sender.alt = 'Test Alt'
         sender.align = None
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -105,7 +101,6 @@ class TestBuildIkhayaPictureNode(TestCase):
 
     def test_generates_thumbnail_with_width_and_height(self):
         """Test thumbnail generation when both width and height are provided."""
-        # Create temporary file
         test_file_path = os.path.join(self.temp_dir, 'test.png')
         with open(test_file_path, 'wb') as f:
             f.write(b'fake image data')
@@ -118,9 +113,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'test.png'
         sender.width = 100
         sender.height = 50
-        sender.alt = 'Test Alt'
         sender.align = 'center'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -157,9 +150,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'test.png'
         sender.width = 100
         sender.height = 50
-        sender.alt = 'Test Alt'
         sender.align = 'right'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -189,9 +180,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'test.png'
         sender.width = 100
         sender.height = 50
-        sender.alt = 'Test Alt'
         sender.align = 'left'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -213,12 +202,6 @@ class TestBuildIkhayaPictureNode(TestCase):
     def test_handles_static_file_does_not_exist_exception(self):
         """Test that function returns None when StaticFile does not exist."""
         sender = Mock()
-        sender.target = 'nonexistent.png'
-        sender.width = 100
-        sender.height = 50
-        sender.alt = 'Test Alt'
-        sender.align = 'left'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -244,9 +227,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'test.png'
         sender.width = 200
         sender.height = 100
-        sender.alt = 'Test Alt'
         sender.align = 'right'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -279,9 +260,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'test.png'
         sender.width = None
         sender.height = None
-        sender.alt = 'Test Alt'
         sender.align = 'left'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -310,9 +289,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'image.jpg'
         sender.width = 150
         sender.height = 75
-        sender.alt = 'Test Alt'
         sender.align = 'center'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
@@ -383,9 +360,7 @@ class TestBuildIkhayaPictureNode(TestCase):
         sender.target = 'test.png'
         sender.width = None
         sender.height = 100
-        sender.alt = 'Test Alt'
         sender.align = 'right'
-        sender.title = 'Test Title'
 
         context = Mock()
         context.application = 'ikhaya'
