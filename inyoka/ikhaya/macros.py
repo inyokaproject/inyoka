@@ -22,7 +22,7 @@ from inyoka.wiki.signals import build_picture_node
 @receiver(build_picture_node)
 def build_ikhaya_picture_node(sender, context, format, **kwargs):
     if not context.application == 'ikhaya':
-        return
+        return None
 
     target, width, height = (sender.target, sender.width, sender.height)
     try:
@@ -48,4 +48,4 @@ def build_ikhaya_picture_node(sender, context, format, **kwargs):
             return nodes.Link(url_for(file), [img])
         return img
     except StaticFile.DoesNotExist:
-        return
+        return None
