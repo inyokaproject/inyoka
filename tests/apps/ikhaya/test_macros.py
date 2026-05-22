@@ -20,23 +20,19 @@ from inyoka.utils.test import TestCase
 class TestBuildIkhayaPictureNode(TestCase):
 
   def setUp(self):
-    """Set up test fixtures."""
     self.temp_dir = tempfile.mkdtemp()
 
   def tearDown(self):
-    """Clean up test fixtures."""
     import shutil
     if os.path.exists(self.temp_dir):
       shutil.rmtree(self.temp_dir)
 
   def test_returns_none_when_context_application_not_ikhaya(self):
     """Test that function returns None when context.application is not 'ikhaya'."""
-    # Create a mock sender
     sender = Mock()
 
-    # Create a mock context with application != 'ikhaya'
     context = Mock()
-    context.application = 'wiki'
+    context.application = 'wiki' # not 'ikhaya'
 
     result = build_ikhaya_picture_node(sender, context, 'html')
 
