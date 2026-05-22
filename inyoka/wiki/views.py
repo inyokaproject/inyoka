@@ -96,37 +96,6 @@ def fetch_real_target(target, width=None, height=None, force=False):
     return target
 
 
-def get_image_resource(request):
-    """
-    Deliver the attachment  as image.  This is used by the `Picture` macro
-    mainly.  The idea is that we can still check privileges
-    and that the image URL does not change if a new revision is uploaded.
-    """
-    target = request.GET.get('target')
-    if not target:
-        raise Http404()
-
-    target = normalize_pagename(target)
-    if not has_privilege(request.user, target, 'read'):
-        raise PermissionDenied
-
-    try:
-        width = int(request.GET['width'])
-    except (KeyError, ValueError):
-        width = None
-    try:
-        height = int(request.GET['height'])
-    except (KeyError, ValueError):
-        height = None
-
-    force = request.GET.get('force') == 'yes'
-    target = fetch_real_target(target, width=width, height=height, force=force)
-    if target is None:
-        raise Http404()
-
-    return HttpResponseRedirect(target)
-
-
 class WikiAtomFeed(InyokaAtomFeed):
     """
     Atom feed with revisions of the *whole wiki*.
