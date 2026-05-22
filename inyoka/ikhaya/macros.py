@@ -1,12 +1,13 @@
 """
-    inyoka.ikhaya.macros
-    ~~~~~~~~~~~~~~~~~~~~
+inyoka.ikhaya.macros
+~~~~~~~~~~~~~~~~~~~~
 
-    Macros for Ikhaya.
+Macros for Ikhaya.
 
-    :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 import os
 
 from django.conf import settings
@@ -33,22 +34,27 @@ def build_ikhaya_picture_node(sender, context, format, **kwargs):
 
     if (width or height) and os.path.exists(file.file.path):
         tt = target.rsplit('.', 1)
-        dimension = '%sx%s' % (width and int(width) or '',
-                               height and int(height) or '')
+        dimension = '%sx%s' % (width and int(width) or '', height and int(height) or '')
         target = '%s%s.%s' % (tt[0], dimension, tt[1])
 
         destination = os.path.join(settings.MEDIA_ROOT, 'portal/thumbnails', target)
         thumb = get_thumbnail(file.file.path, destination, width, height)
         if thumb:
-            source = os.path.join(settings.MEDIA_URL, 'portal/thumbnails', thumb.rsplit('/', 1)[1])
+            source = os.path.join(
+                settings.MEDIA_URL, 'portal/thumbnails', thumb.rsplit('/', 1)[1]
+            )
         else:
             # fallback to the original file
             source = os.path.join(settings.MEDIA_URL, file.file.name)
     else:
         source = url_for(file)
 
-    img = nodes.Image(source, sender.alt, class_='image-' +
-                      (sender.align or 'default'), title=sender.title)
+    img = nodes.Image(
+        source,
+        sender.alt,
+        class_='image-' + (sender.align or 'default'),
+        title=sender.title,
+    )
 
     if (width or height) and file is not None:
         return nodes.Link(url_for(file), [img])
