@@ -81,6 +81,82 @@ class TestViews(TestCase):
         self.assertRedirects(response, '/testPage5/a/log/')
 
 
+class TestTagRelatedViews(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+        self.p1 = Page.objects.create('testPage1', '\np1 \n # tag: test\n',
+                                      user=self.admin, note='rev 0')
+        self.p2 = Page.objects.create('testPage2', '\np2 \n # tag: another\n',
+                                      user=self.admin, note='rev 0')
+
+        self.p1.edit(user=self.admin,
+                     text='''
+p
+# tag: test
+''',
+                     note="rev 1",
+                     )
+        self.p1.update_meta()
+
+        self.p2.edit(user=self.admin,
+                     text='''
+another
+# tag: another
+''',
+                     note="rev 1",
+                     )
+        self.p2.update_meta()
+
+    def test_recentchanges__not_yet_generated(self):
+        response = self.client.get('/wiki/recentchanges/')
+
+        self.assertContains(response, 'Recent Changes are currently unavailable.')
+
+    def test_missingpages__no_missing(self):
+        response = self.client.get('/wiki/missingpages/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertCountEqual(response.context['missingpages'], [])
+
+    def test_randompages(self):
+        response = self.client.get('/wiki/randompages/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertCountEqual(response.context['randompages'], ['testPage1', 'testPage2', 'Wiki/Index'])
+
+    def test_show_tag_list(self):
+        response = self.client.get('/wiki/tags/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertCountEqual(response.context['tag_list'],
+                              [{'name': 'another', 'count': 1, 'size': 2},
+                               {'name': 'test', 'count': 1, 'size': 2}])
+
+    def test_show_tag_cloud(self):
+        response = self.client.get('/wiki/tagcloud/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertCountEqual(response.context['tag_list'], [{'name': 'another', 'count': 1, 'size': 2}, {'name': 'test', 'count': 1, 'size': 2}])
+
+    def test_show_pages_by_tag__not_existing_tag(self):
+        response = self.client.get('/wiki/tags/foo/')
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_show_pages_by_tag(self):
+        response = self.client.get('/wiki/tags/test/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertCountEqual(response.context['page_list'], ['testPage1'])
+
+
 class TestDoCreate(TestCase):
 
     client_class = InyokaClient
