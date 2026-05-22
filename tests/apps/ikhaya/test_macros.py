@@ -331,7 +331,7 @@ class TestBuildIkhayaPictureNode(TestCase):
           with patch('inyoka.ikhaya.macros.url_for') as mock_url_for:
             mock_url_for.return_value = '/media/portal/files/image.jpg'
 
-            result = build_ikhaya_picture_node(sender, context, 'html')
+            build_ikhaya_picture_node(sender, context, 'html')
 
     # Verify get_thumbnail was called with correct destination path
     call_args = mock_thumbnail.call_args
@@ -353,9 +353,7 @@ class TestBuildIkhayaPictureNode(TestCase):
     sender.target = 'test.png'
     sender.width = 200
     sender.height = None
-    sender.alt = 'Test Alt'
     sender.align = 'left'
-    sender.title = 'Test Title'
 
     context = Mock()
     context.application = 'ikhaya'
