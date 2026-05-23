@@ -352,12 +352,9 @@ def _rename(request, page, new_name, force=False, new_text=None):
 @does_not_exist_is_404
 @case_sensitive_redirect
 @transaction.atomic
-def do_rename(request, name, new_name=None, force=False):
+def do_rename(request, name, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
-
-    if new_name is None:
-        new_name = name
 
     if request.method == 'POST':
         new_name = normalize_pagename(request.POST.get('new_name', ''))
@@ -379,7 +376,7 @@ def do_rename(request, name, new_name=None, force=False):
 
     flash_message(request, 'wiki/action_rename.html', {
         'page': page,
-        'new_name': new_name,
+        'new_name': page.name,
         'force': force
     })
     return HttpResponseRedirect(url_for(page, 'show'))
