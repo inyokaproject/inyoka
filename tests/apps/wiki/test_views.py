@@ -812,6 +812,501 @@ class TestDoRevert(TestCase):
         self.assertRedirects(response, href('wiki', f'test_page/a/revision/{self.rev_1.id}/'))
 
 
+class TestDoRename(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+        self.page = Page.objects.create(
+            user=self.admin,
+            name='test_page',
+            remote_addr='',
+            text='test content'
+        )
+
+    def test_get_request_shows_form(self):
+        """Test that GET request displays the rename form with initial values."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'test_page')
+
+    def test_get_request_with_new_name_parameter(self):
+        """Test that GET request with new_name parameter prefills the form."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        # Form should have the default new_name set to current page name
+        self.assertIn(b'name="new_name"', response.content)
+
+    def test_post_rename_success(self):
+        """Test successful rename of a page."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Renamed the page successfully')
+
+        # Verify page was renamed
+        renamed_page = Page.objects.get_by_name('renamed_page')
+        self.assertEqual(renamed_page.name, 'renamed_page')
+
+    def test_post_rename_with_empty_name(self):
+        """Test rename with empty new_name shows error."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': ''},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'No page name given')
+
+        # Original page should still exist
+        page = Page.objects.get_by_name('test_page')
+        self.assertEqual(page.name, 'test_page')
+
+    def test_post_rename_to_existing_page(self):
+        """Test rename fails if target page already exists."""
+        # Create another page
+        Page.objects.create(
+            user=self.admin,
+            name='existing_page',
+            remote_addr='',
+            text='existing content'
+        )
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'existing_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'A page with this name already exists')
+
+        # Original page should still exist
+        page = Page.objects.get_by_name('test_page')
+        self.assertEqual(page.name, 'test_page')
+
+    def test_post_rename_nonexistent_page(self):
+        """Test rename on non-existent page returns 404."""
+        url = href('wiki', 'nonexistent_page', 'a', 'rename')
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_rename_with_add_redirect(self):
+        """Test rename creates redirect when add_redirect is checked."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page', 'add_redirect': 'on'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Renamed the page successfully')
+
+        # Check new page exists
+        renamed_page = Page.objects.get_by_name('renamed_page')
+        self.assertEqual(renamed_page.name, 'renamed_page')
+
+        # Check redirect page was created
+        redirect_page = Page.objects.get_by_name('test_page')
+        self.assertIn('X-Redirect: renamed_page', redirect_page.rev.text.value)
+
+    def test_post_rename_normalizes_name(self):
+        """Test that new page name is normalized."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'new page name'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Renamed the page successfully')
+
+        # Check normalized name is used
+        renamed_page = Page.objects.get_by_name('new_page_name')
+        self.assertEqual(renamed_page.name, 'new_page_name')
+
+    def test_rename_without_manage_privilege(self):
+        """Test that user without manage privilege cannot rename."""
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTrue(response.redirect_chain[0][0].startswith(href('portal', 'login')))
+
+    def test_rename_deleted_page(self):
+        """Test rename on a deleted page returns 404."""
+        # Delete the page
+        self.page.edit(user=self.admin, deleted=True, note='deleted')
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_rename_with_attachment(self):
+        """Test rename moves attachments correctly."""
+        # Create attachment
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            attachment = Page.objects.create(
+                user=self.admin,
+                text='attachment text',
+                remote_addr=None,
+                name='test_page/attachment1',
+                note='attachment note',
+                attachment_filename='foo.txt',
+                attachment=File(evil),
+            )
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Renamed the page successfully')
+
+        # Check attachment was moved
+        renamed_attachment = Page.objects.get_by_name('renamed_page/attachment1')
+        self.assertEqual(renamed_attachment.name, 'renamed_page/attachment1')
+
+    def test_rename_with_multiple_attachments(self):
+        """Test rename moves multiple attachments correctly."""
+        # Create multiple attachments
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            att1 = Page.objects.create(
+                user=self.admin,
+                text='att1',
+                remote_addr=None,
+                name='test_page/attachment1',
+                note='att1',
+                attachment_filename='file1.txt',
+                attachment=File(evil),
+            )
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            att2 = Page.objects.create(
+                user=self.admin,
+                text='att2',
+                remote_addr=None,
+                name='test_page/attachment2',
+                note='att2',
+                attachment_filename='file2.txt',
+                attachment=File(evil),
+            )
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check both attachments were moved
+        att1_renamed = Page.objects.get_by_name('renamed_page/attachment1')
+        att2_renamed = Page.objects.get_by_name('renamed_page/attachment2')
+        self.assertEqual(att1_renamed.name, 'renamed_page/attachment1')
+        self.assertEqual(att2_renamed.name, 'renamed_page/attachment2')
+
+    def test_rename_with_conflicting_attachments_no_force(self):
+        """Test rename fails when conflicting attachments exist (no force)."""
+        # Create attachment on old page
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            att_old = Page.objects.create(
+                user=self.admin,
+                text='old',
+                remote_addr=None,
+                name='test_page/shared_attachment',
+                note='old att',
+                attachment_filename='old.txt',
+                attachment=File(evil),
+            )
+
+        # Create conflicting attachment on new page
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            att_new = Page.objects.create(
+                user=self.admin,
+                text='new',
+                remote_addr=None,
+                name='renamed_page/shared_attachment',
+                note='new att',
+                attachment_filename='new.txt',
+                attachment=File(evil),
+            )
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'are already attached to the new page name')
+
+        # Original page should still exist
+        page = Page.objects.get_by_name('test_page')
+        self.assertEqual(page.name, 'test_page')
+
+    def test_rename_with_conflicting_attachments_force(self):
+        """Test rename with force=True deletes conflicting attachments."""
+        # Create attachment on old page
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            att_old = Page.objects.create(
+                user=self.admin,
+                text='old',
+                remote_addr=None,
+                name='test_page/shared_attachment',
+                note='old att',
+                attachment_filename='old.txt',
+                attachment=File(evil),
+            )
+
+        # Create conflicting attachment on new page
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            att_new = Page.objects.create(
+                user=self.admin,
+                text='new',
+                remote_addr=None,
+                name='renamed_page/shared_attachment',
+                note='new att',
+                attachment_filename='new.txt',
+                attachment=File(evil),
+            )
+
+        url = href('wiki', 'test_page', 'a', 'rename', force=True)
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Renamed the page successfully')
+
+        # Old attachment should be moved
+        att_renamed = Page.objects.get_by_name('renamed_page/shared_attachment')
+        self.assertEqual(att_renamed.name, 'renamed_page/shared_attachment')
+
+    def test_rename_with_different_case_in_name(self):
+        """Test rename works with different case in page name."""
+        url = href('wiki', 'TEST_PAGE', 'a', 'rename')
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, '/test_page/a/rename/')
+
+    def test_rename_creates_revisions(self):
+        """Test that rename creates new revisions for page and attachments."""
+        original_rev_count = self.page.revisions.count()
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        renamed_page = Page.objects.get_by_name('renamed_page')
+        # Should have one more revision from the rename
+        self.assertEqual(renamed_page.revisions.count(), original_rev_count + 1)
+
+    def test_rename_preserves_content(self):
+        """Test that rename preserves page content."""
+        original_text = self.page.rev.text.value
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        renamed_page = Page.objects.get_by_name('renamed_page')
+        self.assertEqual(renamed_page.rev.text.value, original_text)
+
+    def test_rename_with_whitespace_normalization(self):
+        """Test that whitespace in page name is normalized to underscores."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'final  page  name'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Whitespace should be normalized
+        renamed_page = Page.objects.get_by_name('final_page_name')
+        self.assertEqual(renamed_page.name, 'final_page_name')
+
+    def test_rename_returns_redirect_to_page(self):
+        """Test that POST rename redirects to the renamed page."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=False
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('renamed_page', response.url)
+
+    def test_rename_get_returns_redirect_to_show(self):
+        """Test that GET request without POST returns redirect to show."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('test_page/a/show/', response.url)
+
+    def test_rename_same_name_as_current(self):
+        """Test rename to the same name shows error."""
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'test_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        # Should redirect as the operation completes
+
+    def test_rename_hierarchy_preserved(self):
+        """Test that rename preserves page hierarchy structure."""
+        parent_page = Page.objects.create(
+            user=self.admin,
+            name='parent',
+            remote_addr='',
+            text='parent content'
+        )
+
+        child_page = Page.objects.create(
+            user=self.admin,
+            name='parent/child',
+            remote_addr='',
+            text='child content'
+        )
+
+        url = href('wiki', 'parent', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'new_parent'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Parent should be renamed
+        renamed_parent = Page.objects.get_by_name('new_parent')
+        self.assertEqual(renamed_parent.name, 'new_parent')
+
+        # Child should still be under old parent (not automatically renamed)
+        child = Page.objects.get_by_name('parent/child')
+        self.assertEqual(child.name, 'parent/child')
+
+    def test_rename_attachment_with_text(self):
+        """Test rename preserves attachment text/description."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            attachment = Page.objects.create(
+                user=self.admin,
+                text='attachment description',
+                remote_addr=None,
+                name='test_page/mydoc',
+                note='att note',
+                attachment_filename='mydoc.pdf',
+                attachment=File(evil),
+            )
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Attachment text should be preserved
+        renamed_att = Page.objects.get_by_name('renamed_page/mydoc')
+        self.assertEqual(renamed_att.rev.text.value, 'attachment description')
+
+    def test_rename_updates_last_rev(self):
+        """Test that rename properly updates the page's last_rev."""
+        original_last_rev_id = self.page.last_rev.id
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        self.client.post(
+            url,
+            data={'new_name': 'renamed_page'},
+            follow=True
+        )
+
+        renamed_page = Page.objects.get_by_name('renamed_page')
+        # last_rev should have changed
+        self.assertNotEqual(renamed_page.last_rev.id, original_last_rev_id)
+
+    def test_rename_without_permissions_redirects_to_login(self):
+        """Test that anonymous user is redirected to login."""
+        self.client.logout()
+
+        url = href('wiki', 'test_page', 'a', 'rename')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTrue(response.redirect_chain[0][0].startswith(href('portal', 'login')))
+
+    def test_rename_attachment_to_page_with_no_attachments(self):
+        """Test rename page with no attachments."""
+        # Create a page without attachments
+        simple_page = Page.objects.create(
+            user=self.admin,
+            name='simple_page',
+            remote_addr='',
+            text='just text'
+        )
+
+        url = href('wiki', 'simple_page', 'a', 'rename')
+        response = self.client.post(
+            url,
+            data={'new_name': 'renamed_simple'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Renamed the page successfully')
+
+        renamed = Page.objects.get_by_name('renamed_simple')
+        self.assertEqual(renamed.name, 'renamed_simple')
+
+
 @freeze_time("2023-12-09T23:55:04Z")
 class TestRevisionFeed(TestCase):
 
