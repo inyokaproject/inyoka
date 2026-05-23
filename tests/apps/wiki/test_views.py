@@ -1257,6 +1257,84 @@ class TestDoRename(TestCase):
         self.assertTrue(response.redirect_chain[0][0].startswith(href('portal', 'login')))
 
 
+class TestDoDelete(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user',
+                                               False)
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+        self.page = Page.objects.create(user=self.user, name='delete_test',
+                                        remote_addr='', text='test content')
+        self.url = self.page.get_absolute_url('delete')
+
+    def test_get_shows_delete_form(self):
+        """GET request should display the delete confirmation form."""
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, 'wiki/action_delete.html')
+
+    def test_post_with_cancel(self):
+        """POST request with 'cancel' in POST data should abort deletion."""
+        response = self.client.post(self.url, data={'cancel': 'Cancel'}, follow=True)
+        self.assertContains(response, 'Canceled.')
+
+        # Verify page is not deleted
+        page = Page.objects.get_by_name('delete_test')
+        self.assertFalse(page.rev.deleted)
+
+    def test_post_delete_page(self):
+        """POST request without 'cancel' should delete the page."""
+        response = self.client.post(self.url, data={'note': 'Test deletion'},
+                                    follow=True)
+        self.assertContains(response, 'Page deleted successfully.')
+
+        # Verify page is marked as deleted
+        page = Page.objects.get_by_name('delete_test')
+        self.assertTrue(page.rev.deleted)
+
+    def test_post_delete_page_without_note(self):
+        """POST request without explicit note should use default note."""
+        response = self.client.post(self.url, data={}, follow=True)
+        self.assertContains(response, 'Page deleted successfully.')
+
+        # Verify page is marked as deleted with default note
+        page = Page.objects.get_by_name('delete_test')
+        self.assertTrue(page.rev.deleted)
+        self.assertEqual(page.rev.note, 'Page deleted.')
+
+    def test_delete_nonexistent_page(self):
+        """Trying to delete a non-existent page should return 404."""
+        url = href('wiki', 'nonexistent_page', 'a', 'delete')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_requires_privilege(self):
+        """User without delete privilege should not be able to delete."""
+        unprivileged_user = User.objects.register_user('unprivileged',
+                                                       'unprivileged@example.test',
+                                                       'unprivileged', False)
+        self.client.logout()
+        self.client.login(username='unprivileged', password='unprivileged')
+
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_redirects_to_page(self):
+        """After deletion, should redirect to the page URL."""
+        response = self.client.post(self.url, data={'note': 'Test'})
+        self.assertRedirects(response, self.page.get_absolute_url('show'))
+
+    def test_delete_with_different_case_in_name(self):
+        """Deleting a page with different case in URL should work."""
+        url = href('wiki', 'DELETE_TEST', 'a', 'delete')
+        response = self.client.post(url, data={'note': 'Test deletion'}, follow=True)
+        self.assertContains(response, 'Page deleted successfully.')
+
+
 @freeze_time("2023-12-09T23:55:04Z")
 class TestRevisionFeed(TestCase):
 
