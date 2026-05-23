@@ -519,7 +519,16 @@ class TestDoMetaExport(TestCase):
         user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
         self.page_name = 'test_page'
-        Page.objects.create(user=user, name=self.page_name, remote_addr='', text=self.page_name)
+        page = Page.objects.create(user=user, name=self.page_name, remote_addr='', text=self.page_name)
+        page.edit(user=user,
+                       text='''
+p
+# tag: test, foo
+''',
+                       note="rev 1",
+                       )
+        page.update_meta()
+
         self.url = href('wiki', self.page_name, 'a', 'export', 'meta')
 
         self.client.login(username='user', password='user')
@@ -528,12 +537,13 @@ class TestDoMetaExport(TestCase):
     def test_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        # would need a celery task to run, to contain any content
-        self.assertEqual(b'', response.content)
+        self.assertContains(response, b'tag: foo')
+        self.assertContains(response, b'tag: test')
 
     def test_missing_page(self):
         response = self.client.get(href('wiki', 'not_existing', 'a', 'export', 'meta'))
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(b'', response.content)
 
     def test_name_with_different_case(self):
         url = href('wiki', self.page_name.upper(), 'a', 'export', 'meta')
