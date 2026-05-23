@@ -7,7 +7,7 @@
     :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta, timezone, date
+from datetime import datetime, timedelta, timezone
 from os.path import dirname, join
 from unittest.mock import patch
 
@@ -1346,8 +1346,6 @@ class TestDoDelete(TestCase):
 
 
 class TestDoMvBaustelle(TestCase):
-    """Test do_mv_baustelle action with full line coverage."""
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -1370,43 +1368,42 @@ class TestDoMvBaustelle(TestCase):
             user = self.user
         return Page.objects.create(user=user, name=name, remote_addr='', text=text)
 
-    # ============================================================================
-    # Basic GET Request Tests
-    # ============================================================================
-
     def test_get_request_displays_form(self):
         """Test that GET request displays the form with correct initial values."""
-        page = self._create_page('TestPage', 'Test content')
+        self._create_page('TestPage', 'Test content')
         url = self._get_mv_baustelle_url('TestPage')
 
         response = self.client.get(url)
 
-        self.assertContains(response, 'Baustelle/TestPage')
-        self.assertContains(response, self.admin.username)
+        self.assertContains(response, 'Mark page “TestPage” as “under construction”')
+        self.assertInHTML('<input type="text" name="new_name" value="Baustelle/TestPage" required id="id_new_name">', response.content.decode())
 
     def test_get_request_for_discontinued_page(self):
         """Test GET for pages in Baustelle/Verlassen (discontinued)."""
-        page = self._create_page('Baustelle/Verlassen/TestPage', 'Test content')
+        self._create_page('Baustelle/Verlassen/TestPage', 'Test content')
         url = self._get_mv_baustelle_url('Baustelle/Verlassen/TestPage')
 
         response = self.client.get(url)
 
         # Should show Baustelle/TestPage (without Verlassen)
-        self.assertContains(response, 'Baustelle/TestPage')
+        self.assertInHTML(
+            '<input type="text" name="new_name" value="Baustelle/TestPage" required id="id_new_name">',
+            response.content.decode())
 
     def test_get_request_sets_user_initial(self):
         """Test that current user is set as initial form value."""
-        page = self._create_page('TestPage', 'Test content')
+        self._create_page('TestPage', 'Test content')
         url = self._get_mv_baustelle_url('TestPage')
 
         response = self.client.get(url)
 
         # User should be pre-filled in the form
-        self.assertContains(response, self.admin.username)
+        self.assertInHTML(
+            '<input type="text" name="user" value="admin" required id="id_user">',
+            response.content.decode()
+        )
 
-    # ============================================================================
     # Successful POST Tests (Normal Pages)
-    # ============================================================================
 
     def test_post_successful_move_without_completion_date(self):
         """Test successful move to Baustelle without completion date."""
@@ -1415,30 +1412,29 @@ class TestDoMvBaustelle(TestCase):
 
         response = self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
         # Original page should be moved to Baustelle
-        moved_page = Page.objects.get_by_name('Baustelle/TestPage')
-        self.assertEqual(moved_page.name, 'Baustelle/TestPage')
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'Baustelle/TestPage')
 
         # Copy should exist at original location
         copy_page = Page.objects.get_by_name('TestPage')
-        self.assertIn('Kopie', copy_page.rev.text.value)
+        self.assertIn('[[Vorlage(Kopie', copy_page.rev.text.value)
 
     def test_post_successful_move_with_completion_date(self):
         """Test successful move to Baustelle with completion date."""
-        page = self._create_page('TestPage', 'Original content')
+        self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        completion_date = date(2025, 12, 31)
         response = self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
-            'completion_date': completion_date.strftime('%Y-%m-%d'),
+            'user': self.admin.username,
+            'completion_date': '2025-12-31',
         }, follow=True)
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
@@ -1446,32 +1442,33 @@ class TestDoMvBaustelle(TestCase):
         # Check that date is formatted correctly in template
         moved_page = Page.objects.get_by_name('Baustelle/TestPage')
         self.assertIn('31.12.2025', moved_page.rev.text.value)
+        self.assertIn('Renamed from', moved_page.rev.note)
 
-    def test_move_removes_baustelle_template_from_existing_text(self):
-        """Test removal of existing Baustelle template when moving."""
-        original_text = '[[Vorlage(Baustelle, some info)]]\nOriginal content'
-        page = self._create_page('TestPage', original_text)
+    def test_adds_template_on_move(self):
+        """Test adds template when moving."""
+        original_text = 'Original content'
+        self._create_page('TestPage', original_text)
         url = self._get_mv_baustelle_url('TestPage')
 
         response = self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
+        self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
+
         moved_page = Page.objects.get_by_name('Baustelle/TestPage')
-        # Old Baustelle template should be removed, new Überarbeitung added
-        self.assertNotIn('[[Vorlage(Baustelle', moved_page.rev.text.value)
-        self.assertIn('[[Vorlage(Überarbeitung', moved_page.rev.text.value)
+        self.assertIn('[[Vorlage(Überarbeitung, TestPage, admin)]]', moved_page.rev.text.value)
 
     def test_post_preserves_user_in_template(self):
         """Test that user is preserved in Überarbeitung template."""
-        page = self._create_page('TestPage', 'Original content')
+        self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        response = self.client.post(url, data={
+        self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
@@ -1480,12 +1477,12 @@ class TestDoMvBaustelle(TestCase):
 
     def test_copy_page_includes_original_page_name(self):
         """Test that copy page includes original page name in template."""
-        page = self._create_page('TestPage', 'Original content')
+        self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        response = self.client.post(url, data={
+        self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
@@ -1494,36 +1491,19 @@ class TestDoMvBaustelle(TestCase):
 
     def test_copy_note_indicates_original_in_baustelle(self):
         """Test that copy note indicates original is in Baustelle."""
-        page = self._create_page('TestPage', 'Original content')
+        self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        response = self.client.post(url, data={
+        self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
         copy_page = Page.objects.get_by_name('TestPage')
         self.assertIn('Original in der Baustelle', copy_page.rev.note)
 
-    def test_completion_date_formatting(self):
-        """Test that completion date is formatted as day.month.year."""
-        page = self._create_page('TestPage', 'Original content')
-        url = self._get_mv_baustelle_url('TestPage')
-
-        completion_date = date(2025, 5, 15)
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
-            'completion_date': completion_date.strftime('%Y-%m-%d'),
-        }, follow=True)
-
-        moved_page = Page.objects.get_by_name('Baustelle/TestPage')
-        self.assertIn('15.5.2025', moved_page.rev.text.value)
-
-    # ============================================================================
     # Discontinued Page Tests
-    # ============================================================================
 
     def test_post_move_discontinued_page_no_copy_created(self):
         """Test that no copy is created when moving discontinued pages."""
@@ -1532,28 +1512,28 @@ class TestDoMvBaustelle(TestCase):
 
         response = self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'Baustelle/TestPage')
+
         # No copy should exist at old location for discontinued pages
-        try:
+        with self.assertRaises(Page.DoesNotExist):
             Page.objects.get_by_name('Baustelle/Verlassen/TestPage')
-            # If we get here, check it's marked as deleted or doesn't exist
-        except Page.DoesNotExist:
-            pass
 
     def test_post_removes_verlassen_template(self):
         """Test removal of Verlassen template from discontinued pages."""
         original_text = '[[Vorlage(Verlassen)]]\nOriginal content'
-        page = self._create_page('Baustelle/Verlassen/TestPage', original_text)
+        self._create_page('Baustelle/Verlassen/TestPage', original_text)
         url = self._get_mv_baustelle_url('Baustelle/Verlassen/TestPage')
 
-        response = self.client.post(url, data={
+        self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
@@ -1561,35 +1541,32 @@ class TestDoMvBaustelle(TestCase):
         # Verlassen template should be removed
         self.assertNotIn('[[Vorlage(Verlassen', moved_page.rev.text.value)
 
-    def test_multiple_verlassen_template_lines(self):
-        """Test handling of multiple Verlassen template lines."""
+    def test_verlassen_page__multiple_template_lines(self):
+        """Test handling of multiple template lines."""
         original_text = '[[Vorlage(Verlassen)]]\n[[Vorlage(Something)]]\nOriginal content'
-        page = self._create_page('Baustelle/Verlassen/TestPage', original_text)
+        self._create_page('Baustelle/Verlassen/TestPage', original_text)
         url = self._get_mv_baustelle_url('Baustelle/Verlassen/TestPage')
 
-        response = self.client.post(url, data={
+        self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
         moved_page = Page.objects.get_by_name('Baustelle/TestPage')
         # Only Verlassen template should be removed
         self.assertIn('[[Vorlage(Something)', moved_page.rev.text.value)
-
-    # ============================================================================
-    # Error Handling Tests
-    # ============================================================================
+        self.assertNotIn('[[Vorlage(Verlassen', moved_page.rev.text.value)
 
     def test_post_page_already_exists_error(self):
         """Test error when target page already exists."""
-        page1 = self._create_page('TestPage', 'Original content')
-        page2 = self._create_page('Baustelle/TestPage', 'Already exists')
+        self._create_page('TestPage', 'Original content')
+        self._create_page('Baustelle/TestPage', 'Already exists')
         url = self._get_mv_baustelle_url('TestPage')
 
         response = self.client.post(url, data={
             'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
@@ -1606,8 +1583,11 @@ class TestDoMvBaustelle(TestCase):
             'completion_date': '',
         }, follow=False)
 
-        # Should not have successful redirect
-        self.assertNotEqual(response.status_code, 302)
+        self.assertContains(response, 'Mark page “TestPage” as “under construction”')
+
+        # page should not be renamed
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'TestPage')
 
     def test_page_does_not_exist_404(self):
         """Test 404 for non-existent pages."""
@@ -1627,118 +1607,59 @@ class TestDoMvBaustelle(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
-    def test_permission_denied_without_manage_privilege(self):
-        """Test access control without manage privilege."""
+    def test_anonymous_redirect_to_login(self):
         self.client.logout()
-        page = self._create_page('TestPage', 'Test content')
+        Page.objects.create(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '}}}',
+            user=self.admin,
+            note='init ACL',
+        )
+
+        self._create_page('TestPage', 'Test content')
         url = self._get_mv_baustelle_url('TestPage')
 
         response = self.client.get(url, follow=True)
 
         # Should redirect to login
-        self.assertTrue(response.redirect_chain)
-        self.assertIn('login', response.redirect_chain[0][0])
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTrue(
+            response.redirect_chain[0][0].startswith(href('portal', 'login')))
 
     def test_rename_failure_returns_error_message(self):
         """Test error handling when rename fails."""
-        page = self._create_page('TestPage', 'Original content')
+        self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
         # Mock _rename to return False (failure)
         with patch('inyoka.wiki.actions._rename', return_value=False):
             response = self.client.post(url, data={
                 'new_name': 'Baustelle/TestPage',
-                'user': self.admin.id,
+                'user': self.admin.username,
                 'completion_date': '',
             }, follow=True)
 
-            self.assertContains(response, 'Fehler')
-
-    # ============================================================================
-    # Edge Cases & Advanced Tests
-    # ============================================================================
+        self.assertContains(response, 'Fehler')
 
     def test_hierarchical_page_names(self):
-        """Test with hierarchical page names (category/subcategory)."""
+        """Test with hierarchical page names."""
         page = self._create_page('Category/SubCategory/TestPage', 'Content')
         url = self._get_mv_baustelle_url('Category/SubCategory/TestPage')
 
         response = self.client.post(url, data={
             'new_name': 'Baustelle/Category/SubCategory/TestPage',
-            'user': self.admin.id,
+            'user': self.admin.username,
             'completion_date': '',
         }, follow=True)
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
-        moved_page = Page.objects.get_by_name('Baustelle/Category/SubCategory/TestPage')
-        self.assertEqual(moved_page.name, 'Baustelle/Category/SubCategory/TestPage')
-
-    def test_post_with_empty_completion_date_string(self):
-        """Test POST with empty completion date string."""
-        page = self._create_page('TestPage', 'Original content')
-        url = self._get_mv_baustelle_url('TestPage')
-
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
-            'completion_date': '',
-        }, follow=True)
-
-        self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
-
-        moved_page = Page.objects.get_by_name('Baustelle/TestPage')
-        # Should not contain date when empty
-        self.assertNotIn('.', moved_page.rev.text.value.split('\n')[0])
-
-    def test_case_sensitivity_with_baustelle_prefix_check(self):
-        """Test case sensitivity in Baustelle prefix checking."""
-        page = self._create_page('TestPage', 'Original content')
-        url = self._get_mv_baustelle_url('TestPage')
-
-        response = self.client.get(url)
-
-        # Should initialize with proper case
-        self.assertContains(response, 'Baustelle/TestPage')
-
-    def test_renamed_page_note_indicates_rename_from_original(self):
-        """Test that renamed page note indicates rename from original."""
-        page = self._create_page('TestPage', 'Original content')
-        url = self._get_mv_baustelle_url('TestPage')
-
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
-            'completion_date': '',
-        }, follow=True)
-
-        moved_page = Page.objects.get_by_name('Baustelle/TestPage')
-        # Should have rename note
-        self.assertIn('Renamed from', moved_page.rev.note)
-
-    def test_template_includes_all_metadata(self):
-        """Test that template includes all required metadata."""
-        page = self._create_page('TestPage', 'Original content')
-        url = self._get_mv_baustelle_url('TestPage')
-
-        completion_date = date(2025, 6, 30)
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.id,
-            'completion_date': completion_date.strftime('%Y-%m-%d'),
-        }, follow=True)
-
-        moved_page = Page.objects.get_by_name('Baustelle/TestPage')
-        text = moved_page.rev.text.value
-
-        # Should include Überarbeitung template
-        self.assertIn('[[Vorlage(Überarbeitung', text)
-        # Should include date
-        self.assertIn('30.6.2025', text)
-        # Should include page name
-        self.assertIn('TestPage', text)
-        # Should include user
-        self.assertIn(self.admin.username, text)
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'Baustelle/Category/SubCategory/TestPage')
 
 
 @freeze_time("2023-12-09T23:55:04Z")
