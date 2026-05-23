@@ -1275,7 +1275,7 @@ class TestDoDelete(TestCase):
     def test_get_shows_delete_form(self):
         """GET request should display the delete confirmation form."""
         response = self.client.get(self.url, follow=True)
-        self.assertContains(response, 'wiki/action_delete.html')
+        self.assertContains(response, 'Are you sure you want to delete this page?')
 
     def test_post_with_cancel(self):
         """POST request with 'cancel' in POST data should abort deletion."""
@@ -1290,7 +1290,7 @@ class TestDoDelete(TestCase):
         """POST request without 'cancel' should delete the page."""
         response = self.client.post(self.url, data={'note': 'Test deletion'},
                                     follow=True)
-        self.assertContains(response, 'Page deleted successfully.')
+        self.assertContains(response, 'Page deleted successfully.', status_code=404)
 
         # Verify page is marked as deleted
         page = Page.objects.get_by_name('delete_test')
@@ -1299,7 +1299,7 @@ class TestDoDelete(TestCase):
     def test_post_delete_page_without_note(self):
         """POST request without explicit note should use default note."""
         response = self.client.post(self.url, data={}, follow=True)
-        self.assertContains(response, 'Page deleted successfully.')
+        self.assertContains(response, 'Page deleted successfully.', status_code=404)
 
         # Verify page is marked as deleted with default note
         page = Page.objects.get_by_name('delete_test')
@@ -1314,11 +1314,16 @@ class TestDoDelete(TestCase):
 
     def test_delete_requires_privilege(self):
         """User without delete privilege should not be able to delete."""
-        unprivileged_user = User.objects.register_user('unprivileged',
-                                                       'unprivileged@example.test',
-                                                       'unprivileged', False)
-        self.client.logout()
-        self.client.login(username='unprivileged', password='unprivileged')
+        Page.objects.create(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '}}}',
+            user=self.user,
+            note='init ACL',
+        )
 
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 403)
@@ -1326,13 +1331,18 @@ class TestDoDelete(TestCase):
     def test_delete_redirects_to_page(self):
         """After deletion, should redirect to the page URL."""
         response = self.client.post(self.url, data={'note': 'Test'})
-        self.assertRedirects(response, self.page.get_absolute_url('show'))
+        self.assertRedirects(response, self.page.get_absolute_url('show'), target_status_code=404)
 
     def test_delete_with_different_case_in_name(self):
         """Deleting a page with different case in URL should work."""
         url = href('wiki', 'DELETE_TEST', 'a', 'delete')
         response = self.client.post(url, data={'note': 'Test deletion'}, follow=True)
-        self.assertContains(response, 'Page deleted successfully.')
+
+        self.assertContains(response, 'Are you sure you want to delete this page?')
+        self.assertEqual(response.redirect_chain,
+                         [('/delete_test/a/delete/', 302),
+                          (href('wiki', 'delete_test'), 302)]
+        )
 
 
 @freeze_time("2023-12-09T23:55:04Z")
