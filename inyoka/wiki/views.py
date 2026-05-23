@@ -1,18 +1,18 @@
 """
-    inyoka.wiki.views
-    ~~~~~~~~~~~~~~~~~
+inyoka.wiki.views
+~~~~~~~~~~~~~~~~~
 
-    The views for the wiki.  Unlike the other applications the wiki doesn't
-    really use the views but `actions`.  This is the case because we only
-    have one kind of page which is a wiki page.  Non existing pages render
-    a replacement message to create one, so not much to dispatch.
+The views for the wiki.  Unlike the other applications the wiki doesn't
+really use the views but `actions`.  This is the case because we only
+have one kind of page which is a wiki page.  Non existing pages render
+a replacement message to create one, so not much to dispatch.
 
-    Some internal functions such as the image serving are implemented as
-    views too because they do not necessarily work on page objects.
+Some internal functions such as the image serving are implemented as
+views too because they do not necessarily work on page objects.
 
 
-    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
 
 from django.conf import settings
@@ -35,8 +35,8 @@ from inyoka.wiki.utils import case_sensitive_redirect
 def index(request):
     """Wiki index is a redirect to the `settings.WIKI_MAIN_PAGE`."""
     return HttpResponseRedirect(
-        href('wiki', settings.WIKI_MAIN_PAGE) +
-        (request.GET and '?' + request.GET.urlencode() or '')
+        href('wiki', settings.WIKI_MAIN_PAGE)
+        + (request.GET and '?' + request.GET.urlencode() or '')
     )
 
 
@@ -64,10 +64,13 @@ class WikiAtomFeed(InyokaAtomFeed):
     """
     Atom feed with revisions of the *whole wiki*.
     """
+
     name = 'wiki_feed'
     supports_modes = False
 
-    title = _('%(sitename)s wiki – last changes') % {'sitename': settings.BASE_DOMAIN_NAME}
+    title = _('%(sitename)s wiki – last changes') % {
+        'sitename': settings.BASE_DOMAIN_NAME
+    }
 
     def _subtitle(self, __):
         return _('Feed contains revisions of the whole wiki')
@@ -79,10 +82,7 @@ class WikiAtomFeed(InyokaAtomFeed):
         return Revision.objects.get_latest_revisions(count=self.count)
 
     def item_title(self, rev):
-        return '%s: %s' % (
-            rev.user or settings.ANONYMOUS_USER_NAME,
-            rev.note or _('-')
-        )
+        return '%s: %s' % (rev.user or settings.ANONYMOUS_USER_NAME, rev.note or _('-'))
 
     def item_comments(self, rev):
         return rev.page.get_absolute_url(action='discussion')
@@ -92,11 +92,15 @@ class WikiAtomFeed(InyokaAtomFeed):
 
     def item_description(self, rev):
         if rev.deleted:
-            text = _('%(user)s deleted the article “%(article)s” on '
-                     '%(date)s. Summary: %(summary)s')
+            text = _(
+                '%(user)s deleted the article “%(article)s” on '
+                '%(date)s. Summary: %(summary)s'
+            )
         else:
-            text = _('%(user)s edited the article “%(article)s” on '
-                     '%(date)s. Summary: %(summary)s')
+            text = _(
+                '%(user)s edited the article “%(article)s” on '
+                '%(date)s. Summary: %(summary)s'
+            )
 
         return text % {
             'user': rev.user or _('An anonymous user'),
@@ -127,7 +131,7 @@ class WikiAtomFeed(InyokaAtomFeed):
         return _localtime(rev.change_date)
 
 
-@method_decorator(case_sensitive_redirect, name="__call__")
+@method_decorator(case_sensitive_redirect, name='__call__')
 class WikiPageAtomFeed(WikiAtomFeed):
     """
     Atom feed with revisions of *one wiki page*.
@@ -136,11 +140,13 @@ class WikiPageAtomFeed(WikiAtomFeed):
     def title(self, page):
         return _('%(sitename)s wiki – %(pagename)s') % {
             'sitename': settings.BASE_DOMAIN_NAME,
-            'pagename': page.name
+            'pagename': page.name,
         }
 
     def _subtitle(self, page):
-        return _('Feed contains revisions of the wiki page “%(pagename)s”.') % {'pagename': page.name}
+        return _('Feed contains revisions of the wiki page “%(pagename)s”.') % {
+            'pagename': page.name
+        }
 
     def link(self, page):
         return page.get_absolute_url()
@@ -202,7 +208,4 @@ def show_pages_by_tag(request, tag):
     page_list = Page.objects.find_by_tag(tag)
     if not page_list:
         raise Http404()
-    return {
-        'page_list': page_list,
-        'active_tag': tag
-    }
+    return {'page_list': page_list, 'active_tag': tag}
