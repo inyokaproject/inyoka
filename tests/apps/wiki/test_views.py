@@ -1883,6 +1883,347 @@ class TestDoMvDiscontinued(TestCase):
                          )
 
 
+class TestDoMvBack(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+
+        self.client.login(username='admin', password='admin')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_get_request_shows_form(self):
+        """Test that GET request displays the confirmation form."""
+        page = Page.objects.create(
+            user=self.user, name='Baustelle/test_page', remote_addr='',
+            text='test content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.get(url, follow=True)
+
+        self.assertContains(response, 'wiki/action_mv_back.html')
+
+    def test_post_cancel_aborts_mv_back(self):
+        """Test that POST with cancel parameter aborts the move."""
+        page = Page.objects.create(
+            user=self.user, name='Baustelle/test_page', remote_addr='',
+            text='test content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(
+            url,
+            data={'cancel': 'Cancel'},
+            follow=True
+        )
+
+        self.assertContains(response, 'Wiederherstellen wurde abgebrochen.')
+
+        # Verify page name hasn't changed
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'Baustelle/test_page')
+
+    def test_mv_back_from_baustelle_no_copy(self):
+        """Test moving page back from Baustelle when no copy exists."""
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\ntest content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(
+            url,
+            data={},
+            follow=True
+        )
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+        # Verify page was renamed
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'test_page')
+
+        # Verify box was removed from text
+        self.assertNotIn('[[Vorlage(Baustelle', page.rev.text.value)
+        self.assertEqual(page.rev.text.value, 'test content')
+
+    def test_mv_back_with_ueberarbeitung_box(self):
+        """Test moving page back when it has Überarbeitung box."""
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='[[Vorlage(Überarbeitung, 1.1.2023, admin)]]\ntest content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'test_page')
+        self.assertEqual(page.rev.text.value, 'test content')
+
+    def test_mv_back_with_copy_exists(self):
+        """Test moving page back when a copy exists at destination."""
+        # Create page in Baustelle
+        baustelle_page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\noriginal content'
+        )
+
+        # Create copy at destination
+        copy = Page.objects.create(
+            user=self.user,
+            name='test_page',
+            remote_addr='',
+            text='[[Vorlage(Kopie, Baustelle/test_page)]]\ncopy content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+        # Verify original page was renamed
+        baustelle_page.refresh_from_db()
+        self.assertEqual(baustelle_page.name, 'test_page')
+
+        # Verify copy was moved to Trash
+        copy.refresh_from_db()
+        self.assertEqual(copy.name, 'Trash/test_page-1')
+
+    def test_mv_back_with_copy_multiple_trash_conflicts(self):
+        """Test moving page back when Trash slots are occupied."""
+        # Create page in Baustelle
+        baustelle_page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/article',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\noriginal'
+        )
+
+        # Create copy at destination
+        copy = Page.objects.create(
+            user=self.user,
+            name='article',
+            remote_addr='',
+            text='[[Vorlage(Kopie, Baustelle/article)]]\ncopy'
+        )
+
+        # Create some conflicting Trash entries
+        for i in range(1, 3):
+            Page.objects.create(
+                user=self.user,
+                name=f'Trash/article-{i}',
+                remote_addr='',
+                text='conflict'
+            )
+
+        url = href('wiki', 'Baustelle/article', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+        # Verify copy was moved to first available Trash slot
+        copy.refresh_from_db()
+        self.assertEqual(copy.name, 'Trash/article-3')
+
+    def test_mv_back_with_copy_kopie_prefix_removed(self):
+        """Test that Kopie prefix is stripped from copy before moving to Trash."""
+        baustelle_page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\noriginal'
+        )
+
+        copy = Page.objects.create(
+            user=self.user,
+            name='test_page',
+            remote_addr='',
+            text='[[Vorlage(Kopie, Baustelle/test_page)]]\n[[Vorlage(Kopie, Baustelle/test_page)]]\ncopy content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+        # Verify copy text had Kopie prefix removed
+        copy.refresh_from_db()
+        self.assertEqual(copy.name, 'Trash/test_page-1')
+        self.assertNotIn('[[Vorlage(Kopie', copy.rev.text.value)
+
+    def test_mv_back_non_baustelle_page_no_prefix(self):
+        """Test moving back a page that doesn't start with Baustelle/."""
+        # This edge case: page name doesn't start with Baustelle/
+        page = Page.objects.create(
+            user=self.user,
+            name='test_page',
+            remote_addr='',
+            text='test content'
+        )
+
+        url = href('wiki', 'test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+        # Verify page name remains unchanged (new_name = name in this case)
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'test_page')
+
+    def test_mv_back_non_existent_page_404(self):
+        """Test that moving back a non-existent page returns 404."""
+        url = href('wiki', 'Baustelle/non_existent', 'a', 'mv_back')
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_mv_back_without_permissions_redirects_to_login(self):
+        """Test that user without manage privilege is redirected to login."""
+        self.client.logout()
+
+        # Create ACL restricting access
+        Page.objects.create(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '}}}',
+            user=self.user,
+            note='init ACL',
+        )
+
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='test content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertTrue(
+            response.redirect_chain[0][0].startswith(href('portal', 'login')))
+
+    def test_mv_back_with_different_case_in_name(self):
+        """Test mv_back with different case in page name."""
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/Test_Page',
+            remote_addr='',
+            text='test content'
+        )
+
+        url = href('wiki', 'BAUSTELLE/TEST_PAGE', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+    def test_mv_back_with_hierarchy_in_page_name(self):
+        """Test mv_back with hierarchical page names."""
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/Category/test_page',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\ntest content'
+        )
+
+        url = href('wiki', 'Baustelle/Category/test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'Category/test_page')
+
+    def test_mv_back_success_message_with_acl_link(self):
+        """Test that success message contains link to ACL page."""
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='test content'
+        )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Wiki/ACL/All-in-One')
+
+    def test_mv_back_rename_failure_error_message(self):
+        """Test error message when rename operation fails."""
+        # Create a page that will cause _rename to fail
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='test content'
+        )
+
+        # Create conflicting page at destination
+        conflict = Page.objects.create(
+            user=self.user,
+            name='test_page',
+            remote_addr='',
+            text='[[Vorlage(Kopie, some_other_page)]]\ncopy'
+        )
+
+        # This should fail to move copy (can't find space in Trash)
+        # We need to fill all Trash slots (1-99)
+        for i in range(1, 100):
+            Page.objects.create(
+                user=self.user,
+                name=f'Trash/test_page-{i}',
+                remote_addr='',
+                text='trash'
+            )
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Kopie konnte nicht nach Trash verschoben werden')
+
+        # Verify page was not renamed
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'Baustelle/test_page')
+
+    def test_mv_back_updates_page_last_rev(self):
+        """Test that mv_back properly updates the page's last_rev."""
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\ntest content'
+        )
+        original_rev_count = page.revisions.count()
+
+        url = href('wiki', 'Baustelle/test_page', 'a', 'mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        page.refresh_from_db()
+        # mv_back should create a new revision via _rename
+        self.assertEqual(page.revisions.count(), original_rev_count + 1)
+
+
 @freeze_time("2023-12-09T23:55:04Z")
 class TestRevisionFeed(TestCase):
 
