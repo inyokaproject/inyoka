@@ -2518,6 +2518,283 @@ class TestDoExport(TestCase):
         self.assertIn('äöü'.encode('utf-8'), response.content)
 
 
+class TestDoAttach(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user',
+                                               False)
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+        self.page = Page.objects.create(user=self.user, name='test_page',
+                                        remote_addr='', text='test content')
+        self.url = self.page.get_absolute_url('attach')
+
+    def test_get_shows_form(self):
+        """Test GET request displays the attachment form."""
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Please enter a name for this attachment')
+
+    def test_page_with_attachment_shows_error(self):
+        """Test that accessing attach on an attachment itself returns error."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            attachment = Page.objects.create(
+                user=self.user,
+                text='text',
+                remote_addr=None,
+                name='parent_page/attachment',
+                note='attachment note',
+                attachment_filename='foo.txt',
+                attachment=File(evil),
+            )
+        url = attachment.get_absolute_url('attach')
+        response = self.client.get(url, follow=True)
+        self.assertContains(response, 'Attachments within attachments are not allowed')
+
+    def test_post_without_filename_shows_error(self):
+        """Test POST without filename shows error message."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': '',
+                'override': False,
+                'text': '',
+                'note': ''
+            }, follow=True)
+        self.assertContains(response, 'Please enter a name for this attachment')
+
+    def test_post_with_invalid_form(self):
+        """Test POST with invalid form data."""
+        response = self.client.post(self.url, data={
+            'filename': 'test.txt',
+            # Missing required 'attachment' field
+        }, follow=True)
+        self.assertContains(response, 'This field is required')
+
+    def test_post_attachment_creation_with_filename(self):
+        """Test successful attachment creation with custom filename."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'custom_name.txt',
+                'override': False,
+                'text': 'Attachment description',
+                'note': 'Adding attachment'
+            }, follow=True)
+        self.assertContains(response, 'Attachment saved successfully')
+
+        # Verify attachment was created
+        attachment = Page.objects.get_by_name('test_page/custom_name.txt')
+        self.assertEqual(attachment.rev.text.value, 'Attachment description')
+
+    def test_post_attachment_creation_with_original_filename(self):
+        """Test attachment creation using original file name."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': '',
+                'override': False,
+                'text': 'Test description',
+                'note': 'Note here'
+            }, follow=True)
+        self.assertContains(response, 'Attachment saved successfully')
+
+        # Verify attachment was created with original filename
+        attachment = Page.objects.get_by_name('test_page/evil.png')
+        self.assertIsNotNone(attachment.rev.attachment)
+
+    def test_post_duplicate_attachment_without_override(self):
+        """Test posting duplicate attachment without override flag shows error."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            # Create first attachment
+            Page.objects.create(
+                user=self.user,
+                text='existing',
+                remote_addr=None,
+                name='test_page/existing_file.txt',
+                note='first',
+                attachment_filename='existing_file.txt',
+                attachment=File(evil),
+            )
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'existing_file.txt',
+                'override': False,
+                'text': '',
+                'note': ''
+            }, follow=True)
+        self.assertContains(response,
+                            'Another page or attachment with the same name exists')
+
+    def test_post_duplicate_attachment_with_override(self):
+        """Test posting duplicate attachment with override flag creates new revision."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            # Create first attachment
+            existing = Page.objects.create(
+                user=self.user,
+                text='old content',
+                remote_addr=None,
+                name='test_page/overwrite_me.txt',
+                note='original',
+                attachment_filename='overwrite_me.txt',
+                attachment=File(evil),
+            )
+            original_rev_count = existing.revisions.count()
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'overwrite_me.txt',
+                'override': True,
+                'text': 'updated content',
+                'note': 'updated note'
+            }, follow=True)
+        self.assertContains(response, 'Attachment saved successfully')
+
+        # Verify new revision was created
+        updated = Page.objects.get_by_name('test_page/overwrite_me.txt')
+        self.assertEqual(updated.revisions.count(), original_rev_count + 1)
+        self.assertEqual(updated.rev.text.value, 'updated content')
+
+    def test_post_attachment_with_weiterleitung_metadata(self):
+        """Test attachment redirect based on weiterleitung metadata."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'redirect_test.txt',
+                'override': False,
+                'text': '',
+                'note': ''
+            }, follow=False)
+
+        # Get the created attachment
+        attachment = Page.objects.get_by_name('test_page/redirect_test.txt')
+        # The redirect URL should point to show_no_redirect action
+        self.assertRedirects(response, attachment.get_absolute_url('show'))
+
+    def test_post_attachment_with_text_and_note(self):
+        """Test attachment creation with description text and edit note."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'documented.txt',
+                'override': False,
+                'text': 'This is a detailed description',
+                'note': 'Added important documentation'
+            }, follow=True)
+        self.assertContains(response, 'Attachment saved successfully')
+
+        attachment = Page.objects.get_by_name('test_page/documented.txt')
+        self.assertEqual(attachment.rev.text.value, 'This is a detailed description')
+        self.assertIn('Added important documentation', attachment.rev.note)
+
+    def test_post_attachment_without_text_and_note(self):
+        """Test attachment creation with empty text and note."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'minimal.txt',
+                'override': False,
+                'text': '',
+                'note': ''
+            }, follow=True)
+        self.assertContains(response, 'Attachment saved successfully')
+
+        attachment = Page.objects.get_by_name('test_page/minimal.txt')
+        self.assertEqual(attachment.rev.text.value, '')
+
+    def test_get_lists_existing_attachments(self):
+        """Test GET request lists existing attachments for the page."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            Page.objects.create(
+                user=self.user,
+                text='attachment 1',
+                remote_addr=None,
+                name='test_page/file1.txt',
+                note='first',
+                attachment_filename='file1.txt',
+                attachment=File(evil),
+            )
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            Page.objects.create(
+                user=self.user,
+                text='attachment 2',
+                remote_addr=None,
+                name='test_page/file2.txt',
+                note='second',
+                attachment_filename='file2.txt',
+                attachment=File(evil),
+            )
+
+        response = self.client.get(self.url)
+        self.assertContains(response, 'file1.txt')
+        self.assertContains(response, 'file2.txt')
+
+    def test_attachment_name_normalization(self):
+        """Test that attachment names are normalized (spaces replaced with underscores)."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'file with spaces.txt',
+                'override': False,
+                'text': '',
+                'note': ''
+            }, follow=True)
+        self.assertContains(response, 'Attachment saved successfully')
+
+        # Verify attachment name was normalized
+        attachment = Page.objects.get_by_name('test_page/file_with_spaces.txt')
+        self.assertIsNotNone(attachment)
+
+    def test_post_attachment_non_attachment_page_becomes_attachment(self):
+        """Test posting attachment to existing non-attachment page with override."""
+        # Create a regular page first
+        regular_page = Page.objects.create(
+            user=self.user,
+            text='regular content',
+            remote_addr=None,
+            name='test_page/existing_page.txt',
+            note='regular page'
+        )
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            response = self.client.post(self.url, data={
+                'attachment': evil,
+                'filename': 'existing_page.txt',
+                'override': True,
+                'text': 'now an attachment',
+                'note': 'converted to attachment'
+            }, follow=True)
+        self.assertContains(response, 'Attachment saved successfully')
+
+        updated = Page.objects.get_by_name('test_page/existing_page.txt')
+        self.assertIsNotNone(updated.rev.attachment)
+
+    def test_context_contains_required_keys(self):
+        """Test that response context contains required keys."""
+        response = self.client.get(self.url)
+        self.assertIn('page', response.context)
+        self.assertIn('attachments', response.context)
+        self.assertIn('form', response.context)
+
+    def test_context_deny_robots_is_set(self):
+        """Test that deny_robots is set in context."""
+        response = self.client.get(self.url)
+        self.assertEqual(response.context['deny_robots'], 'noindex')
+
+    def test_attachment_with_different_case_in_name(self):
+        """Test attachment creation on page name with different case."""
+        url = self.page.get_absolute_url('attach').replace('test_page', 'TEST_PAGE')
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, self.url)
+
+
 @freeze_time("2023-12-09T23:55:04Z")
 class TestRevisionFeed(TestCase):
 
