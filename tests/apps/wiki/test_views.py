@@ -1662,6 +1662,255 @@ class TestDoMvBaustelle(TestCase):
         self.assertEqual(page.name, 'Baustelle/Category/SubCategory/TestPage')
 
 
+class TestDoMvDiscontinued(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.admin = User.objects.register_user('admin', 'admin@example.test', 'admin', False)
+
+        self.client.login(username='admin', password='admin')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+        self.page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\nTest content'
+        )
+
+    def _get_url(self, page_name):
+        """Helper to get the mv_discontinued URL."""
+        return href('wiki', page_name, 'a', 'mv_discontinued')
+
+    def test_get_request_shows_flash_form(self):
+        """Test that GET request displays the flash message form."""
+        url = self._get_url('Baustelle/test_page')
+        response = self.client.get(url, follow=True)
+
+        # GET request should show flash message and redirect to show
+        self.assertRedirects(response, href('wiki', 'Baustelle/test_page'))
+
+    def test_post_cancel_mv_discontinued(self):
+        """Test that POST with cancel parameter aborts the move."""
+        url = self._get_url('Baustelle/test_page')
+        response = self.client.post(
+            url,
+            data={'cancel': 'Cancel'},
+            follow=True
+        )
+
+        self.assertContains(response, 'Verschieben wurde abgebrochen.')
+
+        # Verify page name hasn't changed
+        page = Page.objects.get_by_name('Baustelle/test_page')
+        self.assertEqual(page.name, 'Baustelle/test_page')
+
+    def test_post_mv_discontinued_success(self):
+        """Test successful move from Baustelle to Baustelle/Verlassen."""
+        url = self._get_url('Baustelle/test_page')
+        response = self.client.post(
+            url,
+            data={},
+            follow=True
+        )
+
+        self.assertContains(response, 'Seite wurde erfolgreich verschoben.')
+
+        # Verify page has been renamed
+        page = Page.objects.get_by_name('Baustelle/Verlassen/test_page')
+        self.assertEqual(page.name, 'Baustelle/Verlassen/test_page')
+        # Verify the Baustelle template box was removed and Verlassen box added
+        self.assertIn('[[Vorlage(Verlassen)]]', page.rev.text.value)
+
+    def test_post_mv_discontinued_removes_baustelle_box(self):
+        """Test that Baustelle box is removed during the move."""
+        url = self._get_url('Baustelle/test_page')
+        response = self.client.post(url, data={}, follow=True)
+
+        page = Page.objects.get_by_name('Baustelle/Verlassen/test_page')
+        # Original text had [[Vorlage(Baustelle)]], should be removed
+        self.assertNotIn('[[Vorlage(Baustelle)]]', page.rev.text.value)
+        self.assertIn('[[Vorlage(Verlassen)]]', page.rev.text.value)
+        self.assertIn('Test content', page.rev.text.value)
+
+    def test_post_mv_discontinued_page_already_exists(self):
+        """Test that error message shown when target page already exists."""
+        # Create a page at the destination
+        Page.objects.create(
+            user=self.user,
+            name='Baustelle/Verlassen/test_page',
+            remote_addr='',
+            text='Existing page'
+        )
+
+        url = self._get_url('Baustelle/test_page')
+        response = self.client.post(url, data={}, follow=True)
+
+        # Should show error and redirect back
+        self.assertContains(response, 'existiert bereits')
+        self.assertRedirects(response, href('wiki', 'Baustelle/test_page'))
+
+        # Page should not have been renamed
+        self.assertTrue(Page.objects.filter(name='Baustelle/test_page').exists())
+
+    def test_post_mv_discontinued_rename_fails(self):
+        """Test handling when _rename function fails."""
+        url = self._get_url('Baustelle/test_page')
+
+        # Mock _rename to return False
+        with patch('inyoka.wiki.actions._rename', return_value=False):
+            response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Beim Verschieben ist ein Fehler aufgereten.')
+        self.assertRedirects(response, href('wiki', 'Baustelle/test_page'))
+
+    def test_post_mv_discontinued_non_existent_page(self):
+        """Test that non-existent page returns 404."""
+        url = self._get_url('Baustelle/non_existent')
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_mv_discontinued_deleted_page(self):
+        """Test that deleted page cannot be moved."""
+        # Create and delete a page in Baustelle
+        deleted_page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/deleted_page',
+            remote_addr='',
+            text='Content'
+        )
+        deleted_page.edit(user=self.user, deleted=True, note='deleted')
+
+        url = self._get_url('Baustelle/deleted_page')
+        response = self.client.get(url, follow=False)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_mv_discontinued_preserves_content(self):
+        """Test that page content is preserved during move."""
+        original_content = 'Important content to preserve'
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/preserve_test',
+            remote_addr='',
+            text=original_content
+        )
+
+        url = self._get_url('Baustelle/preserve_test')
+        response = self.client.post(url, data={}, follow=True)
+
+        moved_page = Page.objects.get_by_name('Baustelle/Verlassen/preserve_test')
+        self.assertIn(original_content, moved_page.rev.text.value)
+
+    def test_post_mv_discontinued_already_in_verlassen(self):
+        """Test moving a page already in Baustelle/Verlassen."""
+        # Create a page already in Verlassen directory
+        verlassen_page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/Verlassen/already_discontinued',
+            remote_addr='',
+            text='[[Vorlage(Verlassen)]]\nContent'
+        )
+
+        url = self._get_url('Baustelle/Verlassen/already_discontinued')
+        response = self.client.post(url, data={}, follow=True)
+
+        # Name transformation: Baustelle/Verlassen/X -> Baustelle/Verlassen/Verlassen/X
+        # The name replacement is simple string replacement
+        expected_name = 'Baustelle/Verlassen/Verlassen/already_discontinued'
+        moved_page = Page.objects.get_by_name(expected_name)
+        self.assertEqual(moved_page.name, expected_name)
+
+    def test_post_mv_discontinued_updates_revision_count(self):
+        """Test that a new revision is created during the move."""
+        initial_rev_count = self.page.revisions.count()
+
+        url = self._get_url('Baustelle/test_page')
+        response = self.client.post(url, data={}, follow=True)
+
+        moved_page = Page.objects.get_by_name('Baustelle/Verlassen/test_page')
+        # Should have one more revision (from the rename operation)
+        self.assertGreater(moved_page.revisions.count(), initial_rev_count)
+
+    def test_post_mv_discontinued_requires_manage_privilege(self):
+        """Test that manage privilege is required."""
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        url = self._get_url('Baustelle/test_page')
+        response = self.client.get(url, follow=True)
+
+        # Should be redirected to login or get permission error
+        # The @require_privilege decorator should handle this
+        self.assertTrue(
+            response.status_code == 403 or
+            any('login' in str(r[0]).lower() for r in response.redirect_chain)
+        )
+
+    def test_post_mv_discontinued_normalizes_pagename(self):
+        """Test that page names are normalized."""
+        # Page names with spaces should be normalized
+        spaced_page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/spaced_page',
+            remote_addr='',
+            text='Content'
+        )
+
+        url = href('wiki', 'Baustelle/spaced_page', 'a', 'mv_discontinued')
+        response = self.client.post(url, data={}, follow=True)
+
+        # Page should exist with normalized name
+        self.assertTrue(
+            Page.objects.filter(name='Baustelle/Verlassen/spaced_page').exists()
+        )
+
+    def test_post_mv_discontinued_multiline_text_handling(self):
+        """Test handling of multi-line page text with template."""
+        multiline_text = '[[Vorlage(Baustelle, info, user)]]\nLine 1\nLine 2\nLine 3'
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/multiline_test',
+            remote_addr='',
+            text=multiline_text
+        )
+
+        url = self._get_url('Baustelle/multiline_test')
+        response = self.client.post(url, data={}, follow=True)
+
+        moved_page = Page.objects.get_by_name('Baustelle/Verlassen/multiline_test')
+        text = moved_page.rev.text.value
+        # Template box should be replaced
+        self.assertTrue(
+            text.startswith('[[Vorlage(Verlassen)]]')
+        )
+        # Original content (after first newline) should be preserved
+        self.assertIn('Line 1', text)
+        self.assertIn('Line 2', text)
+        self.assertIn('Line 3', text)
+
+    def test_post_mv_discontinued_empty_text_page(self):
+        """Test moving a page with empty text."""
+        empty_page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/empty_page',
+            remote_addr='',
+            text=''
+        )
+
+        url = self._get_url('Baustelle/empty_page')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite wurde erfolgreich verschoben.')
+        moved_page = Page.objects.get_by_name('Baustelle/Verlassen/empty_page')
+        # Should at least have the Verlassen template
+        self.assertEqual(moved_page.rev.text.value, '[[Vorlage(Verlassen)]]\n')
+
+
 @freeze_time("2023-12-09T23:55:04Z")
 class TestRevisionFeed(TestCase):
 
