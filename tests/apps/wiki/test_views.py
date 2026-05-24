@@ -2259,7 +2259,6 @@ class TestDoBacklinks(TestCase):
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
 
-        # Create a target page
         self.target_page_name = 'target_page'
         self.target_page = Page.objects.create(
             user=self.user,
@@ -2270,12 +2269,6 @@ class TestDoBacklinks(TestCase):
 
     def test_backlinks_basic_get(self):
         """Test basic GET request to backlinks page."""
-        url = href('wiki', self.target_page_name, 'a', 'backlinks')
-        response = self.client.get(url)
-        self.assertContains(response, self.target_page_name)
-
-    def test_backlinks_page_in_context(self):
-        """Test that the page object is present in the response context."""
         url = self.target_page.get_absolute_url('backlinks')
         response = self.client.get(url)
         self.assertContains(response, self.target_page_name)
@@ -2284,53 +2277,45 @@ class TestDoBacklinks(TestCase):
         """Test that the deny_robots flag is set in the response."""
         url = self.target_page.get_absolute_url('backlinks')
         response = self.client.get(url)
-        # The deny_robots flag should be set, which typically adds a meta tag
-        # This is ensured by the template, so we just verify the page loads
-        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, '<meta name="robots" content="noindex, nofollow">')
 
     def test_backlinks_with_case_insensitive_page_name(self):
-        """Test backlinks with different case in page name."""
         url = href('wiki', self.target_page_name.upper(), 'a', 'backlinks')
         response = self.client.get(url, follow=True)
-        # Should redirect to the lowercase version due to case_sensitive_redirect
+
         self.assertRedirects(response, f'/{self.target_page_name}/a/backlinks/')
 
     def test_backlinks_with_page_having_links_to_it(self):
         """Test backlinks when other pages link to this page."""
-        # Create a page that links to the target page
         linking_page_name = 'linking_page'
-        linking_text = f'This page links to [[{self.target_page_name}]]'
         linking_page = Page.objects.create(
             user=self.user,
             name=linking_page_name,
             remote_addr='',
-            text=linking_text
+            text=f'This page links to [:{self.target_page_name}:]',
         )
-        # Update metadata to register the link
         linking_page.update_meta()
 
         url = self.target_page.get_absolute_url('backlinks')
         response = self.client.get(url)
         self.assertContains(response, self.target_page_name)
+        self.assertContains(response, linking_page_name)
 
     def test_backlinks_with_deleted_page(self):
         """Test that backlinks works for deleted pages (should not fail)."""
-        # Delete the target page
         self.target_page.edit(user=self.user, deleted=True, note='deleted')
 
-        # The backlinks action should still work and not fail
-        url = href('wiki', self.target_page_name, 'a', 'backlinks')
+        url = self.target_page.get_absolute_url('backlinks')
         response = self.client.get(url)
-        # Should return 200 because the action retrieves the page by name
-        # regardless of deletion status (as per docstring)
-        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, 'This article is an orphan and not referenced by any site.')
 
     def test_backlinks_with_multiple_links(self):
         """Test backlinks when multiple pages link to the target."""
-        # Create multiple pages that link to the target
         for i in range(3):
             linking_page_name = f'linking_page_{i}'
-            linking_text = f'Page {i} links to [[{self.target_page_name}]]'
+            linking_text = f'Page {i} links to [:{self.target_page_name}:]'
             linking_page = Page.objects.create(
                 user=self.user,
                 name=linking_page_name,
@@ -2341,27 +2326,14 @@ class TestDoBacklinks(TestCase):
 
         url = self.target_page.get_absolute_url('backlinks')
         response = self.client.get(url)
+
         self.assertContains(response, self.target_page_name)
-
-    def test_backlinks_with_hierarchical_page_name(self):
-        """Test backlinks with pages that have hierarchical names."""
-        # Create a hierarchical page
-        hierarchical_page_name = 'category/target_subpage'
-        hierarchical_page = Page.objects.create(
-            user=self.user,
-            name=hierarchical_page_name,
-            remote_addr='',
-            text='Hierarchical page'
-        )
-
-        url = href('wiki', hierarchical_page_name, 'a', 'backlinks')
-        response = self.client.get(url)
-        self.assertContains(response, 'target_subpage')
+        for i in range(3):
+            self.assertContains(response, f'linking_page_{i}')
 
     def test_backlinks_with_space_in_page_name(self):
         """Test backlinks with spaces converted to underscores in page name."""
-        # Create a page with underscores (spaces are normalized to underscores)
-        page_with_space = Page.objects.create(
+        Page.objects.create(
             user=self.user,
             name='test_page_with_spaces',
             remote_addr='',
@@ -2372,18 +2344,11 @@ class TestDoBacklinks(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
 
-    def test_backlinks_no_backlinks_exist(self):
-        """Test backlinks when no pages link to the target page."""
-        url = self.target_page.get_absolute_url('backlinks')
-        response = self.client.get(url)
-        # Should still render successfully with an empty backlinks list
-        self.assertContains(response, self.target_page_name)
-
     def test_backlinks_with_different_case_redirects(self):
         """Test that case-sensitive redirect works correctly."""
         url = href('wiki', 'TARGET_PAGE', 'a', 'backlinks')
         response = self.client.get(url, follow=True)
-        # Should redirect to lowercase version
+
         self.assertRedirects(response, f'/{self.target_page_name}/a/backlinks/')
 
 
