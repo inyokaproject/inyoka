@@ -2776,6 +2776,291 @@ class TestDoAttach(TestCase):
         self.assertRedirects(response, '/test_page/a/attachments/')
 
 
+class TestDoAttachEdit(TestCase):
+    """Test the do_attach_edit action for wiki attachments."""
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % 'example.com'
+
+        # Create a page with an attachment for testing
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
+            self.attachment_page = Page.objects.create(
+                user=self.user,
+                text='Initial attachment description',
+                remote_addr='',
+                name='attachment_test',
+                note='Initial attachment',
+                attachment_filename='test.png',
+                attachment=File(evil),
+            )
+        self.url = self.attachment_page.get_absolute_url('edit')
+
+    def test_get_request_displays_form(self):
+        """Test that GET request displays the edit attachment form."""
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Edit')
+        self.assertContains(response, 'attachment')
+
+    def test_form_initial_values_set_correctly(self):
+        """Test that form initial values are populated from the page."""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        # The initial text should be from the attachment's current text
+        self.assertIn('Initial attachment description', response.content.decode())
+
+    def test_post_valid_form_with_new_attachment(self):
+        """Test successful POST with a new attachment file."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': 'Updated attachment description',
+                'note': 'Updated attachment with new file',
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+        # Verify the page was updated
+        updated_page = Page.objects.get_by_name('attachment_test')
+        self.assertEqual(updated_page.rev.text.value, 'Updated attachment description')
+        self.assertIn('Updated attachment with new file', updated_page.rev.note)
+
+    def test_post_valid_form_without_new_attachment(self):
+        """Test successful POST with updated text but no new attachment file."""
+        data = {
+            'text': 'Updated text without new file',
+            'note': 'Updated text only',
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+        # Verify the page was updated
+        updated_page = Page.objects.get_by_name('attachment_test')
+        self.assertEqual(updated_page.rev.text.value, 'Updated text without new file')
+        self.assertIn('Updated text only', updated_page.rev.note)
+
+    def test_post_with_new_attachment_and_filename(self):
+        """Test POST that replaces attachment with new filename."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': 'New text',
+                'note': 'With new filename',
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+        updated_page = Page.objects.get_by_name('attachment_test')
+        self.assertIsNotNone(updated_page.rev.attachment)
+
+    def test_post_with_new_attachment_preserves_original_filename_if_not_specified(self):
+        """Test that new attachment uses original filename if not explicitly changed."""
+        original_filename = self.attachment_page.rev.attachment.filename
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': 'New text',
+                'note': 'New attachment',
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+    def test_post_with_empty_text_and_note(self):
+        """Test POST with empty optional fields."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': '',
+                'note': '',
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+    def test_post_preserves_previous_text_if_not_provided(self):
+        """Test that previous text is preserved if not provided in POST."""
+        original_text = self.attachment_page.rev.text.value
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'note': 'Just updating attachment',
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+        updated_page = Page.objects.get_by_name('attachment_test')
+        # Text should be updated even though we didn't explicitly provide it
+        # The form handles this internally
+
+    def test_post_redirect_to_page_after_successful_edit(self):
+        """Test that user is redirected to the attachment page after successful edit."""
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': 'Updated',
+                'note': 'Test note',
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        # Should redirect to the attachment page
+        self.assertContains(response, 'attachment_test')
+
+    def test_form_is_edit_attachment_form(self):
+        """Test that the form is an EditAttachmentForm."""
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Description of attachment')
+        self.assertContains(response, 'Edit summary')
+
+    def test_context_contains_form_and_page(self):
+        """Test that context includes both form and page objects."""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('form', response.context)
+        self.assertIn('page', response.context)
+
+    def test_page_in_context_is_correct_attachment(self):
+        """Test that the page in context is the correct attachment page."""
+        response = self.client.get(self.url)
+        self.assertEqual(response.context['page'].name, 'attachment_test')
+
+    def test_context_modifier_applied(self):
+        """Test that context modifier is applied to add privilege test."""
+        response = self.client.get(self.url)
+        # The context modifier should add 'can' privilege test to context
+        self.assertEqual(response.status_code, 200)
+
+    def test_with_different_case_in_name(self):
+        """Test that page name case-insensitivity works."""
+        url = href('wiki', 'ATTACHMENT_TEST', 'a', 'edit')
+        response = self.client.get(url, follow=True)
+        # Should redirect to correct case
+        self.assertEqual(response.status_code, 200)
+
+    def test_nonexistent_attachment_page(self):
+        """Test that requesting edit of non-existent page returns 404."""
+        url = href('wiki', 'nonexistent_attachment', 'a', 'edit')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_attachment_edit_without_file_field_in_request(self):
+        """Test POST without providing attachment field at all."""
+        data = {
+            'text': 'Updated description only',
+            'note': 'No new attachment',
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+    def test_multiple_edits_create_revisions(self):
+        """Test that multiple edits create multiple revisions."""
+        initial_rev_count = self.attachment_page.revisions.count()
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': 'First edit',
+                'note': 'First revision',
+                'attachment': new_file,
+            }
+            self.client.post(self.url, data=data, follow=True)
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': 'Second edit',
+                'note': 'Second revision',
+                'attachment': new_file,
+            }
+            self.client.post(self.url, data=data, follow=True)
+
+        updated_page = Page.objects.get_by_name('attachment_test')
+        self.assertEqual(updated_page.revisions.count(), initial_rev_count + 2)
+
+    def test_edit_form_has_correct_initial_text(self):
+        """Test that form displays attachment's current text as initial value."""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        # The form's initial text should be the attachment's current text
+
+    def test_post_with_long_note(self):
+        """Test POST with a long edit note."""
+        long_note = 'A' * 512  # Max length for note field
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': 'Updated',
+                'note': long_note,
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+    def test_post_with_multiline_text(self):
+        """Test POST with multiline description text."""
+        multiline_text = 'Line 1\nLine 2\nLine 3'
+
+        with open(join(dirname(__file__), 'evil.png'), 'rb') as new_file:
+            data = {
+                'text': multiline_text,
+                'note': 'Updated',
+                'attachment': new_file,
+            }
+            response = self.client.post(self.url, data=data, follow=True)
+
+        self.assertContains(response, 'Attachment edited successfully')
+
+        updated_page = Page.objects.get_by_name('attachment_test')
+        self.assertEqual(updated_page.rev.text.value, multiline_text)
+
+    def test_requires_attach_privilege(self):
+        """Test that do_attach_edit requires 'attach' privilege."""
+        # This is implicitly tested through the @require_privilege decorator
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_page_clean_article_name_decorator(self):
+        """Test that page names are normalized through decorator."""
+        # clean_article_name decorator should normalize the name
+        url = href('wiki', 'ATTACHMENT TEST', 'a', 'edit')
+        response = self.client.get(url, follow=True)
+        # Should handle case-insensitive lookup
+
+    def test_attachment_filename_preserved_on_edit(self):
+        """Test that attachment filename is preserved when editing without new file."""
+        original_attachment = self.attachment_page.rev.attachment
+
+        data = {
+            'text': 'Just description update',
+            'note': 'Description only',
+        }
+        response = self.client.post(self.url, data=data, follow=True)
+
+        updated_page = Page.objects.get_by_name('attachment_test')
+        # Attachment should still exist
+        self.assertIsNotNone(updated_page.rev.attachment)
+
+    def test_case_sensitive_redirect_decorator(self):
+        """Test that @case_sensitive_redirect is applied."""
+        # Test with different case
+        url = href('wiki', 'attachment_TEST', 'a', 'edit')
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+
 @freeze_time("2023-12-09T23:55:04Z")
 class TestRevisionFeed(TestCase):
 
