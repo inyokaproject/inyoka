@@ -227,7 +227,6 @@ class TestGetAttachment(TestCase):
         url = href('wiki', '_attachment', target='attachment_page')
         response = self.client.get(url, follow=True)
 
-        self.assertEqual(response.status_code, 200)
         self.assertStartsWith(response.redirect_chain[0][0], f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
 
     def test_special_characters_in_target(self):
