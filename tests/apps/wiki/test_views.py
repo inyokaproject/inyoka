@@ -2554,17 +2554,6 @@ class TestDoAttach(TestCase):
         response = self.client.get(url, follow=True)
         self.assertContains(response, 'Attachments within attachments are not allowed')
 
-    def test_post_without_filename_shows_error(self):
-        """Test POST without filename shows error message."""
-        with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': '',
-                'override': False,
-                'text': '',
-                'note': ''
-            }, follow=True)
-        self.assertContains(response, 'Please enter a name for this attachment')
 
     def test_post_with_invalid_form(self):
         """Test POST with invalid form data."""

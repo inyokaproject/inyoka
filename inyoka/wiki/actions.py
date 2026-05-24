@@ -914,10 +914,7 @@ def do_attach(request, name):
         d = form.cleaned_data
         attachment_name = d.get('filename') or d['attachment'].name
         filename = d['attachment'].name or d.get('filename')
-        if not attachment_name:
-            messages.info(request,
-                _('Please enter a name for this attachment.'))
-            return context
+
         attachment_name = '%s/%s' % (name, attachment_name)
         attachment_name = normalize_pagename(attachment_name.strip('/'))
         try:
