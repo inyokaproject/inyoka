@@ -2212,6 +2212,40 @@ class TestDoMvBack(TestCase):
         self.assertContains(response, 'Beim Verschieben ist ein Fehler aufgetreten.')
         self.assertRedirects(response, href('wiki', 'Baustelle/test_page'))
 
+    def test_mv_back__different_case_in_trash(self):
+        page = Page.objects.create(
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='[[Vorlage(Baustelle)]]\ntest content'
+        )
+
+        copy = Page.objects.create(
+            user=self.user,
+            name='test_page',
+            remote_addr='',
+            text='[[Vorlage(Kopie, some_other_page)]]\ncopy'
+        )
+
+        Page.objects.create(
+            user=self.user,
+            name='Trash/Test_page-1',
+            remote_addr='',
+            text='trash'
+        )
+
+        url = page.get_absolute_url('mv_back')
+        response = self.client.post(url, data={}, follow=True)
+
+        self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
+        self.assertRedirects(response, href('wiki', 'test_page'))
+
+        page.refresh_from_db()
+        self.assertEqual(page.name, 'test_page')
+
+        copy.refresh_from_db()
+        self.assertEqual(copy.name, 'Trash/test_page-2')
+
 
 @freeze_time("2023-12-09T23:55:04Z")
 class TestRevisionFeed(TestCase):

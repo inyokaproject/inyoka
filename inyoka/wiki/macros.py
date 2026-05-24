@@ -126,15 +126,15 @@ class RedirectPages(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        # TODO i18n: bloody hell, this is crazy... requires some more thinking
-        #           and a migration as well as coordination with the wiki team...
-        for page in Page.objects.find_by_metadata('weiterleitung'):
-            target = page.metadata.get('weiterleitung')
-            link = nodes.InternalLink(page.name, [nodes.Text(page.title)],
+
+        for page in Page.objects.find_by_metadata('X-Redirect'):
+            target = page.metadata.get('X-Redirect')
+            source_link = nodes.InternalLink(page.name, [nodes.Text(page.title)],
                                       force_existing=True)
             title = [nodes.Text(get_pagetitle(target, True))]
             target = nodes.InternalLink(target, title)
-            result.children.append(nodes.ListItem([link, nodes.Text(' \u2794 '),
+
+            result.children.append(nodes.ListItem([source_link, nodes.Text(' \u2794 '),
                                                    target]))
         return result
 

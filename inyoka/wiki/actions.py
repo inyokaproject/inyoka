@@ -40,7 +40,7 @@ from inyoka.utils.templating import flash_message
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
-from inyoka.wiki.exceptions import CircularRedirectException
+from inyoka.wiki.exceptions import CaseSensitiveException, CircularRedirectException
 from inyoka.wiki.forms import (
     AddAttachmentForm,
     EditAttachmentForm,
@@ -705,6 +705,8 @@ def do_mv_back(request, name):
                     trash_name = "Trash/%s-%i" % (new_name, id)
                     try:
                         Page.objects.get_by_name(trash_name)
+                    except CaseSensitiveException:
+                        continue
                     except Page.DoesNotExist:
                         if not _rename(request, copy, trash_name,
                                        new_text=copy_text):
