@@ -1681,13 +1681,9 @@ class TestDoMvDiscontinued(TestCase):
             text='[[Vorlage(Baustelle)]]\nTest content'
         )
 
-    def _get_url(self, page_name):
-        """Helper to get the mv_discontinued URL."""
-        return href('wiki', page_name, 'a', 'mv_discontinued')
-
     def test_get_request_shows_flash_form(self):
         """Test that GET request displays the flash message form."""
-        url = self._get_url('Baustelle/test_page')
+        url = self.page.get_absolute_url('mv_discontinued')
         response = self.client.get(url, follow=True)
 
         # GET request should show flash message and redirect to show
@@ -1696,7 +1692,7 @@ class TestDoMvDiscontinued(TestCase):
 
     def test_post_cancel_mv_discontinued(self):
         """Test that POST with cancel parameter aborts the move."""
-        url = self._get_url('Baustelle/test_page')
+        url = self.page.get_absolute_url('mv_discontinued')
         response = self.client.post(
             url,
             data={'cancel': 'Cancel'},
@@ -1711,7 +1707,7 @@ class TestDoMvDiscontinued(TestCase):
 
     def test_post_mv_discontinued_success(self):
         """Test successful move from Baustelle to Baustelle/Verlassen."""
-        url = self._get_url('Baustelle/test_page')
+        url = self.page.get_absolute_url('mv_discontinued')
         response = self.client.post(
             url,
             data={},
@@ -1739,7 +1735,7 @@ class TestDoMvDiscontinued(TestCase):
             text='Existing page'
         )
 
-        url = self._get_url('Baustelle/test_page')
+        url = self.page.get_absolute_url('mv_discontinued')
         response = self.client.post(url, data={}, follow=True)
 
         # Should show error and redirect back
@@ -1751,7 +1747,7 @@ class TestDoMvDiscontinued(TestCase):
 
     def test_post_mv_discontinued_rename_fails(self):
         """Test handling when _rename function fails."""
-        url = self._get_url('Baustelle/test_page')
+        url = self.page.get_absolute_url('mv_discontinued')
 
         # Mock _rename to return False
         with patch('inyoka.wiki.actions._rename', return_value=False):
@@ -1762,7 +1758,7 @@ class TestDoMvDiscontinued(TestCase):
 
     def test_post_mv_discontinued_non_existent_page(self):
         """Test that non-existent page returns 404."""
-        url = self._get_url('Baustelle/non_existent')
+        url = href('wiki', 'Baustelle/non_existent', 'a', 'mv_discontinued')
         response = self.client.get(url, follow=False)
 
         self.assertEqual(response.status_code, 404)
@@ -1777,7 +1773,7 @@ class TestDoMvDiscontinued(TestCase):
         )
         deleted_page.edit(user=self.user, deleted=True, note='deleted')
 
-        url = self._get_url('Baustelle/deleted_page')
+        url = deleted_page.get_absolute_url('mv_discontinued')
         response = self.client.get(url, follow=False)
 
         self.assertEqual(response.status_code, 404)
@@ -1785,29 +1781,30 @@ class TestDoMvDiscontinued(TestCase):
     def test_post_mv_discontinued_preserves_content(self):
         """Test that page content is preserved during move."""
         original_content = 'Important content to preserve'
-        Page.objects.create(
+        page = Page.objects.create(
             user=self.user,
             name='Baustelle/preserve_test',
             remote_addr='',
             text=original_content
         )
 
-        url = self._get_url('Baustelle/preserve_test')
+        url = page.get_absolute_url('mv_discontinued')
         self.client.post(url, data={}, follow=True)
 
         moved_page = Page.objects.get_by_name('Baustelle/Verlassen/preserve_test')
         self.assertIn(original_content, moved_page.rev.text.value)
 
     def test_post_mv_discontinued_already_in_verlassen(self):
+        """Test moving a page already in Baustelle/Verlassen."""
         # Create a page already in Verlassen
-        Page.objects.create(
+        page = Page.objects.create(
             user=self.user,
             name='Baustelle/Verlassen/already_discontinued',
             remote_addr='',
             text='[[Vorlage(Verlassen)]]\nContent'
         )
 
-        url = self._get_url('Baustelle/Verlassen/already_discontinued')
+        url = page.get_absolute_url('mv_discontinued')
         self.client.post(url, data={}, follow=True)
 
         # Name transformation: Baustelle/Verlassen/X -> Baustelle/Verlassen/Verlassen/X
@@ -1819,7 +1816,7 @@ class TestDoMvDiscontinued(TestCase):
         """Test that a new revision is created during the move."""
         initial_rev_count = self.page.revisions.count()
 
-        url = self._get_url('Baustelle/test_page')
+        url = self.page.get_absolute_url('mv_discontinued')
         self.client.post(url, data={}, follow=True)
 
         moved_page = Page.objects.get_by_name('Baustelle/Verlassen/test_page')
@@ -1842,7 +1839,7 @@ class TestDoMvDiscontinued(TestCase):
             note='init ACL',
         )
 
-        url = self._get_url('Baustelle/test_page')
+        url = self.page.get_absolute_url('mv_discontinued')
         response = self.client.get(url, follow=True)
 
         # Should get permission error
@@ -1868,14 +1865,14 @@ class TestDoMvDiscontinued(TestCase):
     def test_post_mv_discontinued_multiline_text_handling(self):
         """Test handling of multi-line page text with template."""
         multiline_text = '[[Vorlage(Baustelle, info, user)]]\nLine 1\nLine 2\nLine 3'
-        Page.objects.create(
+        page = Page.objects.create(
             user=self.user,
             name='Baustelle/multiline_test',
             remote_addr='',
             text=multiline_text
         )
 
-        url = self._get_url('Baustelle/multiline_test')
+        url = page.get_absolute_url('mv_discontinued')
         self.client.post(url, data={}, follow=True)
 
         moved_page = Page.objects.get_by_name('Baustelle/Verlassen/multiline_test')
