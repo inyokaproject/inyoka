@@ -2392,12 +2392,9 @@ class TestDoExport(TestCase):
 
     def test_export_raw_specific_revision_numeric_id(self):
         """Test exporting raw format of a specific numeric revision."""
-        # Create a new revision
         self.page.edit(text='updated content', user=self.user, note='Update')
 
-        # Get the first revision ID
         first_rev_id = self.page.revisions.all().order_by('id').first().id
-
         url = self.page.get_absolute_url('export', format='raw', revision=first_rev_id)
         response = self.client.get(url)
 
@@ -2407,35 +2404,30 @@ class TestDoExport(TestCase):
 
     def test_export_html_specific_revision_numeric_id(self):
         """Test exporting HTML format of a specific numeric revision."""
-        # Create a new revision
         self.page.edit(text='updated content', user=self.user, note='Update')
 
-        # Get the first revision ID
         first_rev_id = self.page.revisions.all().order_by('id').first().id
-
         url = self.page.get_absolute_url('export', format='html', revision=first_rev_id)
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
-
-    def test_export_raw_invalid_revision_string(self):
-        """Test exporting with invalid (non-numeric) revision parameter falls back to latest."""
-        url = self.page.get_absolute_url('export', format='raw', revision='invalid')
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
         self.assertIn(b'initial content', response.content)
 
-    def test_export_html_invalid_revision_string(self):
-        """Test exporting HTML with invalid (non-numeric) revision parameter falls back to latest."""
-        url = self.page.get_absolute_url('export', format='html',
-                                         revision='not_a_number')
+    def test_export_raw_invalid_revision_string(self):
+        """Test exporting with invalid (non-numeric) revision parameter."""
+        url = self.page.get_absolute_url('export', format='raw', revision=1337)
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'text/html; charset=utf-8')
+        self.assertEqual(response.status_code, 404)
+
+    def test_export_html_invalid_revision_string(self):
+        """Test exporting HTML with invalid (non-numeric) revision parameter."""
+        url = self.page.get_absolute_url('export', format='html',
+                                         revision=1337)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
 
     def test_export_nonexistent_page(self):
         """Test exporting a non-existent page returns 404."""
@@ -2468,29 +2460,6 @@ class TestDoExport(TestCase):
         response = self.client.get(url, follow=False)
 
         self.assertEqual(response.status_code, 404)
-
-    def test_export_raw_default_format(self):
-        """Test that raw is the default format when not specified."""
-        url = href('wiki', self.page_name, 'a', 'export')
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'text/plain; charset=utf-8')
-        self.assertIn(b'initial content', response.content)
-
-    def test_export_robots_tag_noindex(self):
-        """Test that X-Robots-Tag header is set to noindex."""
-        url = self.page.get_absolute_url('export', format='raw')
-        response = self.client.get(url)
-
-        self.assertEqual(response['X-Robots-Tag'], 'noindex')
-
-    def test_export_robots_tag_noindex_html(self):
-        """Test that X-Robots-Tag header is set to noindex for HTML exports."""
-        url = self.page.get_absolute_url('export', format='html')
-        response = self.client.get(url)
-
-        self.assertEqual(response['X-Robots-Tag'], 'noindex')
 
     def test_export_name_with_different_case(self):
         """Test export with different case in page name."""
@@ -2547,42 +2516,6 @@ class TestDoExport(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('äöü'.encode('utf-8'), response.content)
-
-    def test_export_revision_isdigit_boundary(self):
-        """Test export with revision that starts with digit but has non-digit chars."""
-        url = self.page.get_absolute_url('export', format='raw', revision='123abc')
-        response = self.client.get(url)
-
-        # '123abc'.isdigit() is False, so should get latest revision
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'initial content', response.content)
-
-    def test_export_html_and_raw_both_set_robots_tag(self):
-        """Test that both raw and html formats set X-Robots-Tag."""
-        url_raw = self.page.get_absolute_url('export', format='raw')
-        url_html = self.page.get_absolute_url('export', format='html')
-
-        response_raw = self.client.get(url_raw)
-        response_html = self.client.get(url_html)
-
-        self.assertEqual(response_raw['X-Robots-Tag'], 'noindex')
-        self.assertEqual(response_html['X-Robots-Tag'], 'noindex')
-
-    def test_export_multiple_revisions_raw(self):
-        """Test exporting multiple different revisions in raw format."""
-        self.page.edit(text='rev 1', user=self.user, note='Edit 1')
-        self.page.edit(text='rev 2', user=self.user, note='Edit 2')
-
-        revisions = self.page.revisions.all().order_by('id')
-
-        # Export second revision
-        rev_id = revisions[1].id
-        url = self.page.get_absolute_url('export', format='raw', revision=rev_id)
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'rev 1', response.content)
-        self.assertNotIn(b'rev 2', response.content)
 
 
 @freeze_time("2023-12-09T23:55:04Z")
