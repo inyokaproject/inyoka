@@ -19,6 +19,8 @@ from django.http import Http404
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from freezegun import freeze_time
+from inyoka.portal.models import Subscription
+
 from inyoka.wiki.acl import PrivilegeTest
 
 from inyoka.portal.user import User
@@ -2774,6 +2776,48 @@ class TestDoAttach(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertRedirects(response, '/test_page/a/attachments/')
+
+
+class TestDoSubscribe(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.page = Page.objects.create(
+            user=self.user,
+            name='subscribe_page',
+            remote_addr='',
+            text='subscribe text'
+        )
+        self.url = href('wiki', 'subscribe_page', 'a', 'subscribe')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+
+    def test_subscribe_success(self):
+        # Subscribe when no subscription exists — creates subscription and shows success message
+        self.client.login(username='user', password='user')
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, 'notified on changes on this page')
+        self.assertTrue(Subscription.objects.user_subscribed(self.user, self.page))
+
+    def test_subscribe_duplicate(self):
+        # Subscribe when already subscribed — shows error message and does not duplicate
+        Subscription(user=self.user, content_object=self.page).save()
+        self.client.login(username='user', password='user')
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, 'already subscribed')
+        # Should only be one subscription
+        subscriptions = Subscription.objects.filter(user=self.user, object_id=self.page.id)
+        self.assertEqual(subscriptions.count(), 1)
+
+    def test_subscribe_requires_login(self):
+        # Without authentication, should redirect to login page
+        self.client.logout()
+        response = self.client.get(self.url, follow=False)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(href('portal', 'login'), response.url)
 
 
 class TestDoAttachEdit(TestCase):
