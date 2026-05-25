@@ -2843,6 +2843,57 @@ class TestDoSubscribe(TestCase):
         self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/')
 
 
+class TestDoUnsubscribe(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % self.settings.BASE_DOMAIN_NAME
+        self.page = Page.objects.create(user=self.user, name='test_page', remote_addr='', text='content')
+        self.url = href('wiki', 'test_page', 'a', 'unsubscribe')
+
+    def test_unsubscribe_existing_subscription(self):
+        # Create a subscription
+        sub = Subscription(user=self.user, content_object=self.page)
+        sub.save()
+
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, "You won&#39;t be notified for changes on this page anymore")
+
+        # Should be deleted
+        self.assertFalse(Subscription.objects.filter(user=self.user, object_id=self.page.pk).exists())
+
+    def test_unsubscribe_no_subscription(self):
+        # No subscription exists
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, "No subscription for this page found.")
+
+    def test_unsubscribe_redirect_next_with_safe_domain(self):
+        sub = Subscription(user=self.user, content_object=self.page)
+        sub.save()
+        # Add safe next param
+        safe_next = '/foo/bar'
+        response = self.client.get(f'{self.url}?next={safe_next}', follow=False)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(safe_next))
+
+    def test_unsubscribe_redirect_next_with_unsafe_domain(self):
+        sub = Subscription(user=self.user, content_object=self.page)
+        sub.save()
+        # Add unsafe next param (external site)
+        unsafe_next = 'https://example.com/evil'
+        response = self.client.get(f'{self.url}?next={unsafe_next}', follow=False)
+        # Should NOT redirect to unsafe; should redirect to wiki page
+        self.assertEqual(response.status_code, 302)
+        page_url = self.page.get_absolute_url()
+        self.assertTrue(page_url in response['Location'])
+
+
 class TestDoAttachEdit(TestCase):
 
     client_class = InyokaClient
