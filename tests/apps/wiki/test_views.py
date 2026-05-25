@@ -19,14 +19,14 @@ from django.http import Http404
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from freezegun import freeze_time
+
+from inyoka.forum.models import Forum, Post, Topic
 from inyoka.portal.models import Subscription
-
-from inyoka.wiki.acl import PrivilegeTest
-
 from inyoka.portal.user import User
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
+from inyoka.wiki.acl import PrivilegeTest
 from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
 from inyoka.wiki.views import get_attachment
@@ -3065,6 +3065,115 @@ class TestDoAttachEdit(TestCase):
         updated_page = Page.objects.get_by_name('attachment_test')
         # Attachment should still exist
         self.assertEqual(updated_page.rev.attachment, original_attachment)
+
+
+class TestDoManageDiscussion(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.user.is_superuser = True
+        self.user.save()
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+        self.page_name = 'discussion_test'
+        self.page = Page.objects.create(
+            user=self.user, name=self.page_name, remote_addr='', text='test'
+        )
+        self.url = href('wiki', self.page_name, 'a', 'discussion')
+
+    def _setup_forum(self):
+        self.forum1 = Forum.objects.create(name='Forum Parent')
+        self.forum2 = Forum.objects.create(name='Forum 2', parent=self.forum1)
+
+        self.topic = Topic.objects.create(
+            title='A test Topic', author=self.user, forum=self.forum2
+        )
+        self.post = Post.objects.create(
+            text='Post 1', author=self.user, topic=self.topic, position=0
+        )
+
+    def test_get_shows_form(self):
+        response = self.client.get(self.url)
+
+        self.assertContains(response, '<form')
+        self.assertContains(response, 'You can choose a topic as the discussion topic of this article.')
+
+    def test_permission_required(self):
+        self.client.logout()
+        Page.objects.create(
+            'ACL',
+            '#X-Behave: Access-Control-List\n'
+            '{{{\n'
+            '[*]\n'
+            'user=none\n'
+            '}}}',
+            user=self.user,
+            note='init ACL',
+        )
+
+        response = self.client.get(self.url, follow=False)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(f'http://{settings.BASE_DOMAIN_NAME}/login/'))
+
+    def test_get_request_redirects_case_sensitive(self):
+        url = href('wiki', self.page.name.upper(), 'a', 'discussion')
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '/discussion_test/a/discussion/')
+
+    def test_post_with_invalid_topic_slug(self):
+        response = self.client.post(
+            self.url,
+            data={'topic': 'nonexistent-topic'},
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response.context['form'], 'topic', ['This topic does not exist.'])
+
+    def test_link_topic(self):
+        self._setup_forum()
+
+        response = self.client.post(
+            self.url,
+            data={'topic': self.topic.slug},
+            follow=True
+        )
+
+        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/')
+        self.page.refresh_from_db()
+        self.assertEqual(self.page.topic, self.topic)
+
+    def test_unlink_topic(self):
+        self._setup_forum()
+
+        self.page.topic = self.topic
+        self.page.save()
+
+        response = self.client.post(
+            self.url,
+            data={'topic': ''},
+            follow=True
+        )
+
+        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/discussion_test/')
+        self.page.refresh_from_db()
+        self.assertIsNone(self.page.topic)
+
+    def test_get_with_topic(self):
+        self._setup_forum()
+
+        self.page.topic = self.topic
+        self.page.save()
+
+        response = self.client.get(
+            self.url, follow=True
+        )
+
+        self.assertInHTML('<input type="text" name="topic" value="a-test-topic" id="id_topic">', response.content.decode())
 
 
 @freeze_time("2023-12-09T23:55:04Z")
