@@ -2654,27 +2654,23 @@ class TestDoAttach(TestCase):
         self.assertEqual(updated.revisions.count(), original_rev_count + 1)
         self.assertEqual(updated.rev.text.value, 'updated content')
 
-    @skip('TODO: double check if weiterleitung metadata is not simply outdated')
-    def test_post_attachment_with_redirect_metadata(self):
-        """Test attachment redirect based on metadata."""
-        self.page.edit(text='''special text
-# X-Redirect: foo
-''', user=self.user, note='Special')
-        self.page.update_meta()
+    def test_post_attachment_with_redirect(self):
+        """Test target, if attachment description contains a redirect."""
 
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
             response = self.client.post(self.url, data={
                 'attachment': evil,
                 'filename': 'redirect_test.txt',
                 'override': False,
-                'text': '',
+                'text': '''special text
+# X-Redirect: foo
+''',
                 'note': ''
             }, follow=False)
 
-        # Get the created attachment
         attachment = Page.objects.get_by_name('test_page/redirect_test.txt')
         # The redirect URL should point to show_no_redirect action
-        self.assertRedirects(response, attachment.get_absolute_url('show'))
+        self.assertRedirects(response, attachment.get_absolute_url('show_no_redirect'))
 
     def test_post_attachment_with_text_and_note(self):
         """Test attachment creation with description text and edit note."""

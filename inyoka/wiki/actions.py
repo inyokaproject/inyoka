@@ -944,10 +944,12 @@ def do_attach(request, name):
                     attachment=d['attachment'])
         messages.success(request,
             _('Attachment saved successfully.'))
-        if ap.metadata.get('weiterleitung'):
+
+        if ap.metadata.get('X-Redirect'):
             url = url_for(ap, action='show_no_redirect')
         else:
             url = url_for(ap)
+
         return HttpResponseRedirect(url)
 
     context['deny_robots'] = 'noindex'
