@@ -2796,28 +2796,43 @@ class TestDoSubscribe(TestCase):
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
 
     def test_subscribe_success(self):
-        # Subscribe when no subscription exists — creates subscription and shows success message
+        """Subscribe when no subscription exists and shows success message"""
         self.client.login(username='user', password='user')
+
         response = self.client.get(self.url, follow=True)
+
         self.assertContains(response, 'notified on changes on this page')
         self.assertTrue(Subscription.objects.user_subscribed(self.user, self.page))
 
     def test_subscribe_duplicate(self):
-        # Subscribe when already subscribed — shows error message and does not duplicate
+        """Subscribe when already subscribed and shows error message"""
         Subscription(user=self.user, content_object=self.page).save()
         self.client.login(username='user', password='user')
+
         response = self.client.get(self.url, follow=True)
+
         self.assertContains(response, 'already subscribed')
         # Should only be one subscription
         subscriptions = Subscription.objects.filter(user=self.user, object_id=self.page.id)
         self.assertEqual(subscriptions.count(), 1)
 
+    @override_settings(LOGIN_URL=f'//{settings.BASE_DOMAIN_NAME}/login/')
     def test_subscribe_requires_login(self):
-        # Without authentication, should redirect to login page
+        """Without authentication, should redirect to login page"""
         self.client.logout()
+
         response = self.client.get(self.url, follow=False)
+
         self.assertEqual(response.status_code, 302)
-        self.assertIn(href('portal', 'login'), response.url)
+        self.assertTrue(response.url.startswith(f'//{settings.BASE_DOMAIN_NAME}/login/'))
+
+    def test_subscribe_space_in_name(self):
+        url = href('wiki', 'subscribe page', 'a', 'subscribe')
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/')
 
 
 class TestDoAttachEdit(TestCase):
