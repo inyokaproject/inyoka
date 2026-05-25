@@ -990,6 +990,7 @@ def do_attach_edit(request, name):
 
 @clean_article_name
 @login_required
+@case_sensitive_redirect
 def do_subscribe(request, name):
     """
     Subscribe the user to the page with `page_name`

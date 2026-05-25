@@ -2834,6 +2834,14 @@ class TestDoSubscribe(TestCase):
 
         self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/')
 
+    def test_subscribe_different_case_in_name(self):
+        url = href('wiki', 'subscribe_PAGE', 'a', 'subscribe')
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/')
+
 
 class TestDoAttachEdit(TestCase):
 
