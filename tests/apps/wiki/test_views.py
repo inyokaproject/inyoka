@@ -2894,6 +2894,14 @@ class TestDoUnsubscribe(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, self.page.get_absolute_url())
 
+    def test_subscribe_different_case_and_space_in_name(self):
+        url = href('wiki', 'test PAGE', 'a', 'unsubscribe')
+        self.client.login(username='user', password='user')
+
+        response = self.client.get(url, follow=True)
+
+        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/test_page/')
+
 
 class TestDoAttachEdit(TestCase):
 

@@ -1008,6 +1008,7 @@ def do_subscribe(request, name):
 
 @clean_article_name
 @login_required
+@case_sensitive_redirect
 def do_unsubscribe(request, name):
     """
     Unsubscribe the user from the page with `page_name`
