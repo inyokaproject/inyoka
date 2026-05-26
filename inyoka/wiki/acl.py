@@ -31,7 +31,6 @@ from inyoka.portal.user import User
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
 
 #: metadata users without the `PRIV_MANAGE` privilege can edit.
@@ -52,12 +51,6 @@ PRIV_MANAGE = 32
 PRIV_NONE = 0
 PRIV_DEFAULT = PRIV_ALL = 63
 
-#: because we use different names in the german frontend these
-#: constants hold the name used in the frontend.  i call bullshit,
-#: we use english names again and the constants are left as an
-#: exercise for the reader.
-GROUP_OWNER = 'owner'
-
 #: used by the decorator
 privilege_map = {
     'read': PRIV_READ,
@@ -72,7 +65,7 @@ privilege_map = {
 class PrivilegeTest:
     """
     An instance of this class is passed to all the action templates.  Attribute
-    access can then be used to check if the current user has a privilege the
+    access can then be used to check if the current user has a privilege on the
     current page.
     """
 
@@ -113,11 +106,6 @@ class GroupContainer:
     def load(self):
         """Load the data from the database."""
         self.cache = set(self.user.groups.values_list('name', flat=True))
-        for item in Page.objects.get_owners(self.page):
-            if item == self.user.username or \
-               (item.startswith('@') and item[1:] in self.cache):
-                self.cache.add(GROUP_OWNER)
-                break
 
     def __contains__(self, obj):
         if self.cache is None:

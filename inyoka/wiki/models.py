@@ -56,12 +56,6 @@
     ``X-Cache-Time``
         This is used to give the page a different cache time than the default.
 
-    ``X-Owner``
-        Every user or group (prefixed with an ``'@'``) defined this way is
-        added to the special ACL ``@Owner`` group.  This is for example used
-        for user wiki pages that should only give moderators, administrators
-        and the owner of the page access.
-
     Every internal key is only modifiable by people with the ``PRIV_MANAGE``
     privilege.  Some keys like `X-Link` and `X-Attach` that are defined also
     by the wiki parser itself are marked as `LENIENT_METADATA_KEYS` which
@@ -327,31 +321,6 @@ class PageManager(models.Manager):
         of the time anyway.
         """
         return len(self.get_page_list(existing_only, cached))
-
-    def get_owners(self, page_name):
-        """
-        Get a set of owners defined using the ``'X-Owner'`` metadata key.
-        This set may include groups too and is probably just seful for the
-        `get_privilege_flags` function from the `acl` module which uses it.
-
-        Groups are prefixed with an ``'@'`` sig.-
-        """
-        owners = MetaData.objects.filter(page__name=page_name, key='X-Owner')\
-                                 .values_list('value', flat=True)
-        return set(owners)
-
-    def get_owned(self, owners):
-        """
-        Return all the pages a user or some group (prefixed with ``@`` own).
-        The return value will be a list of page names, not page objects.
-
-        Reverse method of `get_owners`.
-        """
-        if not owners:
-            return []
-        pages = MetaData.objects.filter(key='X-Owner', value__in=owners)\
-                                .values_list('page__name')
-        return set(pages)
 
     def get_orphans(self):
         """
