@@ -24,21 +24,21 @@ class TestPage(TestCase):
         Test, that content of a embedder page will be updated.
         """
         template = Page.objects.create('Wiki/Templates/template', 'Foo')
-        page = Page.objects.create('test1', '[:test1:] content [[Vorlage(template, "Hello World")]]')
+        page = Page.objects.create('test1', 'content [[Vorlage(template, "Hello World")]]')
 
         self.assertEqual(page.last_rev.text.value_rendered,
-                         '<p><a href="http://wiki.ubuntuusers.local:8080/test1/" class="internal">test1</a> content Foo</p>')
+                         '<p>content Foo</p>')
 
         # included `template` was changed
         # `page` should have a different content, but it's yet not updated
         template.edit('Bar', note='changed content')
         self.assertEqual(page.last_rev.text.value_rendered,
-                         '<p><a href="http://wiki.ubuntuusers.local:8080/test1/" class="internal">test1</a> content Foo</p>')
+                         '<p>content Foo</p>')
 
         template.update_related_pages()
 
         self.assertEqual(page.last_rev.text.value_rendered,
-                         '<p><a href="http://wiki.ubuntuusers.local:8080/test1/" class="internal">test1</a> content Bar</p>')
+                         '<p>content Bar</p>')
 
     def test_update_related_pages__metadata_updated(self):
         """
