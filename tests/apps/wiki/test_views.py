@@ -198,7 +198,7 @@ class TestGetAttachment(TestCase):
         response = get_attachment(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
 
     def test_target_normalized(self):
         """Test that target name is normalized before use."""
@@ -209,7 +209,7 @@ class TestGetAttachment(TestCase):
         response = get_attachment(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
 
     def test_case_insensitive_target(self):
         """Test that target parameter is case-insensitive."""
@@ -220,14 +220,14 @@ class TestGetAttachment(TestCase):
         response = get_attachment(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
 
     def test_attachment_href_integration(self):
         """Test full integration with client."""
         url = href('wiki', '_attachment', target='attachment_page')
         response = self.client.get(url, follow=True)
 
-        self.assertStartsWith(response.redirect_chain[0][0], f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+        self.assertTrue(response.redirect_chain[0][0].startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
 
     def test_special_characters_in_target(self):
         """Test handling of special characters in target parameter."""
@@ -237,7 +237,7 @@ class TestGetAttachment(TestCase):
 
         response = get_attachment(request)
         self.assertEqual(response.status_code, 302)
-        self.assertStartsWith(response.url, f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/')
+        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
 
     def test_anonymous_user_without_privilege(self):
         """Test that anonymous users are properly denied access."""
