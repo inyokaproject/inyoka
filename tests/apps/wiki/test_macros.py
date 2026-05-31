@@ -444,3 +444,19 @@ class TestWikiMacros(TestCase):
         </ul>
         '''
         self.assertInHTML(needle, html)
+
+    def test_redirect_pages__simple_query(self):
+        p1 = Page.objects.create('foo', 'some text\n# X-Redirect: bar')
+        p2 = Page.objects.create('bar', 'test [:foo:content]')
+
+        p1.update_meta()
+        p2.update_meta()
+
+        page = Page(name='Something')
+        html = parse("""[[RedirectPages()]]""").render(
+            RenderContext(wiki_page=page, application='wiki'),
+            format='html'
+        )
+
+        needle = '<ul><li><a href="http://wiki.ubuntuusers.local:8080/foo/" class="internal">foo</a> ➔ <a href="http://wiki.ubuntuusers.local:8080/bar/" class="internal">bar</a></li></ul>'
+        self.assertInHTML(needle, html)

@@ -125,41 +125,11 @@ class GroupContainer:
         return obj in self.cache
 
 
-class MultiPrivilegeTest:
-    """
-    Efficient way for multiple privilege tests for one users to many pages.
-    """
-
-    def __init__(self, user):
-        self.user = user
-        self.groups = set(self.user.groups.values_list('name', flat=True))
-        self.owned_pages = set(Page.objects.get_owned(self.groups))
-
-    def get_groups(self, page_name):
-        if page_name in self.owned_pages:
-            return self.groups & {GROUP_OWNER}
-        return self.groups
-
-    def get_privilege_flags(self, page_name):
-        groups = self.get_groups(page_name)
-        return get_privilege_flags(self.user, page_name, groups)
-
-    def get_privileges(self, page_name):
-        groups = self.get_groups(page_name)
-        return get_privileges(self.user, page_name, groups)
-
-    def has_privilege(self, page_name, privilege):
-        groups = self.get_groups(page_name)
-        return has_privilege(self.user, page_name, privilege, groups)
-
-
 def get_privilege_flags(user, page_name, groups=None):
     """
     Return an integer with the privilege flags for a user for the given
-    page name.  Like any other page name depending function the page name
+    page name.  Like any other page name depending on function the page name
     must be in a normalized state.
-
-    :param groups: used internally by the `MultiPrivilegeTest`
     """
     if user is None:
         user = User.objects.get_anonymous_user()
@@ -187,8 +157,6 @@ def get_privileges(user, page_name, groups=None):
     Get a dict with the privileges a user has for a page (or doesn't).  `user`
     must be a user object or `None` in which case the privileges for an
     anonymous user are returned.
-
-    :param groups: used internally by the `MultiPrivilegeTest`
     """
     result = {}
     flags = get_privilege_flags(user, page_name, groups)
@@ -203,8 +171,6 @@ def has_privilege(user, page_name, privilege, groups=None):
     for multiple privileges (for example if you want to display what a user
     can do or not do) you should use `get_privileges` which is faster for
     multiple checks and also returns it automatically as a dict.
-
-    :param groups: used internally by the `MultiPrivilegeTest`
     """
     if isinstance(privilege, str):
         privilege = privilege_map[privilege]
