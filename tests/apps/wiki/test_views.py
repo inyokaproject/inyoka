@@ -1,12 +1,13 @@
 """
-    tests.apps.wiki.test_views
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests.apps.wiki.test_views
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test wiki views.
+Test wiki views.
 
-    :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 from datetime import datetime, timedelta, timezone
 from os.path import dirname, join
 from unittest.mock import patch
@@ -33,7 +34,6 @@ from inyoka.wiki.views import get_attachment
 
 
 class TestViews(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -43,26 +43,36 @@ class TestViews(TestCase):
         self.client.login(username='admin', password='admin')
 
     def test_index(self):
-        Page.objects.create(settings.WIKI_MAIN_PAGE, 'rev 0', user=self.admin, note='rev 0')
+        Page.objects.create(
+            settings.WIKI_MAIN_PAGE, 'rev 0', user=self.admin, note='rev 0'
+        )
 
         response = self.client.get('/', follow=True)
 
-        self.assertRedirects(response,
-                             f'http://wiki.{settings.BASE_DOMAIN_NAME}/Welcome/')
+        self.assertRedirects(
+            response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/Welcome/'
+        )
 
     def test_index__redirect_with_GET(self):
-        Page.objects.create(settings.WIKI_MAIN_PAGE, 'rev 0', user=self.admin, note='rev 0')
+        Page.objects.create(
+            settings.WIKI_MAIN_PAGE, 'rev 0', user=self.admin, note='rev 0'
+        )
 
         response = self.client.get('/?foo=bar', follow=True)
 
-        self.assertRedirects(response,
-                             f'http://wiki.{settings.BASE_DOMAIN_NAME}/Welcome/?foo=bar')
+        self.assertRedirects(
+            response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/Welcome/?foo=bar'
+        )
 
     @override_settings(WIKI_REVISIONS_PER_PAGE=5)
     def test_log(self):
         p50 = Page.objects.create('Testpage50', 'rev 0', user=self.admin, note='rev 0')
-        p100 = Page.objects.create('Testpage100', 'rev 0', user=self.admin, note='rev 0')
-        p250 = Page.objects.create('Testpage250', 'rev 0', user=self.admin, note='rev 0')
+        p100 = Page.objects.create(
+            'Testpage100', 'rev 0', user=self.admin, note='rev 0'
+        )
+        p250 = Page.objects.create(
+            'Testpage250', 'rev 0', user=self.admin, note='rev 0'
+        )
 
         for i in range(1, 2):
             p50.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
@@ -76,23 +86,23 @@ class TestViews(TestCase):
             p250.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
         p250.save()
 
-        req = self.client.get("/Testpage50/a/log", follow=True).content
+        req = self.client.get('/Testpage50/a/log', follow=True).content
         self.assertEqual(req.count(b'<tr'), 2)
-        req = self.client.get("/Testpage50/a/log/2", follow=True)
+        req = self.client.get('/Testpage50/a/log/2', follow=True)
         self.assertEqual(req.status_code, 404)
 
-        req = self.client.get("/Testpage100/a/log", follow=True).content
+        req = self.client.get('/Testpage100/a/log', follow=True).content
         self.assertEqual(req.count(b'<tr'), 5)
-        req = self.client.get("/Testpage100/a/log/2", follow=True)
+        req = self.client.get('/Testpage100/a/log/2', follow=True)
         self.assertEqual(req.status_code, 404)
 
-        req = self.client.get("/Testpage250/a/log", follow=True).content
+        req = self.client.get('/Testpage250/a/log', follow=True).content
         self.assertEqual(req.count(b'<tr'), 5)
-        req = self.client.get("/Testpage250/a/log/2", follow=True).content
+        req = self.client.get('/Testpage250/a/log/2', follow=True).content
         self.assertEqual(req.count(b'<tr'), 5)
-        req = self.client.get("/Testpage250/a/log/3", follow=True).content
+        req = self.client.get('/Testpage250/a/log/3', follow=True).content
         self.assertEqual(req.count(b'<tr'), 2)
-        req = self.client.get("/Testpage250/a/log/4", follow=True)
+        req = self.client.get('/Testpage250/a/log/4', follow=True)
         self.assertEqual(req.status_code, 404)
 
     def test_log_with_different_case_in_name(self):
@@ -105,13 +115,16 @@ class TestViews(TestCase):
 
 
 class TestGetAttachment(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
-        self.admin = User.objects.register_user('admin', 'admin@example.test', 'admin', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
 
         self.client.login(username='admin', password='admin')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
@@ -151,11 +164,7 @@ class TestGetAttachment(TestCase):
         # Create an ACL that denies read access
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.admin,
             note='init ACL',
         )
@@ -169,11 +178,8 @@ class TestGetAttachment(TestCase):
 
     def test_no_attachment_raises_http404(self):
         """Test that Http404 is raised when page has no attachment."""
-        Page.objects.create( # page without attachment
-            user=self.user,
-            name='no_attachment',
-            remote_addr='',
-            text='text'
+        Page.objects.create(  # page without attachment
+            user=self.user, name='no_attachment', remote_addr='', text='text'
         )
 
         factory = RequestFactory()
@@ -201,7 +207,11 @@ class TestGetAttachment(TestCase):
         response = get_attachment(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
+        self.assertTrue(
+            response.url.startswith(
+                f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'
+            )
+        )
 
     def test_target_normalized(self):
         """Test that target name is normalized before use."""
@@ -212,7 +222,11 @@ class TestGetAttachment(TestCase):
         response = get_attachment(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
+        self.assertTrue(
+            response.url.startswith(
+                f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'
+            )
+        )
 
     def test_case_insensitive_target(self):
         """Test that target parameter is case-insensitive."""
@@ -223,14 +237,22 @@ class TestGetAttachment(TestCase):
         response = get_attachment(request)
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
+        self.assertTrue(
+            response.url.startswith(
+                f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'
+            )
+        )
 
     def test_attachment_href_integration(self):
         """Test full integration with client."""
         url = href('wiki', '_attachment', target='attachment_page')
         response = self.client.get(url, follow=True)
 
-        self.assertTrue(response.redirect_chain[0][0].startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
+        self.assertTrue(
+            response.redirect_chain[0][0].startswith(
+                f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'
+            )
+        )
 
     def test_special_characters_in_target(self):
         """Test handling of special characters in target parameter."""
@@ -240,18 +262,18 @@ class TestGetAttachment(TestCase):
 
         response = get_attachment(request)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith(f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'))
+        self.assertTrue(
+            response.url.startswith(
+                f'//media.{settings.BASE_DOMAIN_NAME}/wiki/attachments/'
+            )
+        )
 
     def test_anonymous_user_without_privilege(self):
         """Test that anonymous users are properly denied access."""
         # Create an ACL that denies anonymous access
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.admin,
             note='init ACL',
         )
@@ -265,7 +287,6 @@ class TestGetAttachment(TestCase):
 
 
 class TestTagRelatedViews(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -274,27 +295,31 @@ class TestTagRelatedViews(TestCase):
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
-        self.p1 = Page.objects.create('testPage1', '\np1 \n # tag: test\n',
-                                      user=self.admin, note='rev 0')
-        self.p2 = Page.objects.create('testPage2', '\np2 \n # tag: another\n',
-                                      user=self.admin, note='rev 0')
+        self.p1 = Page.objects.create(
+            'testPage1', '\np1 \n # tag: test\n', user=self.admin, note='rev 0'
+        )
+        self.p2 = Page.objects.create(
+            'testPage2', '\np2 \n # tag: another\n', user=self.admin, note='rev 0'
+        )
 
-        self.p1.edit(user=self.admin,
-                     text='''
+        self.p1.edit(
+            user=self.admin,
+            text="""
 p
 # tag: test
-''',
-                     note="rev 1",
-                     )
+""",
+            note='rev 1',
+        )
         self.p1.update_meta()
 
-        self.p2.edit(user=self.admin,
-                     text='''
+        self.p2.edit(
+            user=self.admin,
+            text="""
 another
 # tag: another
-''',
-                     note="rev 1",
-                     )
+""",
+            note='rev 1',
+        )
         self.p2.update_meta()
 
     def test_recentchanges__not_yet_generated(self):
@@ -312,21 +337,33 @@ another
         response = self.client.get('/wiki/randompages/')
 
         self.assertEqual(response.status_code, 200)
-        self.assertCountEqual(response.context['randompages'], ['testPage1', 'testPage2', 'Wiki/Index'])
+        self.assertCountEqual(
+            response.context['randompages'], ['testPage1', 'testPage2', 'Wiki/Index']
+        )
 
     def test_show_tag_list(self):
         response = self.client.get('/wiki/tags/')
 
         self.assertEqual(response.status_code, 200)
-        self.assertCountEqual(response.context['tag_list'],
-                              [{'name': 'another', 'count': 1, 'size': 2},
-                               {'name': 'test', 'count': 1, 'size': 2}])
+        self.assertCountEqual(
+            response.context['tag_list'],
+            [
+                {'name': 'another', 'count': 1, 'size': 2},
+                {'name': 'test', 'count': 1, 'size': 2},
+            ],
+        )
 
     def test_show_tag_cloud(self):
         response = self.client.get('/wiki/tagcloud/')
 
         self.assertEqual(response.status_code, 200)
-        self.assertCountEqual(response.context['tag_list'], [{'name': 'another', 'count': 1, 'size': 2}, {'name': 'test', 'count': 1, 'size': 2}])
+        self.assertCountEqual(
+            response.context['tag_list'],
+            [
+                {'name': 'another', 'count': 1, 'size': 2},
+                {'name': 'test', 'count': 1, 'size': 2},
+            ],
+        )
 
     def test_show_pages_by_tag__not_existing_tag(self):
         response = self.client.get('/wiki/tags/foo/')
@@ -341,14 +378,15 @@ another
 
 
 class TestDoCreate(TestCase):
-
     client_class = InyokaClient
 
     surge_protection_message = SurgeProtectionMixin.surge_protection_message
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
@@ -378,7 +416,9 @@ class TestDoCreate(TestCase):
         self.assertContains(response, 'The page Abc already exists.')
 
     def _create_page(self, name):
-            return self.client.post(self.url, data={'name': name, 'template': ''}, follow=True)
+        return self.client.post(
+            self.url, data={'name': name, 'template': ''}, follow=True
+        )
 
     @patch('inyoka.portal.models.User.is_team_member', False)
     def test_surge_protection(self):
@@ -398,24 +438,31 @@ class TestDoCreate(TestCase):
 
 
 class TestDoEdit(TestCase):
-
     client_class = InyokaClient
 
     surge_protection_message = SurgeProtectionMixin.surge_protection_message
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
 
-        self.page = Page.objects.create(user=self.user, name='abc', remote_addr='', text='test')
+        self.page = Page.objects.create(
+            user=self.user, name='abc', remote_addr='', text='test'
+        )
         self.url = self.page.get_absolute_url('edit')
 
     def _edit_page(self, new_content):
-        data = {'text': new_content, 'note': new_content, 'edit_time': datetime.now(timezone.utc),
-                'revision': self.page.last_rev_id}
+        data = {
+            'text': new_content,
+            'note': new_content,
+            'edit_time': datetime.now(timezone.utc),
+            'revision': self.page.last_rev_id,
+        }
         return self.client.post(self.url, data=data, follow=True)
 
     @patch('inyoka.portal.models.User.is_team_member', False)
@@ -436,15 +483,18 @@ class TestDoEdit(TestCase):
 
 
 class TestDoShow(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         self.page_name = 'test_page'
-        page = Page.objects.create(user=self.user, name=self.page_name, remote_addr='', text=self.page_name)
+        page = Page.objects.create(
+            user=self.user, name=self.page_name, remote_addr='', text=self.page_name
+        )
         self.url = page.get_absolute_url('show')
 
         self.client.login(username='user', password='user')
@@ -462,20 +512,24 @@ class TestDoShow(TestCase):
 
     def test_redirect(self):
         text = f'# X-Redirect: {self.page_name}\nfoobar content'
-        redirect = Page.objects.create(user=self.user, name='redirect', remote_addr='', text=text)
+        redirect = Page.objects.create(
+            user=self.user, name='redirect', remote_addr='', text=text
+        )
 
         response = self.client.get(redirect.get_absolute_url('show'), follow=True)
         self.assertRedirects(response, self.url)
         self.assertContains(
             response,
             '<a href="http://wiki.ubuntuusers.local:8080/redirect/no_redirect/">redirect</a>',
-            html=True
+            html=True,
         )
 
     def test_redirect_loop(self):
         name = 'redirect'
         text = f'# X-Redirect: {name}\nfoobar content'
-        redirect = Page.objects.create(user=self.user, name=name, remote_addr='', text=text)
+        redirect = Page.objects.create(
+            user=self.user, name=name, remote_addr='', text=text
+        )
 
         response = self.client.get(redirect.get_absolute_url('show'), follow=True)
         self.assertRedirects(response, redirect.get_absolute_url('show_no_redirect'))
@@ -488,8 +542,7 @@ class TestDoShow(TestCase):
         url = p.get_absolute_url('revision', old_rev)
         response = self.client.get(url, follow=True)
         self.assertContains(
-            response,
-            'You are viewing an old revision of this wiki page.'
+            response, 'You are viewing an old revision of this wiki page.'
         )
 
     def test_deleted_page(self):
@@ -514,7 +567,6 @@ class TestDoShow(TestCase):
 
 
 class TestDoMetaExport(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -522,14 +574,17 @@ class TestDoMetaExport(TestCase):
         user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
         self.page_name = 'test_page'
-        page = Page.objects.create(user=user, name=self.page_name, remote_addr='', text=self.page_name)
-        page.edit(user=user,
-                       text='''
+        page = Page.objects.create(
+            user=user, name=self.page_name, remote_addr='', text=self.page_name
+        )
+        page.edit(
+            user=user,
+            text="""
 p
 # tag: test, foo
-''',
-                       note="rev 1",
-                       )
+""",
+            note='rev 1',
+        )
         page.update_meta()
 
         self.url = href('wiki', self.page_name, 'a', 'export', 'meta')
@@ -556,15 +611,18 @@ p
 
 
 class TestDoDiff(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         self.page_name = 'test_page'
-        self.page = Page.objects.create(user=self.user, name=self.page_name, remote_addr='', text=self.page_name)
+        self.page = Page.objects.create(
+            user=self.user, name=self.page_name, remote_addr='', text=self.page_name
+        )
         self.page.edit(text='new text', user=self.user)
 
         self.client.login(username='user', password='user')
@@ -582,12 +640,16 @@ class TestDoDiff(TestCase):
         self.assertContains(response, b')\n@@ -1 +1 @@\n-test_page\n+new text')
 
     def test_diff__only_old_revision(self):
-        url = self.page.get_absolute_url('diff', revision=Page.objects.get_head(self.page_name, -1))
+        url = self.page.get_absolute_url(
+            'diff', revision=Page.objects.get_head(self.page_name, -1)
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_udiff__only_old_revision(self):
-        url = self.page.get_absolute_url('udiff', revision=Page.objects.get_head(self.page_name, -1))
+        url = self.page.get_absolute_url(
+            'udiff', revision=Page.objects.get_head(self.page_name, -1)
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, b')\n@@ -1 +1 @@\n-test_page\n+new text')
@@ -597,7 +659,7 @@ class TestDoDiff(TestCase):
         url = self.page.get_absolute_url(
             'diff',
             revision=Page.objects.get_head(self.page_name, -2),
-            new_revision=Page.objects.get_head(self.page_name, 0)
+            new_revision=Page.objects.get_head(self.page_name, 0),
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -607,7 +669,7 @@ class TestDoDiff(TestCase):
         url = self.page.get_absolute_url(
             'udiff',
             revision=Page.objects.get_head(self.page_name, -2),
-            new_revision=Page.objects.get_head(self.page_name, 0)
+            new_revision=Page.objects.get_head(self.page_name, 0),
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -656,17 +718,17 @@ class TestDoRevert(TestCase):
         url = href('wiki', 'test_page', 'a', 'revert', self.rev_2.id)
         response = self.client.get(url, follow=True)
 
-        self.assertRedirects(response, href('wiki', 'test_page', 'a', 'revision', self.rev_2.id))
-        self.assertInHTML('<input type="submit" value="Restore">', response.content.decode())
+        self.assertRedirects(
+            response, href('wiki', 'test_page', 'a', 'revision', self.rev_2.id)
+        )
+        self.assertInHTML(
+            '<input type="submit" value="Restore">', response.content.decode()
+        )
 
     def test_post_cancel_revert(self):
         """Test that POST with cancel parameter aborts the revert."""
         url = href('wiki', 'test_page', 'a', 'revert', self.rev_2.id)
-        response = self.client.post(
-            url,
-            data={'cancel': 'Cancel'},
-            follow=True
-        )
+        response = self.client.post(url, data={'cancel': 'Cancel'}, follow=True)
 
         self.assertContains(response, 'Revert aborted')
 
@@ -694,11 +756,7 @@ class TestDoRevert(TestCase):
 
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.user,
             note='init ACL',
         )
@@ -707,15 +765,15 @@ class TestDoRevert(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertEqual(len(response.redirect_chain), 1)
-        self.assertTrue(response.redirect_chain[0][0].startswith(href('portal', 'login')))
+        self.assertTrue(
+            response.redirect_chain[0][0].startswith(href('portal', 'login'))
+        )
 
     def test_post_revert_success(self):
         """Test successful revert to an older revision."""
         url = href('wiki', 'test_page', 'a', 'revert', self.rev_1.id)
         response = self.client.post(
-            url,
-            data={'note': 'Reverting to first revision'},
-            follow=True
+            url, data={'note': 'Reverting to first revision'}, follow=True
         )
 
         self.assertContains(response, 'was reverted successfully')
@@ -731,9 +789,7 @@ class TestDoRevert(TestCase):
         """Test that reverting to the latest revision shows an error."""
         url = href('wiki', 'test_page', 'a', 'revert', self.rev_3.id)
         response = self.client.post(
-            url,
-            data={'note': 'Try to revert to latest'},
-            follow=True
+            url, data={'note': 'Try to revert to latest'}, follow=True
         )
 
         self.assertContains(response, 'Revision is the latest one, revert aborted')
@@ -744,11 +800,7 @@ class TestDoRevert(TestCase):
     def test_revert_with_empty_note(self):
         """Test revert with empty note parameter."""
         url = href('wiki', 'test_page', 'a', 'revert', self.rev_1.id)
-        response = self.client.post(
-            url,
-            data={'note': ''},
-            follow=True
-        )
+        response = self.client.post(url, data={'note': ''}, follow=True)
 
         self.assertContains(response, 'was reverted successfully')
 
@@ -762,11 +814,7 @@ class TestDoRevert(TestCase):
         original_last_rev_id = self.page.last_rev.id
 
         url = href('wiki', 'test_page', 'a', 'revert', self.rev_1.id)
-        self.client.post(
-            url,
-            data={'note': 'Test revert'},
-            follow=True
-        )
+        self.client.post(url, data={'note': 'Test revert'}, follow=True)
 
         page_after = Page.objects.get_by_name('test_page')
         # last_rev should have changed
@@ -811,27 +859,31 @@ class TestDoRevert(TestCase):
         url = href('wiki', 'TEST_PAGE', 'a', 'revert', self.rev_1.id)
         response = self.client.get(url, follow=True)
 
-        self.assertInHTML('<input type="submit" value="Restore">', response.content.decode())
-        self.assertRedirects(response, href('wiki', f'test_page/a/revision/{self.rev_1.id}/'))
+        self.assertInHTML(
+            '<input type="submit" value="Restore">', response.content.decode()
+        )
+        self.assertRedirects(
+            response, href('wiki', f'test_page/a/revision/{self.rev_1.id}/')
+        )
 
 
 class TestDoRename(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
-        self.admin = User.objects.register_user('admin', 'admin@example.test', 'admin', False)
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
         self.page = Page.objects.create(
-            user=self.admin,
-            name='test_page',
-            remote_addr='',
-            text='test content'
+            user=self.admin, name='test_page', remote_addr='', text='test content'
         )
 
     def test_get_request_shows_form(self):
@@ -840,16 +892,15 @@ class TestDoRename(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertInHTML('<input type="text" name="new_name" size="30" value="test_page">', response.content.decode())
+        self.assertInHTML(
+            '<input type="text" name="new_name" size="30" value="test_page">',
+            response.content.decode(),
+        )
 
     def test_post_rename_success(self):
         """Test successful rename of a page."""
         url = href('wiki', 'test_page', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         self.assertRedirects(response, href('wiki', 'renamed_page'))
         self.assertContains(response, 'Renamed the page successfully')
@@ -861,11 +912,7 @@ class TestDoRename(TestCase):
     def test_post_rename_with_empty_name(self):
         """Test rename with empty new_name shows error."""
         url = href('wiki', 'test_page', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': ''},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': ''}, follow=True)
 
         self.assertContains(response, 'No page name given')
         # Original page should still exist
@@ -874,18 +921,16 @@ class TestDoRename(TestCase):
 
     def test_post_rename_to_existing_page(self):
         """Test rename fails if target page already exists."""
-        Page.objects.create( # another page
+        Page.objects.create(  # another page
             user=self.admin,
             name='existing_page',
             remote_addr='',
-            text='existing content'
+            text='existing content',
         )
 
         url = href('wiki', 'test_page', 'a', 'rename')
         response = self.client.post(
-            url,
-            data={'new_name': 'existing_page'},
-            follow=True
+            url, data={'new_name': 'existing_page'}, follow=True
         )
 
         self.assertContains(response, 'A page with this name already exists')
@@ -904,9 +949,7 @@ class TestDoRename(TestCase):
         """Test rename creates redirect when add_redirect is checked."""
         url = href('wiki', 'test_page', 'a', 'rename')
         response = self.client.post(
-            url,
-            data={'new_name': 'renamed_page', 'add_redirect': 'on'},
-            follow=True
+            url, data={'new_name': 'renamed_page', 'add_redirect': 'on'}, follow=True
         )
 
         self.assertContains(response, 'Renamed the page successfully')
@@ -923,9 +966,7 @@ class TestDoRename(TestCase):
         """Test that new page name is normalized."""
         url = href('wiki', 'test_page', 'a', 'rename')
         response = self.client.post(
-            url,
-            data={'new_name': 'new page name'},
-            follow=True
+            url, data={'new_name': 'new page name'}, follow=True
         )
 
         self.assertContains(response, 'Renamed the page successfully')
@@ -941,11 +982,7 @@ class TestDoRename(TestCase):
 
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.admin,
             note='init ACL',
         )
@@ -978,11 +1015,7 @@ class TestDoRename(TestCase):
             )
 
         url = href('wiki', 'test_page', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         self.assertContains(response, 'Renamed the page successfully')
 
@@ -1015,11 +1048,7 @@ class TestDoRename(TestCase):
             )
 
         url = href('wiki', 'test_page', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         self.assertEqual(response.status_code, 200)
 
@@ -1056,11 +1085,7 @@ class TestDoRename(TestCase):
             )
 
         url = href('wiki', 'test_page', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         self.assertContains(response, 'are already attached to the new page name')
 
@@ -1095,11 +1120,7 @@ class TestDoRename(TestCase):
             )
 
         url = href('wiki', 'test_page', 'a', 'rename', 'force')
-        response = self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         self.assertContains(response, 'Renamed the page successfully')
 
@@ -1122,11 +1143,7 @@ class TestDoRename(TestCase):
         original_rev_count = self.page.revisions.count()
 
         url = href('wiki', 'test_page', 'a', 'rename')
-        self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         # Should have one more revision from the rename
         self.assertEqual(self.page.revisions.count(), original_rev_count + 1)
@@ -1136,11 +1153,7 @@ class TestDoRename(TestCase):
         original_text = self.page.rev.text.value
 
         url = href('wiki', 'test_page', 'a', 'rename')
-        self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         renamed_page = Page.objects.get_by_name('renamed_page')
         self.assertEqual(renamed_page.rev.text.value, original_text)
@@ -1156,36 +1169,22 @@ class TestDoRename(TestCase):
     def test_rename_same_name_as_current(self):
         """Test rename to the same name shows error."""
         url = href('wiki', 'test_page', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': 'test_page'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'test_page'}, follow=True)
 
         self.assertContains(response, 'A page with this name already exists.')
 
     def test_rename_hierarchy_preserved(self):
         """Test that rename preserves page hierarchy structure."""
         parent_page = Page.objects.create(
-            user=self.admin,
-            name='parent',
-            remote_addr='',
-            text='parent content'
+            user=self.admin, name='parent', remote_addr='', text='parent content'
         )
 
         child_page = Page.objects.create(
-            user=self.admin,
-            name='parent/child',
-            remote_addr='',
-            text='child content'
+            user=self.admin, name='parent/child', remote_addr='', text='child content'
         )
 
         url = href('wiki', 'parent', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': 'new_parent'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'new_parent'}, follow=True)
 
         self.assertContains(response, 'Renamed the page successfully')
 
@@ -1211,11 +1210,7 @@ class TestDoRename(TestCase):
             )
 
         url = href('wiki', 'test_page', 'a', 'rename')
-        response = self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        response = self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         self.assertContains(response, 'Renamed the page successfully')
 
@@ -1228,11 +1223,7 @@ class TestDoRename(TestCase):
         original_last_rev_id = self.page.last_rev.id
 
         url = href('wiki', 'test_page', 'a', 'rename')
-        self.client.post(
-            url,
-            data={'new_name': 'renamed_page'},
-            follow=True
-        )
+        self.client.post(url, data={'new_name': 'renamed_page'}, follow=True)
 
         self.page.refresh_from_db()
         # last_rev should have changed
@@ -1244,11 +1235,7 @@ class TestDoRename(TestCase):
 
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.admin,
             note='init ACL',
         )
@@ -1257,7 +1244,9 @@ class TestDoRename(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertEqual(len(response.redirect_chain), 1)
-        self.assertTrue(response.redirect_chain[0][0].startswith(href('portal', 'login')))
+        self.assertTrue(
+            response.redirect_chain[0][0].startswith(href('portal', 'login'))
+        )
 
 
 class TestDoDelete(TestCase):
@@ -1265,14 +1254,16 @@ class TestDoDelete(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user',
-                                               False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
 
-        self.page = Page.objects.create(user=self.user, name='delete_test',
-                                        remote_addr='', text='test content')
+        self.page = Page.objects.create(
+            user=self.user, name='delete_test', remote_addr='', text='test content'
+        )
         self.url = self.page.get_absolute_url('delete')
 
     def test_get_shows_delete_form(self):
@@ -1291,8 +1282,9 @@ class TestDoDelete(TestCase):
 
     def test_post_delete_page(self):
         """POST request without 'cancel' should delete the page."""
-        response = self.client.post(self.url, data={'note': 'Test deletion'},
-                                    follow=True)
+        response = self.client.post(
+            self.url, data={'note': 'Test deletion'}, follow=True
+        )
         self.assertContains(response, 'Page deleted successfully.', status_code=404)
 
         # Verify page is marked as deleted
@@ -1319,11 +1311,7 @@ class TestDoDelete(TestCase):
         """User without delete privilege should not be able to delete."""
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.user,
             note='init ACL',
         )
@@ -1334,7 +1322,9 @@ class TestDoDelete(TestCase):
     def test_delete_redirects_to_page(self):
         """After deletion, should redirect to the page URL."""
         response = self.client.post(self.url, data={'note': 'Test'})
-        self.assertRedirects(response, self.page.get_absolute_url('show'), target_status_code=404)
+        self.assertRedirects(
+            response, self.page.get_absolute_url('show'), target_status_code=404
+        )
 
     def test_delete_with_different_case_in_name(self):
         """Deleting a page with different case in URL should work."""
@@ -1342,9 +1332,9 @@ class TestDoDelete(TestCase):
         response = self.client.post(url, data={'note': 'Test deletion'}, follow=True)
 
         self.assertContains(response, 'Are you sure you want to delete this page?')
-        self.assertEqual(response.redirect_chain,
-                         [('/delete_test/a/delete/', 302),
-                          (href('wiki', 'delete_test'), 302)]
+        self.assertEqual(
+            response.redirect_chain,
+            [('/delete_test/a/delete/', 302), (href('wiki', 'delete_test'), 302)],
         )
 
 
@@ -1353,10 +1343,12 @@ class TestDoMvBaustelle(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user',
-                                               False)
-        self.admin = User.objects.register_user('admin', 'admin@example.test', 'admin',
-                                                False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
 
         self.client.login(username='admin', password='admin')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
@@ -1379,7 +1371,10 @@ class TestDoMvBaustelle(TestCase):
         response = self.client.get(url)
 
         self.assertContains(response, 'Mark page “TestPage” as “under construction”')
-        self.assertInHTML('<input type="text" name="new_name" value="Baustelle/TestPage" required id="id_new_name">', response.content.decode())
+        self.assertInHTML(
+            '<input type="text" name="new_name" value="Baustelle/TestPage" required id="id_new_name">',
+            response.content.decode(),
+        )
 
     def test_get_request_for_discontinued_page(self):
         """Test GET for pages in Baustelle/Verlassen (discontinued)."""
@@ -1391,7 +1386,8 @@ class TestDoMvBaustelle(TestCase):
         # Should show Baustelle/TestPage (without Verlassen)
         self.assertInHTML(
             '<input type="text" name="new_name" value="Baustelle/TestPage" required id="id_new_name">',
-            response.content.decode())
+            response.content.decode(),
+        )
 
     def test_get_request_sets_user_initial(self):
         """Test that current user is set as initial form value."""
@@ -1403,7 +1399,7 @@ class TestDoMvBaustelle(TestCase):
         # User should be pre-filled in the form
         self.assertInHTML(
             '<input type="text" name="user" value="admin" required id="id_user">',
-            response.content.decode()
+            response.content.decode(),
         )
 
     # Successful POST Tests (Normal Pages)
@@ -1413,11 +1409,15 @@ class TestDoMvBaustelle(TestCase):
         page = self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        response = self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
@@ -1434,11 +1434,15 @@ class TestDoMvBaustelle(TestCase):
         self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '2025-12-31',
-        }, follow=True)
+        response = self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '2025-12-31',
+            },
+            follow=True,
+        )
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
@@ -1453,27 +1457,37 @@ class TestDoMvBaustelle(TestCase):
         self._create_page('TestPage', original_text)
         url = self._get_mv_baustelle_url('TestPage')
 
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        response = self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
         moved_page = Page.objects.get_by_name('Baustelle/TestPage')
-        self.assertIn('[[Vorlage(Überarbeitung, TestPage, admin)]]', moved_page.rev.text.value)
+        self.assertIn(
+            '[[Vorlage(Überarbeitung, TestPage, admin)]]', moved_page.rev.text.value
+        )
 
     def test_post_preserves_user_in_template(self):
         """Test that user is preserved in Überarbeitung template."""
         self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         moved_page = Page.objects.get_by_name('Baustelle/TestPage')
         self.assertIn(self.admin.username, moved_page.rev.text.value)
@@ -1483,11 +1497,15 @@ class TestDoMvBaustelle(TestCase):
         self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         copy_page = Page.objects.get_by_name('TestPage')
         self.assertIn('[[Vorlage(Kopie, TestPage)', copy_page.rev.text.value)
@@ -1497,11 +1515,15 @@ class TestDoMvBaustelle(TestCase):
         self._create_page('TestPage', 'Original content')
         url = self._get_mv_baustelle_url('TestPage')
 
-        self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         copy_page = Page.objects.get_by_name('TestPage')
         self.assertIn('Original in der Baustelle', copy_page.rev.note)
@@ -1513,11 +1535,15 @@ class TestDoMvBaustelle(TestCase):
         page = self._create_page('Baustelle/Verlassen/TestPage', 'Original content')
         url = self._get_mv_baustelle_url('Baustelle/Verlassen/TestPage')
 
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        response = self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
@@ -1534,11 +1560,15 @@ class TestDoMvBaustelle(TestCase):
         self._create_page('Baustelle/Verlassen/TestPage', original_text)
         url = self._get_mv_baustelle_url('Baustelle/Verlassen/TestPage')
 
-        self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         moved_page = Page.objects.get_by_name('Baustelle/TestPage')
         # Verlassen template should be removed
@@ -1546,15 +1576,21 @@ class TestDoMvBaustelle(TestCase):
 
     def test_verlassen_page__multiple_template_lines(self):
         """Test handling of multiple template lines."""
-        original_text = '[[Vorlage(Verlassen)]]\n[[Vorlage(Something)]]\nOriginal content'
+        original_text = (
+            '[[Vorlage(Verlassen)]]\n[[Vorlage(Something)]]\nOriginal content'
+        )
         self._create_page('Baustelle/Verlassen/TestPage', original_text)
         url = self._get_mv_baustelle_url('Baustelle/Verlassen/TestPage')
 
-        self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         moved_page = Page.objects.get_by_name('Baustelle/TestPage')
         # Only Verlassen template should be removed
@@ -1567,11 +1603,15 @@ class TestDoMvBaustelle(TestCase):
         self._create_page('Baustelle/TestPage', 'Already exists')
         url = self._get_mv_baustelle_url('TestPage')
 
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        response = self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         self.assertContains(response, 'bereits eine Seite')
 
@@ -1581,10 +1621,14 @@ class TestDoMvBaustelle(TestCase):
         url = self._get_mv_baustelle_url('TestPage')
 
         # Missing required field 'user'
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/TestPage',
-            'completion_date': '',
-        }, follow=False)
+        response = self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/TestPage',
+                'completion_date': '',
+            },
+            follow=False,
+        )
 
         self.assertContains(response, 'Mark page “TestPage” as “under construction”')
 
@@ -1614,11 +1658,7 @@ class TestDoMvBaustelle(TestCase):
         self.client.logout()
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.admin,
             note='init ACL',
         )
@@ -1631,7 +1671,8 @@ class TestDoMvBaustelle(TestCase):
         # Should redirect to login
         self.assertEqual(len(response.redirect_chain), 1)
         self.assertTrue(
-            response.redirect_chain[0][0].startswith(href('portal', 'login')))
+            response.redirect_chain[0][0].startswith(href('portal', 'login'))
+        )
 
     def test_rename_failure_returns_error_message(self):
         """Test error handling when rename fails."""
@@ -1640,11 +1681,15 @@ class TestDoMvBaustelle(TestCase):
 
         # Mock _rename to return False (failure)
         with patch('inyoka.wiki.actions._rename', return_value=False):
-            response = self.client.post(url, data={
-                'new_name': 'Baustelle/TestPage',
-                'user': self.admin.username,
-                'completion_date': '',
-            }, follow=True)
+            response = self.client.post(
+                url,
+                data={
+                    'new_name': 'Baustelle/TestPage',
+                    'user': self.admin.username,
+                    'completion_date': '',
+                },
+                follow=True,
+            )
 
         self.assertContains(response, 'Fehler')
 
@@ -1653,11 +1698,15 @@ class TestDoMvBaustelle(TestCase):
         page = self._create_page('Category/SubCategory/TestPage', 'Content')
         url = self._get_mv_baustelle_url('Category/SubCategory/TestPage')
 
-        response = self.client.post(url, data={
-            'new_name': 'Baustelle/Category/SubCategory/TestPage',
-            'user': self.admin.username,
-            'completion_date': '',
-        }, follow=True)
+        response = self.client.post(
+            url,
+            data={
+                'new_name': 'Baustelle/Category/SubCategory/TestPage',
+                'user': self.admin.username,
+                'completion_date': '',
+            },
+            follow=True,
+        )
 
         self.assertContains(response, 'erfolgreich in die Baustelle verschoben')
 
@@ -1666,13 +1715,16 @@ class TestDoMvBaustelle(TestCase):
 
 
 class TestDoMvDiscontinued(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
-        self.admin = User.objects.register_user('admin', 'admin@example.test', 'admin', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.test', 'admin', False
+        )
 
         self.client.login(username='admin', password='admin')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
@@ -1681,7 +1733,7 @@ class TestDoMvDiscontinued(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\nTest content'
+            text='[[Vorlage(Baustelle)]]\nTest content',
         )
 
     def test_get_request_shows_flash_form(self):
@@ -1690,17 +1742,15 @@ class TestDoMvDiscontinued(TestCase):
         response = self.client.get(url, follow=True)
 
         # GET request should show flash message and redirect to show
-        self.assertContains(response, 'Are you sure you want to mark the page as “discontinued”')
+        self.assertContains(
+            response, 'Are you sure you want to mark the page as “discontinued”'
+        )
         self.assertRedirects(response, href('wiki', 'Baustelle/test_page'))
 
     def test_post_cancel_mv_discontinued(self):
         """Test that POST with cancel parameter aborts the move."""
         url = self.page.get_absolute_url('mv_discontinued')
-        response = self.client.post(
-            url,
-            data={'cancel': 'Cancel'},
-            follow=True
-        )
+        response = self.client.post(url, data={'cancel': 'Cancel'}, follow=True)
 
         self.assertContains(response, 'Verschieben wurde abgebrochen.')
 
@@ -1711,11 +1761,7 @@ class TestDoMvDiscontinued(TestCase):
     def test_post_mv_discontinued_success(self):
         """Test successful move from Baustelle to Baustelle/Verlassen."""
         url = self.page.get_absolute_url('mv_discontinued')
-        response = self.client.post(
-            url,
-            data={},
-            follow=True
-        )
+        response = self.client.post(url, data={}, follow=True)
 
         self.assertContains(response, 'Seite wurde erfolgreich verschoben.')
 
@@ -1735,7 +1781,7 @@ class TestDoMvDiscontinued(TestCase):
             user=self.user,
             name='Baustelle/Verlassen/test_page',
             remote_addr='',
-            text='Existing page'
+            text='Existing page',
         )
 
         url = self.page.get_absolute_url('mv_discontinued')
@@ -1772,7 +1818,7 @@ class TestDoMvDiscontinued(TestCase):
             user=self.user,
             name='Baustelle/deleted_page',
             remote_addr='',
-            text='Content'
+            text='Content',
         )
         deleted_page.edit(user=self.user, deleted=True, note='deleted')
 
@@ -1788,7 +1834,7 @@ class TestDoMvDiscontinued(TestCase):
             user=self.user,
             name='Baustelle/preserve_test',
             remote_addr='',
-            text=original_content
+            text=original_content,
         )
 
         url = page.get_absolute_url('mv_discontinued')
@@ -1804,7 +1850,7 @@ class TestDoMvDiscontinued(TestCase):
             user=self.user,
             name='Baustelle/Verlassen/already_discontinued',
             remote_addr='',
-            text='[[Vorlage(Verlassen)]]\nContent'
+            text='[[Vorlage(Verlassen)]]\nContent',
         )
 
         url = page.get_absolute_url('mv_discontinued')
@@ -1824,7 +1870,7 @@ class TestDoMvDiscontinued(TestCase):
 
         moved_page = Page.objects.get_by_name('Baustelle/Verlassen/test_page')
         # Should have one more revision (from the rename operation)
-        self.assertEqual(moved_page.revisions.count(), initial_rev_count+1)
+        self.assertEqual(moved_page.revisions.count(), initial_rev_count + 1)
 
     def test_post_mv_discontinued_requires_manage_privilege(self):
         """Test that manage privilege is required."""
@@ -1833,11 +1879,7 @@ class TestDoMvDiscontinued(TestCase):
 
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.admin,
             note='init ACL',
         )
@@ -1851,10 +1893,7 @@ class TestDoMvDiscontinued(TestCase):
     def test_post_mv_discontinued_normalizes_pagename(self):
         """Test that page names are normalized."""
         Page.objects.create(
-            user=self.user,
-            name='Baustelle/spaced_page',
-            remote_addr='',
-            text='Content'
+            user=self.user, name='Baustelle/spaced_page', remote_addr='', text='Content'
         )
 
         url = href('wiki', 'Baustelle/spaced page', 'a', 'mv_discontinued')
@@ -1872,7 +1911,7 @@ class TestDoMvDiscontinued(TestCase):
             user=self.user,
             name='Baustelle/multiline_test',
             remote_addr='',
-            text=multiline_text
+            text=multiline_text,
         )
 
         url = page.get_absolute_url('mv_discontinued')
@@ -1881,13 +1920,10 @@ class TestDoMvDiscontinued(TestCase):
         moved_page = Page.objects.get_by_name('Baustelle/Verlassen/multiline_test')
         text = moved_page.rev.text.value
 
-        self.assertEqual(text,
-                         '[[Vorlage(Verlassen)]]\nLine 1\nLine 2\nLine 3'
-                         )
+        self.assertEqual(text, '[[Vorlage(Verlassen)]]\nLine 1\nLine 2\nLine 3')
 
 
 class TestDoMvBack(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -1905,28 +1941,30 @@ class TestDoMvBack(TestCase):
     def test_get_request_shows_form(self):
         """Test that GET request displays the confirmation form."""
         page = Page.objects.create(
-            user=self.user, name='Baustelle/test_page', remote_addr='',
-            text='test content'
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='test content',
         )
 
         url = page.get_absolute_url('mv_back')
         response = self.client.get(url, follow=True)
 
-        self.assertContains(response, 'Are you sure you want to move the page into the wiki?')
+        self.assertContains(
+            response, 'Are you sure you want to move the page into the wiki?'
+        )
 
     def test_post_cancel_aborts_mv_back(self):
         """Test that POST with cancel parameter aborts the move."""
         page = Page.objects.create(
-            user=self.user, name='Baustelle/test_page', remote_addr='',
-            text='test content'
+            user=self.user,
+            name='Baustelle/test_page',
+            remote_addr='',
+            text='test content',
         )
 
         url = page.get_absolute_url('mv_back')
-        response = self.client.post(
-            url,
-            data={'cancel': 'Cancel'},
-            follow=True
-        )
+        response = self.client.post(url, data={'cancel': 'Cancel'}, follow=True)
 
         self.assertContains(response, 'Wiederherstellen wurde abgebrochen.')
 
@@ -1940,15 +1978,11 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\ntest content'
+            text='[[Vorlage(Baustelle)]]\ntest content',
         )
 
         url = page.get_absolute_url('mv_back')
-        response = self.client.post(
-            url,
-            data={},
-            follow=True
-        )
+        response = self.client.post(url, data={}, follow=True)
 
         self.assertContains(response, 'Seite erfolgreich ins Wiki verschoben')
 
@@ -1967,7 +2001,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='[[Vorlage(Überarbeitung, 1.1.2023, admin)]]\ntest content'
+            text='[[Vorlage(Überarbeitung, 1.1.2023, admin)]]\ntest content',
         )
 
         url = page.get_absolute_url('mv_back')
@@ -1987,7 +2021,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\noriginal content'
+            text='[[Vorlage(Baustelle)]]\noriginal content',
         )
 
         # Create copy at destination
@@ -1995,7 +2029,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='test_page',
             remote_addr='',
-            text='[[Vorlage(Kopie, Baustelle/test_page)]]\ncopy content'
+            text='[[Vorlage(Kopie, Baustelle/test_page)]]\ncopy content',
         )
 
         url = baustelle_page.get_absolute_url('mv_back')
@@ -2018,7 +2052,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/article',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\noriginal'
+            text='[[Vorlage(Baustelle)]]\noriginal',
         )
 
         # Create copy at destination
@@ -2026,7 +2060,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='article',
             remote_addr='',
-            text='[[Vorlage(Kopie, Baustelle/article)]]\ncopy'
+            text='[[Vorlage(Kopie, Baustelle/article)]]\ncopy',
         )
 
         # Create some conflicting Trash entries
@@ -2035,7 +2069,7 @@ class TestDoMvBack(TestCase):
                 user=self.user,
                 name=f'Trash/article-{i}',
                 remote_addr='',
-                text='conflict'
+                text='conflict',
             )
 
         url = baustelle_page.get_absolute_url('mv_back')
@@ -2050,10 +2084,7 @@ class TestDoMvBack(TestCase):
     def test_mv_back_non_baustelle_page_no_prefix(self):
         """Test moving back a page that doesn't start with Baustelle/."""
         page = Page.objects.create(
-            user=self.user,
-            name='test_page',
-            remote_addr='',
-            text='test content'
+            user=self.user, name='test_page', remote_addr='', text='test content'
         )
 
         url = page.get_absolute_url('mv_back')
@@ -2079,11 +2110,7 @@ class TestDoMvBack(TestCase):
         # Create ACL restricting access
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.user,
             note='init ACL',
         )
@@ -2092,7 +2119,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='test content'
+            text='test content',
         )
 
         url = page.get_absolute_url('mv_back')
@@ -2100,7 +2127,8 @@ class TestDoMvBack(TestCase):
 
         self.assertEqual(len(response.redirect_chain), 1)
         self.assertTrue(
-            response.redirect_chain[0][0].startswith(href('portal', 'login')))
+            response.redirect_chain[0][0].startswith(href('portal', 'login'))
+        )
 
     def test_mv_back_with_different_case_in_name(self):
         """Test mv_back with different case in page name."""
@@ -2108,13 +2136,15 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/Test_Page',
             remote_addr='',
-            text='test content'
+            text='test content',
         )
 
         url = href('wiki', 'BAUSTELLE/TEST_PAGE', 'a', 'mv_back')
         response = self.client.post(url, data={}, follow=True)
 
-        self.assertContains(response, 'Are you sure you want to move the page into the wiki?')
+        self.assertContains(
+            response, 'Are you sure you want to move the page into the wiki?'
+        )
 
     def test_mv_back_with_hierarchy_in_page_name(self):
         """Test mv_back with hierarchical page names."""
@@ -2122,7 +2152,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/Category/test_page',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\ntest content'
+            text='[[Vorlage(Baustelle)]]\ntest content',
         )
 
         url = page.get_absolute_url('mv_back')
@@ -2139,7 +2169,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='test content'
+            text='test content',
         )
 
         url = page.get_absolute_url('mv_back')
@@ -2154,14 +2184,14 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='test content'
+            text='test content',
         )
 
         Page.objects.create(
             user=self.user,
             name='test_page',
             remote_addr='',
-            text='[[Vorlage(Kopie, some_other_page)]]\ncopy'
+            text='[[Vorlage(Kopie, some_other_page)]]\ncopy',
         )
 
         # We need to fill all Trash slots (1-99)
@@ -2170,7 +2200,7 @@ class TestDoMvBack(TestCase):
                 user=self.user,
                 name=f'Trash/test_page-{i}',
                 remote_addr='',
-                text='trash'
+                text='trash',
             )
 
         url = page.get_absolute_url('mv_back')
@@ -2188,7 +2218,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\ntest content'
+            text='[[Vorlage(Baustelle)]]\ntest content',
         )
         original_rev_count = page.revisions.count()
 
@@ -2204,7 +2234,7 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\ntest content'
+            text='[[Vorlage(Baustelle)]]\ntest content',
         )
         url = page.get_absolute_url('mv_back')
 
@@ -2220,21 +2250,18 @@ class TestDoMvBack(TestCase):
             user=self.user,
             name='Baustelle/test_page',
             remote_addr='',
-            text='[[Vorlage(Baustelle)]]\ntest content'
+            text='[[Vorlage(Baustelle)]]\ntest content',
         )
 
         copy = Page.objects.create(
             user=self.user,
             name='test_page',
             remote_addr='',
-            text='[[Vorlage(Kopie, some_other_page)]]\ncopy'
+            text='[[Vorlage(Kopie, some_other_page)]]\ncopy',
         )
 
         Page.objects.create(
-            user=self.user,
-            name='Trash/Test_page-1',
-            remote_addr='',
-            text='trash'
+            user=self.user, name='Trash/Test_page-1', remote_addr='', text='trash'
         )
 
         url = page.get_absolute_url('mv_back')
@@ -2251,7 +2278,6 @@ class TestDoMvBack(TestCase):
 
 
 class TestDoBacklinks(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -2267,7 +2293,7 @@ class TestDoBacklinks(TestCase):
             user=self.user,
             name=self.target_page_name,
             remote_addr='',
-            text='This is the target page'
+            text='This is the target page',
         )
 
     def test_backlinks_basic_get(self):
@@ -2281,7 +2307,9 @@ class TestDoBacklinks(TestCase):
         url = self.target_page.get_absolute_url('backlinks')
         response = self.client.get(url)
 
-        self.assertContains(response, '<meta name="robots" content="noindex, nofollow">')
+        self.assertContains(
+            response, '<meta name="robots" content="noindex, nofollow">'
+        )
 
     def test_backlinks_with_case_insensitive_page_name(self):
         url = href('wiki', self.target_page_name.upper(), 'a', 'backlinks')
@@ -2312,7 +2340,9 @@ class TestDoBacklinks(TestCase):
         url = self.target_page.get_absolute_url('backlinks')
         response = self.client.get(url)
 
-        self.assertContains(response, 'This article is an orphan and not referenced by any site.')
+        self.assertContains(
+            response, 'This article is an orphan and not referenced by any site.'
+        )
 
     def test_backlinks_with_multiple_links(self):
         """Test backlinks when multiple pages link to the target."""
@@ -2323,7 +2353,7 @@ class TestDoBacklinks(TestCase):
                 user=self.user,
                 name=linking_page_name,
                 remote_addr='',
-                text=linking_text
+                text=linking_text,
             )
             linking_page.update_meta()
 
@@ -2340,7 +2370,7 @@ class TestDoBacklinks(TestCase):
             user=self.user,
             name='test_page_with_spaces',
             remote_addr='',
-            text='Page with spaces in name'
+            text='Page with spaces in name',
         )
 
         url = href('wiki', 'test page with spaces', 'a', 'backlinks')
@@ -2356,7 +2386,6 @@ class TestDoBacklinks(TestCase):
 
 
 class TestDoExport(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -2426,8 +2455,7 @@ class TestDoExport(TestCase):
 
     def test_export_html_invalid_revision_string(self):
         """Test exporting HTML with invalid (non-numeric) revision parameter."""
-        url = self.page.get_absolute_url('export', format='html',
-                                         revision=1337)
+        url = self.page.get_absolute_url('export', format='html', revision=1337)
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 404)
@@ -2479,11 +2507,7 @@ class TestDoExport(TestCase):
         # Create ACL that denies read access
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.user,
             note='init ACL',
         )
@@ -2494,7 +2518,8 @@ class TestDoExport(TestCase):
         # Should redirect to login
         self.assertEqual(len(response.redirect_chain), 1)
         self.assertTrue(
-            response.redirect_chain[0][0].startswith(href('portal', 'login')))
+            response.redirect_chain[0][0].startswith(href('portal', 'login'))
+        )
 
     def test_export_multiline_content_raw(self):
         """Test exporting raw content with multiple lines."""
@@ -2526,14 +2551,16 @@ class TestDoAttach(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user',
-                                               False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
 
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
 
-        self.page = Page.objects.create(user=self.user, name='test_page',
-                                        remote_addr='', text='test content')
+        self.page = Page.objects.create(
+            user=self.user, name='test_page', remote_addr='', text='test content'
+        )
         self.url = self.page.get_absolute_url('attachments')
 
     def test_get_shows_form(self):
@@ -2560,23 +2587,31 @@ class TestDoAttach(TestCase):
 
     def test_post_with_invalid_form(self):
         """Test POST with invalid form data."""
-        response = self.client.post(self.url, data={
-            'filename': 'test.txt',
-            # Missing required 'attachment' field
-        }, follow=True)
+        response = self.client.post(
+            self.url,
+            data={
+                'filename': 'test.txt',
+                # Missing required 'attachment' field
+            },
+            follow=True,
+        )
 
         self.assertContains(response, 'This field is required')
 
     def test_post_attachment_creation_with_filename(self):
         """Test successful attachment creation with custom filename."""
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': 'custom_name.txt',
-                'override': False,
-                'text': 'Attachment description',
-                'note': 'Adding attachment'
-            }, follow=True)
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': 'custom_name.txt',
+                    'override': False,
+                    'text': 'Attachment description',
+                    'note': 'Adding attachment',
+                },
+                follow=True,
+            )
         self.assertContains(response, 'Attachment saved successfully')
 
         # Verify attachment was created
@@ -2586,13 +2621,17 @@ class TestDoAttach(TestCase):
     def test_post_attachment_creation_with_original_filename(self):
         """Test attachment creation using original file name."""
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': '',
-                'override': False,
-                'text': 'Test description',
-                'note': 'Note here'
-            }, follow=True)
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': '',
+                    'override': False,
+                    'text': 'Test description',
+                    'note': 'Note here',
+                },
+                follow=True,
+            )
         self.assertContains(response, 'Attachment saved successfully')
 
         # Verify attachment was created with original filename
@@ -2614,15 +2653,20 @@ class TestDoAttach(TestCase):
             )
 
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': 'existing_file.txt',
-                'override': False,
-                'text': '',
-                'note': ''
-            }, follow=True)
-        self.assertContains(response,
-                            'Another page or attachment with the same name exists')
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': 'existing_file.txt',
+                    'override': False,
+                    'text': '',
+                    'note': '',
+                },
+                follow=True,
+            )
+        self.assertContains(
+            response, 'Another page or attachment with the same name exists'
+        )
 
     def test_post_duplicate_attachment_with_override(self):
         """Test posting duplicate attachment with override flag creates new revision."""
@@ -2640,13 +2684,17 @@ class TestDoAttach(TestCase):
             original_rev_count = existing.revisions.count()
 
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': 'overwrite_me.txt',
-                'override': True,
-                'text': 'updated content',
-                'note': 'updated note'
-            }, follow=True)
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': 'overwrite_me.txt',
+                    'override': True,
+                    'text': 'updated content',
+                    'note': 'updated note',
+                },
+                follow=True,
+            )
         self.assertContains(response, 'Attachment saved successfully')
 
         # Verify new revision was created
@@ -2658,15 +2706,19 @@ class TestDoAttach(TestCase):
         """Test target, if attachment description contains a redirect."""
 
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': 'redirect_test.txt',
-                'override': False,
-                'text': '''special text
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': 'redirect_test.txt',
+                    'override': False,
+                    'text': """special text
 # X-Redirect: foo
-''',
-                'note': ''
-            }, follow=False)
+""",
+                    'note': '',
+                },
+                follow=False,
+            )
 
         attachment = Page.objects.get_by_name('test_page/redirect_test.txt')
         # The redirect URL should point to show_no_redirect action
@@ -2675,18 +2727,22 @@ class TestDoAttach(TestCase):
     def test_post_attachment_with_text_and_note(self):
         """Test attachment creation with description text and edit note."""
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': 'documented.txt',
-                'override': False,
-                'text': 'This is a detailed description',
-                'note': 'Added important documentation'
-            }, follow=True)
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': 'documented.txt',
+                    'override': False,
+                    'text': 'This is a detailed description',
+                    'note': 'Added important documentation',
+                },
+                follow=True,
+            )
         self.assertContains(response, 'Attachment saved successfully')
 
         attachment = Page.objects.get_by_name('test_page/documented.txt')
         self.assertEqual(attachment.rev.text.value, 'This is a detailed description')
-        self.assertEqual( attachment.rev.note, 'Added important documentation')
+        self.assertEqual(attachment.rev.note, 'Added important documentation')
 
     def test_get_lists_existing_attachments(self):
         """Test GET request lists existing attachments for the page."""
@@ -2719,13 +2775,17 @@ class TestDoAttach(TestCase):
     def test_attachment_name_normalization(self):
         """Test that attachment names are normalized (spaces replaced with underscores)."""
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': 'file with spaces.txt',
-                'override': False,
-                'text': '',
-                'note': ''
-            }, follow=True)
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': 'file with spaces.txt',
+                    'override': False,
+                    'text': '',
+                    'note': '',
+                },
+                follow=True,
+            )
         self.assertContains(response, 'Attachment saved successfully')
 
         # Verify attachment name was normalized
@@ -2740,19 +2800,25 @@ class TestDoAttach(TestCase):
             text='regular content',
             remote_addr=None,
             name='test_page/existing_page.txt',
-            note='regular page'
+            note='regular page',
         )
 
         with open(join(dirname(__file__), 'evil.png'), 'rb') as evil:
-            response = self.client.post(self.url, data={
-                'attachment': evil,
-                'filename': 'existing_page.txt',
-                'override': True,
-                'text': 'now an attachment',
-                'note': 'converted to attachment'
-            }, follow=True)
+            response = self.client.post(
+                self.url,
+                data={
+                    'attachment': evil,
+                    'filename': 'existing_page.txt',
+                    'override': True,
+                    'text': 'now an attachment',
+                    'note': 'converted to attachment',
+                },
+                follow=True,
+            )
 
-        self.assertContains(response, 'Another page or attachment with the same name exists')
+        self.assertContains(
+            response, 'Another page or attachment with the same name exists'
+        )
 
     def test_context_contains_required_keys(self):
         """Test that response context contains required keys."""
@@ -2783,10 +2849,7 @@ class TestDoSubscribe(TestCase):
             'user', 'user@example.test', 'user', False
         )
         self.page = Page.objects.create(
-            user=self.user,
-            name='subscribe_page',
-            remote_addr='',
-            text='subscribe text'
+            user=self.user, name='subscribe_page', remote_addr='', text='subscribe text'
         )
         self.url = href('wiki', 'subscribe_page', 'a', 'subscribe')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
@@ -2809,7 +2872,9 @@ class TestDoSubscribe(TestCase):
 
         self.assertContains(response, 'already subscribed')
         # Should only be one subscription
-        subscriptions = Subscription.objects.filter(user=self.user, object_id=self.page.id)
+        subscriptions = Subscription.objects.filter(
+            user=self.user, object_id=self.page.id
+        )
         self.assertEqual(subscriptions.count(), 1)
 
     @override_settings(LOGIN_URL=f'//{settings.BASE_DOMAIN_NAME}/login/')
@@ -2820,7 +2885,9 @@ class TestDoSubscribe(TestCase):
         response = self.client.get(self.url, follow=False)
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith(f'//{settings.BASE_DOMAIN_NAME}/login/'))
+        self.assertTrue(
+            response.url.startswith(f'//{settings.BASE_DOMAIN_NAME}/login/')
+        )
 
     def test_subscribe_space_in_name(self):
         url = href('wiki', 'subscribe page', 'a', 'subscribe')
@@ -2828,7 +2895,9 @@ class TestDoSubscribe(TestCase):
 
         response = self.client.get(url, follow=True)
 
-        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/')
+        self.assertRedirects(
+            response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/'
+        )
 
     def test_subscribe_different_case_in_name(self):
         url = href('wiki', 'subscribe_PAGE', 'a', 'subscribe')
@@ -2836,11 +2905,12 @@ class TestDoSubscribe(TestCase):
 
         response = self.client.get(url, follow=True)
 
-        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/')
+        self.assertRedirects(
+            response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/subscribe_page/'
+        )
 
 
 class TestDoUnsubscribe(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -2850,7 +2920,9 @@ class TestDoUnsubscribe(TestCase):
         )
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
-        self.page = Page.objects.create(user=self.user, name='test_page', remote_addr='', text='content')
+        self.page = Page.objects.create(
+            user=self.user, name='test_page', remote_addr='', text='content'
+        )
         self.url = href('wiki', 'test_page', 'a', 'unsubscribe')
 
     def test_unsubscribe_existing_subscription(self):
@@ -2858,14 +2930,18 @@ class TestDoUnsubscribe(TestCase):
         sub.save()
 
         response = self.client.get(self.url, follow=True)
-        self.assertContains(response, "You won't be notified for changes on this page anymore")
+        self.assertContains(
+            response, "You won't be notified for changes on this page anymore"
+        )
 
         # Should be deleted
-        self.assertFalse(Subscription.objects.filter(user=self.user, object_id=self.page.pk).exists())
+        self.assertFalse(
+            Subscription.objects.filter(user=self.user, object_id=self.page.pk).exists()
+        )
 
     def test_unsubscribe_no_subscription(self):
         response = self.client.get(self.url, follow=True)
-        self.assertContains(response, "No subscription for this page found.")
+        self.assertContains(response, 'No subscription for this page found.')
 
     def test_unsubscribe_redirect_next_with_safe_domain(self):
         sub = Subscription(user=self.user, content_object=self.page)
@@ -2896,11 +2972,12 @@ class TestDoUnsubscribe(TestCase):
 
         response = self.client.get(url, follow=True)
 
-        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/test_page/')
+        self.assertRedirects(
+            response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/test_page/'
+        )
 
 
 class TestDoAttachEdit(TestCase):
-
     client_class = InyokaClient
 
     def setUp(self):
@@ -2929,7 +3006,10 @@ class TestDoAttachEdit(TestCase):
         response = self.client.get(self.url)
 
         self.assertContains(response, 'Edit attachment')
-        self.assertContains(response, f'<form action="http://wiki.{settings.BASE_DOMAIN_NAME}/attachment_test/a/edit/"')
+        self.assertContains(
+            response,
+            f'<form action="http://wiki.{settings.BASE_DOMAIN_NAME}/attachment_test/a/edit/"',
+        )
 
     def test_form_initial_values(self):
         """Test that form initial values are populated from the wiki page."""
@@ -2968,7 +3048,7 @@ class TestDoAttachEdit(TestCase):
         # Verify the page was updated
         updated_page = Page.objects.get_by_name('attachment_test')
         self.assertEqual(updated_page.rev.text.value, 'Updated text without new file')
-        self.assertEqual(updated_page.rev.note,'Updated text only')
+        self.assertEqual(updated_page.rev.note, 'Updated text only')
 
     def test_post_with_new_attachment_renames_filename_if_not_specified(self):
         original_filename = self.attachment_page.rev.attachment.filename
@@ -3030,11 +3110,7 @@ class TestDoAttachEdit(TestCase):
         """Test that do_attach_edit requires 'attach' privilege."""
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.user,
             note='init ACL',
         )
@@ -3068,7 +3144,9 @@ class TestDoManageDiscussion(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
+        self.user = User.objects.register_user(
+            'user', 'user@example.test', 'user', False
+        )
         self.user.is_superuser = True
         self.user.save()
 
@@ -3095,17 +3173,15 @@ class TestDoManageDiscussion(TestCase):
         response = self.client.get(self.url)
 
         self.assertContains(response, '<form')
-        self.assertContains(response, 'You can choose a topic as the discussion topic of this article.')
+        self.assertContains(
+            response, 'You can choose a topic as the discussion topic of this article.'
+        )
 
     def test_permission_required(self):
         self.client.logout()
         Page.objects.create(
             'ACL',
-            '#X-Behave: Access-Control-List\n'
-            '{{{\n'
-            '[*]\n'
-            'user=none\n'
-            '}}}',
+            '#X-Behave: Access-Control-List\n{{{\n[*]\nuser=none\n}}}',
             user=self.user,
             note='init ACL',
         )
@@ -3113,7 +3189,9 @@ class TestDoManageDiscussion(TestCase):
         response = self.client.get(self.url, follow=False)
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith(f'http://{settings.BASE_DOMAIN_NAME}/login/'))
+        self.assertTrue(
+            response.url.startswith(f'http://{settings.BASE_DOMAIN_NAME}/login/')
+        )
 
     def test_get_request_redirects_case_sensitive(self):
         url = href('wiki', self.page.name.upper(), 'a', 'discussion')
@@ -3122,24 +3200,24 @@ class TestDoManageDiscussion(TestCase):
 
     def test_post_with_invalid_topic_slug(self):
         response = self.client.post(
-            self.url,
-            data={'topic': 'nonexistent-topic'},
-            follow=True
+            self.url, data={'topic': 'nonexistent-topic'}, follow=True
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response.context['form'], 'topic', ['This topic does not exist.'])
+        self.assertFormError(
+            response.context['form'], 'topic', ['This topic does not exist.']
+        )
 
     def test_link_topic(self):
         self._setup_forum()
 
         response = self.client.post(
-            self.url,
-            data={'topic': self.topic.slug},
-            follow=True
+            self.url, data={'topic': self.topic.slug}, follow=True
         )
 
-        self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/')
+        self.assertRedirects(
+            response, f'http://forum.{settings.BASE_DOMAIN_NAME}/topic/a-test-topic/'
+        )
         self.page.refresh_from_db()
         self.assertEqual(self.page.topic, self.topic)
 
@@ -3149,13 +3227,11 @@ class TestDoManageDiscussion(TestCase):
         self.page.topic = self.topic
         self.page.save()
 
-        response = self.client.post(
-            self.url,
-            data={'topic': ''},
-            follow=True
-        )
+        response = self.client.post(self.url, data={'topic': ''}, follow=True)
 
-        self.assertRedirects(response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/discussion_test/')
+        self.assertRedirects(
+            response, f'http://wiki.{settings.BASE_DOMAIN_NAME}/discussion_test/'
+        )
         self.page.refresh_from_db()
         self.assertIsNone(self.page.topic)
 
@@ -3165,16 +3241,16 @@ class TestDoManageDiscussion(TestCase):
         self.page.topic = self.topic
         self.page.save()
 
-        response = self.client.get(
-            self.url, follow=True
+        response = self.client.get(self.url, follow=True)
+
+        self.assertInHTML(
+            '<input type="text" name="topic" value="a-test-topic" id="id_topic">',
+            response.content.decode(),
         )
 
-        self.assertInHTML('<input type="text" name="topic" value="a-test-topic" id="id_topic">', response.content.decode())
 
-
-@freeze_time("2023-12-09T23:55:04Z")
+@freeze_time('2023-12-09T23:55:04Z')
 class TestRevisionFeed(TestCase):
-
     client_class = InyokaClient
     fixtures = ['wiki_feed.jsonl']
 
@@ -3203,8 +3279,9 @@ class TestRevisionFeed(TestCase):
         response = self.client.get('/_feed/10/')
 
         self.maxDiff = None
-        self.assertXMLEqual(response.content.decode(),
-'''<?xml version="1.0" encoding="utf-8"?>
+        self.assertXMLEqual(
+            response.content.decode(),
+            """<?xml version="1.0" encoding="utf-8"?>
 <feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom">
   <title>ubuntuusers.local:8080 wiki – last changes</title>
   <link href="http://wiki.ubuntuusers.local:8080/wiki/recentchanges/" rel="alternate" />
@@ -3226,12 +3303,12 @@ class TestRevisionFeed(TestCase):
     <summary type="html">user edited the article “test page” on 2023-12-10 00:55:04+01:00. Summary: Created</summary>
   </entry>
 </feed>
-''')
+""",
+        )
 
 
-@freeze_time("2023-12-09T23:55:04Z")
+@freeze_time('2023-12-09T23:55:04Z')
 class TestArticleRevisionFeed(TestCase):
-
     client_class = InyokaClient
     fixtures = ['wiki_feed.jsonl']
 
@@ -3293,7 +3370,9 @@ class TestArticleRevisionFeed(TestCase):
     def test_edit_from_anonymous_user(self):
         anonymous = User.objects.get_anonymous_user()
         self.page.edit(text='another text', user=anonymous, remote_addr='127.0.0.1')
-        self.page.edit(text='another text', user=anonymous, remote_addr='127.0.0.1', deleted=True)
+        self.page.edit(
+            text='another text', user=anonymous, remote_addr='127.0.0.1', deleted=True
+        )
 
         response = self.client.get(self.page.get_absolute_url('feed'))
         self.assertIn('anonymous user edited', response.content.decode())
@@ -3304,9 +3383,11 @@ class TestArticleRevisionFeed(TestCase):
             self.client.get(self.page.get_absolute_url('feed'))
 
     def test_tags(self):
-        self.page.edit(text='foob text\n\n#tag: view, install, intro',
-                       user=self.user,
-                       change_date=datetime.now(timezone.utc) + timedelta(minutes=11))
+        self.page.edit(
+            text='foob text\n\n#tag: view, install, intro',
+            user=self.user,
+            change_date=datetime.now(timezone.utc) + timedelta(minutes=11),
+        )
         self.page.update_meta()
 
         response = self.client.get(self.page.get_absolute_url('feed'))
@@ -3320,8 +3401,9 @@ class TestArticleRevisionFeed(TestCase):
         response = self.client.get(self.page.get_absolute_url('feed'))
 
         self.maxDiff = None
-        self.assertXMLEqual(response.content.decode(),
-'''<?xml version="1.0" encoding="utf-8"?>
+        self.assertXMLEqual(
+            response.content.decode(),
+            """<?xml version="1.0" encoding="utf-8"?>
 <feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom">
   <title>ubuntuusers.local:8080 wiki – test_page</title>
   <link href="http://wiki.ubuntuusers.local:8080/test_page/" rel="alternate"></link>
@@ -3343,4 +3425,5 @@ class TestArticleRevisionFeed(TestCase):
     <summary type="html">user edited the article “test page” on 2023-12-10 00:55:04+01:00. Summary: Created</summary>
   </entry>
 </feed>
-''')
+""",
+        )
