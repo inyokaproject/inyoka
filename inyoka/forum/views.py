@@ -12,7 +12,8 @@ from functools import partial
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models import F, Max, Q
@@ -55,6 +56,7 @@ from inyoka.forum.notifications import (
 )
 from inyoka.markup.base import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
+from inyoka.portal.forms import CreateTicketForm
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
@@ -905,8 +907,6 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
 @templated('forum/ticket.html')
 def create_ticket(request, post_id=None, topic_slug=None):
     """Let a user report a post or topic by creating a ticket."""
-    from django.contrib.contenttypes.models import ContentType
-    from inyoka.portal.forms import CreateTicketForm
     if post_id is not None:
         target = get_object_or_404(Post, id=post_id)
         topic = target.topic

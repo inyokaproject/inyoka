@@ -9,9 +9,30 @@
 #}
 
 {%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
 {% set BREADCRUMBS = [(_('Tickets'), href('portal', 'tickets', 'list'))] + BREADCRUMBS|d([]) %}
 
+{% set STATE_LABELS = {
+  'active': _('Active'),
+  'open': _('Open'),
+  'in_progress': _('In Progress'),
+  'closed': _('Closed'),
+  'all': _('All'),
+} %}
+
 {% block content %}
+<p class="linklist">
+  {% trans %}Filter{% endtrans %}:
+  {%- for s in state_filters %}
+    {%- if s == current_state %}
+      <strong>{{ STATE_LABELS[s] }}</strong>
+    {%- else %}
+      <a href="{{ href('portal', 'tickets', 'list') }}?state={{ s }}">{{ STATE_LABELS[s] }}</a>
+    {%- endif %}
+    {%- if not loop.last %} | {% endif %}
+  {%- endfor %}
+</p>
 <form method="post">
   {{ csrf_input }}
   <table>
@@ -81,6 +102,7 @@
   </p>
   {%- endif %}
 </form>
+<div class="pagination">{{ rendered_pagination }}</div>
 <p>
   <a href="{{ href('portal', 'ticketreason', 'list') }}">{% trans %}Manage ticket reasons{% endtrans %}</a>
 </p>

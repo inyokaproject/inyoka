@@ -50,7 +50,6 @@ from inyoka.ikhaya.models import Article, Event
 from inyoka.portal.forms import (
     NOTIFICATION_CHOICES,
     ConfigurationForm,
-    CreateTicketForm,
     CreateUserForm,
     DeactivateUserForm,
     EditFileForm,
@@ -1699,13 +1698,27 @@ def ticket_reason_subscription(request, mode, reason_id):
     return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
 
 
+TICKET_STATE_FILTERS = {
+    'active': [Ticket.OPEN, Ticket.IN_PROGRESS],
+    'open': [Ticket.OPEN],
+    'in_progress': [Ticket.IN_PROGRESS],
+    'closed': [Ticket.CLOSED],
+    'all': None,
+}
+
+
 @login_required
 @permission_required('forum.manage_tickets_forum', raise_exception=True)
 @templated('portal/ticket_list.html')
-def ticket_list(request):
-    tickets = Ticket.objects.filter(
-        state__in=[Ticket.OPEN, Ticket.IN_PROGRESS]
-    ).select_related('reporting_user', 'owning_user', 'reason').order_by('reporting_time')
+def ticket_list(request, page=1):
+    state = request.GET.get('state', 'active')
+    if state not in TICKET_STATE_FILTERS:
+        state = 'active'
+    states = TICKET_STATE_FILTERS[state]
+    tickets = Ticket.objects.all().select_related(
+        'reporting_user', 'owning_user', 'reason').order_by('reporting_time')
+    if states is not None:
+        tickets = tickets.filter(state__in=states)
 
     if request.method == 'POST':
         form = TicketListForm(tickets, request.POST)
@@ -1728,7 +1741,15 @@ def ticket_list(request):
     else:
         form = TicketListForm(tickets)
 
-    return {'tickets': tickets, 'form': form}
+    pagination = Pagination(request, tickets, page, 25,
+                            link=href('portal', 'tickets', 'list'))
+    return {
+        'tickets': pagination.get_queryset(),
+        'pagination': pagination,
+        'form': form,
+        'current_state': state,
+        'state_filters': list(TICKET_STATE_FILTERS),
+    }
 
 
 @login_required

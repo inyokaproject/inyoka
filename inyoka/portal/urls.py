@@ -95,6 +95,7 @@ urlpatterns = [
     path('ticketreason/<int:reason_id>/delete/', views.ticket_reason_delete),
     re_path(r'^ticketreason/(?P<reason_id>\d+)/(?P<mode>(un)?subscribe)/$', views.ticket_reason_subscription),
     path('tickets/list/', views.ticket_list),
+    path('tickets/list/<int:page>/', views.ticket_list),
     path('tickets/<int:ticket_id>/own/', views.ticket_own),
     path('tickets/<int:ticket_id>/disown/', views.ticket_disown),
     path('tickets/<int:ticket_id>/edit/', views.ticket_edit),
