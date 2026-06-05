@@ -41,7 +41,7 @@ from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
 from inyoka.ikhaya.models import Category
-from inyoka.portal.models import Linkmap, StaticFile, StaticPage
+from inyoka.portal.models import Linkmap, StaticFile, StaticPage, Ticket, TicketReason
 from inyoka.portal.user import (
     User,
     UserBanned,
@@ -78,7 +78,7 @@ GLOBAL_PRIVILEGE_MODELS = {
     'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
-    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage', 'linkmap'),
+    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage', 'ticketreason', 'linkmap'),
 }
 
 NOTIFY_BY_CHOICES = (
@@ -1195,6 +1195,40 @@ class ConfigurationForm(forms.Form):
         except KeyError:
             raise forms.ValidationError(_('Invalid substitution pattern.'))
         return data
+
+
+class ManageTicketReasons(forms.ModelForm):
+    class Meta:
+        model = TicketReason
+        fields = ('content_type', 'reason')
+
+
+class CreateTicketForm(forms.ModelForm):
+    """Allows the user to report arbitrary Django objects."""
+    class Meta:
+        model = Ticket
+        fields = ('reason', 'reporter_comment')
+
+
+class EditTicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ('reason', 'reporter_comment')
+
+
+class EditTicketOwnerCommentForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ('owner_comment',)
+
+
+class TicketListForm(forms.Form):
+    def __init__(self, tickets, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['selected'] = forms.MultipleChoiceField(
+            choices=[(t.id, str(t.id)) for t in tickets],
+            required=False,
+        )
 
 
 class TokenForm(forms.Form):

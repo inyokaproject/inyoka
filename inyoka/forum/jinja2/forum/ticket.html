@@ -1,0 +1,33 @@
+{#
+    forum/ticket.html
+    ~~~~~~~~~~~~~~~~~
+
+    The user can report a post to the moderators on this page.
+
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'forum/page.html' %}
+{% set BREADCRUMBS = [(_('Report post'), href('forum', 'post', post.id, 'ticket')),
+                      (post.topic.forum.name, post.topic.forum|url),
+                      (post.topic.title|e, post.topic|url)] + BREADCRUMBS|d([]) %}
+
+{% block forum_content %}
+  <form method="post" enctype="multipart/form-data" class="new_topic">
+    {{ csrf_input }}
+    <h2>{% trans %}Report post to moderators{% endtrans %}</h2>
+    <p>
+      {%- trans link=href('wiki', 'ubuntuusers/Moderatoren/Portalregeln') -%}
+        Here you can report a post to the moderators if it is against our <a href="{{ link }}">rules</a>. Please select a reason and add a short explanation:
+      {%- endtrans -%}
+    </p>
+    <dl>
+      <dt>{{ form.reason.label }}</dt>
+      <dd>{{ form.reason }}</dd>
+      <dt>{{ form.reporter_comment.label }}</dt>
+      <dd>{{ form.reporter_comment }}</dd>
+    </dl>
+    <p><input type="submit" value="{% trans %}Report post{% endtrans %}"></p>
+  </form>
+{% endblock %}

@@ -9,8 +9,6 @@
 """
 from datetime import timedelta
 from functools import partial
-from itertools import groupby
-from operator import attrgetter
 
 from django.conf import settings
 from django.contrib import messages
@@ -35,8 +33,6 @@ from inyoka.forum.forms import (
     EditPostForm,
     MoveTopicForm,
     NewTopicForm,
-    ReportListForm,
-    ReportTopicForm,
     SplitTopicForm,
 )
 from inyoka.forum.models import (
@@ -51,7 +47,6 @@ from inyoka.forum.models import (
     mark_all_forums_read,
 )
 from inyoka.forum.notifications import (
-    notify_reported_topic_subscribers,
     send_deletion_notification,
     send_discussion_notification,
     send_edit_notifications,
@@ -907,134 +902,47 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
 
 
 @login_required
-@templated('forum/report.html')
-def report(request, topic_slug, page=1):
-    """Change the report_status of a topic and redirect to it"""
-    topic = Topic.objects.get(slug=topic_slug)
-    if not request.user.has_perm('forum.view_forum', topic.forum):
+@templated('forum/ticket.html')
+def create_ticket(request, post_id):
+    """Let a user report a post by creating a ticket.”””
+    from inyoka.portal.forms import CreateTicketForm
+    from inyoka.portal.models import Ticket, TicketReason
+    post = get_object_or_404(Post, id=post_id)
+    if not request.user.has_perm('forum.view_forum', post.topic.forum):
         return abort_access_denied(request)
-    if topic.reported:
-        messages.info(request, _('This topic was already reported.'))
-        return HttpResponseRedirect(url_for(topic))
 
     if request.method == 'POST':
-        form = ReportTopicForm(request.POST)
+        form = CreateTicketForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            topic.reported = data['text']
-            topic.reporter_id = request.user.id
-            topic.save()
+            ticket = form.save(commit=False)
+            ticket.reporting_user = request.user
+            ticket.reporting_time = dj_timezone.now()
+            ticket.content_object = post
+            ticket.save()
+            cache.delete('portal/ticket_count')
 
-            notify_reported_topic_subscribers(
-                _('Reported topic: “%(topic)s”') % {'topic': topic.title},
-                {'topic': topic, 'text': data['text']})
+            if ticket.reason:
+                sub_key = ticket.reason.get_subscription_name()
+                subscriber_ids = storage[sub_key] or ''
+                for uid in filter(None, subscriber_ids.split(',')):
+                    try:
+                        subscriber = User.objects.get(id=uid)
+                    except User.DoesNotExist:
+                        continue
+                    if ticket.can_moderate(subscriber):
+                        send_notification(subscriber, 'new_ticket',
+                                          subject=_('New ticket'),
+                                          args={'ticket': ticket, 'post': post})
+                    else:
+                        remaining = [i for i in subscriber_ids.split(',')
+                                     if i and i != uid]
+                        storage[sub_key] = ','.join(remaining)
 
-            cache.delete('forum/reported_topic_count')
-            messages.success(request, _('The topic was reported.'))
-            return HttpResponseRedirect(href('forum', 'topic', topic_slug,
-                                             page))
+            messages.success(request, _('The post was reported.'))
+            return HttpResponseRedirect(url_for(post.topic))
     else:
-        form = ReportTopicForm()
-    return {
-        'topic': topic,
-        'form': form
-    }
-
-
-@login_required
-@permission_required('forum.manage_reported_topic', raise_exception=True)
-@templated('forum/reportlist.html')
-def reportlist(request):
-    """Get a list of all reported topics"""
-    def _add_field_choices():
-        """Add dynamic field choices to the reported topic formular"""
-        form.fields['selected'].choices = [(topic.id, '') for topic in topics]
-
-    if 'topic' in request.GET:
-        topic = Topic.objects.get(slug=request.GET['topic'])
-        if 'assign' in request.GET:
-            # check that user can only assign himself if he has moderation rights
-            if request.user.has_perm('forum.moderate_forum', topic.forum):
-                if topic.report_claimed_by_id:
-                    messages.info(request, _('This report has already been claimed.'))
-                else:
-                    topic.report_claimed_by_id = request.user.id
-            else:
-                messages.info(request, _('You don\'t have moderation rights for the seleted topic.'))
-        elif 'unassign' in request.GET and request.GET.get('unassign') == request.user.username:
-            topic.report_claimed_by_id = None
-        topic.save()
-        return HttpResponseRedirect(href('forum', 'reported_topics'))
-
-    topics = Topic.objects.filter(reported__isnull=False).order_by('-report_claimed_by','slug').all()
-    if request.method == 'POST':
-        form = ReportListForm(request.POST)
-        _add_field_choices()
-        if form.is_valid():
-            data = form.cleaned_data
-            if not data['selected']:
-                messages.error(request, _('No topics selected.'))
-            else:
-                # We select all topics that have been selected and also
-                # select the regarding forum, 'cause we will check for the
-                # moderation privilege.
-                topics_selected = topics.filter(id__in=data['selected']).select_related('forum')
-
-                topic_ids_modrights = set()
-                # Check for the moderate privilege of the forums of selected
-                # reported topics and take only the topic IDs where the
-                # requesting user can moderate the forum.
-                for forum, selected_topics in groupby(topics_selected, attrgetter('forum')):
-                    if request.user.has_perm('forum.moderate_forum', forum):
-                        topic_ids_modrights.update(list(map(attrgetter('id'), selected_topics)))
-                for topic in topics_selected:
-                    if topic.report_claimed_by_id == request.user.id:
-                        topic_ids_modrights.add(topic.id)
-
-                # Update the reported state.
-                Topic.objects.filter(id__in=topic_ids_modrights).update(
-                    reported=None, reporter=None, report_claimed_by=None)
-                cache.delete('forum/reported_topic_count')
-                topics = [t for t in topics if t.id not in topic_ids_modrights]
-                if len(topics_selected) == len(topic_ids_modrights):
-                    messages.success(request, _('The selected tickets have been closed.'))
-                else:
-                    messages.success(request, _('Only a subset of selected tickets has been '
-                        'closed, considering your moderation privileges '
-                        'for the regarding forums.'))
-    else:
-        form = ReportListForm()
-        _add_field_choices()
-
-    subscribers = storage['reported_topics_subscribers'] or ''
-    subscribed = str(request.user.id) in subscribers.split(',')
-
-    return {
-        'topics': topics,
-        'form': form,
-        'subscribed': subscribed,
-    }
-
-
-def reported_topics_subscription(request, mode):
-    subscribers = storage['reported_topics_subscribers'] or ''
-    users = {int(i) for i in subscribers.split(',') if i}
-
-    if mode == 'subscribe':
-        if not request.user.has_perm('forum.manage_reported_topic'):
-            raise PermissionDenied
-        users.add(request.user.id)
-        messages.success(request, _('A notification will be sent when a topic is reported.'))
-    elif mode == 'unsubscribe':
-        try:
-            users.remove(request.user.id)
-        except KeyError:
-            pass
-        messages.success(request, _('You will not be notified anymore when a topic is reported.'))
-
-    storage['reported_topics_subscribers'] = ','.join(str(i) for i in users)
-
-    return HttpResponseRedirect(href('forum', 'reported_topics'))
+        form = CreateTicketForm()
+    return {'form': form, 'post': post}
 
 
 def post(request, post_id):

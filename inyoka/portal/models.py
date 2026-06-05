@@ -493,3 +493,68 @@ class Linkmap(models.Model):
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = InyokaMarkupField(application='portal')
+
+
+class TicketReason(models.Model):
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, db_index=True)
+    reason = models.CharField(max_length=200)
+    system_defined = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = gettext_lazy('Ticket Reason')
+        verbose_name_plural = gettext_lazy('Ticket Reasons')
+
+    def __str__(self):
+        return self.reason
+
+    def get_subscription_name(self):
+        return 'ticketreason_%d_subscribers' % self.id
+
+
+class Ticket(models.Model):
+    OPEN = 0
+    IN_PROGRESS = 1
+    CLOSED = 2
+    STATE_CHOICES = [
+        (OPEN, gettext_lazy('Open')),
+        (IN_PROGRESS, gettext_lazy('In Progress')),
+        (CLOSED, gettext_lazy('Closed')),
+    ]
+
+    content_type = models.ForeignKey(
+        ContentType, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='+')
+    object_id = models.PositiveIntegerField(null=True, db_index=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    reporting_user = models.ForeignKey(
+        User, related_name='reported_tickets', on_delete=models.CASCADE)
+    reporting_time = models.DateTimeField(db_index=True)
+    owning_user = models.ForeignKey(
+        User, null=True, blank=True, related_name='owned_tickets',
+        on_delete=models.SET_NULL)
+    owned_time = models.DateTimeField(null=True, blank=True)
+    closed_time = models.DateTimeField(null=True, blank=True)
+    state = models.SmallIntegerField(
+        choices=STATE_CHOICES, default=OPEN, db_index=True)
+    reason = models.ForeignKey(
+        TicketReason, null=True, blank=True, on_delete=models.SET_NULL)
+    reporter_comment = InyokaMarkupField(
+        verbose_name=gettext_lazy('Reporter comment'),
+        application='portal', blank=True)
+    owner_comment = InyokaMarkupField(
+        verbose_name=gettext_lazy('Owner comment'),
+        application='portal', null=True, blank=True)
+
+    def can_moderate(self, user):
+        from inyoka.forum.models import Post, Topic
+        obj = self.content_object
+        if isinstance(obj, Post):
+            forum = obj.topic.forum
+        elif isinstance(obj, Topic):
+            forum = obj.forum
+        else:
+            return user.has_perm('forum.manage_tickets_forum')
+        return (user.has_perm('forum.manage_tickets_forum') or
+                user.has_perm('forum.moderate_forum', forum))

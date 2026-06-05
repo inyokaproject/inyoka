@@ -39,23 +39,22 @@ from inyoka.utils.urls import href, url_for
 
 def context_data(request):
     """Fill in context defaults."""
-    from inyoka.forum.models import Topic
     from inyoka.ikhaya.models import Event, Report, Suggestion
-    from inyoka.portal.models import PrivateMessageEntry
+    from inyoka.portal.models import PrivateMessageEntry, Ticket
     from inyoka.utils.storage import storage
 
     user = request.user
 
     reported = pms = suggestions = events = reported_articles = 0
     if user.is_authenticated:
-        can = {'manage_topics': user.has_perm('forum.manage_reported_topic'),
+        can = {'manage_tickets': user.has_perm('forum.manage_tickets_forum'),
                'article_edit': user.has_perm('ikhaya.change_article'),
                'event_edit': user.has_perm('portal.change_event')}
 
         keys = ['portal/pm_count/%s' % user.id]
 
-        if can['manage_topics']:
-            keys.append('forum/reported_topic_count')
+        if can['manage_tickets']:
+            keys.append('portal/ticket_count')
         if can['article_edit']:
             keys.append('ikhaya/suggestion_count')
             keys.append('ikhaya/reported_article_count')
@@ -72,12 +71,12 @@ def context_data(request):
                 .filter(user__id=user.id, read=False) \
                 .exclude(folder=None).count()
             to_update[key] = pms
-        if can['manage_topics']:
-            key = 'forum/reported_topic_count'
+        if can['manage_tickets']:
+            key = 'portal/ticket_count'
             reported = cached_values.get(key)
             if reported is None:
-                reported = Topic.objects.filter(reporter__id__isnull=False) \
-                                        .count()
+                reported = Ticket.objects.filter(
+                    state__in=[Ticket.OPEN, Ticket.IN_PROGRESS]).count()
                 to_update[key] = reported
         if can['article_edit']:
             key = 'ikhaya/suggestion_count'
@@ -120,7 +119,7 @@ def context_data(request):
         'MESSAGES': messages.get_messages(request),
         'GLOBAL_MESSAGE': global_message,
         'pm_count': pms,
-        'report_count': reported,
+        'ticket_count': reported,
         'article_report_count': reported_articles,
         'suggestion_count': suggestions,
         'event_count': events,

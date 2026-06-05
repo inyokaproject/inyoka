@@ -1,0 +1,85 @@
+{#
+    portal/ticket_list.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    Moderators can see all open tickets on this page.
+
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% set BREADCRUMBS = [(_('Tickets'), href('portal', 'tickets', 'list'))] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+<form method="post">
+  {{ csrf_input }}
+  <table>
+    <thead>
+      <tr>
+        <th>{% trans %}#{% endtrans %}</th>
+        <th>{% trans %}Object{% endtrans %}</th>
+        <th>{% trans %}Reason{% endtrans %}</th>
+        <th>{% trans %}Reported by{% endtrans %}</th>
+        <th>{% trans %}Reported at{% endtrans %}</th>
+        <th>{% trans %}Owned by{% endtrans %}</th>
+        <th>{% trans %}Actions{% endtrans %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for ticket in tickets %}
+      <tr>
+        <td>
+          <input type="checkbox" name="selected" value="{{ ticket.id }}">
+        </td>
+        <td>
+          {%- if ticket.content_object %}
+            <a href="{{ ticket.content_object|url }}">{{ ticket.content_object }}</a>
+          {%- else %}
+            {% trans %}(deleted){% endtrans %}
+          {%- endif %}
+        </td>
+        <td>{{ ticket.reason }}</td>
+        <td>
+          {%- if ticket.reporting_user %}
+            <a href="{{ ticket.reporting_user|url }}">{{ ticket.reporting_user.username }}</a>
+          {%- endif %}
+        </td>
+        <td>{{ ticket.reporting_time|datetime }}</td>
+        <td>
+          {%- if ticket.owning_user %}
+            <a href="{{ ticket.owning_user|url }}">{{ ticket.owning_user.username }}</a>
+            {% if ticket.owning_user == request.user %}
+              | <a href="{{ href('portal', 'tickets', ticket.id, 'disown') }}">{% trans %}Release{% endtrans %}</a>
+              | <a href="{{ href('portal', 'tickets', ticket.id, 'edit') }}">{% trans %}Comment{% endtrans %}</a>
+            {% endif %}
+          {%- else %}
+            <a href="{{ href('portal', 'tickets', ticket.id, 'own') }}">{% trans %}Claim{% endtrans %}</a>
+          {%- endif %}
+        </td>
+        <td>
+          {%- if ticket.reporter_comment %}
+            <p>{{ ticket.reporter_comment_rendered|safe }}</p>
+          {%- endif %}
+          {%- if ticket.owner_comment %}
+            <p><em>{{ ticket.owner_comment_rendered|safe }}</em></p>
+          {%- endif %}
+        </td>
+      </tr>
+      {%- else %}
+      <tr>
+        <td colspan="7">{% trans %}Currently there are no open tickets.{% endtrans %}</td>
+      </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+  {%- if tickets %}
+  <p>
+    <input type="submit" value="{% trans %}Close selected tickets{% endtrans %}">
+  </p>
+  {%- endif %}
+</form>
+<p>
+  <a href="{{ href('portal', 'ticketreason', 'list') }}">{% trans %}Manage ticket reasons{% endtrans %}</a>
+</p>
+{% endblock %}

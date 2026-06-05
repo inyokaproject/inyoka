@@ -88,6 +88,16 @@ urlpatterns = [
     # static pages
     path('pages/', views.pages),
     path('page/new/', views.page_edit),
+    path('ticketreason/list/', views.ticket_reasons_list),
+    path('ticketreason/new/', views.ticket_reason_edit),
+    re_path(r'^ticketreason/all/(?P<mode>(un)?subscribe)/$', views.ticket_reason_subscription, {'reason_id': 'all'}),
+    path('ticketreason/<int:reason_id>/edit/', views.ticket_reason_edit),
+    path('ticketreason/<int:reason_id>/delete/', views.ticket_reason_delete),
+    re_path(r'^ticketreason/(?P<reason_id>\d+)/(?P<mode>(un)?subscribe)/$', views.ticket_reason_subscription),
+    path('tickets/list/', views.ticket_list),
+    path('tickets/<int:ticket_id>/own/', views.ticket_own),
+    path('tickets/<int:ticket_id>/disown/', views.ticket_disown),
+    path('tickets/<int:ticket_id>/edit/', views.ticket_edit),
 ]
 
 urlpatterns.extend([
