@@ -9,17 +9,17 @@
 #}
 
 {%- extends 'forum/page.html' %}
-{% set BREADCRUMBS = [(_('Report post'), href('forum', 'post', post.id, 'ticket')),
-                      (post.topic.forum.name, post.topic.forum|url),
-                      (post.topic.title|e, post.topic|url)] + BREADCRUMBS|d([]) %}
+{% set BREADCRUMBS = [(_('Report'), target|url('ticket')),
+                      (topic.forum.name, topic.forum|url),
+                      (topic.title|e, topic|url)] + BREADCRUMBS|d([]) %}
 
 {% block forum_content %}
   <form method="post" enctype="multipart/form-data" class="new_topic">
     {{ csrf_input }}
-    <h2>{% trans %}Report post to moderators{% endtrans %}</h2>
+    <h2>{% trans %}Report to moderators{% endtrans %}</h2>
     <p>
       {%- trans link=href('wiki', 'ubuntuusers/Moderatoren/Portalregeln') -%}
-        Here you can report a post to the moderators if it is against our <a href="{{ link }}">rules</a>. Please select a reason and add a short explanation:
+        Here you can report this to the moderators if it is against our <a href="{{ link }}">rules</a>. Please select a reason and add a short explanation:
       {%- endtrans -%}
     </p>
     <dl>
@@ -28,6 +28,6 @@
       <dt>{{ form.reporter_comment.label }}</dt>
       <dd>{{ form.reporter_comment }}</dd>
     </dl>
-    <p><input type="submit" value="{% trans %}Report post{% endtrans %}"></p>
+    <p><input type="submit" value="{% trans %}Submit report{% endtrans %}"></p>
   </form>
 {% endblock %}

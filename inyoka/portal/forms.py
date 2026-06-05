@@ -1209,6 +1209,13 @@ class CreateTicketForm(forms.ModelForm):
         model = Ticket
         fields = ('reason', 'reporter_comment')
 
+    def __init__(self, *args, content_type=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if content_type is not None:
+            self.fields['reason'].queryset = TicketReason.objects.filter(
+                content_type=content_type
+            )
+
 
 class EditTicketForm(forms.ModelForm):
     class Meta:

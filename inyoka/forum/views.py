@@ -903,21 +903,29 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
 
 @login_required
 @templated('forum/ticket.html')
-def create_ticket(request, post_id):
-    """Let a user report a post by creating a ticket.”””
+def create_ticket(request, post_id=None, topic_slug=None):
+    """Let a user report a post or topic by creating a ticket."""
+    from django.contrib.contenttypes.models import ContentType
     from inyoka.portal.forms import CreateTicketForm
-    from inyoka.portal.models import Ticket, TicketReason
-    post = get_object_or_404(Post, id=post_id)
-    if not request.user.has_perm('forum.view_forum', post.topic.forum):
+    if post_id is not None:
+        target = get_object_or_404(Post, id=post_id)
+        topic = target.topic
+        success_msg = _('The post was reported.')
+    else:
+        target = get_object_or_404(Topic, slug=topic_slug)
+        topic = target
+        success_msg = _('The topic was reported.')
+    if not request.user.has_perm('forum.view_forum', topic.forum):
         return abort_access_denied(request)
+    target_ct = ContentType.objects.get_for_model(target)
 
     if request.method == 'POST':
-        form = CreateTicketForm(request.POST)
+        form = CreateTicketForm(request.POST, content_type=target_ct)
         if form.is_valid():
             ticket = form.save(commit=False)
             ticket.reporting_user = request.user
             ticket.reporting_time = dj_timezone.now()
-            ticket.content_object = post
+            ticket.content_object = target
             ticket.save()
             cache.delete('portal/ticket_count')
 
@@ -932,17 +940,17 @@ def create_ticket(request, post_id):
                     if ticket.can_moderate(subscriber):
                         send_notification(subscriber, 'new_ticket',
                                           subject=_('New ticket'),
-                                          args={'ticket': ticket, 'post': post})
+                                          args={'ticket': ticket, 'target': target})
                     else:
                         remaining = [i for i in subscriber_ids.split(',')
                                      if i and i != uid]
                         storage[sub_key] = ','.join(remaining)
 
-            messages.success(request, _('The post was reported.'))
-            return HttpResponseRedirect(url_for(post.topic))
+            messages.success(request, success_msg)
+            return HttpResponseRedirect(url_for(topic))
     else:
-        form = CreateTicketForm()
-    return {'form': form, 'post': post}
+        form = CreateTicketForm(content_type=target_ct)
+    return {'form': form, 'target': target, 'topic': topic}
 
 
 def post(request, post_id):

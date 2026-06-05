@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-04-19 23:10+0200\n"
+"POT-Creation-Date: 2026-06-05 14:34+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -20,6 +20,13 @@ msgstr ""
 
 msgid " Activation link:"
 msgstr "Aktivierungslink:"
+
+msgid "#"
+msgstr "#"
+
+#, python-format
+msgid "%(count)d ticket(s) closed."
+msgstr "%(count)d Ticket(s) geschlossen."
 
 #, python-format
 msgid "%(count)s comment"
@@ -75,6 +82,9 @@ msgstr "Alle an- / abwählen"
 #, python-format
 msgid "(Will be scaled to %(width)sx%(height)s)"
 msgstr "(Wird auf %(width)sx%(height)s skaliert)"
+
+msgid "(deleted)"
+msgstr "(gelöscht)"
 
 #, python-format
 msgid "<a href=\"%(link)s\">Send an email</a> to %(name)s"
@@ -205,6 +215,18 @@ msgstr "Wähle den Benutzer aus, den du bearbeiten möchtest:"
 msgid "Choose this if the file should appear as a article or category icon possibility"
 msgstr "Wähle dieses Feld aus, wenn die Datei im Auswahlfeld für Artikel- und Kategorie-Icons erscheinen soll."
 
+msgid "Claim"
+msgstr "Beanspruchen"
+
+msgid "Close selected tickets"
+msgstr "Ausgewählte Tickets schließen"
+
+msgid "Closed"
+msgstr "Geschlossen"
+
+msgid "Comment"
+msgstr "Kommentar"
+
 msgid "Compose mail"
 msgstr "E-Mail verfassen"
 
@@ -228,6 +250,9 @@ msgstr "Kontaktadressen"
 
 msgid "Content"
 msgstr "Inhalt"
+
+msgid "Content type"
+msgstr "Inhaltstyp"
 
 msgid "Control panel"
 msgstr "Kontrollzentrum"
@@ -261,6 +286,9 @@ msgstr "Momentan stehen keine Veranstaltungen an."
 
 msgid "Currently there are no messages in this folder."
 msgstr "Momentan befinden sich keine Nachrichten in diesem Ordner."
+
+msgid "Currently there are no open tickets."
+msgstr "Momentan gibt es keine offenen Tickets."
 
 msgid "Date"
 msgstr "Datum"
@@ -353,6 +381,9 @@ msgstr "E-Mail"
 
 msgid "Edit"
 msgstr "Bearbeiten"
+
+msgid "Edit comment"
+msgstr "Kommentar bearbeiten"
 
 msgid "Edit group"
 msgstr "Gruppe bearbeiten"
@@ -508,6 +539,9 @@ msgstr "Bild URL"
 msgid "In 2024 Inyoka became Open Source Software (<a href=\"%(url)s\">news article in German</a>)."
 msgstr "In 2024 wurde Inyoka Open Source Software (<a href=\"%(url)s\">Ikhaya-Artikel</a>)."
 
+msgid "In Progress"
+msgstr "In Bearbeitung"
+
 #, python-format
 msgid "In total there are %(global_registered_users)s users registered."
 msgstr "Insgesamt sind %(global_registered_users)s registriert."
@@ -608,6 +642,9 @@ msgstr "Passwort vergessen"
 msgid "Mail"
 msgstr "Mail"
 
+msgid "Manage ticket reasons"
+msgstr "Ticket-Gründe verwalten"
+
 msgid "Mark all forums as “read” on logout"
 msgstr "Alle Foren beim Abmelden als gelesen markieren."
 
@@ -637,6 +674,9 @@ msgstr "Der Rekord liegt bei %(record)s am %(time)s."
 msgid "Name"
 msgstr "Name"
 
+msgid "New"
+msgstr "Neu"
+
 msgid "New group"
 msgstr "Neue Gruppe"
 
@@ -647,6 +687,9 @@ msgstr "Neues Passwort"
 msgid "New private message from %(username)s: %(subject)s"
 msgstr "Neue private Nachricht von %(username)s: %(subject)s"
 
+msgid "New ticket reason"
+msgstr "Neuer Ticket-Grund"
+
 #, python-brace-format
 msgid "New user name '{newname}' contains invalid characters. Skipping..."
 msgstr "Der neue Benutzername „{newname}“ enthält ungültige Zeichen. Überspringe..."
@@ -656,6 +699,12 @@ msgstr "Keine json Datei angegeben. Breche ab..."
 
 msgid "No effect if “attachment preview” is disabled"
 msgstr "Automatisch deaktiviert wenn „Anhang-Vorschau“ deaktiviert ist"
+
+msgid "No ticket reasons defined yet."
+msgstr "Es sind noch keine Ticket-Gründe definiert."
+
+msgid "No tickets selected."
+msgstr "Keine Tickets ausgewählt."
 
 msgid "No users were found."
 msgstr "Es wurden keine Benutzer gefunden."
@@ -678,14 +727,26 @@ msgstr "Benachrichtige mich per"
 msgid "Number of entries in the feed"
 msgstr "Anzahl der Einträge im Feed"
 
+msgid "Object"
+msgstr "Objekt"
+
 msgid "Only forum or topic can be provided."
 msgstr "Es kann nur ein Forum oder ein Thema angegeben werden."
 
 msgid "Only lowercase letters, - and _ allowed. Numbers as postfix."
 msgstr "Nur Kleinbuchstaben, - und _ erlaubt. Nummern nur als Suffix."
 
+msgid "Open"
+msgstr "Offen"
+
 msgid "Overview"
 msgstr "Übersicht"
+
+msgid "Owned by"
+msgstr "Bearbeitet von"
+
+msgid "Owner comment"
+msgstr "Bearbeiterkommentar"
 
 msgid "Page name"
 msgstr "Seitenname"
@@ -751,11 +812,17 @@ msgstr "Lesen"
 msgid "Read posts"
 msgstr "Gelesene Beiträge"
 
+msgid "Reason"
+msgstr "Grund"
+
 msgid "Reduced motion"
 msgstr "Weniger Animationen"
 
 msgid "Registered users:"
 msgstr "Registrierte Benutzer:"
+
+msgid "Release"
+msgstr "Freigeben"
 
 msgid "Release date"
 msgstr "Veröffentlichungsdatum"
@@ -773,6 +840,15 @@ msgstr "Antworten"
 msgid "Reply to all"
 msgstr "An alle antworten"
 
+msgid "Reported at"
+msgstr "Gemeldet am"
+
+msgid "Reported by"
+msgstr "Gemeldet von"
+
+msgid "Reporter comment"
+msgstr "Meldekommentar"
+
 msgid "Request new password"
 msgstr "Neues Passwort anfordern"
 
@@ -787,6 +863,9 @@ msgstr "Wiederherstellen"
 
 msgid "Revisions"
 msgstr "Revisionen"
+
+msgid "Save"
+msgstr "Speichern"
 
 msgid "Select"
 msgstr "Auswählen"
@@ -857,8 +936,14 @@ msgstr "Betreff:"
 msgid "Submit"
 msgstr "Speichern"
 
+msgid "Subscribe"
+msgstr "Abonnieren"
+
 msgid "Subscribe to a topic when replying"
 msgstr "Thema bei Antwort automatisch abonnieren"
+
+msgid "Subscribe to all"
+msgstr "Alle abonnieren"
 
 msgid "Subscriptions"
 msgstr "Abonnements"
@@ -874,6 +959,12 @@ msgstr "Eine Veranstaltung vorschlagen"
 
 msgid "Suggest new event"
 msgstr "Eine neue Veranstaltung vorschlagen"
+
+msgid "System"
+msgstr "System"
+
+msgid "System-defined ticket reasons cannot be deleted."
+msgstr "Vom System definierte Ticket-Gründe können nicht gelöscht werden."
 
 msgid "Team affiliation / Member title"
 msgstr "Teamzugehörigkeit / Benutzertitel"
@@ -996,6 +1087,18 @@ msgstr "Die Signatur wird an jeden Beitrag angehängt. Sie kann nicht länger al
 msgid "The state of “%(username)s” was successfully changed."
 msgstr "Der Status von „%(username)s“ wurde erfolgreich aktualisiert."
 
+msgid "The ticket comment was saved."
+msgstr "Der Ticket-Kommentar wurde gespeichert."
+
+msgid "The ticket reason was deleted."
+msgstr "Der Ticket-Grund wurde gelöscht."
+
+msgid "The ticket reason was saved."
+msgstr "Der Ticket-Grund wurde gespeichert."
+
+msgid "The ticket was released."
+msgstr "Das Ticket wurde freigegeben."
+
 msgid "The tokens <code>attachment</code> and <code>user</code> are hardcoded into Inyoka."
 msgstr "Die Kürzel <code>attachment</code> und <code>user</code> sind fest in Inyoka integriert."
 
@@ -1056,6 +1159,18 @@ msgstr "Dieser Text erscheint über dem Wiki Editor."
 msgid "This username is not available, please try another one."
 msgstr "Dieser Benutzername ist nicht verfügbar, bitte versuche es mit einem anderen."
 
+msgid "Ticket Reason"
+msgstr "Ticket-Grund"
+
+msgid "Ticket Reasons"
+msgstr "Ticket-Gründe"
+
+msgid "Ticket reasons"
+msgstr "Ticket-Gründe"
+
+msgid "Tickets"
+msgstr "Tickets"
+
 msgid "Timezone"
 msgstr "Zeitzone"
 
@@ -1085,6 +1200,9 @@ msgstr "URL:"
 
 msgid "Unsubscribe"
 msgstr "Abbestellen"
+
+msgid "Unsubscribe from all"
+msgstr "Alle abbestellen"
 
 msgid "Upcoming events"
 msgstr "Anstehende Veranstaltungen"
@@ -1230,6 +1348,9 @@ msgstr "Du musst ein Passwort und eine Passwortbestätigung eingeben."
 msgid "You need to read and accept our terms and conditions."
 msgstr "Du musst die Hinweise zur Nutzung unserer Plattform lesen und akzeptieren."
 
+msgid "You now own this ticket."
+msgstr "Du bearbeitest jetzt dieses Ticket."
+
 msgid "You successfully changed your password and are now able to login."
 msgstr "Dein Passwort wurde erfolgreich geändert, du kannst dich nun anmelden."
 
@@ -1239,6 +1360,12 @@ msgstr "Du wurdest automatisch wegen Spamverdachts gesperrt. Sollte die Sperrung
 
 msgid "You were not logged in."
 msgstr "Du warst nicht angemeldet."
+
+msgid "You will be notified about new tickets."
+msgstr "Du wirst über neue Tickets benachrichtigt."
+
+msgid "You will no longer be notified about new tickets."
+msgstr "Du wirst nicht mehr über neue Tickets benachrichtigt."
 
 #, python-format
 msgid "You will now be notified about activities of “%(username)s”."

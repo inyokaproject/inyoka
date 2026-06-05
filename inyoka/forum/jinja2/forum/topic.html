@@ -71,7 +71,7 @@
             <span class="action action_report reported_topic">{% trans %}reported topic{% endtrans %}</span>
         {%- endif %}
       {% else %}
-        <a href="{{ topic|url('report') }}"
+        <a href="{{ topic|url('ticket') }}"
            class="action action_report">{% trans %}Report{% endtrans %}</a>
       {% endif %}
     {% endif %}
@@ -283,6 +283,10 @@
                     <a href="{{ post|url('edit') }}"
                        class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
                   </span>
+                {%- endif %}
+                {%- if request.user.is_authenticated %}
+                  <a href="{{ post|url('ticket') }}"
+                     class="action action_report">{% trans %}Report{% endtrans %}</a> |
                 {%- endif %}
                 {%- if not request.user.is_authenticated or can_reply and not topic.locked %}
                   <a href="{{ post|url('quote') }}"

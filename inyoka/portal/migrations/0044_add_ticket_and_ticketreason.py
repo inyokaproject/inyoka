@@ -11,11 +11,15 @@ def add_default_ticket_reasons(apps, schema_editor):
     TicketReason = apps.get_model('portal', 'TicketReason')
     ContentType = apps.get_model('contenttypes', 'ContentType')
     Post = apps.get_model('forum', 'Post')
+    Topic = apps.get_model('forum', 'Topic')
     post_ct = ContentType.objects.get_for_model(Post)
+    topic_ct = ContentType.objects.get_for_model(Topic)
     TicketReason.objects.create(
         content_type=post_ct, reason='Spam', system_defined=True)
     TicketReason.objects.create(
         content_type=post_ct, reason='Other', system_defined=True)
+    TicketReason.objects.create(
+        content_type=topic_ct, reason='Other', system_defined=True)
 
 
 def migrate_old_reported_topics(apps, schema_editor):

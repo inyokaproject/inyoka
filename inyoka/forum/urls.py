@@ -39,6 +39,7 @@ urlpatterns = [
     re_path(r'^topic/(?P<topic_slug>[^/]+)/unsubscribe', views.unsubscribe_topic),
     path('topic/<str:topic_slug>/next/', views.next_topic),
     path('topic/<str:topic_slug>/previous/', views.previous_topic),
+    path('topic/<str:topic_slug>/ticket/', views.create_ticket),
     path('post/<int:post_id>/', views.post),
     path('post/<int:post_id>/ticket/', views.create_ticket),
     path('post/<int:post_id>/edit/', views.edit),
