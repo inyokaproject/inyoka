@@ -74,7 +74,10 @@
               | <a href="{{ href('portal', 'tickets', ticket.id, 'edit') }}">{% trans %}Comment{% endtrans %}</a>
             {% endif %}
             {%- if ticket.owned_time %}
-              <br>{{ ticket.owned_time|datetime }}
+              <br>{% trans %}Claimed{% endtrans %}: {{ ticket.owned_time|datetime }}
+            {%- endif %}
+            {%- if ticket.closed_time %}
+              <br>{% trans %}Closed{% endtrans %}: {{ ticket.closed_time|datetime }}
             {%- endif %}
           {%- else %}
             <a href="{{ href('portal', 'tickets', ticket.id, 'own') }}">{% trans %}Claim{% endtrans %}</a>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-05 14:34+0200\n"
+"POT-Creation-Date: 2026-06-05 15:33+0200\n"
 "PO-Revision-Date: 2025-09-14 18:19+0200\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -544,9 +544,6 @@ msgstr "Antworten"
 msgid "Report"
 msgstr "Melden"
 
-msgid "Report Message"
-msgstr "Meldetext"
-
 msgid "Report to moderators"
 msgstr "Den Moderatoren melden"
 
@@ -1025,4 +1022,7 @@ msgstr "„new“ ist kein gültiger Slug"
 
 #~ msgid "You will not be notified anymore when a topic is reported."
 #~ msgstr "Du wirst ab sofort nicht mehr bei gemeldeten Themen benachrichtigt."
+
+#~ msgid "Report Message"
+#~ msgstr "Meldetext"
 

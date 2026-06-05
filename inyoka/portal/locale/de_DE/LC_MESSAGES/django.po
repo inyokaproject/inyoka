@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-05 14:34+0200\n"
+"POT-Creation-Date: 2026-06-05 15:33+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -129,6 +129,10 @@ msgstr "Aktionen"
 msgid "Activation status"
 msgstr "Aktivierungsstatus"
 
+#, fuzzy
+msgid "Active"
+msgstr "aktiv"
+
 msgid "All"
 msgstr "Alle"
 
@@ -217,6 +221,9 @@ msgstr "Wähle dieses Feld aus, wenn die Datei im Auswahlfeld für Artikel- und 
 
 msgid "Claim"
 msgstr "Beanspruchen"
+
+msgid "Claimed"
+msgstr "Beansprucht"
 
 msgid "Close selected tickets"
 msgstr "Ausgewählte Tickets schließen"
@@ -840,8 +847,9 @@ msgstr "Antworten"
 msgid "Reply to all"
 msgstr "An alle antworten"
 
-msgid "Reported at"
-msgstr "Gemeldet am"
+#, fuzzy
+msgid "Report Message"
+msgstr "Private Nachricht"
 
 msgid "Reported by"
 msgstr "Gemeldet von"
@@ -1438,4 +1446,7 @@ msgstr "bis"
 #, python-format
 msgid "“%(name)s” is no member of any group."
 msgstr "„%(name)s“ ist kein Mitglied einer Gruppe."
+
+#~ msgid "Reported at"
+#~ msgstr "Gemeldet am"
 
