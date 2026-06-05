@@ -181,6 +181,22 @@ def environment(**options):
     return env
 
 
+def ticket_label_filter(obj, length=60):
+    """Render `obj` for the ticket list.
+
+    Models can opt into a custom representation by defining a
+    ``ticket_label()`` method returning a string; otherwise ``str(obj)``
+    is used. The result is truncated to ``length`` characters.
+    """
+    if obj is None:
+        return ''
+    label_fn = getattr(obj, 'ticket_label', None)
+    text = label_fn() if callable(label_fn) else str(obj)
+    if len(text) > length:
+        text = text[:length - 1].rstrip() + '…'
+    return text
+
+
 #: Filters that are globally available in the template environment
 FILTERS = {
     'timedeltaformat': timesince,
@@ -189,6 +205,7 @@ FILTERS = {
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
     'ischeckbox': ischeckbox_filter,
+    'ticket_label': ticket_label_filter,
     # L10N aware variants of Django's filters. They all are patched to use
     # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
     # and TIME_FORMAT (format_time) from the formats module and not the relevant

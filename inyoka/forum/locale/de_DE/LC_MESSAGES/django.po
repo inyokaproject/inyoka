@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-05 15:33+0200\n"
+"POT-Creation-Date: 2026-06-05 15:48+0200\n"
 "PO-Revision-Date: 2025-09-14 18:19+0200\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -32,6 +32,10 @@ msgid "%(count)s voter"
 msgid_plural "%(count)s voters"
 msgstr[0] "%(count)s Wähler"
 msgstr[1] "%(count)s Wähler"
+
+#, python-format
+msgid "%(id)s (in %(topic)s)"
+msgstr "%(id)s (in %(topic)s)"
 
 #, python-format
 msgid "%(site)s forum"
@@ -1002,6 +1006,9 @@ msgstr "„new“ ist kein gültiger Slug"
 #~ msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
 #~ msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
 
+#~ msgid "Report Message"
+#~ msgstr "Meldetext"
+
 #~ msgid "Reported post: “%(post)s”"
 #~ msgstr "Gemeldeter Beitrag: „%(post)s“"
 
@@ -1022,7 +1029,4 @@ msgstr "„new“ ist kein gültiger Slug"
 
 #~ msgid "You will not be notified anymore when a topic is reported."
 #~ msgstr "Du wirst ab sofort nicht mehr bei gemeldeten Themen benachrichtigt."
-
-#~ msgid "Report Message"
-#~ msgstr "Meldetext"
 

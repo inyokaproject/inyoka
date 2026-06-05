@@ -54,7 +54,7 @@
         </td>
         <td>
           {%- if ticket.content_object %}
-            {{ ticket.content_type.name|capitalize }}: <a href="{{ ticket.content_object|url }}">{{ ticket.content_object }}</a>
+            {{ ticket.content_type.name|capitalize }}: <a href="{{ ticket.content_object|url }}">{{ ticket.content_object|ticket_label }}</a>
           {%- else %}
             {% trans %}(deleted){% endtrans %}
           {%- endif %}

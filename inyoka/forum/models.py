@@ -1157,6 +1157,10 @@ class Post(models.Model, LockableObject):
             self.text[0:20]
         )
 
+    def ticket_label(self):
+        return _('%(id)s (in %(topic)s)') % {
+            'id': self.id, 'topic': self.topic.title}
+
     def __repr__(self):
         return '<%s id=%s author=%s>' % (
             self.__class__.__name__,
