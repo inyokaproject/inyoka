@@ -1792,3 +1792,154 @@ class WhoisOnline(TestCase):
     def test_post(self):
         response = self.client.post('/whoisonline/', data={}, follow=True)
         self.assertEqual(response.status_code, 405)
+
+
+class TestTicketViews(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+        from django.contrib.auth.models import Permission
+        from django.contrib.contenttypes.models import ContentType
+        from inyoka.forum.models import Forum, Post, Topic
+        from inyoka.portal.models import Ticket, TicketReason
+
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.com', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+        self.user = User.objects.register_user(
+            'user', 'user@example.com', 'user', False)
+        self.manager = User.objects.register_user(
+            'manager', 'manager@example.com', 'manager', False)
+        # InyokaAuthBackend only honors group perms, so attach via group.
+        mgr_group = Group.objects.create(name='ticket-managers')
+        mgr_group.permissions.add(
+            Permission.objects.get(codename='manage_tickets_forum'))
+        self.manager.groups.add(mgr_group)
+
+        self.forum = Forum.objects.create(name='Forum')
+        self.topic = Topic.objects.create(
+            title='Topic', author=self.user, forum=self.forum)
+        self.post = Post.objects.create(
+            text='Post text', author=self.user, topic=self.topic, position=0)
+
+        post_ct = ContentType.objects.get_for_model(Post)
+        self.reason = TicketReason.objects.filter(content_type=post_ct).first()
+
+        def make_ticket(state, reporter=None):
+            return Ticket.objects.create(
+                content_object=self.post,
+                reporting_user=reporter or self.user,
+                reporting_time=dj_timezone.now(),
+                reason=self.reason,
+                state=state,
+            )
+
+        self.t_open = make_ticket(Ticket.OPEN)
+        self.t_in_progress = make_ticket(Ticket.IN_PROGRESS)
+        self.t_in_progress.owning_user = self.manager
+        self.t_in_progress.save()
+        self.t_closed = make_ticket(Ticket.CLOSED)
+
+        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_list_requires_permission(self):
+        self.client.logout()
+        self.client.login(username='user', password='user')
+        response = self.client.get('/tickets/list/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_list_default_filter_shows_active(self):
+        response = self.client.get('/tickets/list/')
+        self.assertEqual(response.status_code, 200)
+        ids = {t.id for t in response.context['tickets']}
+        self.assertEqual(ids, {self.t_open.id, self.t_in_progress.id})
+        self.assertEqual(response.context['current_state'], 'active')
+
+    def test_list_filter_open(self):
+        response = self.client.get('/tickets/list/?state=open')
+        self.assertEqual({t.id for t in response.context['tickets']},
+                         {self.t_open.id})
+
+    def test_list_filter_in_progress(self):
+        response = self.client.get('/tickets/list/?state=in_progress')
+        self.assertEqual({t.id for t in response.context['tickets']},
+                         {self.t_in_progress.id})
+
+    def test_list_filter_closed(self):
+        response = self.client.get('/tickets/list/?state=closed')
+        self.assertEqual({t.id for t in response.context['tickets']},
+                         {self.t_closed.id})
+
+    def test_list_filter_all(self):
+        response = self.client.get('/tickets/list/?state=all')
+        self.assertEqual(
+            {t.id for t in response.context['tickets']},
+            {self.t_open.id, self.t_in_progress.id, self.t_closed.id})
+
+    def test_list_invalid_filter_falls_back_to_active(self):
+        response = self.client.get('/tickets/list/?state=bogus')
+        self.assertEqual(response.context['current_state'], 'active')
+
+    def test_list_pagination(self):
+        from inyoka.portal.models import Ticket
+        for _i in range(30):
+            Ticket.objects.create(
+                content_object=self.post,
+                reporting_user=self.user,
+                reporting_time=dj_timezone.now(),
+                reason=self.reason,
+                state=Ticket.OPEN,
+            )
+        r1 = self.client.get('/tickets/list/?state=open')
+        r2 = self.client.get('/tickets/list/2/?state=open')
+        self.assertEqual(r1.status_code, 200)
+        self.assertEqual(r2.status_code, 200)
+        self.assertEqual(len(r1.context['tickets']), 25)
+        self.assertEqual(len(r2.context['tickets']), 30 + 1 - 25)
+
+    def test_close_selected_tickets(self):
+        from inyoka.portal.models import Ticket
+        self.client.logout()
+        self.client.login(username='manager', password='manager')
+        response = self.client.post(
+            '/tickets/list/', {'selected': [self.t_in_progress.id]})
+        self.assertEqual(response.status_code, 302)
+        self.t_in_progress.refresh_from_db()
+        self.assertEqual(self.t_in_progress.state, Ticket.CLOSED)
+        self.assertIsNotNone(self.t_in_progress.closed_time)
+
+    def test_ticket_own(self):
+        from inyoka.portal.models import Ticket
+        response = self.client.get(
+            '/tickets/%d/own/' % self.t_open.id, follow=False)
+        self.assertEqual(response.status_code, 302)
+        self.t_open.refresh_from_db()
+        self.assertEqual(self.t_open.owning_user, self.admin)
+        self.assertEqual(self.t_open.state, Ticket.IN_PROGRESS)
+
+    def test_ticket_disown(self):
+        from inyoka.portal.models import Ticket
+        self.client.logout()
+        self.client.login(username='manager', password='manager')
+        response = self.client.get(
+            '/tickets/%d/disown/' % self.t_in_progress.id)
+        self.assertEqual(response.status_code, 302)
+        self.t_in_progress.refresh_from_db()
+        self.assertIsNone(self.t_in_progress.owning_user)
+        self.assertEqual(self.t_in_progress.state, Ticket.OPEN)
+
+    def test_ticketreason_list_get(self):
+        response = self.client.get('/ticketreason/list/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.reason, list(response.context['reasons']))
+
+    def test_ticketreason_delete_system_defined_blocked(self):
+        from inyoka.portal.models import TicketReason
+        response = self.client.post(
+            '/ticketreason/%d/delete/' % self.reason.id,
+            {'confirm': 'Yes'}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(TicketReason.objects.filter(id=self.reason.id).exists())
