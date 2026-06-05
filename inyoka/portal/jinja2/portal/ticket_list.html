@@ -21,7 +21,6 @@
         <th>{% trans %}Object{% endtrans %}</th>
         <th>{% trans %}Reason{% endtrans %}</th>
         <th>{% trans %}Reported by{% endtrans %}</th>
-        <th>{% trans %}Reported at{% endtrans %}</th>
         <th>{% trans %}Owned by{% endtrans %}</th>
         <th>{% trans %}Report Message{% endtrans %}</th>
       </tr>
@@ -34,7 +33,7 @@
         </td>
         <td>
           {%- if ticket.content_object %}
-            <a href="{{ ticket.content_object|url }}">{{ ticket.content_object }}</a>
+            {{ ticket.content_type.name|capitalize }}: <a href="{{ ticket.content_object|url }}">{{ ticket.content_object }}</a>
           {%- else %}
             {% trans %}(deleted){% endtrans %}
           {%- endif %}
@@ -42,10 +41,10 @@
         <td>{{ ticket.reason }}</td>
         <td>
           {%- if ticket.reporting_user %}
-            <a href="{{ ticket.reporting_user|url }}">{{ ticket.reporting_user.username }}</a>
+            <a href="{{ ticket.reporting_user|url }}">{{ ticket.reporting_user.username }}</a><br>
           {%- endif %}
+          {{ ticket.reporting_time|datetime }}
         </td>
-        <td>{{ ticket.reporting_time|datetime }}</td>
         <td>
           {%- if ticket.owning_user %}
             <a href="{{ ticket.owning_user|url }}">{{ ticket.owning_user.username }}</a>
@@ -53,6 +52,9 @@
               | <a href="{{ href('portal', 'tickets', ticket.id, 'disown') }}">{% trans %}Release{% endtrans %}</a>
               | <a href="{{ href('portal', 'tickets', ticket.id, 'edit') }}">{% trans %}Comment{% endtrans %}</a>
             {% endif %}
+            {%- if ticket.owned_time %}
+              <br>{{ ticket.owned_time|datetime }}
+            {%- endif %}
           {%- else %}
             <a href="{{ href('portal', 'tickets', ticket.id, 'own') }}">{% trans %}Claim{% endtrans %}</a>
           {%- endif %}
@@ -68,7 +70,7 @@
       </tr>
       {%- else %}
       <tr>
-        <td colspan="7">{% trans %}Currently there are no open tickets.{% endtrans %}</td>
+        <td colspan="6">{% trans %}Currently there are no open tickets.{% endtrans %}</td>
       </tr>
       {%- endfor %}
     </tbody>
