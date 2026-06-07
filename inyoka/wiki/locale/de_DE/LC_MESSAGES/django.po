@@ -664,16 +664,3 @@ msgstr "{note} [Revision {id} vom {date} wiederhergestellt]"
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
-
-#~ msgid "A site name needs to be entered to create this page."
-#~ msgstr "Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben wurde."
-
-#~ msgid "Another site named “%(title)s” already exists."
-#~ msgstr "Eine andere Seite mit dem Namen „%(title)s“ existiert bereits."
-
-#~ msgid "Create page"
-#~ msgstr "Seite erstellen"
-
-#~ msgid "Please enter a name for this attachment."
-#~ msgstr "Bitte gib einen Dateinamen für den Anhang an."
-

@@ -496,6 +496,9 @@ class Storage(models.Model):
 
 
 class TicketReason(models.Model):
+    """
+    Provides a well defined class that stores reasons that are offerred when creating a ticket. e.g. Spam, Spelling etc.
+    """
     content_type = models.ForeignKey(
         ContentType, on_delete=models.CASCADE, db_index=True)
     reason = models.CharField(max_length=200)
@@ -549,12 +552,12 @@ class Ticket(models.Model):
 
     def can_moderate(self, user):
         from inyoka.forum.models import Post, Topic
+
+        if user.has_perm('forum.manage_tickets_forum'):
+            return True
+
         obj = self.content_object
         if isinstance(obj, Post):
             forum = obj.topic.forum
-        elif isinstance(obj, Topic):
-            forum = obj.forum
-        else:
-            return user.has_perm('forum.manage_tickets_forum')
         return (user.has_perm('forum.manage_tickets_forum') or
                 user.has_perm('forum.moderate_forum', forum))

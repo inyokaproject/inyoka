@@ -1445,7 +1445,3 @@ msgstr "bis"
 #, python-format
 msgid "“%(name)s” is no member of any group."
 msgstr "„%(name)s“ ist kein Mitglied einer Gruppe."
-
-#~ msgid "Reported at"
-#~ msgstr "Gemeldet am"
-

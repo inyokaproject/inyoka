@@ -35,3 +35,5 @@ jinja2/static/style/*-sprite.less
 !inyoka/static/js/jquery.min.js
 !inyoka/static/js/jquery.ba-hashchange.min.js
 !inyoka/static/js/jquery.cookie.min.js
+
+.claude

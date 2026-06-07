@@ -996,37 +996,3 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
-
-#~ msgid "A notification will be sent when a topic is reported."
-#~ msgstr "Du erhältst eine Benachrichtigung, wenn ein Thema gemeldet wurde."
-
-#~ msgid "No topics selected."
-#~ msgstr "Keine Themen ausgewählt."
-
-#~ msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
-#~ msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
-
-#~ msgid "Report Message"
-#~ msgstr "Meldetext"
-
-#~ msgid "Reported post: “%(post)s”"
-#~ msgstr "Gemeldeter Beitrag: „%(post)s“"
-
-#~ msgid "Reported topic: “%(topic)s”"
-#~ msgstr "Gemeldetes Thema: „%(topic)s“"
-
-#~ msgid "The selected tickets have been closed."
-#~ msgstr "Die gewählten Tickets wurden geschlossen."
-
-#~ msgid "This report has already been claimed."
-#~ msgstr "Diese Meldung wird bereits bearbeitet."
-
-#~ msgid "This topic was already reported."
-#~ msgstr "Dieses Thema wurde bereits gemeldet."
-
-#~ msgid "You don't have moderation rights for the seleted topic."
-#~ msgstr "Dir fehlen für das ausgewählte Thema die Moderationsrechte"
-
-#~ msgid "You will not be notified anymore when a topic is reported."
-#~ msgstr "Du wirst ab sofort nicht mehr bei gemeldeten Themen benachrichtigt."
-

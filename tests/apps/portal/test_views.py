@@ -40,6 +40,11 @@ from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key
 
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from inyoka.forum.models import Forum, Post, Topic
+from inyoka.portal.models import Ticket, TicketReason
+
 
 class TestViews(TestCase):
 
@@ -1799,10 +1804,6 @@ class TestTicketViews(TestCase):
 
     def setUp(self):
         super().setUp()
-        from django.contrib.auth.models import Permission
-        from django.contrib.contenttypes.models import ContentType
-        from inyoka.forum.models import Forum, Post, Topic
-        from inyoka.portal.models import Ticket, TicketReason
 
         self.admin = User.objects.register_user(
             'admin', 'admin@example.com', 'admin', False)
@@ -1884,7 +1885,6 @@ class TestTicketViews(TestCase):
         self.assertEqual(response.context['current_state'], 'active')
 
     def test_list_pagination(self):
-        from inyoka.portal.models import Ticket
         for _i in range(30):
             Ticket.objects.create(
                 content_object=self.post,
@@ -1901,7 +1901,6 @@ class TestTicketViews(TestCase):
         self.assertEqual(len(r2.context['tickets']), 30 + 1 - 25)
 
     def test_close_selected_tickets(self):
-        from inyoka.portal.models import Ticket
         self.client.logout()
         self.client.login(username='manager', password='manager')
         response = self.client.post(
@@ -1912,7 +1911,6 @@ class TestTicketViews(TestCase):
         self.assertIsNotNone(self.t_in_progress.closed_time)
 
     def test_ticket_own(self):
-        from inyoka.portal.models import Ticket
         response = self.client.get(
             '/tickets/%d/own/' % self.t_open.id, follow=False)
         self.assertEqual(response.status_code, 302)
@@ -1921,7 +1919,6 @@ class TestTicketViews(TestCase):
         self.assertEqual(self.t_open.state, Ticket.IN_PROGRESS)
 
     def test_ticket_disown(self):
-        from inyoka.portal.models import Ticket
         self.client.logout()
         self.client.login(username='manager', password='manager')
         response = self.client.get(
@@ -1937,7 +1934,6 @@ class TestTicketViews(TestCase):
         self.assertIn(self.reason, list(response.context['reasons']))
 
     def test_ticketreason_delete_system_defined_blocked(self):
-        from inyoka.portal.models import TicketReason
         response = self.client.post(
             '/ticketreason/%d/delete/' % self.reason.id,
             {'confirm': 'Yes'}, follow=True)

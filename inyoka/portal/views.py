@@ -24,7 +24,7 @@ from django.contrib.auth.views import (
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
-from django.core.exceptions import BadRequest
+from django.core.exceptions import BadRequest, PermissionDenied
 from django.core.files.storage import default_storage
 from django.db import IntegrityError
 from django.forms.models import model_to_dict
@@ -1675,7 +1675,6 @@ def ticket_reason_delete(request, reason_id):
 @login_required
 def ticket_reason_subscription(request, mode, reason_id):
     if not request.user.has_perm('forum.manage_tickets_forum'):
-        from django.core.exceptions import PermissionDenied
         raise PermissionDenied
 
     if reason_id == 'all':
@@ -1732,7 +1731,7 @@ def ticket_list(request, page=1):
                     if ticket.can_moderate(request.user) and ticket.owning_user == request.user:
                         ticket.state = Ticket.CLOSED
                         ticket.closed_time = dj_timezone.now()
-                        ticket.save(update_fields=['state', 'closed_time'])
+                        ticket.save()
                         closed_count += 1
                 cache.delete('portal/ticket_count')
                 messages.success(request,
@@ -1758,7 +1757,6 @@ def ticket_list(request, page=1):
 def ticket_edit(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     if ticket.owning_user != request.user:
-        from django.core.exceptions import PermissionDenied
         raise PermissionDenied
     if request.method == 'POST':
         form = EditTicketOwnerCommentForm(request.POST, instance=ticket)
@@ -1776,13 +1774,12 @@ def ticket_edit(request, ticket_id):
 def ticket_own(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     if not ticket.can_moderate(request.user):
-        from django.core.exceptions import PermissionDenied
         raise PermissionDenied
     ticket.owning_user = request.user
     ticket.state = Ticket.IN_PROGRESS
     if not ticket.owned_time:
         ticket.owned_time = dj_timezone.now()
-    ticket.save(update_fields=['owning_user', 'state', 'owned_time'])
+    ticket.save()
     messages.success(request, _('You now own this ticket.'))
     return HttpResponseRedirect(href('portal', 'tickets', 'list'))
 
@@ -1792,10 +1789,9 @@ def ticket_own(request, ticket_id):
 def ticket_disown(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     if ticket.owning_user != request.user:
-        from django.core.exceptions import PermissionDenied
         raise PermissionDenied
     ticket.owning_user = None
     ticket.state = Ticket.OPEN
-    ticket.save(update_fields=['owning_user', 'state'])
+    ticket.save()
     messages.success(request, _('The ticket was released.'))
     return HttpResponseRedirect(href('portal', 'tickets', 'list'))

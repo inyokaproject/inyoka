@@ -39,7 +39,7 @@ from inyoka.forum.constants import (
     SUPPORTED_IMAGE_TYPES,
     UBUNTU_DISTROS,
 )
-from inyoka.portal.models import Subscription
+from inyoka.portal.models import Subscription, Ticket, TicketReason
 from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import QueryCounter
@@ -1117,7 +1117,6 @@ class Post(models.Model, LockableObject):
             # it's the first post, i.e. the topic
             topic.hidden = True
             if report:
-                from inyoka.portal.models import Ticket, TicketReason
                 spam_reason = TicketReason.objects.filter(system_defined=True).first()
                 Ticket.objects.create(
                     reporting_user=User.objects.get_system_user(),
@@ -1133,7 +1132,6 @@ class Post(models.Model, LockableObject):
             self.hidden = True
             self.save(update_fields=['hidden'])
             if report:
-                from inyoka.portal.models import Ticket, TicketReason
                 spam_reason = TicketReason.objects.filter(system_defined=True).first()
                 msg = _(
                     '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
