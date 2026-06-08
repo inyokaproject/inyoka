@@ -495,18 +495,39 @@ class Storage(models.Model):
     value = InyokaMarkupField(application='portal')
 
 
+class TicketReasonManager(models.Manager):
+
+    def get_spam_reason(self, content_type):
+        """Return the spam reason for the given content type, or ``None``."""
+        return self.filter(
+            slug=self.model.SPAM_SLUG, content_type=content_type
+        ).first()
+
+
 class TicketReason(models.Model):
     """
     Provides a well defined class that stores reasons that are offerred when creating a ticket. e.g. Spam, Spelling etc.
     """
+    SPAM_SLUG = 'spam'
+
     content_type = models.ForeignKey(
         ContentType, on_delete=models.CASCADE, db_index=True)
     reason = models.CharField(max_length=200)
+    slug = models.SlugField(null=True, blank=True)
     system_defined = models.BooleanField(default=False)
+
+    objects = TicketReasonManager()
 
     class Meta:
         verbose_name = gettext_lazy('Ticket Reason')
         verbose_name_plural = gettext_lazy('Ticket Reasons')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'slug'],
+                condition=models.Q(slug__isnull=False),
+                name='unique_ticketreason_slug_per_content_type',
+            )
+        ]
 
     def __str__(self):
         return self.reason

@@ -16,7 +16,7 @@ def add_default_ticket_reasons(apps, schema_editor):
     post_ct = ContentType.objects.get_for_model(Post)
     topic_ct = ContentType.objects.get_for_model(Topic)
     TicketReason.objects.create(
-        content_type=post_ct, reason='Spam', system_defined=True)
+        content_type=post_ct, reason='Spam', slug='spam', system_defined=True)
     TicketReason.objects.create(
         content_type=post_ct, reason='Other', system_defined=True)
     TicketReason.objects.create(
@@ -30,7 +30,8 @@ def migrate_old_reported_topics(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     Post = apps.get_model('forum', 'Post')
     post_ct = ContentType.objects.get_for_model(Post)
-    spam_reason = TicketReason.objects.filter(system_defined=True).first()
+    spam_reason = TicketReason.objects.filter(
+        content_type=post_ct, slug='spam').first()
     system_user = apps.get_model(settings.AUTH_USER_MODEL.split('.')[0],
                                  settings.AUTH_USER_MODEL.split('.')[1]
                                  ).objects.filter(username='ubuntuusers').first()
@@ -73,6 +74,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("reason", models.CharField(max_length=200)),
+                ("slug", models.SlugField(blank=True, null=True)),
                 ("system_defined", models.BooleanField(default=False)),
                 (
                     "content_type",
@@ -86,6 +88,14 @@ class Migration(migrations.Migration):
                 "verbose_name": "Ticket Reason",
                 "verbose_name_plural": "Ticket Reasons",
             },
+        ),
+        migrations.AddConstraint(
+            model_name="ticketreason",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("slug__isnull", False)),
+                fields=("content_type", "slug"),
+                name="unique_ticketreason_slug_per_content_type",
+            ),
         ),
         migrations.CreateModel(
             name="Ticket",

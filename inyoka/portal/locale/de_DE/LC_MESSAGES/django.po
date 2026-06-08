@@ -26,7 +26,8 @@ msgstr "#"
 
 #, python-format
 msgid "%(count)d ticket(s) closed."
-msgstr "%(count)d Ticket(s) geschlossen."
+msgstr[0] "%(count)s Meldung geschlossen."
+msgstr[1] "%(count)d Meldungen geschlossen."
 
 #, python-format
 msgid "%(count)s comment"
@@ -225,7 +226,7 @@ msgid "Claimed"
 msgstr "Beansprucht"
 
 msgid "Close selected tickets"
-msgstr "Ausgewählte Tickets schließen"
+msgstr "Ausgewählte Meldungen schließen"
 
 msgid "Closed"
 msgstr "Geschlossen"
@@ -294,7 +295,7 @@ msgid "Currently there are no messages in this folder."
 msgstr "Momentan befinden sich keine Nachrichten in diesem Ordner."
 
 msgid "Currently there are no open tickets."
-msgstr "Momentan gibt es keine offenen Tickets."
+msgstr "Momentan gibt es keine offenen Meldungen."
 
 msgid "Date"
 msgstr "Datum"
@@ -649,7 +650,7 @@ msgid "Mail"
 msgstr "Mail"
 
 msgid "Manage ticket reasons"
-msgstr "Ticket-Gründe verwalten"
+msgstr "Meldegründe verwalten"
 
 msgid "Mark all forums as “read” on logout"
 msgstr "Alle Foren beim Abmelden als gelesen markieren."
@@ -694,7 +695,7 @@ msgid "New private message from %(username)s: %(subject)s"
 msgstr "Neue private Nachricht von %(username)s: %(subject)s"
 
 msgid "New ticket reason"
-msgstr "Neuer Ticket-Grund"
+msgstr "Neuer Meldegrund"
 
 #, python-brace-format
 msgid "New user name '{newname}' contains invalid characters. Skipping..."
@@ -707,10 +708,10 @@ msgid "No effect if “attachment preview” is disabled"
 msgstr "Automatisch deaktiviert wenn „Anhang-Vorschau“ deaktiviert ist"
 
 msgid "No ticket reasons defined yet."
-msgstr "Es sind noch keine Ticket-Gründe definiert."
+msgstr "Es sind noch keine Meldegründe definiert."
 
 msgid "No tickets selected."
-msgstr "Keine Tickets ausgewählt."
+msgstr "Keine Meldungen ausgewählt."
 
 msgid "No users were found."
 msgstr "Es wurden keine Benutzer gefunden."
@@ -846,10 +847,6 @@ msgstr "Antworten"
 msgid "Reply to all"
 msgstr "An alle antworten"
 
-#, fuzzy
-msgid "Report Message"
-msgstr "Private Nachricht"
-
 msgid "Reported by"
 msgstr "Gemeldet von"
 
@@ -971,7 +968,7 @@ msgid "System"
 msgstr "System"
 
 msgid "System-defined ticket reasons cannot be deleted."
-msgstr "Vom System definierte Ticket-Gründe können nicht gelöscht werden."
+msgstr "Vom System definierte Meldegründe können nicht gelöscht werden."
 
 msgid "Team affiliation / Member title"
 msgstr "Teamzugehörigkeit / Benutzertitel"
@@ -1095,16 +1092,16 @@ msgid "The state of “%(username)s” was successfully changed."
 msgstr "Der Status von „%(username)s“ wurde erfolgreich aktualisiert."
 
 msgid "The ticket comment was saved."
-msgstr "Der Ticket-Kommentar wurde gespeichert."
+msgstr "Der Meldungs-Kommentar wurde gespeichert."
 
 msgid "The ticket reason was deleted."
-msgstr "Der Ticket-Grund wurde gelöscht."
+msgstr "Der Meldegrund wurde gelöscht."
 
 msgid "The ticket reason was saved."
-msgstr "Der Ticket-Grund wurde gespeichert."
+msgstr "Der Meldegrund wurde gespeichert."
 
 msgid "The ticket was released."
-msgstr "Das Ticket wurde freigegeben."
+msgstr "Die Meldung wurde freigegeben."
 
 msgid "The tokens <code>attachment</code> and <code>user</code> are hardcoded into Inyoka."
 msgstr "Die Kürzel <code>attachment</code> und <code>user</code> sind fest in Inyoka integriert."

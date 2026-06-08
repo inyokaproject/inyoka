@@ -196,7 +196,7 @@ msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
 msgid "Tickets"
-msgstr ""
+msgstr "Meldungen"
 
 msgid "URL of the topic"
 msgstr "URL des Themas"

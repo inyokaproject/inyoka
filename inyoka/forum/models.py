@@ -1112,42 +1112,35 @@ class Post(models.Model, LockableObject):
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:
             mark_spam(self, self.get_text(), 'forum-post')
+
         topic = self.topic
         if topic.first_post == self:
-            # it's the first post, i.e. the topic
+            # it's the first post, so we hide the topic instead of just the post
             topic.hidden = True
-            if report:
-                spam_reason = TicketReason.objects.filter(system_defined=True).first()
-                Ticket.objects.create(
-                    reporting_user=User.objects.get_system_user(),
-                    reporting_time=dj_timezone.now(),
-                    reporter_comment=_('This topic is hidden due to possible spam.'),
-                    reason=spam_reason,
-                    content_object=self,
-                )
-                cache.delete('portal/ticket_count')
             topic.save(update_fields=['hidden'])
         else:
             # it's not the first post
             self.hidden = True
             self.save(update_fields=['hidden'])
-            if report:
-                spam_reason = TicketReason.objects.filter(system_defined=True).first()
-                msg = _(
-                    '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
-                    'due to possible spam.'
-                ) % {
-                    'username': self.author.username,
-                    'post': self.pk,
-                }
-                Ticket.objects.create(
-                    reporting_user=User.objects.get_system_user(),
-                    reporting_time=dj_timezone.now(),
-                    reporter_comment=msg,
-                    reason=spam_reason,
-                    content_object=self,
-                )
-                cache.delete('portal/ticket_count')
+
+        if report:
+            spam_reason = TicketReason.objects.get_spam_reason(
+                ContentType.objects.get_for_model(self))
+            msg = _(
+                '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
+                'due to possible spam.'
+            ) % {
+                'username': self.author.username,
+                'post': self.pk,
+            }
+            Ticket.objects.create(
+                reporting_user=User.objects.get_system_user(),
+                reporting_time=dj_timezone.now(),
+                reporter_comment=msg,
+                reason=spam_reason,
+                content_object=self,
+            )
+            cache.delete('portal/ticket_count')
 
     def __str__(self):
         return '%s - %s' % (
