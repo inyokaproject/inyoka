@@ -290,6 +290,3 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
-#~ msgid "Reported topics"
-#~ msgstr "Gemeldete Themen"
-
