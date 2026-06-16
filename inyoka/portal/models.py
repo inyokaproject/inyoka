@@ -533,7 +533,7 @@ class TicketReason(models.Model):
         return self.reason
 
     def get_subscription_name(self):
-        return 'ticketreason_%d_subscribers' % self.id
+        return f'ticketreason_{self.id}_subscribers'
 
 
 class Ticket(models.Model):
