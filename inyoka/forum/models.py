@@ -596,9 +596,6 @@ class Topic(models.Model):
     class Meta:
         verbose_name = gettext_lazy('Topic')
         verbose_name_plural = gettext_lazy('Topics')
-        permissions = (
-            ('manage_reported_topic', 'Can manage reported Topics'),
-        )
 
     def cached_forum(self):
         return Forum.objects.get(self.forum_id)

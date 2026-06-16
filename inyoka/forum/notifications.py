@@ -192,7 +192,7 @@ def notify_reported_topic_subscribers(subject, args):
     subscribers = storage['reported_topics_subscribers'] or ''
     users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
     for user in users:
-        if user.has_perm('forum.manage_reported_topic'):
+        if user.has_perm('forum.forum.manage_tickets_forum'):
             send_notification(user, 'new_reported_topic', subject, args)
         else:
             # unsubscribe this user automatically, he has no right to be here.
