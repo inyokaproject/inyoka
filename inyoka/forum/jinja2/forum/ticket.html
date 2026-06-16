@@ -22,12 +22,9 @@
         Here you can report this to the moderators if it is against our <a href="{{ link }}">rules</a>. Please select a reason and add a short explanation:
       {%- endtrans -%}
     </p>
-    <dl>
-      <dt>{{ form.reason.label }}</dt>
-      <dd>{{ form.reason }}</dd>
-      <dt>{{ form.reporter_comment.label }}</dt>
-      <dd>{{ form.reporter_comment }}</dd>
-    </dl>
+
+    {{ form.as_div() }}
+
     <p><input type="submit" value="{% trans %}Submit report{% endtrans %}"></p>
   </form>
 {% endblock %}
