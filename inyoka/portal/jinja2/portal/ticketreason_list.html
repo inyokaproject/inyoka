@@ -11,6 +11,23 @@
 {%- extends 'portal/overall.html' %}
 {% set BREADCRUMBS = [(_('Ticket reasons'), href('portal', 'ticketreason', 'list'))] + BREADCRUMBS|d([]) %}
 
+{% block sidebar %}
+  <div class="container">
+
+{#
+    <h3 class="navi_forum">
+      <a href="{{ href('forum') }}">{% trans %}Forum{% endtrans %}</a>
+    </h3>
+#}
+    <ul>
+      <li><a href="{{ href('portal', 'ticketreason', 'new') }}">{% trans %}New ticket reason{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'ticketreason', 'all', 'subscribe') }}">{% trans %}Subscribe to all{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'ticketreason', 'all', 'unsubscribe') }}">{% trans %}Unsubscribe from all{% endtrans %}</a></li>
+    </ul>
+
+  </div>
+{% endblock %}
+
 {% block content %}
 <table>
   <thead>
@@ -46,9 +63,4 @@
     {%- endfor %}
   </tbody>
 </table>
-<div class="linklist">
-  <a href="{{ href('portal', 'ticketreason', 'new') }}">{% trans %}New ticket reason{% endtrans %}</a> |
-  <a href="{{ href('portal', 'ticketreason', 'all', 'subscribe') }}">{% trans %}Subscribe to all{% endtrans %}</a> |
-  <a href="{{ href('portal', 'ticketreason', 'all', 'unsubscribe') }}">{% trans %}Unsubscribe from all{% endtrans %}</a>
-</div>
 {% endblock %}
