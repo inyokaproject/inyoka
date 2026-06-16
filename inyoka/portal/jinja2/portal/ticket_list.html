@@ -13,6 +13,17 @@
 {% set rendered_pagination = render_pagination(pagination) %}
 {% set BREADCRUMBS = [(_('Tickets'), href('portal', 'tickets', 'list'))] + BREADCRUMBS|d([]) %}
 
+{% block sidebar %}
+  <div class="container">
+    <h3>
+      {% trans %}Ticket reason actions{% endtrans %}
+    </h3>
+    <ul>
+      <li><a href="{{ href('portal', 'ticketreason', 'list') }}">{% trans %}Manage ticket reasons{% endtrans %}</a></li>
+    </ul>
+  </div>
+{% endblock %}
+
 {% set STATE_LABELS = {
   'active': _('Active'),
   'open': _('Open'),
@@ -106,7 +117,4 @@
   {%- endif %}
 </form>
 <div class="pagination">{{ rendered_pagination }}</div>
-<p>
-  <a href="{{ href('portal', 'ticketreason', 'list') }}">{% trans %}Manage ticket reasons{% endtrans %}</a>
-</p>
 {% endblock %}
