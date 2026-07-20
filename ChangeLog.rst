@@ -24,6 +24,19 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+
+1.52.10 (2026-07-XX)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``Django``, ``icalendar`` and ``pillow`` include a known security fix)
+
 1.52.9 (2026-04-14)
 ===================
 
