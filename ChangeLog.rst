@@ -24,6 +24,39 @@ Inyoka Changelog
    🔒 Security
    -----------
 
+
+1.52.10 (2026-07-XX)
+===================
+
+Deployment notes
+----------------
+#. Update requirements
+
+
+🏗 Changes
+----------
+* Add various tests in wiki and ikhaya
+
+🔥 Removals
+-----------
+
+* Wiki: Remove unused classes in ACL and views ``redirect_new_page`` and ``_image/``
+* Wiki: Remove unused ``X-Owner`` metadata/capability
+
+🐛 Fixes
+--------
+
+* ForumField: Prevent exception if string with non-int was passed
+* Wiki: Revert note now includes restored revision id
+* Wiki: Fix ``do_mv_back`` if page with different case already exists in Trash
+
+🔒 Security
+-----------
+
+* Update requirements (at least the dependencies ``Django``, ``icalendar`` and ``pillow`` include a known security fix)
+* Forum: adjustments for permission checks
+
+
 1.52.9 (2026-04-14)
 ===================
 

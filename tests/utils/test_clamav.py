@@ -86,7 +86,6 @@ class TestClamAV(TestCase):
                 cm.output,
                 [
                     "ERROR:inyoka:clamav result: Clamav.ClamavResult(filename='/tmp/not-existing-path', reason='File path check failure: No such file or directory.', status='ERROR')",
-                    "ERROR:inyoka:clamav result: Clamav.ClamavResult(filename='/tmp/not-existing-path', reason='File path check failure: No such file or directory.', status='ERROR')",
                 ],
             )
 
