@@ -1279,6 +1279,17 @@ class TestFeedSelector(TestCase):
         self.assertContains(response, 'Generate feed')
         self.assertNotContains(response, 'action="/feeds/planet/"')
 
+    def test_get_invalid_forum(self):
+        response = self.client.post('/feeds/forum/', {'count': '25', 'mode': 'short', 'forum': '<abc>'})
+
+        self.assertFormError(response.context['form'], 'forum', errors=['Select a valid choice. <abc> is not one of the available choices.'])
+        self.assertContains(response, 'Select a valid choice. &lt;abc&gt; is not one of the available choices.') # check escaping
+
+    def test_get_invalid_topic__with_null_bytes(self):
+        response = self.client.post('/feeds/forum/', {'count': '25', 'mode': 'short', 'topic': "a%00.b"})
+
+        self.assertFormError(response.context['form'], 'topic', errors=['This topic does not exist.'])
+
     def test_post(self):
         response = self.client.post('/feeds/forum/', {'count': '25', 'mode': 'short'})
         self.assertRedirects(response, f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/25/', fetch_redirect_response=False)

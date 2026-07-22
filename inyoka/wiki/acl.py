@@ -31,7 +31,6 @@ from inyoka.portal.user import User
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
 
 #: metadata users without the `PRIV_MANAGE` privilege can edit.
@@ -52,12 +51,6 @@ PRIV_MANAGE = 32
 PRIV_NONE = 0
 PRIV_DEFAULT = PRIV_ALL = 63
 
-#: because we use different names in the german frontend these
-#: constants hold the name used in the frontend.  i call bullshit,
-#: we use english names again and the constants are left as an
-#: exercise for the reader.
-GROUP_OWNER = 'owner'
-
 #: used by the decorator
 privilege_map = {
     'read': PRIV_READ,
@@ -72,7 +65,7 @@ privilege_map = {
 class PrivilegeTest:
     """
     An instance of this class is passed to all the action templates.  Attribute
-    access can then be used to check if the current user has a privilege the
+    access can then be used to check if the current user has a privilege on the
     current page.
     """
 
@@ -113,11 +106,6 @@ class GroupContainer:
     def load(self):
         """Load the data from the database."""
         self.cache = set(self.user.groups.values_list('name', flat=True))
-        for item in Page.objects.get_owners(self.page):
-            if item == self.user.username or \
-               (item.startswith('@') and item[1:] in self.cache):
-                self.cache.add(GROUP_OWNER)
-                break
 
     def __contains__(self, obj):
         if self.cache is None:
@@ -125,41 +113,11 @@ class GroupContainer:
         return obj in self.cache
 
 
-class MultiPrivilegeTest:
-    """
-    Efficient way for multiple privilege tests for one users to many pages.
-    """
-
-    def __init__(self, user):
-        self.user = user
-        self.groups = set(self.user.groups.values_list('name', flat=True))
-        self.owned_pages = set(Page.objects.get_owned(self.groups))
-
-    def get_groups(self, page_name):
-        if page_name in self.owned_pages:
-            return self.groups & {GROUP_OWNER}
-        return self.groups
-
-    def get_privilege_flags(self, page_name):
-        groups = self.get_groups(page_name)
-        return get_privilege_flags(self.user, page_name, groups)
-
-    def get_privileges(self, page_name):
-        groups = self.get_groups(page_name)
-        return get_privileges(self.user, page_name, groups)
-
-    def has_privilege(self, page_name, privilege):
-        groups = self.get_groups(page_name)
-        return has_privilege(self.user, page_name, privilege, groups)
-
-
 def get_privilege_flags(user, page_name, groups=None):
     """
     Return an integer with the privilege flags for a user for the given
-    page name.  Like any other page name depending function the page name
+    page name.  Like any other page name depending on function the page name
     must be in a normalized state.
-
-    :param groups: used internally by the `MultiPrivilegeTest`
     """
     if user is None:
         user = User.objects.get_anonymous_user()
@@ -187,8 +145,6 @@ def get_privileges(user, page_name, groups=None):
     Get a dict with the privileges a user has for a page (or doesn't).  `user`
     must be a user object or `None` in which case the privileges for an
     anonymous user are returned.
-
-    :param groups: used internally by the `MultiPrivilegeTest`
     """
     result = {}
     flags = get_privilege_flags(user, page_name, groups)
@@ -203,8 +159,6 @@ def has_privilege(user, page_name, privilege, groups=None):
     for multiple privileges (for example if you want to display what a user
     can do or not do) you should use `get_privileges` which is faster for
     multiple checks and also returns it automatically as a dict.
-
-    :param groups: used internally by the `MultiPrivilegeTest`
     """
     if isinstance(privilege, str):
         privilege = privilege_map[privilege]

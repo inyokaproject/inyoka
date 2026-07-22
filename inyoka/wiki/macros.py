@@ -9,20 +9,23 @@
 """
 import itertools
 import operator
+import os
+from hashlib import sha1
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.db.models import FilteredRelation, Q
+from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 
 from inyoka.markup import macros, nodes
 from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
-from inyoka.utils.imaging import parse_dimensions
+from inyoka.utils.imaging import get_thumbnail, parse_dimensions
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, urlencode
 from inyoka.wiki.models import Page, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
-from inyoka.wiki.views import fetch_real_target
 
 
 class PageCount(macros.Macro):
@@ -123,15 +126,15 @@ class RedirectPages(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        # TODO i18n: bloody hell, this is crazy... requires some more thinking
-        #           and a migration as well as coordination with the wiki team...
-        for page in Page.objects.find_by_metadata('weiterleitung'):
-            target = page.metadata.get('weiterleitung')
-            link = nodes.InternalLink(page.name, [nodes.Text(page.title)],
+
+        for page in Page.objects.find_by_metadata('X-Redirect'):
+            target = page.metadata.get('X-Redirect')
+            source_link = nodes.InternalLink(page.name, [nodes.Text(page.title)],
                                       force_existing=True)
             title = [nodes.Text(get_pagetitle(target, True))]
             target = nodes.InternalLink(target, title)
-            result.children.append(nodes.ListItem([link, nodes.Text(' \u2794 '),
+
+            result.children.append(nodes.ListItem([source_link, nodes.Text(' \u2794 '),
                                                    target]))
         return result
 
@@ -422,6 +425,37 @@ class Picture(macros.Macro):
         if self.align not in ('left', 'right', 'center'):
             self.align = None
 
+    def _fetch_real_target(self, target, width=None, height=None, force=False):
+        """Return the uri to an image"""
+
+        if height or width:
+            page_filename = Page.objects.attachment_for_page(target)
+            if page_filename is None:
+                return None
+
+            page_filename = force_str(page_filename).encode('utf-8')
+            partial_hash = sha1(page_filename).hexdigest()
+
+            dimension = '%sx%s%s' % (width or '',
+                                     height or '',
+                                     force and '!' or '')
+            hash = '%s%s%s' % (partial_hash, 'i',
+                               dimension.replace('!', 'f'))
+            base_filename = os.path.join('wiki', 'thumbnails', hash[:1],
+                                         hash[:2], hash)
+            thumbnail = get_thumbnail(page_filename.decode(), base_filename, width,
+                                      height, force)
+
+            target = urljoin(settings.MEDIA_URL, thumbnail)
+        else:
+            target = Page.objects.attachment_for_page(target)
+            if not target:
+                return None
+            target = href('media', target)
+        if not target:
+            return None
+        return target
+
     def build_node(self, context, format):
         ret_ = build_picture_node.send(sender=self,
                                        context=context,
@@ -442,16 +476,15 @@ class Picture(macros.Macro):
             target = self.target
 
         wiki_page = context.kwargs.get('wiki_page', None)
-
         if wiki_page:
             target = join_pagename(wiki_page.name, target)
 
-        source = fetch_real_target(target, width=self.width, height=self.height)
+        source = self._fetch_real_target(target, width=self.width, height=self.height)
 
         img = nodes.Image(source, self.alt, class_='image-' +
                           (self.align or 'default'), title=self.title)
         if (self.width or self.height) and wiki_page is not None:
-            return nodes.Link(fetch_real_target(target), [img])
+            return nodes.Link(self._fetch_real_target(target), [img])
         return img
 
 

@@ -40,7 +40,7 @@ from inyoka.utils.templating import flash_message
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
-from inyoka.wiki.exceptions import CircularRedirectException
+from inyoka.wiki.exceptions import CaseSensitiveException, CircularRedirectException
 from inyoka.wiki.forms import (
     AddAttachmentForm,
     EditAttachmentForm,
@@ -91,7 +91,7 @@ def do_show(request, name, rev=None, allow_redirect=True):
     read privilege.  If a page does not exist yet and no revision was provided
     in the URL it will call `do_missing_page` and return that output.
 
-    Otherwise the page from the database is loaded and displayer.  Because it
+    Otherwise, the page from the database is loaded and displayer.  Because it
     does not catch not found exceptions the `views.show_page` function that
     dispatches the actions automatically renders a missing resource.
 
@@ -149,8 +149,8 @@ def do_show(request, name, rev=None, allow_redirect=True):
 @case_sensitive_redirect
 def do_metaexport(request, name):
     """
-    Export metadata as raw text.  This exists mainly for debugging reasons but
-    it could make sense for external scripts too that want to get a quick list
+    Export metadata as raw text.  This exists mainly for debugging reasons, but
+    it could make sense for external scripts, too which want to get a quick list
     of backlinks etc.  Like the `do_show` action this requires read access to
     the page.
     """
@@ -174,7 +174,7 @@ def do_metaexport(request, name):
 @templated('wiki/missing_page.html', status=404, modifier=context_modifier)
 def do_missing_page(request, name, _page=None):
     """
-    Called if a page does not exist yet but it was requested by show.
+    Called if a page does not exist yet, but it was requested by show.
 
     **Template**
         ``'wiki/missing_page.html'``
@@ -352,12 +352,9 @@ def _rename(request, page, new_name, force=False, new_text=None):
 @does_not_exist_is_404
 @case_sensitive_redirect
 @transaction.atomic
-def do_rename(request, name, new_name=None, force=False):
+def do_rename(request, name, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
-
-    if new_name is None:
-        new_name = name
 
     if request.method == 'POST':
         new_name = normalize_pagename(request.POST.get('new_name', ''))
@@ -379,7 +376,7 @@ def do_rename(request, name, new_name=None, force=False):
 
     flash_message(request, 'wiki/action_rename.html', {
         'page': page,
-        'new_name': new_name,
+        'new_name': page.name,
         'force': force
     })
     return HttpResponseRedirect(url_for(page, 'show'))
@@ -659,7 +656,7 @@ def do_mv_discontinued(request, name):
             except Page.DoesNotExist:
                 if not _rename(request, page, new_name, new_text=text):
                     messages.error(request,
-                        'Beim Verschieben ist ein Fehler aufgereten.')
+                        'Beim Verschieben ist ein Fehler aufgetreten.')
                     return HttpResponseRedirect(url_for(page))
             else:
                 messages.error(request,
@@ -708,6 +705,8 @@ def do_mv_back(request, name):
                     trash_name = "Trash/%s-%i" % (new_name, id)
                     try:
                         Page.objects.get_by_name(trash_name)
+                    except CaseSensitiveException:
+                        continue
                     except Page.DoesNotExist:
                         if not _rename(request, copy, trash_name,
                                        new_text=copy_text):
@@ -726,7 +725,7 @@ def do_mv_back(request, name):
             # Rename
             if not _rename(request, page, new_name, new_text=text):
                 messages.error(request,
-                    'Beim Verschieben ist ein Fehler aufgereten.')
+                    'Beim Verschieben ist ein Fehler aufgetreten.')
                 return HttpResponseRedirect(url_for(page))
 
             messages.success(request,
@@ -812,8 +811,8 @@ def do_backlinks(request, name):
     """
     Display a list of backlinks.
 
-    Because this is part of the pathbar that is displayed for deleted pages
-    it should not fail for deleted pages!  Additionally it probably makes
+    Because this is part of the path bar that is displayed for deleted pages
+    it should not fail for deleted pages!  Additionally, it probably makes
     sense to track pages that link to a deleted page.
     """
     page = Page.objects.get_by_name(name)
@@ -831,7 +830,7 @@ def do_backlinks(request, name):
 def do_export(request, name, format='raw', rev=None):
     """
     Export the given revision or the most recent one to the specified format
-    (raw or html).
+    (raw or HTML).
 
     =============== ======= ==================================================
     Format          Partial Full    Description
@@ -915,10 +914,7 @@ def do_attach(request, name):
         d = form.cleaned_data
         attachment_name = d.get('filename') or d['attachment'].name
         filename = d['attachment'].name or d.get('filename')
-        if not attachment_name:
-            messages.info(request,
-                _('Please enter a name for this attachment.'))
-            return context
+
         attachment_name = '%s/%s' % (name, attachment_name)
         attachment_name = normalize_pagename(attachment_name.strip('/'))
         try:
@@ -948,10 +944,12 @@ def do_attach(request, name):
                     attachment=d['attachment'])
         messages.success(request,
             _('Attachment saved successfully.'))
-        if ap.metadata.get('weiterleitung'):
+
+        if ap.metadata.get('X-Redirect'):
             url = url_for(ap, action='show_no_redirect')
         else:
             url = url_for(ap)
+
         return HttpResponseRedirect(url)
 
     context['deny_robots'] = 'noindex'
@@ -994,6 +992,7 @@ def do_attach_edit(request, name):
 
 @clean_article_name
 @login_required
+@case_sensitive_redirect
 def do_subscribe(request, name):
     """
     Subscribe the user to the page with `page_name`
@@ -1011,6 +1010,7 @@ def do_subscribe(request, name):
 
 @clean_article_name
 @login_required
+@case_sensitive_redirect
 def do_unsubscribe(request, name):
     """
     Unsubscribe the user from the page with `page_name`

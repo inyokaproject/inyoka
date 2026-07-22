@@ -7,8 +7,11 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from typing import Optional
+
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
@@ -33,7 +36,7 @@ class ForumField(forms.ChoiceField):
         super().__init__(*args, **kwargs)
         self.set_forum_choices()
 
-    def set_forum_choices(self, privilege='forum.view_forum'):
+    def set_forum_choices(self, privilege='forum.view_forum') -> None:
         """
         Generates a hierarchical representation of all forums for a choice field.
         Only forums with at least `privilege` for the current user are taken into
@@ -59,7 +62,7 @@ class ForumField(forms.ChoiceField):
 
         self.choices = choices
 
-    def to_python(self, value):
+    def to_python(self, value) -> Optional[int]:
         """
         As the choice field just contains forum-ids, we cast it to int.
         If it is empty, None will be returned.
@@ -67,7 +70,16 @@ class ForumField(forms.ChoiceField):
         if value in self.empty_values:
             return None
 
-        return int(value)
+        try:
+            v = int(value)
+        except ValueError:
+            raise ValidationError(
+                self.error_messages["invalid_choice"],
+                code="invalid_choice",
+                params={"value": value},
+            )
+
+        return v
 
 
 class EditPostForm(SurgeProtectionMixin, forms.Form):

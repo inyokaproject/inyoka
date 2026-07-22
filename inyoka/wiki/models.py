@@ -56,12 +56,6 @@
     ``X-Cache-Time``
         This is used to give the page a different cache time than the default.
 
-    ``X-Owner``
-        Every user or group (prefixed with an ``'@'``) defined this way is
-        added to the special ACL ``@Owner`` group.  This is for example used
-        for user wiki pages that should only give moderators, administrators
-        and the owner of the page access.
-
     Every internal key is only modifiable by people with the ``PRIV_MANAGE``
     privilege.  Some keys like `X-Link` and `X-Attach` that are defined also
     by the wiki parser itself are marked as `LENIENT_METADATA_KEYS` which
@@ -93,7 +87,7 @@ from django.db.models.functions import Upper
 from django.template.loader import render_to_string
 from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
-from django.utils.html import escape, strip_tags
+from django.utils.html import escape, format_html, strip_tags
 from django.utils.translation import (
     get_language,
     gettext_lazy,
@@ -106,7 +100,7 @@ from inyoka.markup import base as markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
-from inyoka.utils.dates import datetime_to_timezone, format_datetime
+from inyoka.utils.dates import format_datetime
 from inyoka.utils.decorators import deferred
 from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.highlight import highlight_code
@@ -328,31 +322,6 @@ class PageManager(models.Manager):
         """
         return len(self.get_page_list(existing_only, cached))
 
-    def get_owners(self, page_name):
-        """
-        Get a set of owners defined using the ``'X-Owner'`` metadata key.
-        This set may include groups too and is probably just seful for the
-        `get_privilege_flags` function from the `acl` module which uses it.
-
-        Groups are prefixed with an ``'@'`` sig.-
-        """
-        owners = MetaData.objects.filter(page__name=page_name, key='X-Owner')\
-                                 .values_list('value', flat=True)
-        return set(owners)
-
-    def get_owned(self, owners):
-        """
-        Return all the pages a user or some group (prefixed with ``@`` own).
-        The return value will be a list of page names, not page objects.
-
-        Reverse method of `get_owners`.
-        """
-        if not owners:
-            return []
-        pages = MetaData.objects.filter(key='X-Owner', value__in=owners)\
-                                .values_list('page__name')
-        return set(pages)
-
     def get_orphans(self):
         """
         Return a list of orphaned pages.  The return value will be a list
@@ -496,7 +465,7 @@ class PageManager(models.Manager):
     def attachment_for_page(self, page_name: str) -> str | None:
         """
         Get the internal filename of the attachment attached to the page
-        provided.  If the page does not exist or it doesn't have an attachment
+        provided.  If the page does not exist, or it doesn't have an attachment
         defined the return value will be `None`.
         """
         try:
@@ -879,8 +848,8 @@ class Page(models.Model):
     @property
     def short_title(self):
         """
-        Like `title` but just the short version of it.  Thus it returns the
-        outermost part (after the last slash).  This is primarly used in the
+        Like `title` but just the short version of it.  Thus, it returns the
+        outermost part (after the last slash).  This is primarily used in the
         `do_show` action.
         """
         return get_pagetitle(self.name, full=False)
@@ -1321,7 +1290,7 @@ class Revision(models.Model):
 
         attachment
             If the page itself holds an attachment this will point to an
-            `Attachment` object.  Otherwise this attribute is `None` and must
+            `Attachment` object.  Otherwise, this attribute is `None` and must
             be ignored.
     """
     objects = RevisionManager()
@@ -1385,17 +1354,18 @@ class Revision(models.Model):
 
     def revert(self, note=None, user=None, remote_addr=None):
         """Revert this revision and make it the current one."""
-        # no relative date information, because it stays in the note forever
-
-        note = _('%(note)s [Revision from %(date)s restored by %(user)s]' %
-            {'note': note,
-             'date': datetime_to_timezone(self.change_date).strftime(
-                '%d.%m.%Y %H:%M %Z'),
-             'user': self.user.username if self.user else self.remote_addr})
-        new_rev = Revision(page=self.page, text=self.text,
+        note = format_html(
+            _('{note} [Revision {id} from {date} restored]'),
+            note=note,
+            id=self.pk,
+            date=format_datetime(self.change_date),
+        )
+        new_rev = Revision(page=self.page,
+                           text=self.text,
                            user=(user if user.is_authenticated else None),
                            change_date=dj_timezone.now(),
-                           note=note, deleted=False,
+                           note=note,
+                           deleted=False,
                            remote_addr=remote_addr or '127.0.0.1',
                            attachment=self.attachment)
         new_rev.save()

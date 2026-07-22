@@ -17,9 +17,9 @@
     </p>
   {% else %}
     <h1>{% trans %}Page not found{% endtrans %}</h1>
-    {# TODO: text should be changeable via interface #}
-    <p>Beim Aufruf dieser Seite ist leider ein Fehler aufgetreten. Wenn du gerade einen Beitrag abgesendet hast, lade die Seite bitte nicht sofort neu, sondern überprüfe erst, ob er eingetragen wurde. Falls nicht, kannst du es noch einmal versuchen.</p>
 
-    <p>Die von dir aufgerufene Seite wurde leider nicht gefunden. Bitte prüfe die von dir aufgerufene Adresse. Es kann auch sein, dass du nicht berechtigt bist diese Seite aufzurufen.</p>
+    <p>{% trans %}Unfortunately, the page you requested could not be found. Please check the address you entered. It is also possible that you do not have the permission to access this page.{% endtrans %}</p>
+
+    <p>{% trans %}If you just submitted a post, please don't refresh the page right away. Instead, check if it was posted. If not, you can try again.{% endtrans %}</p>
   {% endif %}
 {% endblock %}

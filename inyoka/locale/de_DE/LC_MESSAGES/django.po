@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-04-05 21:17+0200\n"
+"POT-Creation-Date: 2026-05-31 15:10+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #, python-format
 msgid "\"%(fingerprint)s\" is not a valid GPG Fingerprint."
@@ -86,6 +86,9 @@ msgid ""
 "      re-enable them, at least for this site, or for 'same-origin'\n"
 "      requests."
 msgstr "Wenn du Cookies in deinem Browser deaktiviert hast, aktivierte dies bitte wieder. Es ist dabei ausreichend, Cookies nur für diese Domain oder die Ursprungsdomain („same-origin“) zu aktivieren."
+
+msgid "If you just submitted a post, please don't refresh the page right away. Instead, check if it was posted. If not, you can try again."
+msgstr "Wenn du gerade einen Beitrag abgesendet hast, lade die Seite bitte nicht sofort neu. Stattdessen prüfe erst, ob er eingetragen wurde. Falls nicht, kannst du es noch einmal versuchen."
 
 msgid "Login"
 msgstr "Anmelden"
@@ -197,6 +200,9 @@ msgstr "Diesen Benutzer gibt es nicht"
 
 msgid "URL of the topic"
 msgstr "URL des Themas"
+
+msgid "Unfortunately, the page you requested could not be found. Please check the address you entered. It is also possible that you do not have the permission to access this page."
+msgstr "Die von dir aufgerufene Seite wurde leider nicht gefunden. Bitte prüfe die von dir aufgerufene Adresse. Es kann auch sein, dass du nicht berechtigt bist diese Seite aufzurufen."
 
 msgid "Yes"
 msgstr "Ja"

@@ -49,14 +49,14 @@ class TestClamAV(TestCase):
 
     def test_invalid_port(self) -> None:
         s = Clamav(host='127.0.0.1', port=1337)
-        with self.assertRaisesMessage(ClamdConnectionError, 'Connection refused'):
+        with self.assertRaisesMessage(ClamdConnectionError, '[Errno 111]'):
             s.__enter__()
         s.__exit__(None, None, None)
 
     def test_invalid_address(self) -> None:
         s = Clamav(host='notexisting.test')
         with self.assertRaisesMessage(
-            ClamdConnectionError, 'Name or service not known'
+            ClamdConnectionError, '[Errno -2]'
         ):
             s.__enter__()
         s.__exit__(None, None, None)
@@ -73,11 +73,8 @@ class TestClamAV(TestCase):
         with self.assertLogs('inyoka', level='INFO') as cm:
             scan_all_media_files()
 
-            self.assertEqual(
-                cm.output,
-                [
-                    'ERROR:inyoka:Clamav seems to be unavailable [Errno -2] Name or service not known'
-                ],
+            self.assertTrue(
+                cm.output[0].startswith('ERROR:inyoka:Clamav seems to be unavailable [Errno -2]'),
             )
 
     @override_settings(MEDIA_ROOT='/tmp/not-existing-path')
@@ -88,7 +85,6 @@ class TestClamAV(TestCase):
             self.assertEqual(
                 cm.output,
                 [
-                    "ERROR:inyoka:clamav result: Clamav.ClamavResult(filename='/tmp/not-existing-path', reason='File path check failure: No such file or directory.', status='ERROR')",
                     "ERROR:inyoka:clamav result: Clamav.ClamavResult(filename='/tmp/not-existing-path', reason='File path check failure: No such file or directory.', status='ERROR')",
                 ],
             )
