@@ -46,7 +46,6 @@ dependencies = [
   "pillow",
   "psycopg[binary]",
   "pygments",
-  "python-magic",
   "requests",
   "sentry-sdk",
   "tzdata",
