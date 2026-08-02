@@ -71,13 +71,13 @@
     :license: BSD, see LICENSE for more details.
 """
 import locale
+import mimetypes
 import random
 import time
 from collections import defaultdict
 from functools import partial
 from hashlib import sha1
 
-import magic
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -1200,8 +1200,7 @@ class Attachment(models.Model):
     @cached_property
     def mimetype(self):
         """The mimetype of the attachment."""
-        return magic.from_file(self.file.path, mime=True) or \
-            'application/octet-stream'
+        return mimetypes.guess_type(self.filename)[0] or 'application/octet-stream'
 
     @property
     def contents(self):
