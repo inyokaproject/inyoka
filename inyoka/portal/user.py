@@ -43,6 +43,7 @@ from inyoka.utils.cache import QueryCounter
 from inyoka.utils.clamav import validate_file_infection
 from inyoka.utils.database import InyokaMarkupField, JabberField, JSONField
 from inyoka.utils.decorators import deferred
+from inyoka.utils.forms import validate_file_extension
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
 from inyoka.utils.urls import href
@@ -292,7 +293,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     # profile attributes
     avatar = models.ImageField(gettext_lazy('Avatar'), upload_to=upload_to_avatar,
-                               blank=True, null=True, validators=[validate_file_infection])
+                               blank=True, null=True, validators=[validate_file_infection, validate_file_extension])
     jabber = JabberField(gettext_lazy('Jabber'), max_length=200, blank=True)
     signature = InyokaMarkupField(verbose_name=gettext_lazy('Signature'), blank=True)
     location = models.CharField(gettext_lazy('Residence'), max_length=200, blank=True)

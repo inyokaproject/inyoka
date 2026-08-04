@@ -9,6 +9,7 @@ Test wiki forms.
 """
 
 from functools import partial
+from os import path
 from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -103,11 +104,83 @@ class TestAddAttachmentForm(TestCase):
 
     def test_attachment_contains_eicar(self):
         EICAR.seek(0)
-        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        upload_object = SimpleUploadedFile('eicar.txt', EICAR.read())
         form = self.form(files={'attachment': upload_object})
 
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors, {'attachment': ['File is infected with malware']})
+
+    def test_mime_not_an_image(self):
+        upload_object = SimpleUploadedFile('eicar.png', b'foobar', content_type='image/png')
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertEqual(form.errors, {'attachment': ['Invalid image.']})
+
+    def test_wrong_file_extension(self):
+        path_file = path.join(path.dirname(__file__), 'happy.png')
+
+        with open(path_file, 'rb') as f:
+            upload_object = SimpleUploadedFile('eicar.pdf', f.read(), content_type='image/png')
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertEqual(form.errors, {'attachment': ['File extension does not fit to the files mime type.']})
+
+    def test_valid_images(self):
+        to_test = (
+            {'filename': 'happy.png', 'mime': 'image/png'},
+            {'filename': 'test_attachment.avif', 'mime': 'image/avif'},
+            {'filename': 'test_attachment.gif', 'mime': 'image/gif'},
+            {'filename': 'test_attachment.jpg', 'mime': 'image/jpeg'},
+            {'filename': 'test_attachment.webp', 'mime': 'image/webp'},
+        )
+
+        for t in to_test:
+            with self.subTest(t['filename']):
+                path_file = path.join(path.dirname(__file__), t['filename'])
+
+                with open(path_file, 'rb') as f:
+                    upload_object = SimpleUploadedFile(t['filename'], f.read(), content_type=t['mime'])
+                form = self.form(files={'attachment': upload_object})
+
+                self.assertTrue(form.is_valid())
+
+    def test_pdf(self):
+        path_file = path.join(path.dirname(__file__), '../../utils/test.pdf')
+
+        with open(path_file, 'rb') as f:
+            upload_object = SimpleUploadedFile('test.pdf', f.read(), content_type='application/pdf')
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertTrue(form.is_valid())
+
+    def test_missmatch_content_typ_and_mimetype(self):
+        path_file = path.join(path.dirname(__file__), 'happy.png')
+
+        with open(path_file, 'rb') as f:
+            upload_object = SimpleUploadedFile('eicar.png', f.read(), content_type='image/jpeg')
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertEqual(form.errors, {'attachment': ['Transmitted mimetype does not fit the files mimetype.']})
+
+    def test_no_file_extension(self):
+        upload_object = SimpleUploadedFile('eicar', b'foobar', content_type='image/png')
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertEqual(form.errors, {'attachment': ['File has no file extension.']})
+
+    def test_partial_png(self):
+        path_file = path.join(path.dirname(__file__), 'test_partial.png')
+
+        with open(path_file, 'rb') as f:
+            upload_object = SimpleUploadedFile('partial.png', f.read(), content_type='image/png')
+        form = self.form(files={'attachment': upload_object})
+        self.assertEqual(form.errors, {'attachment': ['Corrupted image.']})
+
+    def test_bat(self):
+        upload_object = SimpleUploadedFile('eicar.gz', b'foobar', content_type='application/gzip')
+        form = self.form(files={'attachment': upload_object})
+
+        self.assertTrue(form.is_valid())
 
 
 class TestEditAttachmentForm(TestCase):

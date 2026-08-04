@@ -21,6 +21,7 @@ from inyoka.utils.forms import (
     MultiField,
     StrippedCharField,
     TopicField,
+    validate_file_extension,
     validate_forbidden_in_text,
 )
 from inyoka.utils.sessions import SurgeProtectionMixin
@@ -259,7 +260,7 @@ class AddAttachmentForm(forms.Form):
     `description`
         The description of the attachment as textarea.
     """
-    attachment = forms.FileField(validators=[validate_file_infection])
+    attachment = forms.FileField(validators=[validate_file_infection, validate_file_extension])
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
     comment = forms.CharField(label=gettext_lazy('Description'), required=False)
