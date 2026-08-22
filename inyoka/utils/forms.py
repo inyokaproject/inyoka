@@ -15,13 +15,14 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import BinaryIO
 
 from django import forms
 from django.conf import settings
 from django.core import validators
 from django.core.cache import cache
 from django.core.exceptions import BadRequest, ValidationError
+from django.core.files.uploadedfile import UploadedFile
+from django.db.models.fields.files import FieldFile
 from django.forms import (
     DateInput,
     MultipleChoiceField,
@@ -458,7 +459,7 @@ class TopicField(forms.CharField):
         return topic
 
 
-def validate_file_extension(file: BinaryIO) -> None:
+def validate_file_extension(file: FieldFile | UploadedFile) -> None:
     """
     Validator function which checks on an uploaded file if the file extension
       - fits to the mime from file itself and
@@ -532,5 +533,6 @@ def validate_file_extension(file: BinaryIO) -> None:
     if not ext_fits_file_mime:
         raise ValidationError(_('File extension does not fit to the files mime type.'))
 
-    if mimetype != file.content_type:
-        raise ValidationError(_('Transmitted mimetype does not fit the files mimetype.'))
+    if hasattr(file, "content_type"):
+        if mimetype != file.content_type:
+            raise ValidationError(_('Transmitted mimetype does not fit the files mimetype.'))
