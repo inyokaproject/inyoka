@@ -8,8 +8,8 @@
     :license: BSD, see LICENSE for more details.
 """
 import hashlib
-from typing import BinaryIO
 
+from django.core.files.base import File
 from werkzeug import utils
 
 
@@ -20,7 +20,7 @@ def get_filename(filename, file=None):
     return utils.secure_filename(filename) or 'Noname'
 
 
-def sha256_io(file: BinaryIO) -> str:
+def sha256_io(file: File) -> str:
     sha256_hash = hashlib.sha256()
 
     file.seek(0)

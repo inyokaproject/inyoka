@@ -194,7 +194,7 @@ class TestEditAttachmentForm(TestCase):
 
     def test_attachment_contains_eicar(self):
         EICAR.seek(0)
-        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        upload_object = SimpleUploadedFile('eicar.bat', EICAR.read())
         form = self.form(files={'attachment': upload_object})
 
         self.assertFalse(form.is_valid())

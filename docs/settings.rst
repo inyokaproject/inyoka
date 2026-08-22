@@ -112,9 +112,6 @@ Forum
     Time in seconds after posting a user is allowed to edit his own posts, for
     posts (w/o, w/) replies. -1 for infinitely, 0 for never
 
-.. py:data:: FORUM_THUMBNAIL_SIZE
-
-    Defaults to: ``(64, 64)``
 
 General
 -------

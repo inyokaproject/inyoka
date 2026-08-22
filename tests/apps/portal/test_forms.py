@@ -224,7 +224,7 @@ class TestEditFileForm(TestCase):
         Test that the clamav validator runs on the file field with the eicar test file.
         """
         EICAR.seek(0)
-        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        upload_object = SimpleUploadedFile('eicar.bat', EICAR.read())
         form = EditFileForm(files={'file': upload_object})
 
         self.assertFalse(form.is_valid())
@@ -305,10 +305,9 @@ class TestConfigurationForm(TestCase):
         Test that the clamav validator runs on the team icon field.
         We remove the checks for a valid image file with python mocks.
         """
-        mock_method.return_value = EICAR
-
         EICAR.seek(0)
-        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        upload_object = SimpleUploadedFile('eicar.bat', EICAR.read())
+        mock_method.return_value = upload_object
         form = self.form(files={'team_icon': upload_object})
 
         self.assertFalse(form.is_valid())
@@ -332,10 +331,11 @@ class TestLinkMapFormset(TestCase):
         Test that the clamav validator runs on the icon field.
         We remove the checks for a valid image file with python mocks.
         """
-        mock_method.return_value = EICAR
-
         EICAR.seek(0)
-        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+
+        upload_object = SimpleUploadedFile('eicar.bat', EICAR.read())
+        mock_method.return_value = upload_object
+
         form = self.form(
             data={
                 'form-TOTAL_FORMS': '1',
@@ -564,10 +564,11 @@ class TestUserCPProfileForm(TestCase):
         Test that the clamav validator runs on the avatar field.
         We remove the checks for a valid image file with python mocks.
         """
-        mock_method.return_value = EICAR
-
         EICAR.seek(0)
-        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+
+        upload_object = SimpleUploadedFile('eicar.bat', EICAR.read())
+        mock_method.return_value = upload_object
+
         form = self.form(
             data={'email': self.user.email},
             files={'avatar': upload_object},

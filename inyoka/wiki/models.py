@@ -1207,7 +1207,7 @@ class Attachment(models.Model):
         """
         The raw contents of the file.  This is usually unsafe because
         it can cause the memory limit to be reached if the file is too
-        big.  However this limitation currently affects the whole django
+        big.  However, this limitation currently affects the whole django
         system which handles uploads in the memory.
         """
         f = self.open()
@@ -1217,7 +1217,7 @@ class Attachment(models.Model):
             f.close()
 
     @property
-    def html_representation(self): # TODO
+    def html_representation(self):
         """
         This method returns a `HTML` representation of the attachment for the
         `show_action` page.  If this method does not know about an internal
@@ -1226,13 +1226,12 @@ class Attachment(models.Model):
         """
         url = escape(self.get_absolute_url())
         if self.mimetype.startswith('image/'):
-            return '<a href="%s"><img class="attachment" src="%s" ' \
-                   'alt="%s"></a>' % (url, url, url)
+            return format_html('<a href="{url}"><img class="attachment" src="{url}" alt="{url}"></a>', url=url)
         else:
             code = ''
             if self.mimetype.startswith('text/'):
                 code = highlight_code(self.contents, filename=self.filename)
-            return '%s<a href="%s">%s</a>' % (code, url, _('Download attachment'))
+            return format_html('{formatted_code}<a href="{url}">{text}</a>', formatted_code=code, url=url, text=_('Download attachment'))
 
     def open(self, mode='rb'):
         """
