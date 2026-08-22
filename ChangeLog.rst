@@ -25,6 +25,33 @@ Inyoka Changelog
    -----------
 
 
+Unreleased 1.52.11 (2026-MM-DD)
+=====================
+
+Deployment notes
+----------------
+#. Update requirements
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+🔒 Security
+-----------
+* At least the dependencies ``django`` and ``sqlparse`` include security fixes
+
+
 1.52.10 (2026-07-22)
 ===================
 
