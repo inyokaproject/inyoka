@@ -34,18 +34,11 @@ Deployment notes
 
 ✨ New features
 ---------------
-
-🏗 Changes
-----------
-
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
+* Simple keyword filter for forum posts
 
 🐛 Fixes
 --------
+* Fix some typos on register page
 
 🔒 Security
 -----------
