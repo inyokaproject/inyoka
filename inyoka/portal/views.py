@@ -1477,6 +1477,7 @@ def config(request):
             'wiki_edit_note', 'wiki_newpage_template', 'wiki_newpage_root',
             'wiki_newpage_infopage', 'wiki_edit_note', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
+            'user_forbidden_values',
             'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']

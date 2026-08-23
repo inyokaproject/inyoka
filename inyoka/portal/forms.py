@@ -1166,6 +1166,16 @@ class ConfigurationForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 5}),
         label=gettext_lazy('Description about the planet that will be used '
                             'on the planet page and in the feed aggregations.'))
+    user_forbidden_values = forms.CharField(required=False,
+        widget=forms.Textarea(),
+        label=gettext_lazy('Forbidden values for user content'),
+        help_text=gettext_lazy(
+            'List of values that are not allowed in user text fields. '
+            'One value per line. Leave empty to disable this validation. '
+            'The validator performs case-insensitive matching to check if any '
+            'of these values appear in the post text. If a forbidden value is '
+            'found, a validation error is raised and the post is rejected.'
+        ))
 
     def clean_distri_versions(self):
         data = self.cleaned_data

@@ -18,7 +18,12 @@ from django.utils.translation import gettext_lazy
 from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Forum, Topic
 from inyoka.utils.clamav import validate_file_infection
-from inyoka.utils.forms import MultiField, StrippedCharField, TopicField
+from inyoka.utils.forms import (
+    MultiField,
+    StrippedCharField,
+    TopicField,
+    validate_forbidden_in_text,
+)
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 from inyoka.utils.text import slugify
@@ -93,7 +98,8 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
     # topic.
     #: the user can select, whether the post's topic should be sticky or not.
     sticky = forms.BooleanField(required=False)
-    title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}), max_length=100)
+    title = forms.CharField(widget=forms.TextInput(attrs={'spellcheck': 'true',}),
+                            max_length=100)
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
 
@@ -108,6 +114,9 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
         if not is_first_post:
             for k in ['sticky', 'title', 'ubuntu_version', 'ubuntu_distro']:
                 del self.fields[k]
+
+        if not self.request.user.is_team_member:
+            self.fields['text'].validators.append(validate_forbidden_in_text)
 
     def clean_text(self):
         if 'send' in self.data:
@@ -135,7 +144,7 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
 
     It's used together with `AddAttachmentForm` in general.
     """
-    title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60, 'spellcheck': 'true'}),
+    title = StrippedCharField(widget=forms.TextInput(attrs={'spellcheck': 'true',}),
                               max_length=100)
     text = StrippedCharField(widget=forms.Textarea, strip=False)
     ubuntu_version = forms.ChoiceField(required=False)
@@ -151,6 +160,9 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices(True)
+
+        if not self.request.user.is_team_member:
+            self.fields['text'].validators.append(validate_forbidden_in_text)
 
     def clean_ubuntu_version(self):
         ubuntu_version = self.cleaned_data.get('ubuntu_version', None)

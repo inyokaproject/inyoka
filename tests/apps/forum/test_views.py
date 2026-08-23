@@ -1779,7 +1779,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
         content = response.content.decode()
         self.assertInHTML(
-            '<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+            '<input type="text" name="title" value="edited title" spellcheck="true" maxlength="100" required id="id_title">',
             content,
         )
         self.assertPreviewInHTML('edited text', response)
@@ -1810,7 +1810,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
         self.assertInHTML(
-            '<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+            '<input type="text" name="title" value="edited title" spellcheck="true" maxlength="100" required id="id_title">',
             response.content.decode(),
         )
         self.assertPreviewInHTML('edited text', response)
@@ -1848,7 +1848,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
         self.assertInHTML(
-            '<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+            '<input type="text" name="title" value="edited title" spellcheck="true" maxlength="100" required id="id_title">',
             response.content.decode(),
         )
         self.assertPreviewInHTML('edited text', response)
@@ -1883,7 +1883,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
         self.assertInHTML(
-            '<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+            '<input type="text" name="title" value="edited title" spellcheck="true" maxlength="100" required id="id_title">',
             response.content.decode(),
         )
         self.assertPreviewInHTML('edited text', response)
@@ -1949,7 +1949,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             pattern % {'q': poll2.question, 'pk': poll2.pk}, content, count=1
         )
         self.assertInHTML(
-            '<input type="text" name="title" value="edited title" required maxlength="100" id="id_title" size="60" />',
+            '<input type="text" name="title" value="edited title" spellcheck="true" maxlength="100" required id="id_title">',
             content,
         )
 
@@ -1966,7 +1966,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(Poll.objects.count(), 0)
         self.assertEqual(PollOption.objects.count(), 0)
         self.assertInHTML(
-            '<input type="text" name="title" value="edited title 2" required maxlength="100" id="id_title" size="60" />',
+            '<input type="text" name="title" value="edited title 2" spellcheck="true" maxlength="100" required id="id_title">',
             response.content.decode(),
         )
 

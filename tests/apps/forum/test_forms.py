@@ -10,11 +10,15 @@
 
 from functools import partial
 
+from django.conf import settings
+from django.contrib.auth.models import Group
+from django.test import RequestFactory
 from guardian.shortcuts import assign_perm
 
-from inyoka.forum.forms import MoveTopicForm, SplitTopicForm
+from inyoka.forum.forms import EditPostForm, MoveTopicForm, NewTopicForm, SplitTopicForm
 from inyoka.forum.models import Forum
 from inyoka.portal.user import User
+from inyoka.utils.storage import storage
 from inyoka.utils.test import TestCase
 
 
@@ -137,3 +141,47 @@ class TestMoveTopicForm(TestCase):
         self.assertTrue(form.is_valid())
         form.clean()
         self.assertEqual(form.cleaned_data['forum'], forum2)
+
+
+class TestEditPostForm(TestCase):
+
+    def setUp(self) -> None:
+        self.user = User.objects.create_user('test', 'test@local.test', 'test')
+        self.user.status = User.STATUS_ACTIVE
+        self.user.save()
+
+        self.forbidden_post_text = 'fooobar123456'
+        storage['user_forbidden_values'] = self.forbidden_post_text
+
+        self.form = partial(EditPostForm, is_first_post=True, needs_spam_check=False)
+
+    def test_user_spam_keywords_blocked(self):
+        factory = RequestFactory()
+        request = factory.get('/')
+        request.user = self.user
+
+        data = {'text': self.forbidden_post_text, 'title': 'test title'}
+        form = self.form(request=request, data=data)
+
+        self.assertFormError(form, 'text', ['Your post contains forbidden content'])
+
+    def test_team_members_no_spam_keywords_checked(self):
+        team_group = Group.objects.get(name=settings.INYOKA_TEAM_GROUP_NAME)
+        self.user.groups.add(team_group)
+
+        factory = RequestFactory()
+        request = factory.get('/')
+        request.user = self.user
+
+        data = {'text': self.forbidden_post_text, 'title': 'test title'}
+        form = self.form(request=request, data=data)
+        form.surge_protection_timeout = None
+        self.assertTrue(form.is_valid())
+
+
+class TestNewTopicForm(TestEditPostForm):
+
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.form = partial(NewTopicForm, needs_spam_check=False, force_version=False)
