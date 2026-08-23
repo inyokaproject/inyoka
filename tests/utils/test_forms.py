@@ -9,7 +9,8 @@ from django.forms import forms
 
 from inyoka.forum.models import Forum, Topic
 from inyoka.portal.user import User
-from inyoka.utils.forms import JabberFormField, TopicField
+from inyoka.utils.forms import JabberFormField, TopicField, validate_forbidden_in_text
+from inyoka.utils.storage import storage
 from inyoka.utils.test import TestCase
 
 
@@ -52,3 +53,30 @@ class TestJabberFormField(TestCase):
     def test_invalid_jabber_id(self):
         with self.assertRaises(forms.ValidationError):
             self.field.clean('foo')
+
+
+class TestValidateForbiddenText(TestCase):
+
+    def test_invalid(self):
+        storage['user_forbidden_values'] = 'foo'
+
+        with self.assertRaises(forms.ValidationError):
+            validate_forbidden_in_text('bazFoobar')
+
+    def test_invalid__configuration_multiline(self):
+        storage['user_forbidden_values'] = 'foo\nbar\nexample.test'
+
+        with self.assertRaises(forms.ValidationError):
+            validate_forbidden_in_text('bar')
+            validate_forbidden_in_text('example.bar.test')
+
+    def test_valid(self):
+        storage['user_forbidden_values'] = 'foo'
+        validate_forbidden_in_text('bazbar')
+
+    def test_empty_storage_setting(self):
+        storage['user_forbidden_values'] = ''
+        validate_forbidden_in_text('bazbar')
+
+    def test_no_storage_setting(self):
+        validate_forbidden_in_text('bazbar')

@@ -25,6 +25,26 @@ Inyoka Changelog
    -----------
 
 
+Unreleased 1.52.11 (2026-MM-DD)
+=====================
+
+Deployment notes
+----------------
+#. Update requirements
+
+✨ New features
+---------------
+* Simple keyword filter for forum posts
+
+🐛 Fixes
+--------
+* Fix some typos on register page
+
+🔒 Security
+-----------
+* At least the dependencies ``django`` and ``sqlparse`` include security fixes
+
+
 1.52.10 (2026-07-22)
 ===================
 

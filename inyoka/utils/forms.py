@@ -20,7 +20,12 @@ from django.conf import settings
 from django.core import validators
 from django.core.cache import cache
 from django.core.exceptions import BadRequest
-from django.forms import DateInput, MultipleChoiceField, SplitDateTimeWidget, TimeInput
+from django.forms import (
+    DateInput,
+    MultipleChoiceField,
+    SplitDateTimeWidget,
+    TimeInput,
+)
 from django.forms.widgets import TextInput
 from django.utils.translation import gettext as _
 
@@ -28,6 +33,7 @@ from inyoka.markup.base import StackExhaused, parse
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.sessions import SurgeProtectionMixin
+from inyoka.utils.storage import storage
 from inyoka.utils.text import slugify
 
 
@@ -52,6 +58,24 @@ def validate_empty_text(value):
     if not value.strip():
         raise forms.ValidationError(_('Text must not be empty'), code='invalid')
     return value
+
+
+def validate_forbidden_in_text(value: str) -> None:
+    """
+    Validate text `value` against a list of forbidden values defined in global configuration.
+    """
+
+    forbidden_values = storage.get('user_forbidden_values', '')
+    text_lower = value.lower()
+
+    for forbidden in forbidden_values.splitlines():
+        forbidden = forbidden.strip().lower()
+
+        if forbidden in text_lower:
+            raise forms.ValidationError(
+                _('Your post contains forbidden content'),
+                code='invalid'
+            )
 
 
 def validate_signature(signature):
