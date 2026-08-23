@@ -98,7 +98,8 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
     # topic.
     #: the user can select, whether the post's topic should be sticky or not.
     sticky = forms.BooleanField(required=False)
-    title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}), max_length=100)
+    title = forms.CharField(widget=forms.TextInput(attrs={'spellcheck': 'true',}),
+                            max_length=100)
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
 
@@ -143,7 +144,7 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
 
     It's used together with `AddAttachmentForm` in general.
     """
-    title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60, 'spellcheck': 'true'}),
+    title = StrippedCharField(widget=forms.TextInput(attrs={'spellcheck': 'true',}),
                               max_length=100)
     text = StrippedCharField(widget=forms.Textarea, strip=False)
     ubuntu_version = forms.ChoiceField(required=False)
