@@ -1,12 +1,13 @@
 """
-    tests.apps.portal.test_models
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests.apps.portal.test_models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test portal models.
+Test portal models.
 
-    :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 import csv
 import gzip
 import io
@@ -36,7 +37,6 @@ from inyoka.utils.urls import href
 
 
 class TestLinkmapModel(TestCase):
-
     error_message_token = 'Only lowercase letters, - and _ allowed. Numbers as postfix.'
 
     def token(self, token):
@@ -67,7 +67,9 @@ class TestLinkmapModel(TestCase):
 
     def test_valid_url(self):
         self.url('http://example.test')
-        self.url('https://startpage.test/do/search?cat=web&language=deutsch&query=PAGE&ff=')
+        self.url(
+            'https://startpage.test/do/search?cat=web&language=deutsch&query=PAGE&ff='
+        )
         self.url('https://PAGE.wordpress.test/')
         self.url('https://web.archive.test/web/*/https://')
 
@@ -93,11 +95,12 @@ class TestLinkmapModel(TestCase):
 
 
 class TestLinkmapManager(TestCase):
-
     def setUp(self):
         super().setUp()
 
-        Linkmap.objects.create(token='example', url='http://example.test', icon='example.png')
+        Linkmap.objects.create(
+            token='example', url='http://example.test', icon='example.png'
+        )
 
         self.css_file = Linkmap.objects.generate_css()
         self.full_path = path.join(settings.MEDIA_ROOT, 'linkmap', self.css_file)
@@ -106,37 +109,45 @@ class TestLinkmapManager(TestCase):
         self.assertIsNotNone(self.css_file)
 
         with open(self.full_path) as f:
-            css = ('/* linkmap for inter wiki links \n :license: BSD*/a.interwiki { padding-left: 20px; }'
-                   'a.interwiki-example { background-image: url("%s"); }')
+            css = (
+                '/* linkmap for inter wiki links \n :license: BSD*/a.interwiki { padding-left: 20px; }'
+                'a.interwiki-example { background-image: url("%s"); }'
+            )
             self.assertEqual(f.read(), css % href('media', 'example.png'))
 
     def test_generate_css__generates_gzip_file(self):
-        with open(self.full_path) as f, gzip.open(self.full_path + '.gz', 'rt') as gzip_f:
+        with (
+            open(self.full_path) as f,
+            gzip.open(self.full_path + '.gz', 'rt') as gzip_f,
+        ):
             self.assertEqual(gzip_f.read(), f.read())
 
     def test_generate_css__deletes_old_files(self):
         self.assertTrue(path.exists(self.full_path))
 
-        Linkmap.objects.create(token='example2', url='http://example.test', icon='example2.png')
+        Linkmap.objects.create(
+            token='example2', url='http://example.test', icon='example2.png'
+        )
         self.css_file = Linkmap.objects.generate_css()
 
         self.assertFalse(path.exists(self.full_path))
-        self.assertTrue(path.exists(path.join(settings.MEDIA_ROOT, 'linkmap', self.css_file)))
+        self.assertTrue(
+            path.exists(path.join(settings.MEDIA_ROOT, 'linkmap', self.css_file))
+        )
 
 
 class TestPrivateMessageManager(TestCase):
-
     def setUp(self):
         super().setUp()
 
-        user = User.objects.register_user('testing', 'example@example.com',
-                                               'pwd', False)
+        user = User.objects.register_user(
+            'testing', 'example@example.com', 'pwd', False
+        )
         self.other_user = User.objects.register_user(
-            'other_user',
-            'example2@example.com',
-            'pwd', False)
+            'other_user', 'example2@example.com', 'pwd', False
+        )
 
-        pm = PrivateMessage(author=user, subject="message", pub_date=dj_timezone.now())
+        pm = PrivateMessage(author=user, subject='message', pub_date=dj_timezone.now())
         pm.send([self.other_user])
 
     def test_orphan_messages__no_orphans(self):
@@ -154,20 +165,24 @@ class TestPrivateMessageManager(TestCase):
         self.assertEqual(PrivateMessage.objects.count(), 1)
         self.assertEqual(PrivateMessageEntry.objects.count(), 0)
 
-        self.assertEqual(list(PrivateMessage.objects.orphan_messages()), [PrivateMessage.objects.get()])
+        self.assertEqual(
+            list(PrivateMessage.objects.orphan_messages()),
+            [PrivateMessage.objects.get()],
+        )
 
     def test_orphan_messages__mixture_orphans_and_no_orphans(self):
         self.third_user = User.objects.register_user(
-            'third_user',
-            'example3@inyoka.test',
-            'pwd',
-            False
+            'third_user', 'example3@inyoka.test', 'pwd', False
         )
 
-        pm2 = PrivateMessage(author=self.other_user, subject="message2", pub_date=dj_timezone.now())
+        pm2 = PrivateMessage(
+            author=self.other_user, subject='message2', pub_date=dj_timezone.now()
+        )
         pm2.send([self.third_user])
 
-        pm3 = PrivateMessage(author=self.other_user, subject="message3", pub_date=dj_timezone.now())
+        pm3 = PrivateMessage(
+            author=self.other_user, subject='message3', pub_date=dj_timezone.now()
+        )
         pm3.send([self.third_user])
 
         self.assertEqual(PrivateMessage.objects.count(), 3)
@@ -184,30 +199,35 @@ class TestPrivateMessageManager(TestCase):
         self.assertEqual(PrivateMessage.objects.count(), 3)
         self.assertEqual(PrivateMessageEntry.objects.count(), 3)
 
-        self.assertEqual(list(PrivateMessage.objects.orphan_messages()),[pm2])
+        self.assertEqual(list(PrivateMessage.objects.orphan_messages()), [pm2])
 
 
 class TestPrivateMessageEntry(TestCase):
-
     def setUp(self):
         super().setUp()
 
-        user = User.objects.register_user('testing', 'example@example.com',
-                                               'pwd', False)
+        user = User.objects.register_user(
+            'testing', 'example@example.com', 'pwd', False
+        )
         user.groups.add(Group.objects.get(name=settings.INYOKA_TEAM_GROUP_NAME))
         self.other_user = User.objects.register_user(
-            'other_user',
-            'example2@example.com',
-            'pwd', False)
-        pm = PrivateMessage(author=user, subject="Expired message", pub_date=dj_timezone.now() -
-            timedelta(days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION))
+            'other_user', 'example2@example.com', 'pwd', False
+        )
+        pm = PrivateMessage(
+            author=user,
+            subject='Expired message',
+            pub_date=dj_timezone.now()
+            - timedelta(days=settings.PRIVATE_MESSAGE_INBOX_SENT_DURATION),
+        )
         pm.send([self.other_user])
 
-        self.archive = PRIVMSG_FOLDERS["archive"][0]
-        self.inbox = PRIVMSG_FOLDERS["inbox"][0]
-        self.sent = PRIVMSG_FOLDERS["sent"][0]
+        self.archive = PRIVMSG_FOLDERS['archive'][0]
+        self.inbox = PRIVMSG_FOLDERS['inbox'][0]
+        self.sent = PRIVMSG_FOLDERS['sent'][0]
 
-        self.privmsgentry = PrivateMessageEntry.objects.get(message=pm, user=self.other_user)
+        self.privmsgentry = PrivateMessageEntry.objects.get(
+            message=pm, user=self.other_user
+        )
 
     def test_delete_messages(self):
         self.assertEqual(self.privmsgentry.message.subject, 'Expired message')
@@ -225,7 +245,11 @@ class TestPrivateMessageEntry(TestCase):
 
         PrivateMessageEntry.clean_private_message_folders()
 
-        self.assertTrue(PrivateMessageEntry.objects.filter(folder=self.archive, user=self.other_user).exists())
+        self.assertTrue(
+            PrivateMessageEntry.objects.filter(
+                folder=self.archive, user=self.other_user
+            ).exists()
+        )
         self.assertEqual(PrivateMessage.objects.count(), 1)
 
     def test_private_messages_deleted(self):
