@@ -41,7 +41,7 @@ from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
 from inyoka.ikhaya.models import Category
-from inyoka.portal.models import Linkmap, StaticFile, StaticPage
+from inyoka.portal.models import Linkmap, SpamEmailAddress, StaticFile, StaticPage
 from inyoka.portal.user import (
     User,
     UserBanned,
@@ -222,14 +222,24 @@ class RegisterForm(forms.Form):
         Validates if the required field `email` contains
         a non-existing mail address.
         """
-        exists = User.objects.filter(email__iexact=self.cleaned_data['email'])\
-                             .exists()
-        if exists:
+
+        email = self.cleaned_data['email']
+
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError(format_html(
                 _('The given email address is already in use. If you forgot '
                   'your password, you can <a href="{link}">restore it</a>.'),
                 link=href('portal', 'lost_password')))
-        return self.cleaned_data['email']
+
+        if SpamEmailAddress.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(format_html(
+                _('Registration with this email address is blocked because it appears '
+                  'on a spam list. In case you suspect an error, contact {mail}.'),
+                mail=settings.INYOKA_CONTACT_EMAIL,
+                )
+            )
+
+        return email
 
 
 class LostPasswordForm(auth_forms.PasswordResetForm):

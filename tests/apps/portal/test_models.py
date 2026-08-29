@@ -7,24 +7,31 @@
     :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import csv
 import gzip
+import io
+import zipfile
 from datetime import timedelta
+from logging import DEBUG
 from os import path
 
+import responses
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.test import TestCase
 from django.utils import timezone as dj_timezone
+from freezegun import freeze_time
 
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
     Linkmap,
     PrivateMessage,
     PrivateMessageEntry,
+    SpamEmailAddress,
 )
 from inyoka.portal.user import User
+from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
 
 
@@ -235,3 +242,171 @@ class TestPrivateMessageEntry(TestCase):
         PrivateMessageEntry.clean_private_message_folders()
 
         self.assertEqual(PrivateMessage.objects.count(), 0)
+
+
+class TestSpamEmailAddress(TestCase):
+    def test_str(self) -> None:
+        address = SpamEmailAddress(email='test@inyoka.test')
+        self.assertEqual(str(address), 'test@inyoka.test')
+
+    @responses.activate
+    def test_addresses_inserted(self) -> None:
+        csv_buffer = io.StringIO()
+        cwriter = csv.writer(csv_buffer)
+        cwriter.writerow(['inyoka@inyoka.test', '1', '2026-08-23 15:17:11'])
+        cwriter.writerow(['i@example.test', '5', '2026-08-18 14:31:38'])
+        cwriter.writerow(['foobar97@test.test', '42', '2026-08-25 00:42:26'])
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'a') as zip_file:
+            zip_file.writestr('listed_email_1_all.txt', csv_buffer.getvalue())
+
+        rsp = responses.Response(
+            method='GET',
+            url='https://www.stopforumspam.com/downloads/listed_email_1_all.zip',
+            content_type='application/zip',
+            body=zip_buffer.getvalue(),
+        )
+        responses.add(rsp)
+
+        SpamEmailAddress.objects.update_spam_emails()
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 3)
+        self.assertCountEqual(
+            SpamEmailAddress.objects.all().values_list('email', flat=True),
+            ['inyoka@inyoka.test', 'i@example.test', 'foobar97@test.test'],
+        )
+
+        csv_buffer.close()
+        zip_buffer.close()
+
+    @responses.activate
+    def test_addresses_invalid_email(self) -> None:
+        csv_content = """email,other"""
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'a') as zip_file:
+            zip_file.writestr('listed_email_1_all.txt', csv_content)
+
+        rsp = responses.Response(
+            method='GET',
+            url='https://www.stopforumspam.com/downloads/listed_email_1_all.zip',
+            content_type='application/zip',
+            body=zip_buffer.getvalue(),
+        )
+        responses.add(rsp)
+
+        with self.assertLogs(level=DEBUG) as cm:
+            SpamEmailAddress.objects.update_spam_emails()
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 0)
+        self.assertEqual(
+            cm.output,
+            [
+                'INFO:inyoka:Starting update_spam_email_list',
+                "DEBUG:inyoka:email: {'email': ['Enter a valid email address.']}",
+                'INFO:inyoka:Finished update_spam_email_list',
+            ],
+        )
+
+        zip_buffer.close()
+
+    @responses.activate
+    def test_addresses_email_already_in_db(self) -> None:
+        csv_content = """test@email.test,other"""
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'a') as zip_file:
+            zip_file.writestr('listed_email_1_all.txt', csv_content)
+
+        rsp = responses.Response(
+            method='GET',
+            url='https://www.stopforumspam.com/downloads/listed_email_1_all.zip',
+            content_type='application/zip',
+            body=zip_buffer.getvalue(),
+        )
+        responses.add(rsp)
+        responses.add(rsp)
+
+        with self.assertLogs(level=DEBUG) as cm:
+            SpamEmailAddress.objects.update_spam_emails()
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 1)
+        self.assertEqual(
+            cm.output,
+            [
+                'INFO:inyoka:Starting update_spam_email_list',
+                'DEBUG:inyoka:Inserted test@email.test',
+                'INFO:inyoka:Finished update_spam_email_list',
+            ],
+        )
+
+        with self.assertLogs(level=DEBUG) as cm:
+            SpamEmailAddress.objects.update_spam_emails()
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 1)
+        self.assertEqual(
+            cm.output,
+            [
+                'INFO:inyoka:Starting update_spam_email_list',
+                'DEBUG:inyoka:test@email.test already in database',
+                'INFO:inyoka:Finished update_spam_email_list',
+            ],
+        )
+
+        zip_buffer.close()
+
+    @responses.activate
+    def test_addresses_fails__http_not_found(self) -> None:
+        rsp = responses.Response(
+            method='GET',
+            url='https://www.stopforumspam.com/downloads/listed_email_1_all.zip',
+            status=404,
+        )
+        responses.add(rsp)
+
+        with self.assertLogs() as cm:
+            SpamEmailAddress.objects.update_spam_emails()
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 0)
+        self.assertEqual(
+            cm.output,
+            [
+                'INFO:inyoka:Starting update_spam_email_list',
+                'ERROR:inyoka:Failed to download spam list: 404 Client Error: Not Found for url: https://www.stopforumspam.com/downloads/listed_email_1_all.zip',
+            ],
+        )
+
+    @responses.activate
+    def test_bad_zipfile(self) -> None:
+        rsp = responses.Response(
+            method='GET',
+            url='https://www.stopforumspam.com/downloads/listed_email_1_all.zip',
+            content_type='application/zip',
+            body='2',
+        )
+        responses.add(rsp)
+
+        with self.assertLogs(level=DEBUG) as cm:
+            SpamEmailAddress.objects.update_spam_emails()
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 0)
+        self.assertEqual(
+            cm.output,
+            [
+                'INFO:inyoka:Starting update_spam_email_list',
+                'ERROR:inyoka:Received bad zip file from https://www.stopforumspam.com/downloads/listed_email_1_all.zip',
+            ],
+        )
+
+    def test_old_entries_removed(self) -> None:
+        with freeze_time('2007-11-17 00:00:00'):
+            old = SpamEmailAddress.objects.create(email='old@inyoka.test')
+
+        SpamEmailAddress.objects.create(email='recent@inyoka.test')
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 2)
+
+        SpamEmailAddress.objects.prune_old_entries()
+
+        self.assertEqual(SpamEmailAddress.objects.count(), 1)
+        with self.assertRaises(SpamEmailAddress.DoesNotExist):
+            old.refresh_from_db()
