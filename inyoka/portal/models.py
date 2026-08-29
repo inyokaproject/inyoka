@@ -1,30 +1,39 @@
 """
-    inyoka.portal.models
-    ~~~~~~~~~~~~~~~~~~~~
+inyoka.portal.models
+~~~~~~~~~~~~~~~~~~~~
 
-    Models for the portal.
+Models for the portal.
 
-    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+import csv
 import glob
 import gzip
 import hashlib
+import io
 import os
+import zipfile
 from datetime import timedelta
+from zipfile import BadZipFile
 
+import requests
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.db.models import Count
+from django.db.models.functions import Upper
 from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy
+from requests import RequestException
 
 from inyoka.utils.database import InyokaMarkupField
+from inyoka.utils.logger import logger
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
 
@@ -473,7 +482,7 @@ class LinkmapManager(models.Manager):
 
 class Linkmap(models.Model):
     """
-    Provides an mapping for the interwikilinks from token to urls.
+    Provides a mapping for the interwikilinks from token to urls.
     """
     CACHE_KEY_MAP = 'portal:linkmap'
     CACHE_KEY_CSS = 'portal:linkmap:css-filname'
@@ -488,6 +497,98 @@ class Linkmap(models.Model):
                              validators=[validate_file_infection])
 
     objects = LinkmapManager()
+
+
+class SpamEmailAddressManager(models.Manager):
+    def update_spam_emails(self, days: int = 1) -> None:
+        """
+        Download the stopforumspam email zip and import entries into SpamEmailAddress.
+        """
+
+        stopforum_zip_url = (
+            f'https://www.stopforumspam.com/downloads/listed_email_{days}_all.zip'
+        )
+
+        logger.info('Starting update_spam_email_list')
+        try:
+            zip_response = requests.get(stopforum_zip_url, timeout=60)
+            zip_response.raise_for_status()
+        except RequestException as e:
+            logger.error(f'Failed to download spam list: {e}')
+            return
+
+        def _insert_in_db_if_new(email: str) -> None:
+            if self.get_queryset().filter(email__iexact=email).exists():
+                logger.debug(f'{email} already in database')
+                return
+
+            a = SpamEmailAddress(email=email)
+            try:
+                a.full_clean()
+            except ValidationError as e:
+                logger.debug(f'{email}: {e}')
+                return
+
+            a.save()
+            logger.debug(f'Inserted {email}')
+
+        file_name = f'listed_email_{days}_all.txt'
+        try:
+            with (
+                zipfile.ZipFile(io.BytesIO(zip_response.content)) as z,
+                z.open(file_name) as csv_file,
+            ):
+                reader = csv.reader((l.decode() for l in csv_file))
+
+                for row in reader:
+                    email = row[0].strip().lower()
+                    _insert_in_db_if_new(email)
+        except BadZipFile:
+            logger.error(f'Received bad zip file from {stopforum_zip_url}')
+            return
+
+        logger.info('Finished update_spam_email_list')
+
+    def prune_old_entries(self) -> None:
+        """
+        Removes entries from the database which are already longer than 2 years in the database
+        (for simplicity, we assume o year has always 365 days).
+        """
+        two_years_ago = dj_timezone.now() - timedelta(days=365 * 2)
+        deleted_summary = (
+            self.get_queryset().filter(inserted_at__lt=two_years_ago).delete()
+        )
+
+        logger.info(f'Deleted {deleted_summary}')
+
+
+class SpamEmailAddress(models.Model):
+    """
+    Contains known spam email addresses. The manager uses stopforumspam as source.
+    """
+
+    email = models.EmailField(
+        verbose_name=gettext_lazy('Email address'),
+        max_length=254,
+        unique=True,
+        db_index=True,
+    )
+    inserted_at = models.DateTimeField(
+        verbose_name=gettext_lazy('Inserted at'), auto_now_add=True
+    )
+
+    objects = SpamEmailAddressManager()
+
+    class Meta:
+        verbose_name = gettext_lazy('Spam email address')
+        verbose_name_plural = gettext_lazy('Spam email addresses')
+
+        indexes = [
+            models.Index(Upper('email'), name='upper_email_idx'),
+        ]
+
+    def __str__(self):
+        return self.email
 
 
 class Storage(models.Model):
