@@ -368,8 +368,9 @@ class TestForumFeedSelectorForm(TestCase):
         assign_perm('forum.view_forum', anonymous_user, self.category)
         assign_perm('forum.view_forum', anonymous_user, self.forum1)
 
-        self.topic = Topic.objects.create(title='A test Topic', author=self.user,
-                                     forum=self.forum1)
+        self.topic = Topic.objects.create(
+            title='A test Topic', author=self.user, forum=self.forum1
+        )
         # self.post = Post.objects.create(text='Post 1', author=self.user, topic=self.topic, position=0)
 
         self.form = ForumFeedSelectorForm
@@ -377,36 +378,61 @@ class TestForumFeedSelectorForm(TestCase):
     def test_form_valid(self):
         form = self.form({'count': 10, 'mode': 'short'})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/')
+        self.assertEqual(
+            form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/short/10/'
+        )
 
     def test_both_forum_and_topic__form_invalid(self):
-        form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url(), 'forum': self.forum1.id})
+        form = self.form(
+            {
+                'count': 10,
+                'mode': 'short',
+                'topic': self.topic.get_absolute_url(),
+                'forum': self.forum1.id,
+            }
+        )
         self.assertFalse(form.is_valid())
-        self.assertFormError(form, None, errors=['Only forum or topic can be provided.'])
+        self.assertFormError(
+            form, None, errors=['Only forum or topic can be provided.']
+        )
 
     def test_with_forum(self):
         form = self.form({'count': 10, 'mode': 'short', 'forum': self.forum1.id})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/forum/forum1/short/10/')
+        self.assertEqual(
+            form.get_url(),
+            f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/forum/forum1/short/10/',
+        )
 
     def test_with_topic(self):
-        form = self.form({'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url()})
+        form = self.form(
+            {'count': 10, 'mode': 'short', 'topic': self.topic.get_absolute_url()}
+        )
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/topic/A%20test%20Topic/short/10/')
+        self.assertEqual(
+            form.get_url(),
+            f'http://forum.{settings.BASE_DOMAIN_NAME}/feeds/topic/A%20test%20Topic/short/10/',
+        )
 
     def test_invalid_count(self):
         form = self.form({'count': '8', 'mode': 'short'})
         self.assertFalse(form.is_valid())
-        self.assertFormError(form, 'count',
-                             errors=['Select a valid choice. 8 is not one of the available choices.'])
+        self.assertFormError(
+            form,
+            'count',
+            errors=['Select a valid choice. 8 is not one of the available choices.'],
+        )
 
     def test_topic_without_permission(self):
         forum2 = Forum(name='forum2', parent=self.category)
         forum2.save()
 
-        topic = Topic.objects.create(title='Another test Topic', author=self.user,
-                                          forum=forum2)
-        form = self.form({'count': 10, 'mode': 'short', 'topic': topic.get_absolute_url()})
+        topic = Topic.objects.create(
+            title='Another test Topic', author=self.user, forum=forum2
+        )
+        form = self.form(
+            {'count': 10, 'mode': 'short', 'topic': topic.get_absolute_url()}
+        )
         self.assertFormError(form, 'topic', errors=['This topic does not exist.'])
 
     def test_topic_not_existing(self):
@@ -422,7 +448,9 @@ class TestForumFeedSelectorForm(TestCase):
         self.assertFormError(
             form,
             'forum',
-            errors=[f'Select a valid choice. {forum2.id} is not one of the available choices.']
+            errors=[
+                f'Select a valid choice. {forum2.id} is not one of the available choices.'
+            ],
         )
 
     def test_forum_not_existing(self):
@@ -431,9 +459,9 @@ class TestForumFeedSelectorForm(TestCase):
         self.assertFormError(
             form,
             'forum',
-            errors=[
-                'Select a valid choice. -5 is not one of the available choices.']
+            errors=['Select a valid choice. -5 is not one of the available choices.'],
         )
+
 
 class TestIkhayaFeedSelectorForm(TestCase):
     def setUp(self):
@@ -446,12 +474,19 @@ class TestIkhayaFeedSelectorForm(TestCase):
     def test_form_valid__all_categories(self):
         form = self.form({'category': '*', 'mode': 'short', 'count': 20})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/short/20/')
+        self.assertEqual(
+            form.get_url(), f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/short/20/'
+        )
 
     def test_form_valid__one_category(self):
-        form = self.form({'category': self.category1.slug, 'mode': 'short', 'count': 20})
+        form = self.form(
+            {'category': self.category1.slug, 'mode': 'short', 'count': 20}
+        )
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/test-category/short/20/')
+        self.assertEqual(
+            form.get_url(),
+            f'http://ikhaya.{settings.BASE_DOMAIN_NAME}/feeds/test-category/short/20/',
+        )
 
     def test_form_invalid(self):
         form = self.form({'mode': 'short', 'count': 20})
@@ -468,12 +503,15 @@ class TestPlanetFeedSelectorForm(TestCase):
     def test_form_valid(self):
         form = self.form({'mode': 'short', 'count': 20})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://planet.{settings.BASE_DOMAIN_NAME}/feeds/short/20/')
+        self.assertEqual(
+            form.get_url(), f'http://planet.{settings.BASE_DOMAIN_NAME}/feeds/short/20/'
+        )
 
     def test_form_invalid(self):
         form = self.form({'count': 20})
         self.assertFalse(form.is_valid())
         self.assertFormError(form, 'mode', errors=['This field is required.'])
+
 
 class TestWikiFeedSelectorForm(TestCase):
     def setUp(self):
@@ -484,12 +522,16 @@ class TestWikiFeedSelectorForm(TestCase):
     def test_form_valid__with_page(self):
         form = self.form({'mode': 'title', 'count': 20, 'page': 'baz'})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/baz/a/feed/20/')
+        self.assertEqual(
+            form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/baz/a/feed/20/'
+        )
 
     def test_form_valid__no_page(self):
         form = self.form({'mode': 'title', 'count': 20})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/_feed/20/')
+        self.assertEqual(
+            form.get_url(), f'http://wiki.{settings.BASE_DOMAIN_NAME}/_feed/20/'
+        )
 
     def test_form_invalid(self):
         form = self.form({})
@@ -556,7 +598,6 @@ class TestUserCPProfileForm(TestCase):
 
 
 class TestRegisterForm(TestCase):
-
     def setUp(self):
         self.form = RegisterForm
 
@@ -566,23 +607,34 @@ class TestRegisterForm(TestCase):
         self.request.session.save()
 
     def test_password_missmatch(self):
-        form = self.form(self.request.session, data={'password': 'a', 'confirm_password': 'b'})
+        form = self.form(
+            self.request.session, data={'password': 'a', 'confirm_password': 'b'}
+        )
 
-        self.assertFormError(form, None, 'The password must match the password confirmation.')
+        self.assertFormError(
+            form, None, 'The password must match the password confirmation.'
+        )
 
     def test_password_missmatch__only_case_differs(self):
 
-        form = self.form(self.request.session, data={'password': 'A', 'confirm_password': 'a'})
+        form = self.form(
+            self.request.session, data={'password': 'A', 'confirm_password': 'a'}
+        )
 
-        self.assertFormError(form, None, 'The password must match the password confirmation.')
+        self.assertFormError(
+            form, None, 'The password must match the password confirmation.'
+        )
 
     def test_clean_username_invalid_characters(self):
         data = {
             'username': 'invalid§user',
         }
         form = self.form(self.request.session, data=data)
-        self.assertFormError(form, 'username',
-            'Your username contains invalid characters. Only alphanumeric chars and “-” are allowed.')
+        self.assertFormError(
+            form,
+            'username',
+            'Your username contains invalid characters. Only alphanumeric chars and “-” are allowed.',
+        )
 
     def test_invalid_email_format(self):
         data = {
@@ -590,52 +642,58 @@ class TestRegisterForm(TestCase):
         }
         form = self.form(self.request.session, data=data)
 
-        self.assertFormError(form, 'email',
-            'Enter a valid email address.')
+        self.assertFormError(form, 'email', 'Enter a valid email address.')
 
     def test_clean_terms_of_usage_missing(self):
         form = self.form(self.request.session, data={})
 
-        self.assertFormError(form, 'terms_of_usage',
-            'This field is required.')
+        self.assertFormError(form, 'terms_of_usage', 'This field is required.')
 
     def test_clean_terms_of_usage__not_accepted(self):
         form = self.form(self.request.session, data={'terms_of_usage': False})
 
-        self.assertFormError(form, 'terms_of_usage',
-            'This field is required.')
+        self.assertFormError(form, 'terms_of_usage', 'This field is required.')
 
     def test_clean_terms_of_usage__different_value(self):
         form = self.form(self.request.session, data={'terms_of_usage': 'foo'})
 
-        self.assertFormError(form, 'terms_of_usage',[])
-
+        self.assertFormError(form, 'terms_of_usage', [])
 
     def test_clean_email_duplicate(self):
         User.objects.register_user(
-            'existinguser', email='existing@example.test', password='pass', send_mail=False
+            'existinguser',
+            email='existing@example.test',
+            password='pass',
+            send_mail=False,
         )
         data = {
             'email': 'existing@example.test',
         }
         form = self.form(self.request.session, data=data)
 
-        self.assertFormError(form, 'email',
-                             'The given email address is already in use. If you forgot your password, you can <a href="http://ubuntuusers.local:8080/lost_password/">restore it</a>.')
+        self.assertFormError(
+            form,
+            'email',
+            'The given email address is already in use. If you forgot your password, you can <a href="http://ubuntuusers.local:8080/lost_password/">restore it</a>.',
+        )
 
     def test_clean_email_duplicate__case_insensitive(self):
         User.objects.register_user(
-            'existinguser', email='existing@example.test', password='pass',
-            send_mail=False
+            'existinguser',
+            email='existing@example.test',
+            password='pass',
+            send_mail=False,
         )
         data = {
             'email': 'existing@exAmple.test',
         }
         form = self.form(self.request.session, data=data)
 
-
-        self.assertFormError(form, 'email',
-                             'The given email address is already in use. If you forgot your password, you can <a href="http://ubuntuusers.local:8080/lost_password/">restore it</a>.')
+        self.assertFormError(
+            form,
+            'email',
+            'The given email address is already in use. If you forgot your password, you can <a href="http://ubuntuusers.local:8080/lost_password/">restore it</a>.',
+        )
 
     def test_spam_address_rejected(self):
         SpamEmailAddress.objects.create(email='spam@example.test')
@@ -645,8 +703,11 @@ class TestRegisterForm(TestCase):
         }
         form = self.form(self.request.session, data=data)
 
-        self.assertFormError(form, 'email',
-                             f'Registration with this email address is blocked because it appears on a spam list. In case you suspect an error, contact {settings.INYOKA_CONTACT_EMAIL}.')
+        self.assertFormError(
+            form,
+            'email',
+            f'Registration with this email address is blocked because it appears on a spam list. In case you suspect an error, contact {settings.INYOKA_CONTACT_EMAIL}.',
+        )
 
     def test_clean_email_with_special_characters(self):
         data = {
@@ -665,21 +726,23 @@ class TestRegisterForm(TestCase):
 
     def test_clean_username_already_exists(self):
         User.objects.register_user(
-            'existinguser', email='existing@example.test', password='pass',
-            send_mail=False
+            'existinguser',
+            email='existing@example.test',
+            password='pass',
+            send_mail=False,
         )
         data = {
             'username': 'existinguser',
         }
         form = self.form(self.request.session, data=data)
 
-        self.assertFormError(form, 'username',
-                             'This username is not available, please try another one.')
+        self.assertFormError(
+            form, 'username', 'This username is not available, please try another one.'
+        )
 
     def test_clean_username_case_insensitive_check(self):
         User.objects.register_user(
-            'TestUser', email='existing@example.test', password='pass',
-            send_mail=False
+            'TestUser', email='existing@example.test', password='pass', send_mail=False
         )
 
         data = {
@@ -687,8 +750,9 @@ class TestRegisterForm(TestCase):
         }
         form = self.form(self.request.session, data=data)
 
-        self.assertFormError(form, 'username',
-                             'This username is not available, please try another one.')
+        self.assertFormError(
+            form, 'username', 'This username is not available, please try another one.'
+        )
 
     def test_clean_username_as_email(self):
         data = {
@@ -696,5 +760,6 @@ class TestRegisterForm(TestCase):
         }
         form = self.form(self.request.session, data=data)
 
-        self.assertFormError(form, 'username',
-                             'Please do not enter an email address as username.')
+        self.assertFormError(
+            form, 'username', 'Please do not enter an email address as username.'
+        )
