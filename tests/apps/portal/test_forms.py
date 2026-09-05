@@ -14,10 +14,12 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import RequestFactory
 from guardian.shortcuts import assign_perm
 
 from inyoka.forum.models import Forum, Topic
 from inyoka.ikhaya.models import Category
+from inyoka.middlewares.session import SessionMiddleware
 from inyoka.portal.forms import (
     EditFileForm,
     EditStaticPageForm,
@@ -25,9 +27,10 @@ from inyoka.portal.forms import (
     IkhayaFeedSelectorForm,
     LoginForm,
     PlanetFeedSelectorForm,
+    RegisterForm,
     WikiFeedSelectorForm,
 )
-from inyoka.portal.models import StaticFile, StaticPage
+from inyoka.portal.models import SpamEmailAddress, StaticFile, StaticPage
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from tests.utils.test_clamav import EICAR
@@ -550,3 +553,148 @@ class TestUserCPProfileForm(TestCase):
                 ]
             },
         )
+
+
+class TestRegisterForm(TestCase):
+
+    def setUp(self):
+        self.form = RegisterForm
+
+        self.request = RequestFactory().get('/')
+        middleware = SessionMiddleware(lambda x: None)
+        middleware.process_request(self.request)
+        self.request.session.save()
+
+    def test_password_missmatch(self):
+        form = self.form(self.request.session, data={'password': 'a', 'confirm_password': 'b'})
+
+        self.assertFormError(form, None, 'The password must match the password confirmation.')
+
+    def test_password_missmatch__only_case_differs(self):
+
+        form = self.form(self.request.session, data={'password': 'A', 'confirm_password': 'a'})
+
+        self.assertFormError(form, None, 'The password must match the password confirmation.')
+
+    def test_clean_username_invalid_characters(self):
+        data = {
+            'username': 'invalid§user',
+        }
+        form = self.form(self.request.session, data=data)
+        self.assertFormError(form, 'username',
+            'Your username contains invalid characters. Only alphanumeric chars and “-” are allowed.')
+
+    def test_invalid_email_format(self):
+        data = {
+            'email': 'not-an-email',
+        }
+        form = self.form(self.request.session, data=data)
+
+        self.assertFormError(form, 'email',
+            'Enter a valid email address.')
+
+    def test_clean_terms_of_usage_missing(self):
+        form = self.form(self.request.session, data={})
+
+        self.assertFormError(form, 'terms_of_usage',
+            'This field is required.')
+
+    def test_clean_terms_of_usage__not_accepted(self):
+        form = self.form(self.request.session, data={'terms_of_usage': False})
+
+        self.assertFormError(form, 'terms_of_usage',
+            'This field is required.')
+
+    def test_clean_terms_of_usage__different_value(self):
+        form = self.form(self.request.session, data={'terms_of_usage': 'foo'})
+
+        self.assertFormError(form, 'terms_of_usage',[])
+
+
+    def test_clean_email_duplicate(self):
+        User.objects.register_user(
+            'existinguser', email='existing@example.test', password='pass', send_mail=False
+        )
+        data = {
+            'email': 'existing@example.test',
+        }
+        form = self.form(self.request.session, data=data)
+
+        self.assertFormError(form, 'email',
+                             'The given email address is already in use. If you forgot your password, you can <a href="http://ubuntuusers.local:8080/lost_password/">restore it</a>.')
+
+    def test_clean_email_duplicate__case_insensitive(self):
+        User.objects.register_user(
+            'existinguser', email='existing@example.test', password='pass',
+            send_mail=False
+        )
+        data = {
+            'email': 'existing@exAmple.test',
+        }
+        form = self.form(self.request.session, data=data)
+
+
+        self.assertFormError(form, 'email',
+                             'The given email address is already in use. If you forgot your password, you can <a href="http://ubuntuusers.local:8080/lost_password/">restore it</a>.')
+
+    def test_spam_address_rejected(self):
+        SpamEmailAddress.objects.create(email='spam@example.test')
+
+        data = {
+            'email': 'SPAM@example.test',
+        }
+        form = self.form(self.request.session, data=data)
+
+        self.assertFormError(form, 'email',
+                             f'Registration with this email address is blocked because it appears on a spam list. In case you suspect an error, contact {settings.INYOKA_CONTACT_EMAIL}.')
+
+    def test_clean_email_with_special_characters(self):
+        data = {
+            'email': 'test.user+tag@example.test',
+        }
+        form = self.form(self.request.session, data=data)
+
+        self.assertNotIn('email', form.errors)
+
+    def test_username_only_numbers(self):
+        data = {
+            'username': '12345',
+        }
+        form = self.form(self.request.session, data=data)
+        self.assertNotIn('username', form.errors)
+
+    def test_clean_username_already_exists(self):
+        User.objects.register_user(
+            'existinguser', email='existing@example.test', password='pass',
+            send_mail=False
+        )
+        data = {
+            'username': 'existinguser',
+        }
+        form = self.form(self.request.session, data=data)
+
+        self.assertFormError(form, 'username',
+                             'This username is not available, please try another one.')
+
+    def test_clean_username_case_insensitive_check(self):
+        User.objects.register_user(
+            'TestUser', email='existing@example.test', password='pass',
+            send_mail=False
+        )
+
+        data = {
+            'username': 'testuseR',
+        }
+        form = self.form(self.request.session, data=data)
+
+        self.assertFormError(form, 'username',
+                             'This username is not available, please try another one.')
+
+    def test_clean_username_as_email(self):
+        data = {
+            'username': 'test@example.test',
+        }
+        form = self.form(self.request.session, data=data)
+
+        self.assertFormError(form, 'username',
+                             'Please do not enter an email address as username.')
