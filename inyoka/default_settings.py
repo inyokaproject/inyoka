@@ -312,6 +312,14 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'inyoka.wiki.tasks.update_page_by_slug',
         'schedule': timedelta(hours=1),
     },
+    'update-spam-email-list-yearly': {
+        'task': 'inyoka.portal.tasks.update_spam_email_list_yearly',
+        'schedule': crontab(hour=4, minute=0),
+    },
+    'update-spam-email-list-daily': {
+        'task': 'inyoka.portal.tasks.update_spam_email_list_daily',
+        'schedule': timedelta(hours=2),
+    },
     'render_all_wiki_pages': {
         'task': 'inyoka.wiki.tasks.render_all_pages',
         'schedule': crontab(hour=23, minute=5),

@@ -25,6 +25,30 @@ Inyoka Changelog
    -----------
 
 
+Unreleased 1.52.12 (2026-MM-DD)
+=====================
+
+✨ New features
+---------------
+
+* Add stopforumspam integration
+
+🏗 Changes
+----------
+
+🗑 Deprecations
+--------------
+
+🔥 Removals
+-----------
+
+🐛 Fixes
+--------
+
+🔒 Security
+-----------
+
+
 1.52.11 (2026-08-24)
 ====================
 
