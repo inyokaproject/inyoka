@@ -572,7 +572,7 @@ class Ticket(models.Model):
         application='portal', null=True, blank=True)
 
     def can_moderate(self, user):
-        from inyoka.forum.models import Post, Topic
+        from inyoka.forum.models import Post
 
         if user.has_perm('forum.manage_tickets_forum'):
             return True

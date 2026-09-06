@@ -12,6 +12,8 @@ import re
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.cache import cache
 from django.http import Http404
@@ -23,7 +25,7 @@ from django.utils.translation import gettext as _
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
-from inyoka.forum.models import Forum, Topic
+from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
@@ -32,6 +34,8 @@ from inyoka.portal.models import (
     PrivateMessageEntry,
     StaticPage,
     Subscription,
+    Ticket,
+    TicketReason,
 )
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
@@ -39,11 +43,6 @@ from inyoka.utils.forms import CaptchaField
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key
-
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
-from inyoka.forum.models import Forum, Post, Topic
-from inyoka.portal.models import Ticket, TicketReason
 
 
 class TestViews(TestCase):

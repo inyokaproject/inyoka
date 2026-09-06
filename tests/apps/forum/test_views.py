@@ -157,6 +157,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     def test_create_ticket_for_post_creates_ticket(self):
         from django.contrib.contenttypes.models import ContentType
+
         from inyoka.portal.models import Ticket, TicketReason
         post_ct = ContentType.objects.get_for_model(Post)
         reason = TicketReason.objects.filter(content_type=post_ct).first()
@@ -172,6 +173,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     def test_create_ticket_for_topic_creates_ticket(self):
         from django.contrib.contenttypes.models import ContentType
+
         from inyoka.portal.models import Ticket, TicketReason
         topic_ct = ContentType.objects.get_for_model(Topic)
         reason = TicketReason.objects.filter(content_type=topic_ct).first()
