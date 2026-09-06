@@ -506,7 +506,7 @@ class TicketReasonManager(models.Manager):
 
 class TicketReason(models.Model):
     """
-    Provides a well defined class that stores reasons that are offerred when creating a ticket. e.g. Spam, Spelling etc.
+    Stores reasons that are offered when creating a ticket. e.g. Spam, Spelling etc.
     """
     SPAM_SLUG = 'spam'
 
@@ -571,14 +571,18 @@ class Ticket(models.Model):
         verbose_name=gettext_lazy('Owner comment'),
         application='portal', null=True, blank=True)
 
-    def can_moderate(self, user):
-        from inyoka.forum.models import Post
-
+    def can_moderate(self, user) -> bool:
         if user.has_perm('forum.manage_tickets_forum'):
             return True
+
+        from inyoka.forum.models import Post, Topic
 
         obj = self.content_object
         if isinstance(obj, Post):
             forum = obj.topic.forum
-        return (user.has_perm('forum.manage_tickets_forum') or
-                user.has_perm('forum.moderate_forum', forum))
+        elif isinstance(obj, Topic):
+            forum = obj.forum
+        else:
+            forum = None # default value of has_perm, so check global permission
+
+        return user.has_perm('forum.moderate_forum', forum)
