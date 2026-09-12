@@ -55,6 +55,7 @@
         <th>{% trans %}Reported by{% endtrans %}</th>
         <th>{% trans %}Owned by{% endtrans %}</th>
         <th>{% trans %}Reporter Comment{% endtrans %}</th>
+        <th>{% trans %}Owner Comment{% endtrans %}</th>
       </tr>
     </thead>
     <tbody>
@@ -103,16 +104,18 @@
         </td>
         <td>
           {%- if ticket.reporter_comment %}
-            <p>{{ ticket.reporter_comment_rendered|safe }}</p>
+            <p>{{ ticket.reporter_comment_rendered }}</p>
           {%- endif %}
+        </td>
+        <td>
           {%- if ticket.owner_comment %}
-            <p><em>{{ ticket.owner_comment_rendered|safe }}</em></p>
+            <p>{{ ticket.owner_comment_rendered }}</p>
           {%- endif %}
         </td>
       </tr>
       {%- else %}
       <tr>
-        <td colspan="6">{% trans %}Currently there are no open tickets.{% endtrans %}</td>
+        <td colspan="7">{% trans %}Currently there are no open tickets.{% endtrans %}</td>
       </tr>
       {%- endfor %}
     </tbody>
