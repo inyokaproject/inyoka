@@ -1673,10 +1673,8 @@ def ticket_reason_delete(request, reason_id):
 
 
 @login_required
+@permission_required('forum.manage_tickets_forum', raise_exception=True)
 def ticket_reason_subscription(request, mode, reason_id):
-    if not request.user.has_perm('forum.manage_tickets_forum'):
-        raise PermissionDenied
-
     if reason_id == 'all':
         reasons = TicketReason.objects.all()
     else:
