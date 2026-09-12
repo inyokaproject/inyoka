@@ -1,0 +1,12 @@
+Hallo,
+
+ein neues Ticket wurde erstellt.
+
+Grund: {{ ticket.reason }}
+
+Kommentar des Melders:
+    {{ ticket.reporter_comment|wordwrap(75, false)|indent(4) }}
+
+Gemeldeter Inhalt: {{ target|url }}
+
+Übersicht über alle offenen Tickets: {{ href('portal', 'tickets', 'list') }}

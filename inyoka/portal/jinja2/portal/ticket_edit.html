@@ -1,0 +1,27 @@
+{#
+    portal/ticket_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    Edit a ticket's owner comment.
+
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+{% set BREADCRUMBS = [(_('Tickets'), href('portal', 'tickets', 'list')),
+                      (_('Edit comment'), '')] + BREADCRUMBS|d([]) %}
+
+{% block content %}
+<form method="post">
+  {{ csrf_input }}
+  <dl>
+    {{ render_form(form, ['owner_comment']) }}
+  </dl>
+  <p>
+    <input type="submit" value="{% trans %}Save{% endtrans %}">
+    <a href="{{ href('portal', 'tickets', 'list') }}">{% trans %}Cancel{% endtrans %}</a>
+  </p>
+</form>
+{% endblock %}

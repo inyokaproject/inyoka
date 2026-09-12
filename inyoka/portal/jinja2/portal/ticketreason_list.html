@@ -1,0 +1,66 @@
+{#
+    portal/ticketreason_list.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Lists all ticket reasons and subscription status.
+
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% set BREADCRUMBS = [(_('Ticket reasons'), href('portal', 'ticketreason', 'list'))] + BREADCRUMBS|d([]) %}
+
+{% block sidebar %}
+  <div class="container">
+
+{#
+    <h3 class="navi_forum">
+      <a href="{{ href('forum') }}">{% trans %}Forum{% endtrans %}</a>
+    </h3>
+#}
+    <ul>
+      <li><a href="{{ href('portal', 'ticketreason', 'new') }}">{% trans %}New ticket reason{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'ticketreason', 'all', 'subscribe') }}">{% trans %}Subscribe to all{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'ticketreason', 'all', 'unsubscribe') }}">{% trans %}Unsubscribe from all{% endtrans %}</a></li>
+    </ul>
+
+  </div>
+{% endblock %}
+
+{% block content %}
+<table>
+  <thead>
+    <tr>
+      <th>{% trans %}Reason{% endtrans %}</th>
+      <th>{% trans %}Content type{% endtrans %}</th>
+      <th>{% trans %}System{% endtrans %}</th>
+      <th>{% trans %}Actions{% endtrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%- for reason in reasons %}
+    <tr>
+      <td>{{ reason.reason|e }}</td>
+      <td>{{ reason.content_type }}</td>
+      <td>{{ reason.system_defined }}</td>
+      <td>
+        {%- if not reason.system_defined %}
+          <a href="{{ href('portal', 'ticketreason', reason.id, 'edit') }}">{% trans %}Edit{% endtrans %}</a> |
+          <a href="{{ href('portal', 'ticketreason', reason.id, 'delete') }}">{% trans %}Delete{% endtrans %}</a> |
+        {%- endif %}
+        {%- if subscribed_per_reason[reason.id] %}
+          <a href="{{ href('portal', 'ticketreason', reason.id, 'unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>
+        {%- else %}
+          <a href="{{ href('portal', 'ticketreason', reason.id, 'subscribe') }}">{% trans %}Subscribe{% endtrans %}</a>
+        {%- endif %}
+      </td>
+    </tr>
+    {%- else %}
+    <tr>
+      <td colspan="4">{% trans %}No ticket reasons defined yet.{% endtrans %}</td>
+    </tr>
+    {%- endfor %}
+  </tbody>
+</table>
+{% endblock %}

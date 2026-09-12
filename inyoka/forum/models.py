@@ -39,8 +39,7 @@ from inyoka.forum.constants import (
     SUPPORTED_IMAGE_TYPES,
     UBUNTU_DISTROS,
 )
-from inyoka.forum.notifications import notify_reported_topic_subscribers
-from inyoka.portal.models import Subscription
+from inyoka.portal.models import Subscription, Ticket, TicketReason
 from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import QueryCounter
@@ -368,6 +367,7 @@ class Forum(models.Model):
             ('vote_forum', 'Can make Votes in Forum'),
             ('upload_forum', 'Can upload Attachments in Forum'),
             ('moderate_forum', 'Can moderate Forum'),
+            ('manage_tickets_forum', 'Can manage tickets for Forums'),
         )
 
     def get_absolute_url(self, action='show', **query):
@@ -596,9 +596,6 @@ class Topic(models.Model):
     class Meta:
         verbose_name = gettext_lazy('Topic')
         verbose_name_plural = gettext_lazy('Topics')
-        permissions = (
-            ('manage_reported_topic', 'Can manage reported Topics'),
-        )
 
     def cached_forum(self):
         return Forum.objects.get(self.forum_id)
@@ -685,7 +682,7 @@ class Topic(models.Model):
         if action in ('show',):
             return href('forum', 'topic', self.slug, **query)
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
-                      'solve', 'unsolve', 'lock', 'unlock', 'report',
+                      'solve', 'unsolve', 'lock', 'unlock', 'ticket',
                       'subscribe', 'unsubscribe',
                       'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action, **query)
@@ -1112,53 +1109,45 @@ class Post(models.Model, LockableObject):
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:
             mark_spam(self, self.get_text(), 'forum-post')
+
         topic = self.topic
         if topic.first_post == self:
-            # it's the first post, i.e. the topic
+            # it's the first post, so we hide the topic instead of just the post
             topic.hidden = True
-            if report:
-                # Don't report a topic as spam if explicitly classified
-                topic.reported = _('This topic is hidden due to possible spam.')
-                topic.reporter = User.objects.get_system_user()
-
-                notify_reported_topic_subscribers(
-                    _('Reported topic: “%(topic)s”') % {'topic': topic.title},
-                    {'topic': topic, 'text': topic.reported})
-
-                cache.delete('forum/reported_topic_count')
-            topic.save(update_fields=['hidden', 'reported', 'reporter'])
+            topic.save(update_fields=['hidden'])
         else:
             # it's not the first post
             self.hidden = True
             self.save(update_fields=['hidden'])
-            if report:
-                # Don't report a post as spam if explicitly classified
-                msg = _(
-                    '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
-                    'due to possible spam.'
-                ) % {
-                    'username': self.author.username,
-                    'post': self.pk,
-                }
-                if topic.reported:
-                    topic.reported += '\n\n%s' % msg
-                else:
-                    topic.reported = msg
-                    topic.reporter = User.objects.get_system_user()
 
-                notify_reported_topic_subscribers(
-                    _('Reported post: “%(post)s”') % {'post': self.pk},
-                    {'topic': topic, 'text': msg})
-
-                cache.delete('forum/reported_topic_count')
-
-            topic.save(update_fields=['reported', 'reporter'])
+        if report:
+            spam_reason = TicketReason.objects.get_spam_reason(
+                ContentType.objects.get_for_model(self))
+            msg = _(
+                '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
+                'due to possible spam.'
+            ) % {
+                'username': self.author.username,
+                'post': self.pk,
+            }
+            Ticket.objects.create(
+                reporting_user=User.objects.get_system_user(),
+                reporting_time=dj_timezone.now(),
+                reporter_comment=msg,
+                reason=spam_reason,
+                content_object=self,
+            )
+            cache.delete('portal/ticket_count')
 
     def __str__(self):
         return '%s - %s' % (
             self.topic.title,
             self.text[0:20]
         )
+
+    def ticket_label(self):
+        return _('%(id)s (in %(topic)s)') % {
+            'id': self.id, 'topic': self.topic.title}
 
     def __repr__(self):
         return '<%s id=%s author=%s>' % (

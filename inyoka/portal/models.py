@@ -493,3 +493,96 @@ class Linkmap(models.Model):
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = InyokaMarkupField(application='portal')
+
+
+class TicketReasonManager(models.Manager):
+
+    def get_spam_reason(self, content_type):
+        """Return the spam reason for the given content type, or ``None``."""
+        return self.filter(
+            slug=self.model.SPAM_SLUG, content_type=content_type
+        ).first()
+
+
+class TicketReason(models.Model):
+    """
+    Stores reasons that are offered when creating a ticket. e.g. Spam, Spelling etc.
+    """
+    SPAM_SLUG = 'spam'
+
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, db_index=True)
+    reason = models.CharField(max_length=200)
+    slug = models.SlugField(null=True, blank=True)
+    system_defined = models.BooleanField(default=False)
+
+    objects = TicketReasonManager()
+
+    class Meta:
+        verbose_name = gettext_lazy('Ticket Reason')
+        verbose_name_plural = gettext_lazy('Ticket Reasons')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'slug'],
+                condition=models.Q(slug__isnull=False),
+                name='unique_ticketreason_slug_per_content_type',
+            )
+        ]
+
+    def __str__(self):
+        return self.reason
+
+    def get_subscription_name(self):
+        return f'ticketreason_{self.id}_subscribers'
+
+
+class Ticket(models.Model):
+    OPEN = 0
+    IN_PROGRESS = 1
+    CLOSED = 2
+    STATE_CHOICES = [
+        (OPEN, gettext_lazy('Open')),
+        (IN_PROGRESS, gettext_lazy('In Progress')),
+        (CLOSED, gettext_lazy('Closed')),
+    ]
+
+    content_type = models.ForeignKey(
+        ContentType, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='+')
+    object_id = models.PositiveIntegerField(null=True, db_index=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    reporting_user = models.ForeignKey(
+        User, related_name='reported_tickets', on_delete=models.CASCADE)
+    reporting_time = models.DateTimeField(db_index=True)
+    owning_user = models.ForeignKey(
+        User, null=True, blank=True, related_name='owned_tickets',
+        on_delete=models.SET_NULL)
+    owned_time = models.DateTimeField(null=True, blank=True)
+    closed_time = models.DateTimeField(null=True, blank=True)
+    state = models.SmallIntegerField(
+        choices=STATE_CHOICES, default=OPEN, db_index=True)
+    reason = models.ForeignKey(
+        TicketReason, null=True, blank=True, on_delete=models.SET_NULL)
+    reporter_comment = InyokaMarkupField(
+        verbose_name=gettext_lazy('Reporter comment'),
+        application='portal', blank=True)
+    owner_comment = InyokaMarkupField(
+        verbose_name=gettext_lazy('Owner comment'),
+        application='portal', null=True, blank=True)
+
+    def can_moderate(self, user) -> bool:
+        if user.has_perm('forum.manage_tickets_forum'):
+            return True
+
+        from inyoka.forum.models import Post, Topic
+
+        obj = self.content_object
+        if isinstance(obj, Post):
+            forum = obj.topic.forum
+        elif isinstance(obj, Topic):
+            forum = obj.forum
+        else:
+            forum = None # default value of has_perm, so check global permission
+
+        return user.has_perm('forum.moderate_forum', forum)

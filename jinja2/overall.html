@@ -123,11 +123,11 @@
       </ul>{# .tabbar #}
     </header>{# .header #}
 
-        {% if request.user.has_perm('forum.manage_reported_topic') or request.user.has_perm('ikhaya.change_article') or request.user.has_perm('portal.change_event') %}
+        {% if request.user.has_perm('forum.manage_tickets_forum') or request.user.has_perm('ikhaya.change_article') or request.user.has_perm('portal.change_event') %}
           <div id="admin_menu">
             <div class="bar">
-              {% if request.user.has_perm('forum.manage_reported_topic') %}
-                {{ macros.render_modnavi_li(_('Reported topics'), href('forum', 'reported_topics'), href('static', 'img/admin/report.png'), report_count) }}
+              {% if request.user.has_perm('forum.manage_tickets_forum') %}
+                {{ macros.render_modnavi_li(_('Tickets'), href('portal', 'tickets', 'list'), href('static', 'img/admin/report.png'), ticket_count) }}
               {% endif %}
               {% if request.user.has_perm('ikhaya.change_article') %}
                 {% set label = _('Article suggestions') %}

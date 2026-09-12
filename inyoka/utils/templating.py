@@ -39,23 +39,22 @@ from inyoka.utils.urls import href, url_for
 
 def context_data(request):
     """Fill in context defaults."""
-    from inyoka.forum.models import Topic
     from inyoka.ikhaya.models import Event, Report, Suggestion
-    from inyoka.portal.models import PrivateMessageEntry
+    from inyoka.portal.models import PrivateMessageEntry, Ticket
     from inyoka.utils.storage import storage
 
     user = request.user
 
     reported = pms = suggestions = events = reported_articles = 0
     if user.is_authenticated:
-        can = {'manage_topics': user.has_perm('forum.manage_reported_topic'),
+        can = {'manage_tickets': user.has_perm('forum.manage_tickets_forum'),
                'article_edit': user.has_perm('ikhaya.change_article'),
                'event_edit': user.has_perm('portal.change_event')}
 
         keys = ['portal/pm_count/%s' % user.id]
 
-        if can['manage_topics']:
-            keys.append('forum/reported_topic_count')
+        if can['manage_tickets']:
+            keys.append('portal/ticket_count')
         if can['article_edit']:
             keys.append('ikhaya/suggestion_count')
             keys.append('ikhaya/reported_article_count')
@@ -72,12 +71,12 @@ def context_data(request):
                 .filter(user__id=user.id, read=False) \
                 .exclude(folder=None).count()
             to_update[key] = pms
-        if can['manage_topics']:
-            key = 'forum/reported_topic_count'
+        if can['manage_tickets']:
+            key = 'portal/ticket_count'
             reported = cached_values.get(key)
             if reported is None:
-                reported = Topic.objects.filter(reporter__id__isnull=False) \
-                                        .count()
+                reported = Ticket.objects.filter(
+                    state__in=[Ticket.OPEN, Ticket.IN_PROGRESS]).count()
                 to_update[key] = reported
         if can['article_edit']:
             key = 'ikhaya/suggestion_count'
@@ -120,7 +119,7 @@ def context_data(request):
         'MESSAGES': messages.get_messages(request),
         'GLOBAL_MESSAGE': global_message,
         'pm_count': pms,
-        'report_count': reported,
+        'ticket_count': reported,
         'article_report_count': reported_articles,
         'suggestion_count': suggestions,
         'event_count': events,
@@ -182,6 +181,22 @@ def environment(**options):
     return env
 
 
+def ticket_label_filter(obj, length=60):
+    """Render `obj` for the ticket list.
+
+    Models can opt into a custom representation by defining a
+    ``ticket_label()`` method returning a string; otherwise ``str(obj)``
+    is used. The result is truncated to ``length`` characters.
+    """
+    if obj is None:
+        return ''
+    label_fn = getattr(obj, 'ticket_label', None)
+    text = label_fn() if callable(label_fn) else str(obj)
+    if len(text) > length:
+        text = text[:length - 1].rstrip() + '…'
+    return text
+
+
 #: Filters that are globally available in the template environment
 FILTERS = {
     'timedeltaformat': timesince,
@@ -190,6 +205,7 @@ FILTERS = {
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
     'ischeckbox': ischeckbox_filter,
+    'ticket_label': ticket_label_filter,
     # L10N aware variants of Django's filters. They all are patched to use
     # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
     # and TIME_FORMAT (format_time) from the formats module and not the relevant
