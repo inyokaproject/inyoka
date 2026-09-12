@@ -12,11 +12,9 @@ from django.conf import settings
 from django.utils import translation
 from django.utils.translation import gettext as _
 
-from inyoka.portal.user import User
 from inyoka.utils import ctype
 from inyoka.utils.logger import logger
-from inyoka.utils.notification import queue_notifications, send_notification
-from inyoka.utils.storage import storage
+from inyoka.utils.notification import queue_notifications
 
 
 def send_newtopic_notifications(user, post, topic, forum):
@@ -186,16 +184,3 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
         }
         notified_users = queue_notifications(filter=forum_subscribers, exclude={'user_id__in': notified_users}, **notification_args)
         logger.debug(f'Notified for include_forums with template {template}: {notified_users}')
-
-
-def notify_reported_topic_subscribers(subject, args):
-    subscribers = storage['reported_topics_subscribers'] or ''
-    users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
-    for user in users:
-        if user.has_perm('forum.forum.manage_tickets_forum'):
-            send_notification(user, 'new_reported_topic', subject, args)
-        else:
-            # unsubscribe this user automatically, he has no right to be here.
-            user_ids = [i for i in subscribers.split(',')]
-            user_ids.remove(str(user.id))
-            storage['reported_topics_subscribers'] = ','.join(user_ids)
