@@ -15,7 +15,6 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
-from django.forms.widgets import CheckboxInput
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.encoding import force_str
@@ -147,10 +146,6 @@ def urlencode_filter(value):
     return quote(value)
 
 
-def ischeckbox_filter(input):
-    return isinstance(input, CheckboxInput)
-
-
 class LazyJSONEncoder(json.JSONEncoder):
     """
     Encode a given object as JSON string, taking care of lazy objects. Lazy
@@ -188,7 +183,6 @@ FILTERS = {
     'url': url_for,
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
-    'ischeckbox': ischeckbox_filter,
     # L10N aware variants of Django's filters. They all are patched to use
     # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
     # and TIME_FORMAT (format_time) from the formats module and not the relevant
