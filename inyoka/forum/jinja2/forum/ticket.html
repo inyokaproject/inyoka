@@ -9,6 +9,9 @@
 #}
 
 {%- extends 'forum/page.html' %}
+{% set styles = ['editor'] %}
+{% set scripts = ['WikiEditor'] %}
+
 {% set BREADCRUMBS = [(_('Report'), target|url('ticket')),
                       (topic.forum.name, topic.forum|url),
                       (topic.title|e, topic|url)] + BREADCRUMBS|d([]) %}
@@ -27,4 +30,14 @@
 
     <p><input type="submit" value="{% trans %}Submit report{% endtrans %}"></p>
   </form>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+
+  <script>
+    /* <![CDATA[ */
+    const text = new WikiEditor('#id_reporter_comment');
+    /* ]]> */
+  </script>
 {% endblock %}
