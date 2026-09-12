@@ -13,12 +13,14 @@ import json
 import os
 
 from django import forms
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core import signing, validators
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -1200,6 +1202,18 @@ class ManageTicketReasons(forms.ModelForm):
     class Meta:
         model = TicketReason
         fields = ('content_type', 'reason')
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        inyoka_apps = [
+            a.name.replace('inyoka.', '')
+            for a in apps.get_app_configs()
+            if a.name.startswith('inyoka')
+        ]
+        self.fields['content_type'].queryset = ContentType.objects.filter(
+            app_label__in=inyoka_apps
+        )
 
 
 class CreateTicketForm(forms.ModelForm):
