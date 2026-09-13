@@ -52,6 +52,7 @@ from inyoka.utils.decorators import deferred
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
+from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.spam import mark_ham, mark_spam
 from inyoka.utils.urls import href
@@ -1130,7 +1131,7 @@ class Post(models.Model, LockableObject):
                 'username': self.author.username,
                 'post': self.pk,
             }
-            Ticket.objects.create(
+            ticket = Ticket.objects.create(
                 reporting_user=User.objects.get_system_user(),
                 reporting_time=dj_timezone.now(),
                 reporter_comment=msg,
@@ -1138,6 +1139,14 @@ class Post(models.Model, LockableObject):
                 content_object=self,
             )
             cache.delete('portal/ticket_count')
+
+            for user in ticket.reason.subscribers.all():
+                if ticket.can_moderate(user):
+                    send_notification(user, 'new_ticket',
+                                      subject=_('New ticket'),
+                                      args={'ticket': ticket, 'target': self})
+                else:
+                    ticket.reason.subscribers.remove(user)
 
     def __str__(self):
         return '%s - %s' % (

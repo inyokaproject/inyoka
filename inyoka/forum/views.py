@@ -930,21 +930,13 @@ def create_ticket(request, post_id=None, topic_slug=None):
             cache.delete('portal/ticket_count')
 
             if ticket.reason:
-                sub_key = ticket.reason.get_subscription_name()
-                subscriber_ids = storage[sub_key] or ''
-                for uid in filter(None, subscriber_ids.split(',')):
-                    try:
-                        subscriber = User.objects.get(id=uid)
-                    except User.DoesNotExist:
-                        continue
-                    if ticket.can_moderate(subscriber):
-                        send_notification(subscriber, 'new_ticket',
+                for user in ticket.reason.subscribers.all():
+                    if ticket.can_moderate(user):
+                        send_notification(user, 'new_ticket',
                                           subject=_('New ticket'),
                                           args={'ticket': ticket, 'target': target})
                     else:
-                        remaining = [i for i in subscriber_ids.split(',')
-                                     if i and i != uid]
-                        storage[sub_key] = ','.join(remaining)
+                        ticket.reason.subscribers.remove(user)
 
             messages.success(request, success_msg)
             return HttpResponseRedirect(url_for(topic))

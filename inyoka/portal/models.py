@@ -514,7 +514,11 @@ class TicketReason(models.Model):
         ContentType, on_delete=models.CASCADE, db_index=True)
     reason = models.CharField(max_length=200)
     slug = models.SlugField(null=True, blank=True)
-    system_defined = models.BooleanField(default=False)
+    system_defined = models.BooleanField(
+        default=False,
+        help_text='Used for predefined reasons like "spam" that cannot be edited/deleted from the gui.'
+    )
+    subscribers = models.ManyToManyField(User)
 
     objects = TicketReasonManager()
 
@@ -531,9 +535,6 @@ class TicketReason(models.Model):
 
     def __str__(self):
         return self.reason
-
-    def get_subscription_name(self):
-        return f'ticketreason_{self.id}_subscribers'
 
 
 class Ticket(models.Model):

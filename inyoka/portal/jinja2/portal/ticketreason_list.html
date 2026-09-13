@@ -57,7 +57,7 @@
           <a href="{{ href('portal', 'ticketreason', reason.id, 'edit') }}">{% trans %}Edit{% endtrans %}</a> |
           <a href="{{ href('portal', 'ticketreason', reason.id, 'delete') }}">{% trans %}Delete{% endtrans %}</a> |
         {%- endif %}
-        {%- if subscribed_per_reason[reason.id] %}
+        {%- if request.user in reason.subscribers.all() %}
           <form method="post" action="{{ href('portal', 'ticketreason', reason.id, 'unsubscribe') }}">
             {{ csrf_input }}
             <button type="submit">{% trans %}Unsubscribe{% endtrans %}</button>

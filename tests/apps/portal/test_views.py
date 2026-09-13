@@ -40,7 +40,6 @@ from inyoka.portal.models import (
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
 from inyoka.utils.forms import CaptchaField
-from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key
@@ -2019,20 +2018,25 @@ class TestTicketViews(TestCase):
         response = self.client.post('/ticketreason/all/subscribe/', follow=True)
         self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
 
-        for reason in TicketReason.objects.all():
-            sub_key = reason.get_subscription_name()
-            with self.subTest(sub_key=sub_key):
-                self.assertEqual(str(storage[sub_key]), f'{self.admin.id}')
+        self.assertEqual(self.admin.ticketreason_set.count(), 3)
 
     def test_ticket_reason_subscription__unsubscribe_all(self):
         response = self.client.post('/ticketreason/all/unsubscribe/')
         self.assertRedirects(response,
                              f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
 
-        for reason in TicketReason.objects.all():
-            sub_key = reason.get_subscription_name()
-            with self.subTest(sub_key=sub_key):
-                self.assertEqual(str(storage[sub_key]), '')
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [])
+
+    def test_ticket_reason_subscription__unsubscribe_one_id(self):
+        reason = TicketReason.objects.first()
+        reason.subscribers.add(self.admin)
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [reason])
+
+        response = self.client.post(f'/ticketreason/{reason.id}/unsubscribe/')
+        self.assertRedirects(response,
+                             f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [])
 
     def test_ticket_reason_subscription__subscribe_one_id(self):
         reason = TicketReason.objects.first()
@@ -2041,5 +2045,4 @@ class TestTicketViews(TestCase):
         self.assertRedirects(response,
                              f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
 
-        sub_key = reason.get_subscription_name()
-        self.assertEqual(str(storage[sub_key]), f'{self.admin.id}')
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [reason])

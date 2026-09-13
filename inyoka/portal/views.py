@@ -1636,11 +1636,7 @@ def linkmap_export(request):
 @templated('portal/ticketreason_list.html')
 def ticket_reasons_list(request):
     reasons = TicketReason.objects.all()
-    subscribed_per_reason = {}
-    for reason in reasons:
-        subs = storage[reason.get_subscription_name()] or ''
-        subscribed_per_reason[reason.id] = str(request.user.id) in subs.split(',')
-    return {'reasons': reasons, 'subscribed_per_reason': subscribed_per_reason}
+    return {'reasons': reasons}
 
 
 @login_required
@@ -1680,22 +1676,23 @@ def ticket_reason_delete(request, reason_id):
 @login_required
 @permission_required('forum.manage_tickets_forum', raise_exception=True)
 def ticket_reason_subscription(request, mode, reason_id):
-    if reason_id == 'all':
-        reasons = TicketReason.objects.all()
-    else:
-        reasons = [get_object_or_404(TicketReason, id=reason_id)]
+    if mode == 'subscribe':
+        if reason_id == 'all':
+            reasons = TicketReason.objects.all()
+            request.user.ticketreason_set.set(reasons)
+        else:
+            reason = get_object_or_404(TicketReason, id=reason_id)
+            request.user.ticketreason_set.add(reason)
 
-    for reason in reasons:
-        sub_key = reason.get_subscription_name()
-        subs = storage[sub_key] or ''
-        users = {i for i in subs.split(',') if i}
-        if mode == 'subscribe':
-            users.add(str(request.user.id))
-            messages.success(request, _('You will be notified about new tickets.'))
-        elif mode == 'unsubscribe':
-            users.discard(str(request.user.id))
-            messages.success(request, _('You will no longer be notified about new tickets.'))
-        storage[sub_key] = ','.join(users)
+        messages.success(request, _('You will be notified about new tickets.'))
+    elif mode == 'unsubscribe':
+        if reason_id == 'all':
+            request.user.ticketreason_set.clear()
+        else:
+            reason = get_object_or_404(TicketReason, id=reason_id)
+            request.user.ticketreason_set.remove(reason)
+
+        messages.success(request, _('You will no longer be notified about new tickets.'))
 
     return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
 
