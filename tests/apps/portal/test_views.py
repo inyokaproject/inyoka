@@ -40,6 +40,7 @@ from inyoka.portal.models import (
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
 from inyoka.utils.forms import CaptchaField
+from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key
@@ -1808,8 +1809,10 @@ class TestTicketViews(TestCase):
             'admin', 'admin@example.com', 'admin', False)
         self.admin.is_superuser = True
         self.admin.save()
+
         self.user = User.objects.register_user(
             'user', 'user@example.com', 'user', False)
+
         self.manager = User.objects.register_user(
             'manager', 'manager@example.com', 'manager', False)
         # InyokaAuthBackend only honors group perms, so attach via group.
@@ -1899,6 +1902,12 @@ class TestTicketViews(TestCase):
         self.assertEqual(len(r1.context['tickets']), 25)
         self.assertEqual(len(r2.context['tickets']), 30 + 1 - 25)
 
+    def test_list__empty_selection(self):
+        response = self.client.post(
+            '/tickets/list/', {'selected': []})
+
+        self.assertContains(response, 'No tickets selected.')
+
     def test_close_selected_tickets(self):
         self.client.logout()
         self.client.login(username='manager', password='manager')
@@ -1932,10 +1941,52 @@ class TestTicketViews(TestCase):
         self.assertIsNone(self.t_in_progress.owning_user)
         self.assertEqual(self.t_in_progress.state, Ticket.OPEN)
 
+    def test_ticket_disown__not_owner(self):
+        response = self.client.post(
+            '/tickets/%d/disown/' % self.t_in_progress.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit__not_owner(self):
+        response = self.client.get('/tickets/%d/edit/' % self.t_closed.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit__not_existing_ticket(self):
+        response = self.client.get('/tickets/913379/edit/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_edit__get(self):
+        self.t_closed.owning_user = self.admin
+        self.t_closed.save()
+
+        response = self.client.get('/tickets/%d/edit/' % self.t_closed.id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit__post(self):
+        self.t_closed.owning_user = self.admin
+        self.t_closed.save()
+
+        response = self.client.post('/tickets/%d/edit/' % self.t_closed.id, data={'owner_comment': 'foo'}, follow=True)
+        self.assertContains(response, 'The ticket comment was saved.')
+
+        self.t_closed.refresh_from_db()
+        self.assertEqual(self.t_closed.owner_comment, 'foo')
+
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/tickets/list/')
+
     def test_ticketreason_list_get(self):
         response = self.client.get('/ticketreason/list/')
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.reason, list(response.context['reasons']))
+
+    def test_ticketreason_delete(self):
+        reason = TicketReason.objects.create(content_type=ContentType.objects.get_for_model(Post), reason='reason')
+
+        response = self.client.post(
+            f'/ticketreason/{reason.id}/delete/',
+            {'confirm': 'Yes'}, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(TicketReason.objects.filter(id=reason.id).exists())
 
     def test_ticketreason_delete_system_defined_blocked(self):
         response = self.client.post(
@@ -1943,3 +1994,52 @@ class TestTicketViews(TestCase):
             {'confirm': 'Yes'}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(TicketReason.objects.filter(id=self.reason.id).exists())
+
+    def test_ticketreason_new__get(self):
+        response = self.client.get('/ticketreason/new/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_ticketreason_edit__post(self):
+        content_type = ContentType.objects.get_for_model(Post)
+        reason = TicketReason.objects.create(content_type=content_type, reason='reason')
+
+        response = self.client.post(f'/ticketreason/{reason.id}/edit/',
+                                    data={'content_type': content_type.id, 'reason': 'changed'},
+                                    follow=True)
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        reason.refresh_from_db()
+        self.assertEqual(reason.reason, 'changed')
+
+    def test_ticket_reason_subscription__get_not_allowed_method(self):
+        response = self.client.get('/ticketreason/all/subscribe/')
+        self.assertEqual(response.status_code, 405)
+
+    def test_ticket_reason_subscription__subscribe_all(self):
+        response = self.client.post('/ticketreason/all/subscribe/', follow=True)
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        for reason in TicketReason.objects.all():
+            sub_key = reason.get_subscription_name()
+            with self.subTest(sub_key=sub_key):
+                self.assertEqual(str(storage[sub_key]), f'{self.admin.id}')
+
+    def test_ticket_reason_subscription__unsubscribe_all(self):
+        response = self.client.post('/ticketreason/all/unsubscribe/')
+        self.assertRedirects(response,
+                             f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        for reason in TicketReason.objects.all():
+            sub_key = reason.get_subscription_name()
+            with self.subTest(sub_key=sub_key):
+                self.assertEqual(str(storage[sub_key]), '')
+
+    def test_ticket_reason_subscription__subscribe_one_id(self):
+        reason = TicketReason.objects.first()
+
+        response = self.client.post(f'/ticketreason/{reason.id}/subscribe/', follow=True)
+        self.assertRedirects(response,
+                             f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        sub_key = reason.get_subscription_name()
+        self.assertEqual(str(storage[sub_key]), f'{self.admin.id}')
