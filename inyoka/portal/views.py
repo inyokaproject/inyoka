@@ -1648,6 +1648,7 @@ def ticket_reasons_list(request):
 @templated('portal/ticketreason_edit.html')
 def ticket_reason_edit(request, reason_id=None):
     reason = get_object_or_404(TicketReason, id=reason_id) if reason_id else None
+
     if request.method == 'POST':
         form = ManageTicketReasons(request.POST, instance=reason)
         if form.is_valid():
@@ -1656,6 +1657,7 @@ def ticket_reason_edit(request, reason_id=None):
             return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
     else:
         form = ManageTicketReasons(instance=reason)
+
     return {'form': form, 'reason': reason}
 
 
@@ -1664,14 +1666,17 @@ def ticket_reason_edit(request, reason_id=None):
 @confirm_action()
 def ticket_reason_delete(request, reason_id):
     reason = get_object_or_404(TicketReason, id=reason_id)
+
     if reason.system_defined:
         messages.error(request, _('System-defined ticket reasons cannot be deleted.'))
-        return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
-    reason.delete()
-    messages.success(request, _('The ticket reason was deleted.'))
+    else:
+        reason.delete()
+        messages.success(request, _('The ticket reason was deleted.'))
+
     return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
 
 
+@require_POST
 @login_required
 @permission_required('forum.manage_tickets_forum', raise_exception=True)
 def ticket_reason_subscription(request, mode, reason_id):
@@ -1754,8 +1759,10 @@ def ticket_list(request, page=1):
 @templated('portal/ticket_edit.html')
 def ticket_edit(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+
     if ticket.owning_user != request.user:
         raise PermissionDenied
+
     if request.method == 'POST':
         form = EditTicketOwnerCommentForm(request.POST, instance=ticket)
         if form.is_valid():
@@ -1764,32 +1771,41 @@ def ticket_edit(request, ticket_id):
             return HttpResponseRedirect(href('portal', 'tickets', 'list'))
     else:
         form = EditTicketOwnerCommentForm(instance=ticket)
+
     return {'form': form, 'ticket': ticket}
 
 
+@require_POST
 @login_required
 @permission_required('forum.manage_tickets_forum', raise_exception=True)
 def ticket_own(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+
     if not ticket.can_moderate(request.user):
         raise PermissionDenied
+
     ticket.owning_user = request.user
     ticket.state = Ticket.IN_PROGRESS
     if not ticket.owned_time:
         ticket.owned_time = dj_timezone.now()
     ticket.save()
+
     messages.success(request, _('You now own this ticket.'))
     return HttpResponseRedirect(href('portal', 'tickets', 'list'))
 
 
+@require_POST
 @login_required
 @permission_required('forum.manage_tickets_forum', raise_exception=True)
 def ticket_disown(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+
     if ticket.owning_user != request.user:
         raise PermissionDenied
+
     ticket.owning_user = None
     ticket.state = Ticket.OPEN
     ticket.save()
+
     messages.success(request, _('The ticket was released.'))
     return HttpResponseRedirect(href('portal', 'tickets', 'list'))

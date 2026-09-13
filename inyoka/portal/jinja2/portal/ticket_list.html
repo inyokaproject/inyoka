@@ -44,6 +44,13 @@
     {%- if not loop.last %} | {% endif %}
   {%- endfor %}
 </p>
+
+<form id="dis-own-form" method="post">
+  {# small dummy form which allows POST actions with csrf token inside the big table
+     which is already inside a form #}
+  {{ csrf_input }}
+</form>
+
 <form method="post">
   {{ csrf_input }}
   <table>
@@ -89,7 +96,7 @@
           {%- if ticket.owning_user %}
             <a href="{{ ticket.owning_user|url }}">{{ ticket.owning_user.username }}</a>
             {% if ticket.owning_user == request.user %}
-              | <a href="{{ href('portal', 'tickets', ticket.id, 'disown') }}">{% trans %}Release{% endtrans %}</a>
+              | <button type="submit" form="dis-own-form" formaction="{{ href('portal', 'tickets', ticket.id, 'disown') }}">{% trans %}Release{% endtrans %}</button>
               | <a href="{{ href('portal', 'tickets', ticket.id, 'edit') }}">{% trans %}Comment{% endtrans %}</a>
             {% endif %}
             {%- if ticket.owned_time %}
@@ -99,7 +106,7 @@
               <br>{% trans %}Closed{% endtrans %}: {{ ticket.closed_time|datetime }}
             {%- endif %}
           {%- else %}
-            <a href="{{ href('portal', 'tickets', ticket.id, 'own') }}">{% trans %}Claim{% endtrans %}</a>
+            <button type="submit" form="dis-own-form" formaction="{{ href('portal', 'tickets', ticket.id, 'own') }}">{% trans %}Claim{% endtrans %}</button>
           {%- endif %}
         </td>
         <td>

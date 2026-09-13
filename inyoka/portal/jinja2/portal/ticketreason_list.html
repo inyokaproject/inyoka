@@ -19,8 +19,18 @@
     </h3>
     <ul>
       <li><a href="{{ href('portal', 'ticketreason', 'new') }}">{% trans %}New ticket reason{% endtrans %}</a></li>
-      <li><a href="{{ href('portal', 'ticketreason', 'all', 'subscribe') }}">{% trans %}Subscribe to all{% endtrans %}</a></li>
-      <li><a href="{{ href('portal', 'ticketreason', 'all', 'unsubscribe') }}">{% trans %}Unsubscribe from all{% endtrans %}</a></li>
+      <li>
+        <form id="all-subscribe" method="post" action="{{ href('portal', 'ticketreason', 'all', 'subscribe') }}">
+          {{ csrf_input }}
+          <button type="submit">{% trans %}Subscribe to all{% endtrans %}</button>
+        </form>
+      </li>
+      <li>
+        <form id="all-unsubscribe" method="post" action="{{ href('portal', 'ticketreason', 'all', 'unsubscribe') }}">
+          {{ csrf_input }}
+          <button type="submit" >{% trans %}Unsubscribe from all{% endtrans %}</button>
+        </form>
+      </li>
     </ul>
 
   </div>
@@ -48,9 +58,15 @@
           <a href="{{ href('portal', 'ticketreason', reason.id, 'delete') }}">{% trans %}Delete{% endtrans %}</a> |
         {%- endif %}
         {%- if subscribed_per_reason[reason.id] %}
-          <a href="{{ href('portal', 'ticketreason', reason.id, 'unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>
+          <form method="post" action="{{ href('portal', 'ticketreason', reason.id, 'unsubscribe') }}">
+            {{ csrf_input }}
+            <button type="submit">{% trans %}Unsubscribe{% endtrans %}</button>
+          </form>
         {%- else %}
-          <a href="{{ href('portal', 'ticketreason', reason.id, 'subscribe') }}">{% trans %}Subscribe{% endtrans %}</a>
+          <form method="post" action="{{ href('portal', 'ticketreason', reason.id, 'subscribe') }}">
+            {{ csrf_input }}
+            <button type="submit">{% trans %}Subscribe{% endtrans %}</button>
+          </form>
         {%- endif %}
       </td>
     </tr>

@@ -1909,8 +1909,13 @@ class TestTicketViews(TestCase):
         self.assertEqual(self.t_in_progress.state, Ticket.CLOSED)
         self.assertIsNotNone(self.t_in_progress.closed_time)
 
-    def test_ticket_own(self):
+    def test_ticket_own__not_allowed_method(self):
         response = self.client.get(
+            '/tickets/%d/own/' % self.t_open.id)
+        self.assertEqual(response.status_code, 405)
+
+    def test_ticket_own(self):
+        response = self.client.post(
             '/tickets/%d/own/' % self.t_open.id, follow=False)
         self.assertEqual(response.status_code, 302)
         self.t_open.refresh_from_db()
@@ -1920,7 +1925,7 @@ class TestTicketViews(TestCase):
     def test_ticket_disown(self):
         self.client.logout()
         self.client.login(username='manager', password='manager')
-        response = self.client.get(
+        response = self.client.post(
             '/tickets/%d/disown/' % self.t_in_progress.id)
         self.assertEqual(response.status_code, 302)
         self.t_in_progress.refresh_from_db()
