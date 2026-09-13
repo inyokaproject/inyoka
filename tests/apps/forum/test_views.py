@@ -17,6 +17,7 @@ import feedparser
 import responses
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.http import Http404
 from django.test import RequestFactory
@@ -42,6 +43,7 @@ from inyoka.forum.models import (
     Topic,
     mark_all_forums_read,
 )
+from inyoka.portal.models import Ticket, TicketReason
 from inyoka.portal.user import User
 from inyoka.portal.utils import UbuntuVersion
 from inyoka.utils.storage import storage
@@ -140,7 +142,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(response.context['topic'], self.topic)
 
     def test_create_ticket_reasons_filtered_to_post(self):
-        from django.contrib.contenttypes.models import ContentType
         response = self.client.get('/post/%d/ticket/' % self.post.id)
         post_ct = ContentType.objects.get_for_model(Post)
         reasons = response.context['form'].fields['reason'].queryset
@@ -148,7 +149,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertTrue(all(r.content_type_id == post_ct.id for r in reasons))
 
     def test_create_ticket_reasons_filtered_to_topic(self):
-        from django.contrib.contenttypes.models import ContentType
         response = self.client.get('/topic/%s/ticket/' % self.topic.slug)
         topic_ct = ContentType.objects.get_for_model(Topic)
         reasons = response.context['form'].fields['reason'].queryset
@@ -156,9 +156,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertTrue(all(r.content_type_id == topic_ct.id for r in reasons))
 
     def test_create_ticket_for_post_creates_ticket(self):
-        from django.contrib.contenttypes.models import ContentType
-
-        from inyoka.portal.models import Ticket, TicketReason
         post_ct = ContentType.objects.get_for_model(Post)
         reason = TicketReason.objects.filter(content_type=post_ct).first()
         response = self.client.post(
@@ -172,9 +169,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(ticket.state, Ticket.OPEN)
 
     def test_create_ticket_for_topic_creates_ticket(self):
-        from django.contrib.contenttypes.models import ContentType
-
-        from inyoka.portal.models import Ticket, TicketReason
         topic_ct = ContentType.objects.get_for_model(Topic)
         reason = TicketReason.objects.filter(content_type=topic_ct).first()
         response = self.client.post(
