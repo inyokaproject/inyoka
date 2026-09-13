@@ -24,22 +24,14 @@
   </div>
 {% endblock %}
 
-{% set STATE_LABELS = {
-  'active': _('Active'),
-  'open': _('Open'),
-  'in_progress': _('In Progress'),
-  'closed': _('Closed'),
-  'all': _('All'),
-} %}
-
 {% block content %}
 <p class="linklist">
   {% trans %}Filter{% endtrans %}:
   {%- for s in state_filters %}
     {%- if s == current_state %}
-      <strong>{{ STATE_LABELS[s] }}</strong>
+      <strong>{{ state_filters[s]['label'] }}</strong>
     {%- else %}
-      <a href="{{ href('portal', 'tickets', 'list') }}?state={{ s }}">{{ STATE_LABELS[s] }}</a>
+      <a href="{{ href('portal', 'tickets', 'list') }}?state={{ s }}">{{ state_filters[s]['label'] }}</a>
     {%- endif %}
     {%- if not loop.last %} | {% endif %}
   {%- endfor %}

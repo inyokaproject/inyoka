@@ -1700,23 +1700,37 @@ def ticket_reason_subscription(request, mode, reason_id):
     return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
 
 
-TICKET_STATE_FILTERS = {
-    'active': [Ticket.OPEN, Ticket.IN_PROGRESS],
-    'open': [Ticket.OPEN],
-    'in_progress': [Ticket.IN_PROGRESS],
-    'closed': [Ticket.CLOSED],
-    'all': None,
-}
-
-
 @login_required
 @permission_required('forum.manage_tickets_forum', raise_exception=True)
 @templated('portal/ticket_list.html')
 def ticket_list(request, page=1):
+    ticket_state_filters = {
+        'active': {
+            'query_states': [Ticket.OPEN, Ticket.IN_PROGRESS],
+            'label': _('Active'),
+        },
+        'open': {
+            'query_states': [Ticket.OPEN],
+            'label': _('Open'),
+        },
+        'in_progress': {
+            'query_states': [Ticket.IN_PROGRESS],
+            'label': _('In Progress'),
+        },
+        'closed': {
+            'query_states': [Ticket.CLOSED],
+            'label': _('Closed'),
+        },
+        'all': {
+            'query_states': None,
+            'label': _('All'),
+        },
+    }
+
     state = request.GET.get('state', 'active')
-    if state not in TICKET_STATE_FILTERS:
+    if state not in ticket_state_filters:
         state = 'active'
-    states = TICKET_STATE_FILTERS[state]
+    states = ticket_state_filters[state]['query_states']
     tickets = Ticket.objects.all().select_related(
         'reporting_user', 'owning_user', 'reason').order_by('reporting_time')
     if states is not None:
@@ -1745,12 +1759,13 @@ def ticket_list(request, page=1):
 
     pagination = Pagination(request, tickets, page, 25,
                             link=href('portal', 'tickets', 'list'))
+
     return {
         'tickets': pagination.get_queryset(),
         'pagination': pagination,
         'form': form,
         'current_state': state,
-        'state_filters': list(TICKET_STATE_FILTERS),
+        'state_filters': ticket_state_filters,
     }
 
 
