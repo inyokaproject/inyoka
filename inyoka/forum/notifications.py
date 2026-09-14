@@ -14,7 +14,7 @@ from django.utils.translation import gettext as _
 
 from inyoka.utils import ctype
 from inyoka.utils.logger import logger
-from inyoka.utils.notification import queue_notifications
+from inyoka.utils.notification import queue_notifications, send_notification
 
 
 def send_newtopic_notifications(user, post, topic, forum):
@@ -184,3 +184,13 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
         }
         notified_users = queue_notifications(filter=forum_subscribers, exclude={'user_id__in': notified_users}, **notification_args)
         logger.debug(f'Notified for include_forums with template {template}: {notified_users}')
+
+
+def send_ticket_notification(ticket, target) -> None:
+    for user in ticket.reason.subscribers.all():
+        if ticket.can_moderate(user):
+            send_notification(user, 'new_ticket',
+                              subject=_('New ticket'),
+                              args={'ticket': ticket, 'target': target})
+        else:
+            ticket.reason.subscribers.remove(user)

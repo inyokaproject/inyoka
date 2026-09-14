@@ -53,6 +53,7 @@ from inyoka.forum.notifications import (
     send_edit_notifications,
     send_newtopic_notifications,
     send_notification_for_topics,
+    send_ticket_notification,
 )
 from inyoka.markup.base import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
@@ -929,13 +930,7 @@ def create_ticket(request, post_id=None, topic_slug=None):
             ticket.save()
             cache.delete(Ticket.CACHE_COUNT_KEY)
 
-            for user in ticket.reason.subscribers.all():
-                if ticket.can_moderate(user):
-                    send_notification(user, 'new_ticket',
-                                      subject=_('New ticket'),
-                                      args={'ticket': ticket, 'target': target})
-                else:
-                    ticket.reason.subscribers.remove(user)
+            send_ticket_notification(ticket, target)
 
             messages.success(request, success_msg)
             return HttpResponseRedirect(url_for(topic))
