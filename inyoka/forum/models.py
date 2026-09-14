@@ -1138,7 +1138,7 @@ class Post(models.Model, LockableObject):
                 reason=spam_reason,
                 content_object=self,
             )
-            cache.delete('portal/ticket_count')
+            cache.delete(Ticket.CACHE_COUNT_KEY)
 
             for user in ticket.reason.subscribers.all():
                 if ticket.can_moderate(user):

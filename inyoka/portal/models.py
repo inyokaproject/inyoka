@@ -547,6 +547,8 @@ class Ticket(models.Model):
         (CLOSED, gettext_lazy('Closed')),
     ]
 
+    CACHE_COUNT_KEY = 'portal/ticket_count'
+
     content_type = models.ForeignKey(
         ContentType, null=True, blank=True, on_delete=models.SET_NULL,
         related_name='+')

@@ -57,7 +57,7 @@ from inyoka.forum.notifications import (
 from inyoka.markup.base import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.forms import CreateTicketForm
-from inyoka.portal.models import Subscription
+from inyoka.portal.models import Subscription, Ticket
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
 from inyoka.utils.database import get_simplified_queryset
@@ -927,7 +927,7 @@ def create_ticket(request, post_id=None, topic_slug=None):
             ticket.reporting_time = dj_timezone.now()
             ticket.content_object = target
             ticket.save()
-            cache.delete('portal/ticket_count')
+            cache.delete(Ticket.CACHE_COUNT_KEY)
 
             for user in ticket.reason.subscribers.all():
                 if ticket.can_moderate(user):

@@ -53,7 +53,7 @@ def context_data(request):
         keys = ['portal/pm_count/%s' % user.id]
 
         if can['manage_tickets']:
-            keys.append('portal/ticket_count')
+            keys.append(Ticket.CACHE_COUNT_KEY)
         if can['article_edit']:
             keys.append('ikhaya/suggestion_count')
             keys.append('ikhaya/reported_article_count')
@@ -71,7 +71,7 @@ def context_data(request):
                 .exclude(folder=None).count()
             to_update[key] = pms
         if can['manage_tickets']:
-            key = 'portal/ticket_count'
+            key = Ticket.CACHE_COUNT_KEY
             reported = cached_values.get(key)
             if reported is None:
                 reported = Ticket.objects.filter(

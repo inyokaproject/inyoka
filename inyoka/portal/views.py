@@ -1747,7 +1747,7 @@ def ticket_list(request, page=1):
                         ticket.closed_time = dj_timezone.now()
                         ticket.save()
                         closed_count += 1
-                cache.delete('portal/ticket_count')
+                cache.delete(Ticket.CACHE_COUNT_KEY)
                 messages.success(request,
                     _('%(count)d ticket(s) closed.') % {'count': closed_count})
                 return HttpResponseRedirect(href('portal', 'tickets', 'list'))
