@@ -1222,15 +1222,13 @@ class CreateTicketForm(forms.ModelForm):
         model = Ticket
         fields = ('reason', 'reporter_comment')
 
-    def __init__(self, *args, content_type=None, **kwargs):
+    def __init__(self, *args, content_type, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self.fields['reason'].required = True
-
-        if content_type is not None:
-            self.fields['reason'].queryset = TicketReason.objects.filter(
-                content_type=content_type
-            )
+        self.fields['reason'].queryset = TicketReason.objects.filter(
+            content_type=content_type
+        )
 
 
 class EditTicketOwnerCommentForm(forms.ModelForm):
