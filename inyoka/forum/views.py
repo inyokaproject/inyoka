@@ -929,14 +929,13 @@ def create_ticket(request, post_id=None, topic_slug=None):
             ticket.save()
             cache.delete('portal/ticket_count')
 
-            if ticket.reason:
-                for user in ticket.reason.subscribers.all():
-                    if ticket.can_moderate(user):
-                        send_notification(user, 'new_ticket',
-                                          subject=_('New ticket'),
-                                          args={'ticket': ticket, 'target': target})
-                    else:
-                        ticket.reason.subscribers.remove(user)
+            for user in ticket.reason.subscribers.all():
+                if ticket.can_moderate(user):
+                    send_notification(user, 'new_ticket',
+                                      subject=_('New ticket'),
+                                      args={'ticket': ticket, 'target': target})
+                else:
+                    ticket.reason.subscribers.remove(user)
 
             messages.success(request, success_msg)
             return HttpResponseRedirect(url_for(topic))

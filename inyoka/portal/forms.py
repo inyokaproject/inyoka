@@ -1224,6 +1224,9 @@ class CreateTicketForm(forms.ModelForm):
 
     def __init__(self, *args, content_type=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.fields['reason'].required = True
+
         if content_type is not None:
             self.fields['reason'].queryset = TicketReason.objects.filter(
                 content_type=content_type
