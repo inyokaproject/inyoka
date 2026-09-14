@@ -1233,12 +1233,6 @@ class CreateTicketForm(forms.ModelForm):
             )
 
 
-class EditTicketForm(forms.ModelForm):
-    class Meta:
-        model = Ticket
-        fields = ('reason', 'reporter_comment')
-
-
 class EditTicketOwnerCommentForm(forms.ModelForm):
     class Meta:
         model = Ticket
