@@ -1749,7 +1749,12 @@ def ticket_list(request, page=1):
                         closed_count += 1
                 cache.delete(Ticket.CACHE_COUNT_KEY)
                 messages.success(request,
-                    _('%(count)d ticket(s) closed.') % {'count': closed_count})
+                    ngettext(
+                        '%(count)d ticket closed.',
+                        '%(count)d tickets closed.',
+                        closed_count
+                    ) % {'count': closed_count}
+                )
                 return HttpResponseRedirect(href('portal', 'tickets', 'list'))
     else:
         form = TicketListForm(tickets)

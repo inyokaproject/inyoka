@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-05 15:48+0200\n"
+"POT-Creation-Date: 2026-09-15 23:04+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -25,8 +25,9 @@ msgid "#"
 msgstr "#"
 
 #, python-format
-msgid "%(count)d ticket(s) closed."
-msgstr[0] "%(count)s Meldung geschlossen."
+msgid "%(count)d ticket closed."
+msgid_plural "%(count)d tickets closed."
+msgstr[0] "%(count)d Meldung geschlossen."
 msgstr[1] "%(count)d Meldungen geschlossen."
 
 #, python-format
@@ -432,6 +433,9 @@ msgstr "Filter"
 msgid "Folder"
 msgstr "Ordner"
 
+msgid "Forbidden values for user content"
+msgstr "Verbotene Werte für Nutzerinhalte"
+
 msgid "Forum"
 msgstr "Forum"
 
@@ -568,6 +572,9 @@ msgstr "Infoseite für neue Wiki-Seiten"
 msgid "Information page to which a “create” link should redirect to."
 msgstr "Infoseite, auf die ein „erstellen“ Link verweisen soll."
 
+msgid "Inserted at"
+msgstr "Eingefügt am"
+
 msgid "Interface"
 msgstr "Oberfläche"
 
@@ -628,6 +635,9 @@ msgstr "Link Map"
 
 msgid "Linkmap"
 msgstr "Linkmap"
+
+msgid "List of values that are not allowed in user text fields. One value per line. Leave empty to disable this validation. The validator performs case-insensitive matching to check if any of these values appear in the post text. If a forbidden value is found, a validation error is raised and the post is rejected."
+msgstr "Liste an Werten, die in Nutzer-Textfeldern nicht erlaubt sind. Pro Zeile ein Wert. Ein leeres Feld deaktiviert die Validierung. Die Validierung, ob einer der Werte im Beitrag vorkommt, erfolgt unabhängig von Großschreibung. Wenn ein verbotener Wert gefunden wird, wird ein Fehler angezeigt und der Beitrag abgelehnt."
 
 msgid "Location of new wiki pages"
 msgstr "Ort neuer Wiki-Seiten"
@@ -828,6 +838,10 @@ msgstr "Weniger Animationen"
 msgid "Registered users:"
 msgstr "Registrierte Benutzer:"
 
+#, python-brace-format
+msgid "Registration with this email address is blocked because it appears on a spam list. In case you suspect an error, contact {mail}."
+msgstr "Registrierung mit dieser E-Mail-Adresse blockiert, da sie auf einer Spam-Liste vorkommt. Falls du einen Fehler vermutest, schreibe eine Nachricht an {mail}."
+
 msgid "Release"
 msgstr "Freigeben"
 
@@ -835,7 +849,7 @@ msgid "Release date"
 msgstr "Veröffentlichungsdatum"
 
 msgid "Renaming users complete."
-msgstr "Umbennen der Benutzer abgeschlossen."
+msgstr "Umbenennen der Benutzer abgeschlossen."
 
 #, python-brace-format
 msgid "Renaming {oldname} to {newname}..."
@@ -909,6 +923,12 @@ msgstr "Zeige ungelesene Beiträge"
 
 msgid "Signature"
 msgstr "Signatur"
+
+msgid "Spam email address"
+msgstr "Spam-E-Mail-Adresse"
+
+msgid "Spam email addresses"
+msgstr "Spam-E-Mail-Adressen"
 
 msgid "Split messages into multiple pages"
 msgstr "Nachricht auf mehrere Seiten aufteilen"
@@ -1168,6 +1188,9 @@ msgstr "Ticket-Grund"
 
 msgid "Ticket Reasons"
 msgstr "Ticket-Gründe"
+
+msgid "Ticket reason actions"
+msgstr "Aktionen für Ticket-Gründe"
 
 msgid "Ticket reasons"
 msgstr "Ticket-Gründe"
@@ -1442,3 +1465,4 @@ msgstr "bis"
 #, python-format
 msgid "“%(name)s” is no member of any group."
 msgstr "„%(name)s“ ist kein Mitglied einer Gruppe."
+
