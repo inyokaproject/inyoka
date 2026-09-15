@@ -1,0 +1,129 @@
+{#
+    portal/ticket_list.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    Moderators can see all open tickets on this page.
+
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+{% set BREADCRUMBS = [(_('Tickets'), href('portal', 'tickets', 'list'))] + BREADCRUMBS|d([]) %}
+
+{% block sidebar %}
+  <div class="container">
+    <h3>
+      {% trans %}Ticket reason actions{% endtrans %}
+    </h3>
+    <ul>
+      <li><a href="{{ href('portal', 'ticketreason', 'list') }}">{% trans %}Manage ticket reasons{% endtrans %}</a></li>
+    </ul>
+  </div>
+{% endblock %}
+
+{% block content %}
+<p class="linklist">
+  {% trans %}Filter{% endtrans %}:
+  {%- for s in state_filters %}
+    {%- if s == current_state %}
+      <strong>{{ state_filters[s]['label'] }}</strong>
+    {%- else %}
+      <a href="{{ href('portal', 'tickets', 'list') }}?state={{ s }}">{{ state_filters[s]['label'] }}</a>
+    {%- endif %}
+    {%- if not loop.last %} | {% endif %}
+  {%- endfor %}
+</p>
+
+<form id="dis-own-form" method="post">
+  {# small dummy form which allows POST actions with csrf token inside the big table
+     which is already inside a form #}
+  {{ csrf_input }}
+</form>
+
+<form method="post">
+  {{ csrf_input }}
+  <table>
+    <thead>
+      <tr>
+        <th>{% trans %}#{% endtrans %}</th>
+        <th>{% trans %}Object{% endtrans %}</th>
+        <th>{% trans %}Reason{% endtrans %}</th>
+        <th>{% trans %}Reported by{% endtrans %}</th>
+        <th>{% trans %}Owned by{% endtrans %}</th>
+        <th>{% trans %}Reporter Comment{% endtrans %}</th>
+        <th>{% trans %}Owner Comment{% endtrans %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for ticket in tickets %}
+      <tr>
+        <td>
+          <input type="checkbox" name="selected" value="{{ ticket.id }}">
+        </td>
+        <td>
+          {%- if ticket.content_object %}
+            {{ ticket.content_type.name|capitalize }}:
+            <a href="{{ ticket.content_object|url }}">
+              {% if ticket.content_object.ticket_label %}
+                {{ ticket.content_object.ticket_label() }}
+              {% else %}
+                {{ ticket.content_object }}
+              {% endif %}
+            </a>
+          {%- else %}
+            {% trans %}(deleted){% endtrans %}
+          {%- endif %}
+        </td>
+        <td>{{ ticket.reason }}</td>
+        <td>
+          {%- if ticket.reporting_user %}
+            <a href="{{ ticket.reporting_user|url }}">{{ ticket.reporting_user.username }}</a><br>
+          {%- endif %}
+          {{ ticket.reporting_time|datetime }}
+        </td>
+        <td>
+          {%- if ticket.owning_user %}
+            <a href="{{ ticket.owning_user|url }}">{{ ticket.owning_user.username }}</a>
+            {% if ticket.owning_user == request.user %}
+              | <button type="submit" form="dis-own-form" formaction="{{ href('portal', 'tickets', ticket.id, 'disown') }}">{% trans %}Release{% endtrans %}</button>
+              | <a href="{{ href('portal', 'tickets', ticket.id, 'edit') }}">{% trans %}Comment{% endtrans %}</a>
+            {% endif %}
+            {%- if ticket.owned_time %}
+              <br>{% trans %}Claimed{% endtrans %}: {{ ticket.owned_time|datetime }}
+            {%- endif %}
+            {%- if ticket.closed_time %}
+              <br>{% trans %}Closed{% endtrans %}: {{ ticket.closed_time|datetime }}
+            {%- endif %}
+          {%- else %}
+            <button type="submit" form="dis-own-form" formaction="{{ href('portal', 'tickets', ticket.id, 'own') }}">{% trans %}Claim{% endtrans %}</button>
+          {%- endif %}
+        </td>
+        <td>
+          {%- if ticket.reporter_comment %}
+            <p>{{ ticket.reporter_comment_rendered }}</p>
+          {%- endif %}
+        </td>
+        <td>
+          {%- if ticket.owner_comment %}
+            <p>{{ ticket.owner_comment_rendered }}</p>
+          {%- endif %}
+        </td>
+      </tr>
+      {%- else %}
+      <tr>
+        <td colspan="7">{% trans %}Currently there are no open tickets.{% endtrans %}</td>
+      </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+  {%- if tickets %}
+  <p>
+    <input type="submit" value="{% trans %}Close selected tickets{% endtrans %}">
+  </p>
+  {%- endif %}
+</form>
+<div class="pagination">{{ rendered_pagination }}</div>
+{% endblock %}

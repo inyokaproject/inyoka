@@ -12,6 +12,8 @@ import re
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.cache import cache
 from django.http import Http404
@@ -23,7 +25,7 @@ from django.utils.translation import gettext as _
 from freezegun import freeze_time
 from guardian.shortcuts import assign_perm
 
-from inyoka.forum.models import Forum, Topic
+from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
@@ -32,6 +34,8 @@ from inyoka.portal.models import (
     PrivateMessageEntry,
     StaticPage,
     Subscription,
+    Ticket,
+    TicketReason,
 )
 from inyoka.portal.user import Group, User
 from inyoka.portal.views import static_page
@@ -1792,3 +1796,253 @@ class WhoisOnline(TestCase):
     def test_post(self):
         response = self.client.post('/whoisonline/', data={}, follow=True)
         self.assertEqual(response.status_code, 405)
+
+
+class TestTicketViews(TestCase):
+    client_class = InyokaClient
+
+    def setUp(self):
+        super().setUp()
+
+        self.admin = User.objects.register_user(
+            'admin', 'admin@example.com', 'admin', False)
+        self.admin.is_superuser = True
+        self.admin.save()
+
+        self.user = User.objects.register_user(
+            'user', 'user@example.com', 'user', False)
+
+        self.manager = User.objects.register_user(
+            'manager', 'manager@example.com', 'manager', False)
+        # InyokaAuthBackend only honors group perms, so attach via group.
+        mgr_group = Group.objects.create(name='ticket-managers')
+        mgr_group.permissions.add(
+            Permission.objects.get(codename='manage_tickets_forum'))
+        self.manager.groups.add(mgr_group)
+
+        self.forum = Forum.objects.create(name='Forum')
+        self.topic = Topic.objects.create(
+            title='Topic', author=self.user, forum=self.forum)
+        self.post = Post.objects.create(
+            text='Post text', author=self.user, topic=self.topic, position=0)
+
+        post_ct = ContentType.objects.get_for_model(Post)
+        self.reason = TicketReason.objects.filter(content_type=post_ct).first()
+
+        def make_ticket(state, reporter=None):
+            return Ticket.objects.create(
+                content_object=self.post,
+                reporting_user=reporter or self.user,
+                reporting_time=dj_timezone.now(),
+                reason=self.reason,
+                state=state,
+            )
+
+        self.t_open = make_ticket(Ticket.OPEN)
+        self.t_in_progress = make_ticket(Ticket.IN_PROGRESS)
+        self.t_in_progress.owning_user = self.manager
+        self.t_in_progress.save()
+        self.t_closed = make_ticket(Ticket.CLOSED)
+
+        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_list_requires_permission(self):
+        self.client.logout()
+        self.client.login(username='user', password='user')
+        response = self.client.get('/tickets/list/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_list_default_filter_shows_active(self):
+        response = self.client.get('/tickets/list/')
+        self.assertEqual(response.status_code, 200)
+        ids = {t.id for t in response.context['tickets']}
+        self.assertEqual(ids, {self.t_open.id, self.t_in_progress.id})
+        self.assertEqual(response.context['current_state'], 'active')
+
+    def test_list_filter_open(self):
+        response = self.client.get('/tickets/list/?state=open')
+        self.assertEqual({t.id for t in response.context['tickets']},
+                         {self.t_open.id})
+
+    def test_list_filter_in_progress(self):
+        response = self.client.get('/tickets/list/?state=in_progress')
+        self.assertEqual({t.id for t in response.context['tickets']},
+                         {self.t_in_progress.id})
+
+    def test_list_filter_closed(self):
+        response = self.client.get('/tickets/list/?state=closed')
+        self.assertEqual({t.id for t in response.context['tickets']},
+                         {self.t_closed.id})
+
+    def test_list_filter_all(self):
+        response = self.client.get('/tickets/list/?state=all')
+        self.assertEqual(
+            {t.id for t in response.context['tickets']},
+            {self.t_open.id, self.t_in_progress.id, self.t_closed.id})
+
+    def test_list_invalid_filter_falls_back_to_active(self):
+        response = self.client.get('/tickets/list/?state=bogus')
+        self.assertEqual(response.context['current_state'], 'active')
+
+    def test_list_pagination(self):
+        for _i in range(30):
+            Ticket.objects.create(
+                content_object=self.post,
+                reporting_user=self.user,
+                reporting_time=dj_timezone.now(),
+                reason=self.reason,
+                state=Ticket.OPEN,
+            )
+        r1 = self.client.get('/tickets/list/?state=open')
+        r2 = self.client.get('/tickets/list/2/?state=open')
+        self.assertEqual(r1.status_code, 200)
+        self.assertEqual(r2.status_code, 200)
+        self.assertEqual(len(r1.context['tickets']), 25)
+        self.assertEqual(len(r2.context['tickets']), 30 + 1 - 25)
+
+    def test_list__empty_selection(self):
+        response = self.client.post(
+            '/tickets/list/', {'selected': []})
+
+        self.assertContains(response, 'No tickets selected.')
+
+    def test_close_selected_tickets(self):
+        self.client.logout()
+        self.client.login(username='manager', password='manager')
+        response = self.client.post(
+            '/tickets/list/', {'selected': [self.t_in_progress.id]})
+        self.assertEqual(response.status_code, 302)
+        self.t_in_progress.refresh_from_db()
+        self.assertEqual(self.t_in_progress.state, Ticket.CLOSED)
+        self.assertIsNotNone(self.t_in_progress.closed_time)
+
+    def test_ticket_own__not_allowed_method(self):
+        response = self.client.get(
+            '/tickets/%d/own/' % self.t_open.id)
+        self.assertEqual(response.status_code, 405)
+
+    def test_ticket_own(self):
+        response = self.client.post(
+            '/tickets/%d/own/' % self.t_open.id, follow=False)
+        self.assertEqual(response.status_code, 302)
+        self.t_open.refresh_from_db()
+        self.assertEqual(self.t_open.owning_user, self.admin)
+        self.assertEqual(self.t_open.state, Ticket.IN_PROGRESS)
+
+    def test_ticket_disown(self):
+        self.client.logout()
+        self.client.login(username='manager', password='manager')
+        response = self.client.post(
+            '/tickets/%d/disown/' % self.t_in_progress.id)
+        self.assertEqual(response.status_code, 302)
+        self.t_in_progress.refresh_from_db()
+        self.assertIsNone(self.t_in_progress.owning_user)
+        self.assertEqual(self.t_in_progress.state, Ticket.OPEN)
+
+    def test_ticket_disown__not_owner(self):
+        response = self.client.post(
+            '/tickets/%d/disown/' % self.t_in_progress.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit__not_owner(self):
+        response = self.client.get('/tickets/%d/edit/' % self.t_closed.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit__not_existing_ticket(self):
+        response = self.client.get('/tickets/913379/edit/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_edit__get(self):
+        self.t_closed.owning_user = self.admin
+        self.t_closed.save()
+
+        response = self.client.get('/tickets/%d/edit/' % self.t_closed.id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit__post(self):
+        self.t_closed.owning_user = self.admin
+        self.t_closed.save()
+
+        response = self.client.post('/tickets/%d/edit/' % self.t_closed.id, data={'owner_comment': 'foo'}, follow=True)
+        self.assertContains(response, 'The ticket comment was saved.')
+
+        self.t_closed.refresh_from_db()
+        self.assertEqual(self.t_closed.owner_comment, 'foo')
+
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/tickets/list/')
+
+    def test_ticketreason_list_get(self):
+        response = self.client.get('/ticketreason/list/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.reason, list(response.context['reasons']))
+
+    def test_ticketreason_delete(self):
+        reason = TicketReason.objects.create(content_type=ContentType.objects.get_for_model(Post), reason='reason')
+
+        response = self.client.post(
+            f'/ticketreason/{reason.id}/delete/',
+            {'confirm': 'Yes'}, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(TicketReason.objects.filter(id=reason.id).exists())
+
+    def test_ticketreason_delete_system_defined_blocked(self):
+        response = self.client.post(
+            '/ticketreason/%d/delete/' % self.reason.id,
+            {'confirm': 'Yes'}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(TicketReason.objects.filter(id=self.reason.id).exists())
+
+    def test_ticketreason_new__get(self):
+        response = self.client.get('/ticketreason/new/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_ticketreason_edit__post(self):
+        content_type = ContentType.objects.get_for_model(Post)
+        reason = TicketReason.objects.create(content_type=content_type, reason='reason')
+
+        response = self.client.post(f'/ticketreason/{reason.id}/edit/',
+                                    data={'content_type': content_type.id, 'reason': 'changed'},
+                                    follow=True)
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        reason.refresh_from_db()
+        self.assertEqual(reason.reason, 'changed')
+
+    def test_ticket_reason_subscription__get_not_allowed_method(self):
+        response = self.client.get('/ticketreason/all/subscribe/')
+        self.assertEqual(response.status_code, 405)
+
+    def test_ticket_reason_subscription__subscribe_all(self):
+        response = self.client.post('/ticketreason/all/subscribe/', follow=True)
+        self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        self.assertEqual(self.admin.ticketreason_set.count(), 3)
+
+    def test_ticket_reason_subscription__unsubscribe_all(self):
+        response = self.client.post('/ticketreason/all/unsubscribe/')
+        self.assertRedirects(response,
+                             f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [])
+
+    def test_ticket_reason_subscription__unsubscribe_one_id(self):
+        reason = TicketReason.objects.first()
+        reason.subscribers.add(self.admin)
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [reason])
+
+        response = self.client.post(f'/ticketreason/{reason.id}/unsubscribe/')
+        self.assertRedirects(response,
+                             f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [])
+
+    def test_ticket_reason_subscription__subscribe_one_id(self):
+        reason = TicketReason.objects.first()
+
+        response = self.client.post(f'/ticketreason/{reason.id}/subscribe/', follow=True)
+        self.assertRedirects(response,
+                             f'http://{settings.BASE_DOMAIN_NAME}/ticketreason/list/')
+
+        self.assertCountEqual(self.admin.ticketreason_set.all(), [reason])

@@ -7,7 +7,6 @@ Test forum views.
 :copyright: (c) 2012-2026 by the Inyoka Team, see AUTHORS for more details.
 :license: BSD, see LICENSE for more details.
 """
-
 import shutil
 from os import makedirs, path
 from random import randint
@@ -17,6 +16,8 @@ import feedparser
 import responses
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.core.cache import cache
 from django.http import Http404
 from django.test import RequestFactory
@@ -42,6 +43,7 @@ from inyoka.forum.models import (
     Topic,
     mark_all_forums_read,
 )
+from inyoka.portal.models import Ticket, TicketReason
 from inyoka.portal.user import User
 from inyoka.portal.utils import UbuntuVersion
 from inyoka.utils.storage import storage
@@ -127,9 +129,101 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             newtopic()
         Post.objects.bulk_create(posts)
 
-    def test_reported_topics(self):
-        response = self.client.get('/reported_topics/')
+    def test_create_ticket_for_post_get(self):
+        response = self.client.get('/post/%d/ticket/' % self.post.id)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['target'], self.post)
+        self.assertEqual(response.context['topic'], self.topic)
+
+    def test_create_ticket_for_topic_get(self):
+        response = self.client.get('/topic/%s/ticket/' % self.topic.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['target'], self.topic)
+        self.assertEqual(response.context['topic'], self.topic)
+
+    def test_create_ticket_reasons_filtered_to_post(self):
+        response = self.client.get('/post/%d/ticket/' % self.post.id)
+        post_ct = ContentType.objects.get_for_model(Post)
+        reasons = response.context['form'].fields['reason'].queryset
+        self.assertTrue(reasons.exists())
+        self.assertTrue(all(r.content_type_id == post_ct.id for r in reasons))
+
+    def test_create_ticket_reasons_filtered_to_topic(self):
+        response = self.client.get('/topic/%s/ticket/' % self.topic.slug)
+        topic_ct = ContentType.objects.get_for_model(Topic)
+        reasons = response.context['form'].fields['reason'].queryset
+        self.assertTrue(reasons.exists())
+        self.assertTrue(all(r.content_type_id == topic_ct.id for r in reasons))
+
+    def test_create_ticket_for_post_creates_ticket(self):
+        post_ct = ContentType.objects.get_for_model(Post)
+        reason = TicketReason.objects.filter(content_type=post_ct).first()
+        response = self.client.post(
+            '/post/%d/ticket/' % self.post.id,
+            {'reason': reason.id, 'reporter_comment': 'spam attempt'},
+        )
+        self.assertEqual(response.status_code, 302)
+        ticket = Ticket.objects.get(content_type=post_ct, object_id=self.post.id)
+        self.assertEqual(ticket.reporting_user, self.admin)
+        self.assertEqual(ticket.reason, reason)
+        self.assertEqual(ticket.state, Ticket.OPEN)
+
+    def test_create_ticket_for_topic_creates_ticket(self):
+        topic_ct = ContentType.objects.get_for_model(Topic)
+        reason = TicketReason.objects.filter(content_type=topic_ct).first()
+        response = self.client.post(
+            '/topic/%s/ticket/' % self.topic.slug,
+            {'reason': reason.id, 'reporter_comment': 'wrong forum'},
+        )
+        self.assertEqual(response.status_code, 302)
+        ticket = Ticket.objects.get(content_type=topic_ct, object_id=self.topic.id)
+        self.assertEqual(ticket.reporting_user, self.admin)
+        self.assertEqual(ticket.reason, reason)
+
+    def test_create_ticket__notification_send(self):
+        topic_ct = ContentType.objects.get_for_model(Topic)
+        reason = TicketReason.objects.filter(content_type=topic_ct).first()
+        reason.subscribers.add(self.admin)
+
+        self.client.post(
+            '/topic/%s/ticket/' % self.topic.slug,
+            {'reason': reason.id, 'reporter_comment': 'wrong forum'},
+        )
+
+        self.assertEqual(mail.outbox[0].subject,
+                         'inyokaproject.org: New ticket')
+
+    def test_create_ticket___subscriber_without_permission(self):
+        topic_ct = ContentType.objects.get_for_model(Topic)
+        reason = TicketReason.objects.filter(content_type=topic_ct).first()
+        reason.subscribers.add(self.user)
+
+        self.client.post(
+            '/topic/%s/ticket/' % self.topic.slug,
+            {'reason': reason.id, 'reporter_comment': 'wrong forum'},
+        )
+
+        self.assertCountEqual(reason.subscribers.all(),[])
+
+    def test_create_ticket_unknown_post_404(self):
+        response = self.client.get('/post/9999999/ticket/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_create_ticket_unknown_topic_404(self):
+        response = self.client.get('/topic/does-not-exist/ticket/')
+        self.assertEqual(response.status_code, 404)
+
+    def test_create_ticket_anonymous_redirects_to_login(self):
+        self.client.logout()
+        response = self.client.get('/post/%d/ticket/' % self.post.id)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('login', response['Location'])
+
+    def test_create_ticket_without_view_perm_denied(self):
+        self.client.logout()
+        self.client.login(username='user', password='user')
+        response = self.client.get('/post/%d/ticket/' % self.post.id)
+        self.assertEqual(response.status_code, 403)
 
     @patch('inyoka.forum.views.send_notification')
     def test_movetopic(self, mock_send):

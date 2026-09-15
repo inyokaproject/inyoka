@@ -13,12 +13,14 @@ import json
 import os
 
 from django import forms
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core import signing, validators
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -41,7 +43,7 @@ from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
 from inyoka.ikhaya.models import Category
-from inyoka.portal.models import Linkmap, StaticFile, StaticPage
+from inyoka.portal.models import Linkmap, StaticFile, StaticPage, Ticket, TicketReason
 from inyoka.portal.user import (
     User,
     UserBanned,
@@ -78,7 +80,7 @@ GLOBAL_PRIVILEGE_MODELS = {
     'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
-    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage', 'linkmap'),
+    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage', 'ticketreason', 'linkmap'),
 }
 
 NOTIFY_BY_CHOICES = (
@@ -862,7 +864,6 @@ class GroupForumPermissionForm(forms.Form):
             'forum.change_forum',
             'forum.delete_forum',
             'forum.delete_topic',
-            'forum.manage_reported_topic',
             'forum.view_topic',
         )
         forums = [tuple[1] for tuple in Forum.get_children_recursive(Forum.objects.get_sorted())]
@@ -1195,6 +1196,54 @@ class ConfigurationForm(forms.Form):
         except KeyError:
             raise forms.ValidationError(_('Invalid substitution pattern.'))
         return data
+
+
+class ManageTicketReasons(forms.ModelForm):
+    class Meta:
+        model = TicketReason
+        fields = ('content_type', 'reason')
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        inyoka_apps = [
+            a.name.replace('inyoka.', '')
+            for a in apps.get_app_configs()
+            if a.name.startswith('inyoka')
+        ]
+        self.fields['content_type'].queryset = ContentType.objects.filter(
+            app_label__in=inyoka_apps
+        )
+
+
+class CreateTicketForm(forms.ModelForm):
+    """Allows the user to report arbitrary Django objects."""
+    class Meta:
+        model = Ticket
+        fields = ('reason', 'reporter_comment')
+
+    def __init__(self, *args, content_type, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        self.fields['reason'].required = True
+        self.fields['reason'].queryset = TicketReason.objects.filter(
+            content_type=content_type
+        )
+
+
+class EditTicketOwnerCommentForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ('owner_comment',)
+
+
+class TicketListForm(forms.Form):
+    def __init__(self, tickets, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['selected'] = forms.MultipleChoiceField(
+            choices=[(t.id, str(t.id)) for t in tickets],
+            required=False,
+        )
 
 
 class TokenForm(forms.Form):
