@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-05 15:48+0200\n"
+"POT-Creation-Date: 2026-09-15 23:04+0200\n"
 "PO-Revision-Date: 2025-09-14 18:19+0200\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -17,9 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
-
-msgid "#"
-msgstr "#"
 
 #, python-format
 msgid "%(count)s vote"
@@ -59,9 +56,6 @@ msgstr "(Themenstarter)"
 msgid "(Un)lock"
 msgstr "(Ent)sperren"
 
-msgid "(undo)"
-msgstr "(rückgängig)"
-
 msgid "12 hours"
 msgstr "12 Stunden"
 
@@ -78,9 +72,6 @@ msgstr "<a href=\"%(link)s\">Beiträge</a> von <a href=\"%(userlink)s\">%(author
 #, python-format
 msgid "<a href=\"%(link)s\">Posts</a> by <a href=\"%(userlink)s\">%(author)s</a> in this topic"
 msgstr "<a href=\"%(link)s\">Beiträge</a> von <a href=\"%(userlink)s\">%(author)s</a> in diesem Thema"
-
-msgid "Action"
-msgstr "Aktionen"
 
 msgid "Action canceled."
 msgstr "Aktion abgebrochen."
@@ -103,12 +94,6 @@ msgstr "Mehrere Antworten erlauben"
 msgid "An old revision of the post was restored."
 msgstr "Eine ältere Revision des Beitrages wurde wiederhergestellt."
 
-msgid "Assign to me"
-msgstr "Mir zuweisen"
-
-msgid "Assigned to"
-msgstr "In Bearbeitung von"
-
 msgid "Attach to old topic"
 msgstr "An bestehendes Thema anhängen"
 
@@ -123,9 +108,6 @@ msgstr "Abbrechen"
 
 msgid "Captions"
 msgstr "Überschriften"
-
-msgid "Close selected tickets"
-msgstr "Schließe gewählte Meldungen"
 
 msgid "Count user posts"
 msgstr "Zähle Beiträge der Benutzer"
@@ -147,9 +129,6 @@ msgstr "Aktuelles Forum"
 
 msgid "Current revision"
 msgstr "Aktuelle Revision"
-
-msgid "Currently there are no reported topics."
-msgstr "Es gibt zurzeit keine gemeldeten Themen."
 
 msgid "Default text for new topics"
 msgstr "Standard Text für neue Beiträge"
@@ -283,10 +262,6 @@ msgstr "Gehe zu Beitrag"
 
 msgid "Here you can move a topic into another forum."
 msgstr "Hier kannst du ein Thema in ein anderes Forum verschieben."
-
-#, python-format
-msgid "Here you can report a topic to the moderators if it is against our <a href=\"%(link)s\">rules</a>. Please add a short explanation:"
-msgstr "Hier kannst du ein Thema den Moderatoren melden, falls es gegen unsere <a href=\"%(link)s\">Portalregeln</a> verstößt. Bitte füge eine kurze Beschreibung hinzu:"
 
 #, python-format
 msgid "Here you can report this to the moderators if it is against our <a href=\"%(link)s\">rules</a>. Please select a reason and add a short explanation:"
@@ -551,19 +526,6 @@ msgstr "Melden"
 msgid "Report to moderators"
 msgstr "Den Moderatoren melden"
 
-msgid "Report topic"
-msgstr "Thema melden"
-
-#, python-format
-msgid "Report topic “%(topic)s”"
-msgstr "Thema „%(topic)s“ melden"
-
-msgid "Reported by"
-msgstr "Gemeldet von"
-
-msgid "Reported topics"
-msgstr "Gemeldete Themen"
-
 msgid "Residence:"
 msgstr "Wohnort:"
 
@@ -624,9 +586,6 @@ msgstr "Meldung absenden"
 
 msgid "Subscribe"
 msgstr "Abonnieren"
-
-msgid "Subscribe to topic reports"
-msgstr "Themenmeldungen abonnieren"
 
 msgid "Support group"
 msgstr "Gruppe der Supporter"
@@ -784,9 +743,6 @@ msgstr "Dieser Beitrag ist verborgen. Entweder muss er von Moderatoren aktiviert
 msgid "This topic"
 msgstr "Dieses Thema"
 
-msgid "This topic is hidden due to possible spam."
-msgstr "Dieses Thema wurde aufgrund möglichen Spams verborgen"
-
 msgid "This topic is hidden. Either it needs to be activated by moderators or it has been hidden explicitly by moderators."
 msgstr "Dieses Thema ist verborgen. Entweder muss es von Moderatoren aktiviert werden oder es wurde explizit von Moderatoren verborgen."
 
@@ -866,9 +822,6 @@ msgstr "Ungelöste Themen"
 
 msgid "Unsubscribe"
 msgstr "Abbestellen"
-
-msgid "Unsubscribe from topic reports"
-msgstr "Themenmeldungen abbestellen"
 
 msgid "Version"
 msgstr "Version"
@@ -996,3 +949,4 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
+
