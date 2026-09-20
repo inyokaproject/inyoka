@@ -658,7 +658,7 @@ def get_permissions_for_app(application, filtered=None):
     ``GLOBAL_PRIVILEGE_MODELS`` for ``application`` and return a "list" of
     two-tuples of the form
     ``('app_label.permission_codename', 'Permission Name')``
-    orderd by the ``'app_label.permission_codename'``.
+    ordered by the ``'app_label.permission_codename'``.
 
     An optional ``filtered`` argument helps to filter out unwanted/unused
     permissions.
