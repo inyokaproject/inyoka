@@ -884,6 +884,7 @@ class GroupForumPermissionForm(forms.Form):
             'forum.change_forum',
             'forum.delete_forum',
             'forum.delete_topic',
+            'forum.manage_tickets_forum',
             'forum.view_topic',
         )
         forums = [tuple[1] for tuple in Forum.get_children_recursive(Forum.objects.get_sorted())]
