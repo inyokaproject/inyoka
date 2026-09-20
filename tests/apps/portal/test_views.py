@@ -12,7 +12,6 @@ import re
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
-from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.cache import cache
@@ -1815,10 +1814,9 @@ class TestTicketViews(TestCase):
         self.manager = User.objects.register_user(
             'manager', 'manager@example.com', 'manager', False)
         # InyokaAuthBackend only honors group perms, so attach via group.
-        mgr_group = Group.objects.create(name='ticket-managers')
-        mgr_group.permissions.add(
-            Permission.objects.get(codename='manage_tickets_forum'))
-        self.manager.groups.add(mgr_group)
+        self.mgr_group = Group.objects.create(name='ticket-managers')
+        assign_perm('forum.manage_tickets_forum', self.mgr_group)
+        self.manager.groups.add(self.mgr_group)
 
         self.forum = Forum.objects.create(name='Forum')
         self.topic = Topic.objects.create(
@@ -1909,9 +1907,13 @@ class TestTicketViews(TestCase):
 
     def test_close_selected_tickets(self):
         self.client.logout()
+
+        assign_perm('forum.moderate_forum', self.mgr_group, self.forum)
         self.client.login(username='manager', password='manager')
+
         response = self.client.post(
             '/tickets/list/', {'selected': [self.t_in_progress.id]})
+
         self.assertEqual(response.status_code, 302)
         self.t_in_progress.refresh_from_db()
         self.assertEqual(self.t_in_progress.state, Ticket.CLOSED)
