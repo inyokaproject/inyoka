@@ -676,9 +676,6 @@ class Ticket(models.Model):
         application='portal', null=True, blank=True)
 
     def can_moderate(self, user) -> bool:
-        if user.has_perm('forum.manage_tickets_forum'):
-            return True
-
         from inyoka.forum.models import Post, Topic
 
         obj = self.content_object
@@ -687,6 +684,6 @@ class Ticket(models.Model):
         elif isinstance(obj, Topic):
             forum = obj.forum
         else:
-            forum = None # default value of has_perm, so check global permission
+            return False # always bound to object
 
         return user.has_perm('forum.moderate_forum', forum)

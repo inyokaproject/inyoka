@@ -658,7 +658,7 @@ def get_permissions_for_app(application, filtered=None):
     ``GLOBAL_PRIVILEGE_MODELS`` for ``application`` and return a "list" of
     two-tuples of the form
     ``('app_label.permission_codename', 'Permission Name')``
-    orderd by the ``'app_label.permission_codename'``.
+    ordered by the ``'app_label.permission_codename'``.
 
     An optional ``filtered`` argument helps to filter out unwanted/unused
     permissions.
@@ -737,6 +737,9 @@ class GroupGlobalPermissionForm(forms.Form):
         'portal.add_linkmap',
         'portal.delete_linkmap',
         'portal.view_linkmap',
+        'portal.add_ticketreason',
+        'portal.delete_ticketreason',
+        'portal.view_ticketreason',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
@@ -881,6 +884,7 @@ class GroupForumPermissionForm(forms.Form):
             'forum.change_forum',
             'forum.delete_forum',
             'forum.delete_topic',
+            'forum.manage_tickets_forum',
             'forum.view_topic',
         )
         forums = [tuple[1] for tuple in Forum.get_children_recursive(Forum.objects.get_sorted())]
