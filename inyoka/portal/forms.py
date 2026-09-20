@@ -737,6 +737,9 @@ class GroupGlobalPermissionForm(forms.Form):
         'portal.add_linkmap',
         'portal.delete_linkmap',
         'portal.view_linkmap',
+        'portal.add_ticketreason',
+        'portal.delete_ticketreason',
+        'portal.view_ticketreason',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
