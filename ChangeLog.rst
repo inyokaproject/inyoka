@@ -28,6 +28,12 @@ Inyoka Changelog
 Unreleased 1.52.12 (2026-MM-DD)
 =====================
 
+Deployment notes
+----------------
+
+#. Update requirements
+#. Execute database migrations
+
 ✨ New features
 ---------------
 
@@ -35,6 +41,8 @@ Unreleased 1.52.12 (2026-MM-DD)
 
 🏗 Changes
 ----------
+
+* new ticketing system for Forum (topics & posts). The new global permissions ``forum.manage_tickets_forum`` and ``portal.change_ticketreason`` need to be assigned to groups manually.
 
 🗑 Deprecations
 --------------
