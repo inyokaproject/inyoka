@@ -63,17 +63,8 @@
              id="{{ topic.slug }}">{% trans %}Mark as solved{% endtrans %}</a>
         {% endif %} |
       {% endif %}
-      {% if topic.reported %}
-        {%- if can_moderate %}
-            <a href="{{ href('forum', 'reported_topics') }}"
-               class="action action_report admin_link">{% trans %}reported topic{% endtrans %}</a>
-        {%- else %}
-            <span class="action action_report reported_topic">{% trans %}reported topic{% endtrans %}</span>
-        {%- endif %}
-      {% else %}
-        <a href="{{ topic|url('ticket') }}"
-           class="action action_report">{% trans %}Report{% endtrans %}</a>
-      {% endif %}
+      <a href="{{ topic|url('ticket') }}"
+         class="action action_report">{% trans %}Report{% endtrans %}</a>
     {% endif %}
   </span>
   {%- if can_moderate %}
