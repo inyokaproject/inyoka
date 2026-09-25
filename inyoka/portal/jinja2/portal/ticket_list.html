@@ -73,6 +73,18 @@
                 {{ ticket.content_object }}
               {% endif %}
             </a>
+
+            <br>
+            {% trans %}Forum:{% endtrans %}
+            {% if ticket.content_object.topic %} {# object is a post #}
+              <a href="{{ ticket.content_object.topic.forum|url }}">
+                {{ ticket.content_object.topic.forum }}
+              </a>
+            {%- else %}  {# object is a topic #}
+              <a href="{{ ticket.content_object.forum|url }}">
+                {{ ticket.content_object.forum }}
+              </a>
+            {% endif %}
           {%- else %}
             {% trans %}(deleted){% endtrans %}
           {%- endif %}

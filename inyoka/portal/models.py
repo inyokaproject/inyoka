@@ -667,7 +667,9 @@ class Ticket(models.Model):
     state = models.SmallIntegerField(
         choices=STATE_CHOICES, default=OPEN, db_index=True)
     reason = models.ForeignKey(
-        TicketReason, null=True, blank=True, on_delete=models.SET_NULL)
+        TicketReason, null=True, blank=True, on_delete=models.SET_NULL,
+        verbose_name=gettext_lazy('Reason'),
+    )
     reporter_comment = InyokaMarkupField(
         verbose_name=gettext_lazy('Reporter comment'),
         application='portal', blank=True)
