@@ -441,22 +441,18 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             author=self.user,
             forum=self.forum2,
             hidden=True,
-            reported='spam',
-            reporter=self.system_user,
         )
         post = Post.objects.create(
             text='Post 1', author=self.user, topic=topic, position=0, hidden=False
         )
         self.make_valid_key()
         self.make_mark_ham()
+
         response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 302)
         post = Post.objects.select_related('topic').get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertFalse(post.topic.hidden)
-        # Don't remove the reported marker
-        self.assertIn('spam', post.topic.reported)
-        self.assertEqual(post.topic.reporter, self.system_user)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -474,14 +470,12 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         )
         self.make_valid_key()
         self.make_mark_spam()
+
         response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 302)
         post = Post.objects.select_related('topic').get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertTrue(post.topic.hidden)
-        # Don't mark the topic as reported
-        self.assertIsNone(post.topic.reported)
-        self.assertIsNone(post.topic.reporter)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -494,21 +488,18 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             author=self.user,
             forum=self.forum2,
             hidden=True,
-            reported='spam',
-            reporter=self.system_user,
         )
         post = Post.objects.create(
             text='Post 1', author=self.user, topic=topic, position=0
         )
         self.make_valid_key()
         self.make_mark_ham()
+
         response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 403)
-        post = Post.objects.select_related('topic__reporter').get(pk=post.pk)
+        post = Post.objects.get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertTrue(post.topic.hidden)
-        self.assertIn('spam', post.topic.reported)
-        self.assertEqual(post.topic.reporter, self.system_user)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -526,13 +517,12 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         )
         self.make_valid_key()
         self.make_mark_spam()
+
         response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 403)
         post = Post.objects.select_related('topic').get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertFalse(post.topic.hidden)
-        self.assertIsNone(post.topic.reported)
-        self.assertIsNone(post.topic.reporter)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
