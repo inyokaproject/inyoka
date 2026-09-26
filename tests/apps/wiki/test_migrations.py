@@ -40,7 +40,7 @@ class TestRevisionAdjustDatetime(MigratorTestCase):
             text=text,
             user=user,
             change_date=datetime.datetime(
-                2023, 5, 26, 3, 34, 54, tzinfo=datetime.timezone.utc
+                2023, 5, 26, 3, 34, 54, tzinfo=datetime.UTC
             ),
             note='Created',
         )
@@ -56,7 +56,7 @@ class TestRevisionAdjustDatetime(MigratorTestCase):
         revision = page_model.objects.get(id=self.page_id).last_rev
         self.assertEqual(
             revision.change_date,
-            datetime.datetime(2023, 5, 26, 5, 34, 54, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2023, 5, 26, 5, 34, 54, tzinfo=datetime.UTC),
         )
         self.assertEqual(
             revision.change_date,
@@ -111,7 +111,7 @@ class TestWikiIndexExistingUntouched(MigratorTestCase):
             page=p,
             text=text,
             user=user,
-            change_date=datetime.datetime(2025, 5, 2, 7, 34, 50, tzinfo=datetime.timezone.utc),
+            change_date=datetime.datetime(2025, 5, 2, 7, 34, 50, tzinfo=datetime.UTC),
             note='manual init',
         )
         p.rev.save()

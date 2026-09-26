@@ -275,7 +275,7 @@ class TestIndex(TestCase):
             text="a2Text",
             publication_datetime=datetime.datetime(2005,2, 10,
                                                    12, 0,
-                                                   tzinfo=datetime.timezone.utc),
+                                                   tzinfo=datetime.UTC),
             category=self.cat,
             public=True,
         )
@@ -290,7 +290,7 @@ class TestIndex(TestCase):
     def test_month(self):
         article2 = Article.objects.create(author=self.admin, subject="a2Subject",
                                               intro="a2Intro", text="a2Text",
-                                              publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.timezone.utc),
+                                              publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.UTC),
                                               category=self.cat)
 
         response = self.client.get('/2005/2/')
@@ -311,12 +311,12 @@ class TestIndex(TestCase):
         for i in range(2, 20):
             Article.objects.create(author=self.admin, subject=f"a{i}Subject",
                                intro=f"a{i}Intro", text=f"a{i}Text",
-                               publication_datetime=datetime.datetime(2005, 2, i,12, 0, tzinfo=datetime.timezone.utc),
+                               publication_datetime=datetime.datetime(2005, 2, i,12, 0, tzinfo=datetime.UTC),
                                category=self.cat)
 
         article_last = Article.objects.create(author=self.admin, subject="aLastSubject",
                                intro="aLastIntro", text="aLastText",
-                               publication_datetime=datetime.datetime(2004, 5, 1, 13, 0, tzinfo=datetime.timezone.utc),
+                               publication_datetime=datetime.datetime(2004, 5, 1, 13, 0, tzinfo=datetime.UTC),
                                category=self.cat)
 
         response = self.client.get('/2/')
@@ -354,7 +354,7 @@ class TestIndex(TestCase):
     def test_anonymous_user__no_unpublished_articles(self):
         article_public = Article.objects.create(author=self.admin, subject="a2Subject",
                                           intro="a2Intro", text="a2Text",
-                                          publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.timezone.utc),
+                                          publication_datetime=datetime.datetime(2005, 2, 10, 12, 0, tzinfo=datetime.UTC),
                                           category=self.cat,
                                           public=True)
 
@@ -368,32 +368,32 @@ class TestIndex(TestCase):
     def test_order_of_articles(self):
         old_public = Article.objects.create(author=self.admin, subject="a2Subject",
                                                 intro="a2Intro", text="a2Text",
-                                                publication_datetime=datetime.datetime(2005, 2, 10,12, 0, tzinfo=datetime.timezone.utc),
+                                                publication_datetime=datetime.datetime(2005, 2, 10,12, 0, tzinfo=datetime.UTC),
                                                 category=self.cat,
                                                 public=True)
 
         public = Article.objects.create(author=self.admin, subject="aPublicSubject",
                                           intro="aPublicIntro", text="aPublicText",
-                                          publication_datetime=datetime.datetime(2024, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
+                                          publication_datetime=datetime.datetime(2024, 2, 10, 10, 0, tzinfo=datetime.UTC),
                                           category=self.cat,
                                           public=True)
 
         public_same_day = Article.objects.create(author=self.admin, subject="aPublic2Subject",
                                           intro="aPublic2Intro", text="aPublic2Text",
-                                          publication_datetime=datetime.datetime(2024, 2, 10,20, 0, tzinfo=datetime.timezone.utc),
+                                          publication_datetime=datetime.datetime(2024, 2, 10,20, 0, tzinfo=datetime.UTC),
                                           category=self.cat,
                                           public=True)
 
         updated = Article.objects.create(author=self.admin, subject="aUpdateSubject",
                                          intro="aUpdateIntro", text="aUpdateText",
-                                         publication_datetime=datetime.datetime(2023, 2, 10, 10, 0, tzinfo=datetime.timezone.utc),
-                                         updated=datetime.datetime(2024, 2, 11, 21, 0, tzinfo=datetime.timezone.utc),
+                                         publication_datetime=datetime.datetime(2023, 2, 10, 10, 0, tzinfo=datetime.UTC),
+                                         updated=datetime.datetime(2024, 2, 11, 21, 0, tzinfo=datetime.UTC),
                                          category=self.cat,
                                          public=True)
 
         old_draft = Article.objects.create(author=self.admin, subject="aOldDraftSubject",
                                                 intro="aOldDraftIntro", text="aOldDraftText",
-                                                publication_datetime=datetime.datetime(2005, 2, 10, 20, 0, tzinfo=datetime.timezone.utc),
+                                                publication_datetime=datetime.datetime(2005, 2, 10, 20, 0, tzinfo=datetime.UTC),
                                                 category=self.cat,
                                                 public=False)
 
@@ -1054,14 +1054,14 @@ class TestArchive(TestCase):
         for i in range(1, 12):
             Article.objects.create(author=self.admin, subject=f"a{i}Subject",
                                    intro=f"a{i}Intro", text=f"a{i}Text",
-                                   publication_datetime=datetime.datetime(2005, i, 2, 12, 0, tzinfo=datetime.timezone.utc),
+                                   publication_datetime=datetime.datetime(2005, i, 2, 12, 0, tzinfo=datetime.UTC),
                                    category=self.cat,
                                    public=True,
                                    )
 
         Article.objects.create(author=self.user, subject="aLastSubject",
                                intro="aLastIntro", text="aLastText",
-                               publication_datetime=datetime.datetime(2004, 5, 12, 13, 0, tzinfo=datetime.timezone.utc),
+                               publication_datetime=datetime.datetime(2004, 5, 12, 13, 0, tzinfo=datetime.UTC),
                                category=self.cat,
                                public=True,
                                )
@@ -1444,7 +1444,7 @@ class TestEventDelete(TestCase):
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='test', password='test')
 
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.UTC)
         self.event = Event.objects.create(
             name='Event',
             start=now,
