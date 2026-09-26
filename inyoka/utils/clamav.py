@@ -19,21 +19,15 @@ import re
 import socket
 import struct
 import sys
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import IO, AnyStr, Generator
+from typing import IO, AnyStr, Self
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from inyoka.utils.logger import logger
-
-if sys.version_info < (3, 11):
-    from typing import TypeVar
-
-    Self = TypeVar('Self', bound='Clamav')
-else:
-    from typing import Self
 
 
 class ClamdError(Exception):
@@ -92,7 +86,7 @@ class Clamav:
             self.clamd_socket.settimeout(self.timeout)
 
             return self
-        except socket.error as e:
+        except OSError as e:
             self.__exit__(*sys.exc_info())
             raise ClamdConnectionError(e)
 
@@ -153,7 +147,7 @@ class Clamav:
         if args:
             concat_args = ' ' + ' '.join(args)
 
-        cmd = f'n{cmd}{concat_args}\n'.encode('utf-8')
+        cmd = f'n{cmd}{concat_args}\n'.encode()
         self.clamd_socket.send(cmd)
 
     def _recv_response(self) -> Generator[str, None, None]:
@@ -167,7 +161,7 @@ class Clamav:
                     stripped_line = line.decode('utf-8').strip()
                     if stripped_line:
                         yield stripped_line
-        except (socket.error, socket.timeout) as e:
+        except (OSError, TimeoutError) as e:
             self.__exit__(*sys.exc_info())
             raise ClamdConnectionError(f'Error while reading from socket: {e.args}')
 

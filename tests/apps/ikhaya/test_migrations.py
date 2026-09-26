@@ -55,7 +55,7 @@ class TestArticlePublicationMerge(MigratorTestCase):
 
         self.assertEqual(
             a.publication_datetime,
-            datetime.datetime(2024, 1, 1, 10, 0, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2024, 1, 1, 10, 0, tzinfo=datetime.UTC),
         )
 
     def test_publication_datetime__second_article(self):
@@ -64,7 +64,7 @@ class TestArticlePublicationMerge(MigratorTestCase):
 
         self.assertEqual(
             a.publication_datetime,
-            datetime.datetime(2023, 5, 15, 23, 0, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2023, 5, 15, 23, 0, tzinfo=datetime.UTC),
         )
 
 
@@ -91,10 +91,10 @@ class TestAdjustDatetime(MigratorTestCase):
             category=category,
             author=user,
             publication_datetime=datetime.datetime(
-                2023, 5, 26, 3, 34, 54, tzinfo=datetime.timezone.utc
+                2023, 5, 26, 3, 34, 54, tzinfo=datetime.UTC
             ),
             updated=datetime.datetime(
-                2023, 5, 26, 3, 34, 54, tzinfo=datetime.timezone.utc
+                2023, 5, 26, 3, 34, 54, tzinfo=datetime.UTC
             ),
         )
         self.a_id = a.id
@@ -105,10 +105,10 @@ class TestAdjustDatetime(MigratorTestCase):
             category=category,
             author=user,
             publication_datetime=datetime.datetime(
-                2023, 5, 25, 3, 34, 54, tzinfo=datetime.timezone.utc
+                2023, 5, 25, 3, 34, 54, tzinfo=datetime.UTC
             ),
             updated=datetime.datetime(
-                2023, 5, 25, 1, 34, 54, tzinfo=datetime.timezone.utc
+                2023, 5, 25, 1, 34, 54, tzinfo=datetime.UTC
             ),
         )
         self.a2_id = a2.id
@@ -119,7 +119,7 @@ class TestAdjustDatetime(MigratorTestCase):
             text='Comment 1',
             author=user,
             pub_date=datetime.datetime(
-                2023, 5, 26, 3, 34, 54, tzinfo=datetime.timezone.utc
+                2023, 5, 26, 3, 34, 54, tzinfo=datetime.UTC
             ),
         )
         self.comment_id__cest = comment__cest.id
@@ -129,7 +129,7 @@ class TestAdjustDatetime(MigratorTestCase):
             text='Comment 1',
             author=user,
             pub_date=datetime.datetime(
-                2024, 1, 16, 21, 57, 1, tzinfo=datetime.timezone.utc
+                2024, 1, 16, 21, 57, 1, tzinfo=datetime.UTC
             ),
         )
         self.comment_id__cet = comment__cet.id
@@ -140,7 +140,7 @@ class TestAdjustDatetime(MigratorTestCase):
             text='Report 1',
             author=user,
             pub_date=datetime.datetime(
-                2023, 4, 16, 5, 27, tzinfo=datetime.timezone.utc
+                2023, 4, 16, 5, 27, tzinfo=datetime.UTC
             ),
         )
         self.report_id = report.id
@@ -152,7 +152,7 @@ class TestAdjustDatetime(MigratorTestCase):
             c = comment_model.objects.get(id=self.comment_id__cest)
             self.assertEqual(
                 c.pub_date,
-                datetime.datetime(2023, 5, 26, 5, 34, 54, tzinfo=datetime.timezone.utc),
+                datetime.datetime(2023, 5, 26, 5, 34, 54, tzinfo=datetime.UTC),
             )
             self.assertEqual(
                 c.pub_date,
@@ -171,7 +171,7 @@ class TestAdjustDatetime(MigratorTestCase):
             c = comment_model.objects.get(id=self.comment_id__cet)
             self.assertEqual(
                 c.pub_date,
-                datetime.datetime(2024, 1, 16, 22, 57, 1, tzinfo=datetime.timezone.utc),
+                datetime.datetime(2024, 1, 16, 22, 57, 1, tzinfo=datetime.UTC),
             )
             self.assertEqual(
                 c.pub_date,
@@ -207,16 +207,16 @@ class TestAdjustDatetime(MigratorTestCase):
         # publication_datetime should be the same
         self.assertEqual(
             a.publication_datetime,
-            datetime.datetime(2023, 5, 26, 3, 34, 54, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2023, 5, 26, 3, 34, 54, tzinfo=datetime.UTC),
         )
         self.assertEqual(
             a.updated,
-            datetime.datetime(2023, 5, 26, 5, 34, 54, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2023, 5, 26, 5, 34, 54, tzinfo=datetime.UTC),
         )
 
         a2 = article_model.objects.get(id=self.a2_id)
         self.assertEqual(
             a2.publication_datetime,
-            datetime.datetime(2023, 5, 25, 3, 34, 54, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2023, 5, 25, 3, 34, 54, tzinfo=datetime.UTC),
         )
         self.assertIsNone(a2.updated)

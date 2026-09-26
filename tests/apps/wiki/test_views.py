@@ -2543,7 +2543,7 @@ class TestDoExport(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('äöü'.encode('utf-8'), response.content)
+        self.assertIn('äöü'.encode(), response.content)
 
 
 class TestDoAttach(TestCase):

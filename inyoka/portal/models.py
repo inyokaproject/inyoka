@@ -538,7 +538,7 @@ class SpamEmailAddressManager(models.Manager):
                 zipfile.ZipFile(io.BytesIO(zip_response.content)) as z,
                 z.open(file_name) as csv_file,
             ):
-                reader = csv.reader((l.decode() for l in csv_file))
+                reader = csv.reader(l.decode() for l in csv_file)
 
                 for row in reader:
                     email = row[0].strip().lower()

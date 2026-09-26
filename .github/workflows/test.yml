@@ -22,12 +22,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.14', '3.13', '3.12', '3.11', '3.10']
+        python-version: ['3.14', '3.13', '3.12', '3.11']
         database: ['postgresql', 'sqlite']
         theme: ['', 'theme-ubuntuusers']
 
         include:
-          - python-version: 3.12
+          - python-version: 3.14
             database: 'postgresql'
             theme: ''
             build_docs: true
