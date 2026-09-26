@@ -575,17 +575,12 @@ class Topic(models.Model):
     sticky = models.BooleanField(default=False, db_index=True)
     solved = models.BooleanField(default=False)
     locked = models.BooleanField(default=False)
-    reported = InyokaMarkupField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
     ubuntu_version = models.CharField(max_length=5, null=True, blank=True)
     ubuntu_distro = models.CharField(max_length=40, null=True, blank=True)
     has_poll = models.BooleanField(default=False)
 
     forum = models.ForeignKey(Forum, related_name='topics',
-        on_delete=models.PROTECT)
-    reporter = models.ForeignKey(User, null=True, related_name='+',
-        on_delete=models.PROTECT)
-    report_claimed_by = models.ForeignKey(User, null=True, related_name='+',
         on_delete=models.PROTECT)
     author = models.ForeignKey(User, related_name='topics',
         on_delete=models.PROTECT)
