@@ -48,8 +48,13 @@ def _clean_expired_users():
     deleted after ACTIVATION_HOURS (default 48h).
     """
     expired_datetime = dj_timezone.now() - timedelta(hours=settings.ACTIVATION_HOURS)
-    user_query = (User.objects.filter(status=User.STATUS_INACTIVE).filter(date_joined__lte=expired_datetime)
-                     .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
+    user_query = (
+        User.objects.filter(status=User.STATUS_INACTIVE)
+        .filter(date_joined__lte=expired_datetime)
+        .exclude(
+            username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}
+        )
+    )
 
     for user in user_query:
         if not user.has_content():
@@ -68,8 +73,9 @@ def _clean_inactive_users():
     USER_INACTIVE_DAYS (default one year) ago.
     """
     inactive_datetime = dj_timezone.now() - timedelta(days=settings.USER_INACTIVE_DAYS)
-    user_query = (User.objects.filter(last_login__lte=inactive_datetime)
-                  .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
+    user_query = User.objects.filter(last_login__lte=inactive_datetime).exclude(
+        username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}
+    )
 
     for user in user_query:
         if not user.has_content():
