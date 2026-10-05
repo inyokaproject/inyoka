@@ -114,3 +114,11 @@ def update_spam_email_list_yearly():
     as that's also the update rate according to the stopforumspam website.
     """
     SpamEmailAddress.objects.update_spam_emails(days=365)
+
+
+@shared_task
+def clean_spam_email_list():
+    """
+    Prunes old mail address entries from the database.
+    """
+    SpamEmailAddress.objects.prune_old_entries()

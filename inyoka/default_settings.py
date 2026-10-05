@@ -320,6 +320,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'inyoka.portal.tasks.update_spam_email_list_daily',
         'schedule': timedelta(hours=2),
     },
+    'clean-spam-email-list': {
+        'task': 'inyoka.portal.tasks.clean_spam_email_list',
+        'schedule': crontab(hour=4, minute=15, day_of_week='tuesday'),
+    },
     'render_all_wiki_pages': {
         'task': 'inyoka.wiki.tasks.render_all_pages',
         'schedule': crontab(hour=23, minute=5),
