@@ -56,6 +56,8 @@ Deployment notes
 🔒 Security
 -----------
 
+* Update requirements (at least ``django`` contains security fixes)
+
 
 1.52.11 (2026-08-24)
 ====================
