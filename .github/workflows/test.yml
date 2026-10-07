@@ -227,7 +227,7 @@ jobs:
           name: 'Inyoka_Documentation'
           path: 'docs'
       - name: Upload artifact for GitHub pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: 'docs'
       - name: Deploy to GitHub Pages
