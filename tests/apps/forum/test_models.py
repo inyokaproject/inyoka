@@ -26,15 +26,6 @@ from tests.apps.forum.forum_test_class import (
 )
 
 
-class TestAttachmentModel(TestCase):
-    def test_regression_ticket760(self):
-        a = Attachment.create('test.txt', ContentFile('test'), 'text/plain', [])
-        try:
-            self.assertEqual(a.contents, b'test')
-        finally:
-            a.delete()  # Yank the file from the filesystem
-
-
 class TestForumModel(ForumTestCase):
 
     def test_automatic_slug(self):

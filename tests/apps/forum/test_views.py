@@ -1022,10 +1022,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             '<div class="text"><p>newpost text</p></div>', content, count=1
         )
         att = Attachment.objects.get()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         self.assertInHTML(
-            pattern
-            % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name},
+            f'<li><a href="{att.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
@@ -1096,25 +1094,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             count=1,
         )
         att1, att2 = Attachment.objects.all()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         content = response.content.decode()
         self.assertInHTML(
-            pattern
-            % {
-                'url': att1.get_absolute_url(),
-                'comment': att1.comment,
-                'name': att1.name,
-            },
+            f'<li><a href="{att1.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
         self.assertInHTML(
-            pattern
-            % {
-                'url': att2.get_absolute_url(),
-                'comment': att2.comment,
-                'name': att2.name,
-            },
+            f'<li><a href="{att2.get_absolute_url()}" type="image/png">newpost_second_file.png (276 Bytes) <br> newpost comment for file 2</a></li>',
             content,
             count=1,
         )
@@ -1532,10 +1519,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             '<div class="text"><p>newpost text</p></div>', content, count=1
         )
         att = Attachment.objects.get()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         self.assertInHTML(
-            pattern
-            % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name},
+            f'<li><a href="{att.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
@@ -1604,25 +1589,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             count=1,
         )
         att1, att2 = Attachment.objects.all()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         content = response.content.decode()
         self.assertInHTML(
-            pattern
-            % {
-                'url': att1.get_absolute_url(),
-                'comment': att1.comment,
-                'name': att1.name,
-            },
+            f'<li><a href="{att1.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
         self.assertInHTML(
-            pattern
-            % {
-                'url': att2.get_absolute_url(),
-                'comment': att2.comment,
-                'name': att2.name,
-            },
+            f'<li><a href="{att2.get_absolute_url()}" type="image/png">newpost_second_file.png (276 Bytes) <br> newpost comment for file 2</a></li>',
             content,
             count=1,
         )

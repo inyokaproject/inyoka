@@ -8,14 +8,8 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.utils.translation import gettext_lazy
-from PIL import Image
 
 from inyoka.portal.utils import get_ubuntu_versions
-
-# initialize PIL to make Image.ID available
-Image.init()
-SUPPORTED_IMAGE_TYPES = ['image/%s' % m.lower() for m in Image.ID]
-
 
 POSTS_PER_PAGE = 15
 TOPICS_PER_PAGE = 30

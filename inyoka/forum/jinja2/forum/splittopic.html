@@ -84,29 +84,7 @@
               <div class="text">
                 {{ post.get_text() }}
               </div>
-              {%- set attachments = post.grouped_attachments %}
-              {%- if attachments %}
-                <dl class="attachments">
-                  {%- for group, list, class in attachments %}
-                    {%- if group %}
-                      <dt>{{ group }}</dt>
-                      <ul class="attr_list{% if class %} {{ class }}{% endif %}">
-                      {%- for att in list %}
-                        <li>{{ att.html_representation }}</li>
-                      {%- endfor %}
-                      </ul>
-                    {%- else %}
-                      {%- for att in list %}
-                        <dt>{{ att.name|e }} ({{ att.size|filesizeformat(true) }})</dt>
-                        {%- if att.comment %}
-                          <dd class="comment">{{ att.comment|e }}</dd>
-                        {%- endif %}
-                        <dd>{{ att.html_representation }}</dd>
-                      {%- endfor %}
-                    {%- endif %}
-                  {%- endfor %}
-                </dl>
-              {%- endif %}
+
               {%- if post.author.signature and not request.user.settings['hide_signatures'] %}
                 <div class="signature">
                   {{ post.author.signature_rendered }}

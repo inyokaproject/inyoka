@@ -7,7 +7,6 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import os
 import pickle
 import re
 from datetime import datetime, timezone
@@ -27,16 +26,15 @@ from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.db.models import Count, F, Max, QuerySet, Sum
 from django.utils import timezone as dj_timezone
-from django.utils.encoding import DjangoUnicodeDecodeError, force_str
-from django.utils.html import escape, format_html
+from django.utils.encoding import force_str
+from django.utils.html import escape
 from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy, pgettext
+from django.utils.translation import gettext_lazy
 from werkzeug.utils import secure_filename
 
 from inyoka.forum.constants import (
     CACHE_PAGES_COUNT,
     POSTS_PER_PAGE,
-    SUPPORTED_IMAGE_TYPES,
     UBUNTU_DISTROS,
 )
 from inyoka.forum.notifications import send_ticket_notification
@@ -50,8 +48,6 @@ from inyoka.utils.database import (
     model_or_none,
 )
 from inyoka.utils.decorators import deferred
-from inyoka.utils.highlight import highlight_code
-from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.spam import mark_ham, mark_spam
@@ -1056,22 +1052,8 @@ class Post(models.Model, LockableObject):
         old_topic.forum.invalidate_topic_cache()
 
     @property
-    def grouped_attachments(self):
-        def expr(v):
-            if not v.mimetype.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
-                return ''
-            return _('Pictures')
-
-        if hasattr(self, '_attachments_cache'):
-            attachments = sorted(self._attachments_cache, key=expr)
-        else:
-            attachments = sorted(self.attachments.all(), key=expr)
-
-        grouped = [
-            (x[0], list(x[1]), 'broken' if not x[0] else '')
-            for x in groupby(attachments, expr)
-        ]
-        return grouped
+    def ordered_attachments(self):
+        return sorted(self.attachments.all(), key=lambda o: o.name)
 
     def check_ownpost_limit(self, type='edit'):
         if type == 'edit':
@@ -1218,9 +1200,6 @@ class Attachment(models.Model):
         Delete the attachment from the filesystem and
         also mark the database-object for deleting.
         """
-        thumb_path = self.get_thumbnail_path()
-        if thumb_path and path.exists(thumb_path):
-            os.remove(thumb_path)
         self.file.delete(save=False)
         super().delete()
 
@@ -1252,104 +1231,10 @@ class Attachment(models.Model):
             attachment.file.close()
 
     @property
-    def size(self):
+    def size(self) -> int:
         """The size of the attachment in bytes."""
         f = self.file
-        return f.size if f.storage.exists(f.name) else 0.0
-
-    @property
-    def contents(self):
-        """
-        The raw contents of the file.  This is usually unsafe because
-        it can cause the memory limit to be reached if the file is too
-        big.
-
-        This method only opens files that are less than 1KB great, if the
-        file is greater we return None.
-        """
-        f = self.file
-        size = self.size
-        if (size / 1024) > 1 or size == 0.0:
-            return
-
-        with f.file as fobj:
-            return fobj.read()
-
-    def get_thumbnail_path(self):
-        """
-        Returns the path to the thumbnail file.
-        """
-        thumbnail_path = self.file.name
-        img_path = path.join(settings.MEDIA_ROOT,
-                             'forum/thumbnails/%s-%s' % (self.id, thumbnail_path.split('/')[-1]))
-        return get_thumbnail(self.file.path, img_path, *settings.FORUM_THUMBNAIL_SIZE)
-
-    @property
-    def html_representation(self):
-        """
-        This method returns a `HTML` representation of the attachment for the
-        `show_action` page.  If this method does not know about an internal
-        representation for the object the return value will be an download
-        link to the raw attachment.
-        """
-        url = escape(self.get_absolute_url())
-        show_thumbnails = current_request.user.settings.get(
-            'show_thumbnails', False)
-        show_preview = current_request.user.settings.get(
-            'show_preview', False)
-
-        def isimage():
-            """
-            This helper returns True if this attachment is a supported image,
-            else False.
-            """
-            return True if self.mimetype in SUPPORTED_IMAGE_TYPES else False
-
-        def istext():
-            """
-            This helper returns True if this attachment is a text file.
-            """
-            return self.mimetype.startswith('text/')
-
-        def thumbnail():
-            """
-            This helper returns the thumbnail url of this attachment or None
-            if there is no way to create a thumbnail.
-            """
-            thumb = self.get_thumbnail_path()
-            if thumb:
-                return href('media', 'forum/thumbnails/%s' % thumb.split('/')[-1])
-            return thumb
-
-        if show_preview and show_thumbnails and isimage():
-            thumb = thumbnail()
-            if thumb:
-                return format_html(
-                    '<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
-                    url, thumb, self.comment, self.comment,
-                )
-            else:
-                linktext = pgettext(
-                    'Link text to an image attachment',
-                    'View %(name)s'
-                ) % {'name': self.name}
-                return format_html(
-                    '<a href="{}" type="{}" title="{}">{}</a>',
-                    url, self.mimetype, self.comment, linktext
-                )
-        elif show_preview and istext():
-            contents = self.contents
-            if contents is not None:
-                try:
-                    highlighted = highlight_code(force_str(contents), mimetype=self.mimetype)
-                    return format_html('<div class="code">{}</div>', highlighted)
-                except DjangoUnicodeDecodeError:
-                    pass
-
-        linktext = pgettext('Link text to download an attachment',
-            'Download %(name)s') % {'name': self.name}
-        return format_html('<a href="{}" type="{}" title="{}">{}</a>',
-                           url, self.mimetype, self.comment, linktext)
+        return f.size if f.storage.exists(f.name) else 0
 
     def get_absolute_url(self, action=None):
         return self.file.url

@@ -33,10 +33,11 @@ class TestEditBlogForm(TestCase):
         Test that the clamav validator runs on icon field.
         We remove the checks for a valid image file with python mocks.
         """
-        mock_method.return_value = EICAR
-
         EICAR.seek(0)
-        upload_object = SimpleUploadedFile('eicar', EICAR.read())
+        upload_object = SimpleUploadedFile('eicar.bat', EICAR.read())
+
+        mock_method.return_value = upload_object
+
         form = self.form(
             data={
                 'name': 'f',
