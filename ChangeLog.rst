@@ -25,8 +25,8 @@ Inyoka Changelog
    -----------
 
 
-Unreleased 1.52.12 (2026-MM-DD)
-=====================
+1.52.12 (2026-10-10)
+====================
 
 Deployment notes
 ----------------
@@ -44,14 +44,6 @@ Deployment notes
 
 * new ticketing system for Forum (topics & posts). The new global permissions ``forum.manage_tickets_forum`` and ``portal.change_ticketreason`` need to be assigned to groups manually.
 
-🗑 Deprecations
---------------
-
-🔥 Removals
------------
-
-🐛 Fixes
---------
 
 🔒 Security
 -----------
