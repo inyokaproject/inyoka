@@ -1,12 +1,13 @@
 """
-    inyoka.portal.tasks
-    ~~~~~~~~~~~~~~~~~~~~
+inyoka.portal.tasks
+~~~~~~~~~~~~~~~~~~~~
 
-    Celery Tasks for our Portal App.
+Celery Tasks for our Portal App.
 
-    :copyright: (c) 2011-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2011-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 from datetime import timedelta
 from time import time
 
@@ -20,6 +21,8 @@ from inyoka.portal.models import PrivateMessageEntry
 from inyoka.portal.user import User
 from inyoka.utils.logger import logger
 from inyoka.utils.storage import storage
+
+from .models import SpamEmailAddress
 
 
 @shared_task
@@ -38,14 +41,20 @@ def check_for_user_record():
 def clean_expired_users():
     _clean_expired_users()
 
+
 def _clean_expired_users():
     """
     Deletes all never activated Users, except system users. A user will be
     deleted after ACTIVATION_HOURS (default 48h).
     """
     expired_datetime = dj_timezone.now() - timedelta(hours=settings.ACTIVATION_HOURS)
-    user_query = (User.objects.filter(status=User.STATUS_INACTIVE).filter(date_joined__lte=expired_datetime)
-                     .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
+    user_query = (
+        User.objects.filter(status=User.STATUS_INACTIVE)
+        .filter(date_joined__lte=expired_datetime)
+        .exclude(
+            username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}
+        )
+    )
 
     for user in user_query:
         if not user.has_content():
@@ -57,14 +66,16 @@ def _clean_expired_users():
 def clean_inactive_users():
     _clean_inactive_users()
 
+
 def _clean_inactive_users():
     """
     Deletes Users with no content and a last login more than
     USER_INACTIVE_DAYS (default one year) ago.
     """
     inactive_datetime = dj_timezone.now() - timedelta(days=settings.USER_INACTIVE_DAYS)
-    user_query = (User.objects.filter(last_login__lte=inactive_datetime)
-                  .exclude(username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}))
+    user_query = User.objects.filter(last_login__lte=inactive_datetime).exclude(
+        username__in={settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER}
+    )
 
     for user in user_query:
         if not user.has_content():
@@ -87,5 +98,33 @@ def query_counter_task(cache_key, sql):
 @shared_task
 def clean_privmsg_folders():
     """Clean private message folders."""
-    logger.info("Deleting private messages after end of cache duration")
+    logger.info('Deleting private messages after end of cache duration')
     PrivateMessageEntry.clean_private_message_folders()
+
+
+@shared_task
+def update_spam_email_list_daily():
+    """
+    Uses the daily list to update the database entries.
+    According to the stopforumspam website it is updated hourly and
+    can be fetched 24 times per day.
+    """
+    SpamEmailAddress.objects.update_spam_emails()
+
+
+@shared_task
+def update_spam_email_list_yearly():
+    """
+    Uses the list with entries from the last year to update the database entries.
+    The file should be only fetched once a day,
+    as that's also the update rate according to the stopforumspam website.
+    """
+    SpamEmailAddress.objects.update_spam_emails(days=365)
+
+
+@shared_task
+def clean_spam_email_list():
+    """
+    Prunes old mail address entries from the database.
+    """
+    SpamEmailAddress.objects.prune_old_entries()

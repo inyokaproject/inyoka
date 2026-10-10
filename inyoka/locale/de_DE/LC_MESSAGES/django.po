@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-31 15:10+0200\n"
+"POT-Creation-Date: 2026-06-05 15:48+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -145,9 +145,6 @@ msgstr "Private Nachrichten (%(count)s)"
 msgid "Register"
 msgstr "Registrieren"
 
-msgid "Reported topics"
-msgstr "Gemeldete Themen"
-
 msgid "Search"
 msgstr "Suche"
 
@@ -198,6 +195,9 @@ msgstr "Dieses Thema existiert nicht."
 msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
+msgid "Tickets"
+msgstr "Meldungen"
+
 msgid "URL of the topic"
 msgstr "URL des Themas"
 
@@ -229,6 +229,9 @@ msgstr "Du bist nicht berechtigt, diese Seite aufzurufen. (HTTP 403)"
 
 msgid "You have entered an invisible field and were therefore classified as a bot."
 msgstr "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot identifiziert."
+
+msgid "Your post contains forbidden content"
+msgstr "Dein Post enthält nicht-erlaubten Inhalt"
 
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"

@@ -1,12 +1,13 @@
 """
-    inyoka.default_settings
-    ~~~~~~~~~~~~~~~~~~~~~~~
+inyoka.default_settings
+~~~~~~~~~~~~~~~~~~~~~~~
 
-    The inyoka default settings.
+The inyoka default settings.
 
-    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+
 from collections import OrderedDict
 from datetime import timedelta
 from os.path import dirname, join
@@ -91,10 +92,12 @@ INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
 DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
-CLAMAV_ENABLE: bool = True # disable only on development machines or whether clamav is not available due to f.e. hardware *and* you know your user base
-CLAMAV_PORT: int = 3310 # TCP port
-CLAMAV_HOST: str = 'clamav' # hostname or ip
-CLAMAV_MAX_CHUNK_SIZE: int = 1024  # must be smaller than StreamMaxLength in /etc/clamav/clamd.conf
+CLAMAV_ENABLE: bool = True  # disable only on development machines or whether clamav is not available due to f.e. hardware *and* you know your user base
+CLAMAV_PORT: int = 3310  # TCP port
+CLAMAV_HOST: str = 'clamav'  # hostname or ip
+CLAMAV_MAX_CHUNK_SIZE: int = (
+    1024  # must be smaller than StreamMaxLength in /etc/clamav/clamd.conf
+)
 
 # Disable portal registration, useful in case of a spam problem
 INYOKA_DISABLE_REGISTRATION = False
@@ -197,7 +200,7 @@ CACHES = {
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         },
-        'TIMEOUT': CACHE_TIMEOUT
+        'TIMEOUT': CACHE_TIMEOUT,
     },
     'content': {
         'BACKEND': 'inyoka.utils.cache.RedisCache',
@@ -206,8 +209,8 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
         },
-        'TIMEOUT': CACHE_TIMEOUT
-    }
+        'TIMEOUT': CACHE_TIMEOUT,
+    },
 }
 
 
@@ -236,9 +239,7 @@ MIDDLEWARE = (
 
 #: We only allow uploads via memory up to 2.5mb and do not stream into
 #: temporary files.
-FILE_UPLOAD_HANDLERS = (
-    'django.core.files.uploadhandler.MemoryFileUploadHandler',
-)
+FILE_UPLOAD_HANDLERS = ('django.core.files.uploadhandler.MemoryFileUploadHandler',)
 
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
@@ -312,6 +313,18 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'inyoka.wiki.tasks.update_page_by_slug',
         'schedule': timedelta(hours=1),
     },
+    'update-spam-email-list-yearly': {
+        'task': 'inyoka.portal.tasks.update_spam_email_list_yearly',
+        'schedule': crontab(hour=4, minute=0),
+    },
+    'update-spam-email-list-daily': {
+        'task': 'inyoka.portal.tasks.update_spam_email_list_daily',
+        'schedule': timedelta(hours=2),
+    },
+    'clean-spam-email-list': {
+        'task': 'inyoka.portal.tasks.clean_spam_email_list',
+        'schedule': crontab(hour=4, minute=15, day_of_week='tuesday'),
+    },
     'render_all_wiki_pages': {
         'task': 'inyoka.wiki.tasks.render_all_pages',
         'schedule': crontab(hour=23, minute=5),
@@ -319,7 +332,7 @@ CELERY_BEAT_SCHEDULE = {
     'clean_private_message_folders': {
         'task': 'inyoka.portal.tasks.clean_privmsg_folders',
         'schedule': crontab(hour=6, minute=30, day_of_week='saturday'),
-    }
+    },
 }
 
 
@@ -334,7 +347,7 @@ LOGGING = {
         },
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
-        }
+        },
     },
     'formatters': {
         'console': {
@@ -364,7 +377,7 @@ LOGGING = {
         },
         'null': {
             'class': 'logging.NullHandler',
-        }
+        },
     },
     'loggers': {
         '': {
@@ -373,26 +386,36 @@ LOGGING = {
             'propagate': False,
         },
         'django.db.backends': {
-            'handlers': ['inyokalog',],
+            'handlers': [
+                'inyokalog',
+            ],
             'level': 'INFO',
             'propagate': False,
         },
         'PIL': {
-            'handlers': ['null',],
+            'handlers': [
+                'null',
+            ],
             'level': 'ERROR',
             'propagate': False,
         },
         'celery': {
-            'handlers': ['console', 'celerylog',],
+            'handlers': [
+                'console',
+                'celerylog',
+            ],
             'level': 'INFO',
             'propagate': False,
         },
         'kombu': {
-            'handlers': ['console', 'celerylog',],
+            'handlers': [
+                'console',
+                'celerylog',
+            ],
             'level': 'ERROR',
             'propagate': False,
         },
-    }
+    },
 }
 
 WSGI_APPLICATION = 'inyoka.wsgi.application'
@@ -409,10 +432,10 @@ AUTHENTICATION_BACKENDS = (
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.Argon2PasswordHasher',
-    'django.contrib.auth.hashers.PBKDF2PasswordHasher'
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 )
 
-FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 FORMS_URLFIELD_ASSUME_HTTPS = True
 
 TEMPLATES = [
@@ -436,8 +459,8 @@ TEMPLATES = [
             'cache_size': -1,
             'context_processors': ['inyoka.utils.templating.context_data'],
             'undefined': jinja2.Undefined,
-        }
-    }
+        },
+    },
 ]
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
@@ -453,85 +476,87 @@ ANONYMOUS_USER_NAME = 'anonymous'
 # disable guardian monkey patching, for custom user model support
 GUARDIAN_MONKEY_PATCH_USER = False
 
-SMILIES = OrderedDict([
-    (':?:', '❓'),  # has to come before :?
-    (':???:', '⁇'),  # has to come before :?
-    # normal smilies
-    (':-)', '☺'),
-    (':)', '☺'),
-    (':-(', '☹'),
-    (':(', '☹'),
-    (';-)', '😉'),
-    (';)', '😉'),
-    (':-P', '😛'),
-    (':P', '😛'),
-    (':-D', '😀'),
-    (':D', '😀'),
-    (':-o', '😮'),
-    (':-O', '😮'),
-    (':o', '😮'),
-    (':-?', '😕'),
-    (':?', '😕'),
-    (':-x', '😠'),
-    (':x', '😠'),
-    ('8-)', '😎'),
-    ('# 8)', '😎'),
-    (':-$', '😳'),
-    ('<3', '♥'),
-    (':[]', '😬'),
-    (':-[]', '😬'),
-    ('§)', '🤓'),
-    ('8-o', '😲'),
-    ('8-}', '🐸'),
-    (':-|', '😐'),
-    (':|', '😐'),
-    (';-(', '😢'),
-    (']:-(', '👿'),
-    (']:-)', '😈'),
-    ('O:-)', '😇'),
-    (':->', '😊'),
-    # arrows
-    ('->', '→'),
-    ('<-', '←'),
-    ('=>', '⇒'),
-    ('<=', '⇐'),
-    ('--', '–'),
-    # text smilies
-    (':!:', '❗'),
-    (':arrow:', '▶'),
-    (':backarrow:', '◀'),
-    (':cool:', '😎'),
-    (':cry:', '😢'),
-    (':eek:', '😮'),
-    (':ente:', '🦆'),
-    (':grin:', '😀'),
-    (':idea:', '💡'),
-    (':lol:', '🤣'),
-    (':mad:', '😠'),
-    (':mrgreen:', '😀'),
-    (':neutral:', '😐'),
-    (':oops:', '😳'),
-    (':razz:', '😛'),
-    (':roll:', '🙄'),
-    (':sad:', '☹'),
-    (':shock:', '😲'),
-    (':smile:', '☺'),
-    (':thumbsup:', '👍'),
-    (':wink:', '😉'),
-    ('{dl}', '⮷'),
-    # icons (with no equivalent in unicode)
-    ('# <8-} ', 'css-class:icon-frog-xmas'),
-    (':tux:', 'css-class:icon-tux'),
-    ('{*}', 'css-class:icon-ubuntu'),
-    ('{g}', 'css-class:icon-ubuntugnome'),
-    ('{k}', 'css-class:icon-kubuntu'),
-    ('{l}', 'css-class:icon-lubuntu'),
-    ('{ma}', 'css-class:icon-ubuntumate'),
-    ('{m}', 'css-class:icon-mythbuntu'),
-    ('{ut}', 'css-class:icon-ubuntutouch'),
-    ('{x}', 'css-class:icon-xubuntu'),
-    ('{Übersicht}', 'css-class:icon-overview')
-])
+SMILIES = OrderedDict(
+    [
+        (':?:', '❓'),  # has to come before :?
+        (':???:', '⁇'),  # has to come before :?
+        # normal smilies
+        (':-)', '☺'),
+        (':)', '☺'),
+        (':-(', '☹'),
+        (':(', '☹'),
+        (';-)', '😉'),
+        (';)', '😉'),
+        (':-P', '😛'),
+        (':P', '😛'),
+        (':-D', '😀'),
+        (':D', '😀'),
+        (':-o', '😮'),
+        (':-O', '😮'),
+        (':o', '😮'),
+        (':-?', '😕'),
+        (':?', '😕'),
+        (':-x', '😠'),
+        (':x', '😠'),
+        ('8-)', '😎'),
+        ('# 8)', '😎'),
+        (':-$', '😳'),
+        ('<3', '♥'),
+        (':[]', '😬'),
+        (':-[]', '😬'),
+        ('§)', '🤓'),
+        ('8-o', '😲'),
+        ('8-}', '🐸'),
+        (':-|', '😐'),
+        (':|', '😐'),
+        (';-(', '😢'),
+        (']:-(', '👿'),
+        (']:-)', '😈'),
+        ('O:-)', '😇'),
+        (':->', '😊'),
+        # arrows
+        ('->', '→'),
+        ('<-', '←'),
+        ('=>', '⇒'),
+        ('<=', '⇐'),
+        ('--', '–'),
+        # text smilies
+        (':!:', '❗'),
+        (':arrow:', '▶'),
+        (':backarrow:', '◀'),
+        (':cool:', '😎'),
+        (':cry:', '😢'),
+        (':eek:', '😮'),
+        (':ente:', '🦆'),
+        (':grin:', '😀'),
+        (':idea:', '💡'),
+        (':lol:', '🤣'),
+        (':mad:', '😠'),
+        (':mrgreen:', '😀'),
+        (':neutral:', '😐'),
+        (':oops:', '😳'),
+        (':razz:', '😛'),
+        (':roll:', '🙄'),
+        (':sad:', '☹'),
+        (':shock:', '😲'),
+        (':smile:', '☺'),
+        (':thumbsup:', '👍'),
+        (':wink:', '😉'),
+        ('{dl}', '⮷'),
+        # icons (with no equivalent in unicode)
+        ('# <8-} ', 'css-class:icon-frog-xmas'),
+        (':tux:', 'css-class:icon-tux'),
+        ('{*}', 'css-class:icon-ubuntu'),
+        ('{g}', 'css-class:icon-ubuntugnome'),
+        ('{k}', 'css-class:icon-kubuntu'),
+        ('{l}', 'css-class:icon-lubuntu'),
+        ('{ma}', 'css-class:icon-ubuntumate'),
+        ('{m}', 'css-class:icon-mythbuntu'),
+        ('{ut}', 'css-class:icon-ubuntutouch'),
+        ('{x}', 'css-class:icon-xubuntu'),
+        ('{Übersicht}', 'css-class:icon-overview'),
+    ]
+)
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

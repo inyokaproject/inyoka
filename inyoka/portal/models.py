@@ -1,30 +1,39 @@
 """
-    inyoka.portal.models
-    ~~~~~~~~~~~~~~~~~~~~
+inyoka.portal.models
+~~~~~~~~~~~~~~~~~~~~
 
-    Models for the portal.
+Models for the portal.
 
-    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+:license: BSD, see LICENSE for more details.
 """
+import csv
 import glob
 import gzip
 import hashlib
+import io
 import os
+import zipfile
 from datetime import timedelta
+from zipfile import BadZipFile
 
+import requests
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.db.models import Count
+from django.db.models.functions import Upper
 from django.utils import timezone as dj_timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy
+from requests import RequestException
 
 from inyoka.utils.database import InyokaMarkupField
+from inyoka.utils.logger import logger
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
 
@@ -473,7 +482,7 @@ class LinkmapManager(models.Manager):
 
 class Linkmap(models.Model):
     """
-    Provides an mapping for the interwikilinks from token to urls.
+    Provides a mapping for the interwikilinks from token to urls.
     """
     CACHE_KEY_MAP = 'portal:linkmap'
     CACHE_KEY_CSS = 'portal:linkmap:css-filname'
@@ -490,6 +499,193 @@ class Linkmap(models.Model):
     objects = LinkmapManager()
 
 
+class SpamEmailAddressManager(models.Manager):
+    def update_spam_emails(self, days: int = 1) -> None:
+        """
+        Download the stopforumspam email zip and import entries into SpamEmailAddress.
+        """
+
+        stopforum_zip_url = (
+            f'https://www.stopforumspam.com/downloads/listed_email_{days}_all.zip'
+        )
+
+        logger.info('Starting update_spam_email_list')
+        try:
+            zip_response = requests.get(stopforum_zip_url, timeout=60)
+            zip_response.raise_for_status()
+        except RequestException as e:
+            logger.error(f'Failed to download spam list: {e}')
+            return
+
+        def _insert_in_db_if_new(email: str) -> None:
+            if self.get_queryset().filter(email__iexact=email).exists():
+                logger.debug(f'{email} already in database')
+                return
+
+            a = SpamEmailAddress(email=email)
+            try:
+                a.full_clean()
+            except ValidationError as e:
+                logger.debug(f'{email}: {e}')
+                return
+
+            a.save()
+            logger.debug(f'Inserted {email}')
+
+        file_name = f'listed_email_{days}_all.txt'
+        try:
+            with (
+                zipfile.ZipFile(io.BytesIO(zip_response.content)) as z,
+                z.open(file_name) as csv_file,
+            ):
+                reader = csv.reader(l.decode() for l in csv_file)
+
+                for row in reader:
+                    email = row[0].strip().lower()
+                    _insert_in_db_if_new(email)
+        except BadZipFile:
+            logger.error(f'Received bad zip file from {stopforum_zip_url}')
+            return
+
+        logger.info('Finished update_spam_email_list')
+
+    def prune_old_entries(self) -> None:
+        """
+        Removes entries from the database which are already longer than 2 years in the database
+        (for simplicity, we assume o year has always 365 days).
+        """
+        two_years_ago = dj_timezone.now() - timedelta(days=365 * 2)
+        deleted_summary = (
+            self.get_queryset().filter(inserted_at__lt=two_years_ago).delete()
+        )
+
+        logger.info(f'Deleted {deleted_summary}')
+
+
+class SpamEmailAddress(models.Model):
+    """
+    Contains known spam email addresses. The manager uses stopforumspam as source.
+    """
+
+    email = models.EmailField(
+        verbose_name=gettext_lazy('Email address'),
+        max_length=254,
+        unique=True,
+        db_index=True,
+    )
+    inserted_at = models.DateTimeField(
+        verbose_name=gettext_lazy('Inserted at'), auto_now_add=True
+    )
+
+    objects = SpamEmailAddressManager()
+
+    class Meta:
+        verbose_name = gettext_lazy('Spam email address')
+        verbose_name_plural = gettext_lazy('Spam email addresses')
+
+        indexes = [
+            models.Index(Upper('email'), name='upper_email_idx'),
+        ]
+
+    def __str__(self):
+        return self.email
+
+
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = InyokaMarkupField(application='portal')
+
+
+class TicketReasonManager(models.Manager):
+
+    def get_spam_reason(self, content_type):
+        """Return the spam reason for the given content type, or ``None``."""
+        return self.filter(
+            slug=self.model.SPAM_SLUG, content_type=content_type
+        ).first()
+
+
+class TicketReason(models.Model):
+    """
+    Stores reasons that are offered when creating a ticket. e.g. Spam, Spelling etc.
+    """
+    SPAM_SLUG = 'spam'
+
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, db_index=True)
+    reason = models.CharField(max_length=200)
+    slug = models.SlugField(null=True, blank=True)
+    system_defined = models.BooleanField(
+        default=False,
+        help_text='Used for predefined reasons like "spam" that cannot be edited/deleted from the gui.'
+    )
+    subscribers = models.ManyToManyField(User)
+
+    objects = TicketReasonManager()
+
+    class Meta:
+        verbose_name = gettext_lazy('Ticket Reason')
+        verbose_name_plural = gettext_lazy('Ticket Reasons')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'slug'],
+                condition=models.Q(slug__isnull=False),
+                name='unique_ticketreason_slug_per_content_type',
+            )
+        ]
+
+    def __str__(self):
+        return self.reason
+
+
+class Ticket(models.Model):
+    OPEN = 0
+    IN_PROGRESS = 1
+    CLOSED = 2
+    STATE_CHOICES = [
+        (OPEN, gettext_lazy('Open')),
+        (IN_PROGRESS, gettext_lazy('In Progress')),
+        (CLOSED, gettext_lazy('Closed')),
+    ]
+
+    CACHE_COUNT_KEY = 'portal/ticket_count'
+
+    content_type = models.ForeignKey(
+        ContentType, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='+')
+    object_id = models.PositiveIntegerField(null=True, db_index=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    reporting_user = models.ForeignKey(
+        User, related_name='reported_tickets', on_delete=models.CASCADE)
+    reporting_time = models.DateTimeField(db_index=True)
+    owning_user = models.ForeignKey(
+        User, null=True, blank=True, related_name='owned_tickets',
+        on_delete=models.SET_NULL)
+    owned_time = models.DateTimeField(null=True, blank=True)
+    closed_time = models.DateTimeField(null=True, blank=True)
+    state = models.SmallIntegerField(
+        choices=STATE_CHOICES, default=OPEN, db_index=True)
+    reason = models.ForeignKey(
+        TicketReason, null=True, blank=True, on_delete=models.SET_NULL,
+        verbose_name=gettext_lazy('Reason'),
+    )
+    reporter_comment = InyokaMarkupField(
+        verbose_name=gettext_lazy('Reporter comment'),
+        application='portal', blank=True)
+    owner_comment = InyokaMarkupField(
+        verbose_name=gettext_lazy('Owner comment'),
+        application='portal', null=True, blank=True)
+
+    def can_moderate(self, user) -> bool:
+        from inyoka.forum.models import Post, Topic
+
+        obj = self.content_object
+        if isinstance(obj, Post):
+            forum = obj.topic.forum
+        elif isinstance(obj, Topic):
+            forum = obj.forum
+        else:
+            return False # always bound to object
+
+        return user.has_perm('forum.moderate_forum', forum)

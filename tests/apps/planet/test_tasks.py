@@ -54,5 +54,5 @@ class TestSync(TestCase):
         )
         self.assertEqual(
             e.pub_date,
-            datetime.datetime(2023, 7, 21, 13, 4, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2023, 7, 21, 13, 4, tzinfo=datetime.UTC),
         )

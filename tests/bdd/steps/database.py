@@ -1,4 +1,3 @@
-
 from behave import given, step
 from django.conf import settings
 from django.core.cache import cache

@@ -10,11 +10,15 @@
 from unittest.mock import patch
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test.utils import override_settings
 
 from inyoka.forum.models import Attachment, Forum, Post, PostRevision, Topic
+from inyoka.portal.models import TicketReason
+from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from tests.apps.forum.forum_test_class import (
     ForumTestCase,
@@ -155,6 +159,21 @@ class TestPostModel(ForumTestCase):
         post = Post(text="'''test'''", is_plaintext=True)
 
         self.assertEqual(post.get_text(), "&#x27;&#x27;&#x27;test&#x27;&#x27;&#x27;")
+
+    def test_mark_spam__notification(self):
+        spam_reason = TicketReason.objects.get_spam_reason(
+            ContentType.objects.get_for_model(Post))
+
+        moderator = User.objects.register_user('mod', 'mod@test.test', 'mod', False)
+        moderator.is_superuser = True
+        moderator.save()
+
+        spam_reason.subscribers.add(moderator)
+
+        post = Post.objects.create(text='test1', author=self.user, topic=self.topic)
+        post.mark_spam(report=True, update_akismet=False)
+
+        self.assertEqual(mail.outbox[0].subject, 'inyokaproject.org: New ticket')
 
 
 class TestPostRevisionModel(TestCase):

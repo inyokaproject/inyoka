@@ -7,7 +7,6 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from typing import Optional
 
 from django import forms
 from django.conf import settings
@@ -67,7 +66,7 @@ class ForumField(forms.ChoiceField):
 
         self.choices = choices
 
-    def to_python(self, value) -> Optional[int]:
+    def to_python(self, value) -> int | None:
         """
         As the choice field just contains forum-ids, we cast it to int.
         If it is empty, None will be returned.
