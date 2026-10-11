@@ -7,7 +7,6 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import datetime
 import html
 from itertools import groupby
 
@@ -15,21 +14,21 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
-from django.db.models import Max, Window, F, Count
-from django.db.models.functions import Lag, Lead, RowNumber, TruncWeek
+from django.db.models import Count, Max
+from django.db.models.functions import TruncWeek
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaulttags import GroupedResult
 from django.template.loader import render_to_string
 from django.utils.html import escape, smart_urlquote
 from django.utils.translation import gettext as _
-from django.views.generic import WeekArchiveView, ListView
+from django.views.generic import ListView, WeekArchiveView
 
 from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
 from inyoka.planet.models import Blog, Entry
 from inyoka.utils import generic
 from inyoka.utils.feeds import InyokaAtomFeed
-from inyoka.utils.http import does_not_exist_is_404, templated
+from inyoka.utils.http import cache_anonymous, does_not_exist_is_404, templated
 from inyoka.utils.mail import send_mail
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import flash_message
@@ -59,6 +58,7 @@ blog_edit = generic.CreateUpdateView(model=Blog,
                                      permission_required='planet.change_blog')
 
 
+@cache_anonymous()
 @templated('planet/index.html', modifier=context_modifier)
 def index(request):
     """

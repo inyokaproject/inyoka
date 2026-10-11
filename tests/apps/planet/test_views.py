@@ -14,6 +14,7 @@ import feedparser
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core import mail
+from django.core.cache import cache
 from django.utils import timezone as dj_timezone
 from django.utils import translation
 from freezegun import freeze_time
@@ -444,12 +445,31 @@ class TestIndexAnonymous(IndexMixin, TestCase):
         response = self.client.get('/')
         self.assertContains(response, 'No articles were aggregated')
 
+    def test_cache(self):
+        with self.assertNumQueries(8):
+            self.client.get('/')
+
+        with self.assertNumQueries(1):
+            self.client.get('/')
+
+        self.assertTrue(cache.has_key('inyoka:planet:views:index:anonymous'))
+
 
 class TestIndexAuthenticated(TestIndexAnonymous):
 
     def setUp(self):
         super().setUp()
         self.client.login(username='user', password='user')
+
+    def test_cache(self):
+        """Should not use any planet cache for authenticated users."""
+        with self.assertNumQueries(8):
+            self.client.get('/')
+
+        with self.assertNumQueries(5):
+            self.client.get('/')
+
+        self.assertFalse(cache.has_key('inyoka:planet:views:index:anonymous'))
 
 
 class TestIndexPrivileged(IndexMixin, TestCase):
