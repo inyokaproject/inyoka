@@ -61,7 +61,9 @@
       {%- for ticket in tickets %}
       <tr>
         <td>
+          {%- if ticket.state != ticket.CLOSED %}
           <input type="checkbox" name="selected" value="{{ ticket.id }}">
+          {% endif %}
         </td>
         <td>
           {%- if ticket.content_object %}
@@ -131,7 +133,7 @@
       {%- endfor %}
     </tbody>
   </table>
-  {%- if tickets %}
+  {%- if tickets and current_state != 'closed' %}
   <p>
     <input type="submit" value="{% trans %}Close selected tickets{% endtrans %}">
   </p>
