@@ -394,6 +394,9 @@ class IndexMixin:
         blog = Blog(**blog_args)
         blog.save()
 
+        self._create_entry(blog, adjustments_entry)
+
+    def _create_entry(self, blog, adjustments_entry):
         entry_args = {
             'blog': blog,
             'url': 'http://example.com/article1',
@@ -406,9 +409,6 @@ class IndexMixin:
         entry_args.update((key, adjustments_entry[key]) for key in adjustments_entry.keys())
 
         Entry.objects.create(**entry_args)
-
-        self.assertEqual(Entry.objects.count(), 1)
-        self.assertEqual(Blog.objects.count(), 1)
 
 
 class TestIndexAnonymous(IndexMixin, TestCase):
@@ -453,6 +453,34 @@ class TestIndexAnonymous(IndexMixin, TestCase):
             self.client.get('/')
 
         self.assertTrue(cache.has_key('inyoka:planet:views:index:anonymous'))
+
+    @freeze_time('2013-1-11 11:11')
+    def test_grouping(self):
+        self._create_blog_with_entry()
+        self._create_blog_with_entry(adjustments_entry={
+            'guid': 'http://example.com/article2',
+            'pub_date': dj_timezone.now() + datetime.timedelta(minutes=5),
+        })
+
+        second_day = datetime.datetime(2013, 1, 9, 11, 11, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'guid': 'http://example.com/article3',
+            'pub_date': second_day,
+        })
+
+        response = self.client.get("/")
+
+        grouped_items = response.context['articles_grouped']
+        self.assertEqual(len(grouped_items), 2)
+
+        self.assertEqual(grouped_items[0].grouper, datetime.date(2013, 1, 11))
+        self.assertEqual(len(grouped_items[0].list), 2)
+        self.assertEqual(grouped_items[0].list[0].guid, 'http://example.com/article2')
+        self.assertEqual(grouped_items[0].list[1].guid, 'http://example.com/article1')
+
+        self.assertEqual(grouped_items[1].grouper, second_day.date())
+        self.assertEqual(len(grouped_items[1].list), 1)
+        self.assertEqual(grouped_items[1].list[0].guid, 'http://example.com/article3')
 
 
 class TestIndexAuthenticated(TestIndexAnonymous):
@@ -552,6 +580,27 @@ class TestArchiveIndexViewAnonymous(IndexMixin, TestCase):
 
         response = self.client.get("/archive/")
         self.assertContains(response, 'No articles were aggregated')
+
+    @freeze_time('2013-1-11 11:11')
+    def test_grouping(self):
+        self._create_blog_with_entry()
+        self._create_blog_with_entry(adjustments_entry={'guid': 'http://example.com/article2',})
+
+        second_day = datetime.datetime(2013, 2, 9, 11, 11, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'guid': 'http://example.com/article3',
+            'pub_date': second_day,
+        })
+
+        response = self.client.get("/archive/")
+
+        grouped_items = response.context_data['view'].object_list
+        self.assertEqual(len(grouped_items), 1)
+
+        self.assertEqual(grouped_items[0].grouper, '2013')
+        self.assertEqual(len(grouped_items[0].list), 2)
+        self.assertEqual(grouped_items[0].list[0]['count'], 1)
+        self.assertEqual(grouped_items[0].list[1]['count'], 2)
 
 
 class TestArchiveIndexViewAuthenticated(TestArchiveIndexViewAnonymous):
@@ -656,6 +705,30 @@ class TestEntryWeekArchiveViewAnonymous(BaseTestEntryWeekArchiveView, TestCase):
         response = self.client.get("/2000/week/1/")
         self.assertEqual(response.status_code, 404)
 
+    def test_grouping(self):
+        self._create_blog_with_entry()
+        self._create_blog_with_entry(adjustments_entry={'guid': 'http://example.com/article2',})
+
+        second_day = datetime.datetime(2013, 1, 9, 11, 11, tzinfo=datetime.timezone.utc)
+        self._create_blog_with_entry(adjustments_entry={
+            'guid': 'http://example.com/article3',
+            'pub_date': second_day,
+        })
+
+        response = self.client.get("/2013/week/2/")
+
+        grouped_items = response.context_data['view'].grouped_items()
+        self.assertEqual(len(grouped_items), 2)
+
+        self.assertEqual(grouped_items[0].grouper, datetime.date(2013, 1, 11))
+        self.assertEqual(len(grouped_items[0].list), 2)
+        self.assertEqual(grouped_items[0].list[0].guid, 'http://example.com/article2')
+        self.assertEqual(grouped_items[0].list[1].guid, 'http://example.com/article1')
+
+        self.assertEqual(grouped_items[1].grouper, second_day.date())
+        self.assertEqual(len(grouped_items[1].list), 1)
+        self.assertEqual(grouped_items[1].list[0].guid, 'http://example.com/article3')
+
 
 class TestEntryWeekArchiveViewAuthenticated(TestEntryWeekArchiveViewAnonymous):
 
@@ -675,7 +748,7 @@ class TestEntryWeekArchiveViewPrivileged(BaseTestEntryWeekArchiveView, TestCase)
 
     def test_hidden_entry_shown(self):
         """
-        With a privilege the post should still be shown for this user.
+        With a privilege the blogpost should still be shown for this user.
         Thus, it is also possible to unhide it.
         """
         self._create_blog_with_entry(adjustments_entry={'hidden': True})
@@ -686,7 +759,7 @@ class TestEntryWeekArchiveViewPrivileged(BaseTestEntryWeekArchiveView, TestCase)
 
     def test_entry_from_disabled_blog_shown(self):
         """
-        With a privilege the post should still be shown for this user.
+        With a privilege the blogpost should still be shown for this user.
         """
         self._create_blog_with_entry(adjustments_blog={'active': False,})
 
