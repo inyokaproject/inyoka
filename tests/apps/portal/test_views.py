@@ -1936,6 +1936,11 @@ class TestTicketViews(TestCase):
         self.assertEqual(self.t_open.owning_user, self.admin)
         self.assertEqual(self.t_open.state, Ticket.IN_PROGRESS)
 
+    def test_ticket_own__with_closed_ticket_not_allowed(self):
+        response = self.client.post(
+            '/tickets/%d/own/' % self.t_closed.id, follow=False)
+        self.assertEqual(response.status_code, 403)
+
     def test_ticket_disown(self):
         self.client.logout()
         self.client.login(username='manager', password='manager')
@@ -1951,30 +1956,45 @@ class TestTicketViews(TestCase):
             '/tickets/%d/disown/' % self.t_in_progress.id)
         self.assertEqual(response.status_code, 403)
 
+    def test_ticket_disown__closed_ticket(self):
+        self.t_closed.owning_user = self.admin
+        self.t_closed.save()
+
+        response = self.client.post(
+            '/tickets/%d/disown/' % self.t_closed.id)
+        self.assertContains(response, 'You cannot edit a closed ticket.', status_code=403)
+
     def test_edit__not_owner(self):
-        response = self.client.get('/tickets/%d/edit/' % self.t_closed.id)
+        response = self.client.get('/tickets/%d/edit/' % self.t_open.id)
         self.assertEqual(response.status_code, 403)
+
+    def test_edit__ticket_closed(self):
+        self.t_closed.owning_user = self.admin
+        self.t_closed.save()
+
+        response = self.client.get('/tickets/%d/edit/' % self.t_closed.id)
+        self.assertContains(response, 'You cannot edit a closed ticket.', status_code=403)
 
     def test_edit__not_existing_ticket(self):
         response = self.client.get('/tickets/913379/edit/')
         self.assertEqual(response.status_code, 404)
 
     def test_edit__get(self):
-        self.t_closed.owning_user = self.admin
-        self.t_closed.save()
+        self.t_in_progress.owning_user = self.admin
+        self.t_in_progress.save()
 
-        response = self.client.get('/tickets/%d/edit/' % self.t_closed.id)
+        response = self.client.get('/tickets/%d/edit/' % self.t_in_progress.id)
         self.assertEqual(response.status_code, 200)
 
     def test_edit__post(self):
-        self.t_closed.owning_user = self.admin
-        self.t_closed.save()
+        self.t_in_progress.owning_user = self.admin
+        self.t_in_progress.save()
 
-        response = self.client.post('/tickets/%d/edit/' % self.t_closed.id, data={'owner_comment': 'foo'}, follow=True)
+        response = self.client.post('/tickets/%d/edit/' % self.t_in_progress.id, data={'owner_comment': 'foo'}, follow=True)
         self.assertContains(response, 'The ticket comment was saved.')
 
-        self.t_closed.refresh_from_db()
-        self.assertEqual(self.t_closed.owner_comment, 'foo')
+        self.t_in_progress.refresh_from_db()
+        self.assertEqual(self.t_in_progress.owner_comment, 'foo')
 
         self.assertRedirects(response, f'http://{settings.BASE_DOMAIN_NAME}/tickets/list/')
 
