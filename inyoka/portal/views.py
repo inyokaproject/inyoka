@@ -1729,7 +1729,9 @@ def ticket_list(request, page=1):
         state = 'active'
     states = ticket_state_filters[state]['query_states']
     tickets = Ticket.objects.all().select_related(
-        'reporting_user', 'owning_user', 'reason').order_by('reporting_time')
+        'reporting_user', 'owning_user', 'reason', 'content_type'
+    ).prefetch_related('content_object').order_by('reporting_time')
+
     if states is not None:
         tickets = tickets.filter(state__in=states)
 

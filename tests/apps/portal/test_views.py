@@ -1879,6 +1879,10 @@ class TestTicketViews(TestCase):
             {t.id for t in response.context['tickets']},
             {self.t_open.id, self.t_in_progress.id, self.t_closed.id})
 
+    def test_list_filter_all__queries_used(self):
+        with self.assertNumQueries(13):
+            self.client.get('/tickets/list/?state=all')
+
     def test_list_invalid_filter_falls_back_to_active(self):
         response = self.client.get('/tickets/list/?state=bogus')
         self.assertEqual(response.context['current_state'], 'active')
