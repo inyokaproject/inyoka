@@ -1729,7 +1729,9 @@ def ticket_list(request, page=1):
         state = 'active'
     states = ticket_state_filters[state]['query_states']
     tickets = Ticket.objects.all().select_related(
-        'reporting_user', 'owning_user', 'reason').order_by('reporting_time')
+        'reporting_user', 'owning_user', 'reason', 'content_type'
+    ).prefetch_related('content_object').order_by('reporting_time')
+
     if states is not None:
         tickets = tickets.filter(state__in=states)
 
@@ -1778,6 +1780,11 @@ def ticket_edit(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
     if ticket.owning_user != request.user:
+        messages.error(request, _('You can only edit owned tickets.'))
+        raise PermissionDenied
+
+    if ticket.is_closed:
+        messages.error(request, _('You cannot edit a closed ticket.'))
         raise PermissionDenied
 
     if request.method == 'POST':
@@ -1801,6 +1808,10 @@ def ticket_own(request, ticket_id):
     if not ticket.can_moderate(request.user):
         raise PermissionDenied
 
+    if ticket.is_closed:
+        messages.error(request, _('You cannot edit a closed ticket.'))
+        raise PermissionDenied
+
     ticket.owning_user = request.user
     ticket.state = Ticket.IN_PROGRESS
     if not ticket.owned_time:
@@ -1818,6 +1829,10 @@ def ticket_disown(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
     if ticket.owning_user != request.user:
+        raise PermissionDenied
+
+    if ticket.is_closed:
+        messages.error(request, _('You cannot edit a closed ticket.'))
         raise PermissionDenied
 
     ticket.owning_user = None

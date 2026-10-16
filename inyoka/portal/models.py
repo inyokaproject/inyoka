@@ -677,6 +677,10 @@ class Ticket(models.Model):
         verbose_name=gettext_lazy('Owner comment'),
         application='portal', null=True, blank=True)
 
+    @property
+    def is_closed(self) -> bool:
+        return self.state == self.CLOSED
+
     def can_moderate(self, user) -> bool:
         from inyoka.forum.models import Post, Topic
 
