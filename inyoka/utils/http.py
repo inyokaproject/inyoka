@@ -8,6 +8,7 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
@@ -46,6 +47,29 @@ def templated(template_name, status=None, modifier=None,
                 modifier(request, rv)
             return render(request, template_name, rv, status=status, content_type=content_type)
         return patch_wrapper(proxy, f)
+    return decorator
+
+
+def cache_anonymous(seconds: int=60):
+    """
+    Used as a decorator, a views response will be cached for anonymous users and
+    a duration of `seconds`. For authenticated users no full view cache is used.
+    """
+    def decorator(f):
+        def proxy(request, *args, **kwargs):
+            render_response = lambda : f(request, *args, **kwargs)
+
+            if request.user.is_anonymous:
+                cache_key = request.resolver_match.view_name.replace('.', ':')
+                cache_key += ':anonymous'
+
+                response = cache.get_or_set(cache_key, render_response, seconds)
+            else:
+                response = render_response()
+
+            return response
+        return patch_wrapper(proxy, f)
+
     return decorator
 
 

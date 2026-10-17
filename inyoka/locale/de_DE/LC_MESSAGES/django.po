@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-05 15:48+0200\n"
+"POT-Creation-Date: 2026-10-17 17:20+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -60,11 +60,20 @@ msgstr "Bestätigung"
 msgid "Control panel"
 msgstr "Kontrollzentrum"
 
+msgid "Corrupted image."
+msgstr "Beschädigtes Bild."
+
 msgid "Errors occurred, please fix them."
 msgstr "Bitte die aufgetretenen Fehler beheben."
 
 msgid "Event suggestions"
 msgstr "Veranstaltungsvorschläge"
+
+msgid "File extension does not fit to the files mime type."
+msgstr "Dateierweiterung passt nicht zum MIME-Dateityp."
+
+msgid "File has no file extension."
+msgstr "Die Datei hat keine Dateierweiterung."
 
 msgid "File is infected with malware"
 msgstr "Datei ist mit Malware infiziert"
@@ -89,6 +98,9 @@ msgstr "Wenn du Cookies in deinem Browser deaktiviert hast, aktivierte dies bitt
 
 msgid "If you just submitted a post, please don't refresh the page right away. Instead, check if it was posted. If not, you can try again."
 msgstr "Wenn du gerade einen Beitrag abgesendet hast, lade die Seite bitte nicht sofort neu. Stattdessen prüfe erst, ob er eingetragen wurde. Falls nicht, kannst du es noch einmal versuchen."
+
+msgid "Invalid image."
+msgstr "Ungültiges Bild."
 
 msgid "Login"
 msgstr "Anmelden"
@@ -197,6 +209,9 @@ msgstr "Diesen Benutzer gibt es nicht"
 
 msgid "Tickets"
 msgstr "Meldungen"
+
+msgid "Transmitted mimetype does not fit the files mimetype."
+msgstr "Der gesendete MIME-Typ passt nicht zu dem MIME-Type in der Datei."
 
 msgid "URL of the topic"
 msgstr "URL des Themas"

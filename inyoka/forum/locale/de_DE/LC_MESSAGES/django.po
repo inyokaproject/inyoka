@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-15 23:04+0200\n"
+"POT-Creation-Date: 2026-10-17 17:20+0200\n"
 "PO-Revision-Date: 2025-09-14 18:19+0200\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -97,6 +97,9 @@ msgstr "Eine ältere Revision des Beitrages wurde wiederhergestellt."
 msgid "Attach to old topic"
 msgstr "An bestehendes Thema anhängen"
 
+msgid "Attachment"
+msgstr "Anhang"
+
 msgid "Attachment:"
 msgstr "Anhang:"
 
@@ -178,11 +181,6 @@ msgstr "Möchtest du das Thema wiederherstellen?"
 
 msgid "Do you want to restore this post?"
 msgstr "Möchtest du diesen Beitrag wiederherstellen?"
-
-#, python-format
-msgctxt "Link text to download an attachment"
-msgid "Download %(name)s"
-msgstr "Download %(name)s"
 
 #, python-format
 msgid "Duration of the poll: %(duration)s days"
@@ -425,9 +423,6 @@ msgstr "Eltern Forum"
 
 msgid "Paste"
 msgstr "Ablage"
-
-msgid "Pictures"
-msgstr "Bilder"
 
 msgid "Please login to mark posts as read."
 msgstr "Bitte melde dich an, um Beiträge als gelesen zu markieren."
@@ -826,11 +821,6 @@ msgstr "Abbestellen"
 msgid "Version"
 msgstr "Version"
 
-#, python-format
-msgctxt "Link text to an image attachment"
-msgid "View %(name)s"
-msgstr "%(name)s ansehen"
-
 msgid "Views"
 msgstr "Aufrufe"
 
@@ -949,4 +939,3 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
-

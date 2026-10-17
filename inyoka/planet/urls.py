@@ -21,7 +21,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index),
-    re_path(r'^(\d+)/$', views.index),
+    path("archive/", views.ArchiveIndexView.as_view()),
+    path("<int:year>/week/<int:week>/", views.EntryWeekArchiveView.as_view()),
     path('hide/<int:id>/', views.hide_entry),
     path('suggest/', views.suggest),
     re_path(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', cache_page(60 * 5)(views.PlanetAtomFeed())),
