@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy
 
 from inyoka.portal.user import User
 from inyoka.utils.clamav import validate_file_infection
+from inyoka.utils.forms import validate_file_extension
 from inyoka.utils.urls import href
 
 
@@ -41,7 +42,7 @@ class Blog(models.Model):
         on_delete=models.PROTECT,
     )
     icon = models.ImageField(gettext_lazy('Icon'), upload_to='planet/icons',
-                             blank=True, validators=[validate_file_infection])
+                             blank=True, validators=[validate_file_infection, validate_file_extension])
     last_sync = models.DateTimeField(blank=True, null=True)
     active = models.BooleanField(gettext_lazy('Index the blog'), default=True)
 
