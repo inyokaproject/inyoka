@@ -19,8 +19,16 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 #, python-format
+msgid "%(prefix)s Week %(week)s of %(year)s"
+msgstr "%(prefix)s Woche %(week)s in %(year)s"
+
+#, python-format
 msgid "%(sitename)s planet"
 msgstr "%(sitename)s Planet"
+
+#, python-format
+msgid "%(year)s Week %(week)s"
+msgstr "%(year)s Woche %(week)s"
 
 msgid "A new blog was suggested."
 msgstr "Ein neues Blog wurde vorgeschlagen."
@@ -30,6 +38,9 @@ msgstr "Aktiv"
 
 msgid "Add blog"
 msgstr "Blog hinzufügen"
+
+msgid "Archive"
+msgstr "Archiv"
 
 msgid "Are you sure you want to hide the entry?"
 msgstr "Bist du sicher, dass du diesen Eintrag verbergen möchtest?"
@@ -88,9 +99,6 @@ msgstr "Name"
 msgid "Name of the blog"
 msgstr "Name des Blogs"
 
-msgid "Next »"
-msgstr "Weiter »"
-
 msgid "No articles were aggregated"
 msgstr "Es wurden keine Artikel aggregiert."
 
@@ -102,6 +110,15 @@ msgstr "Kein Titel vorhanden"
 
 msgid "No user is registered as a planet administrator."
 msgstr "Es wurde kein Benutzer als Planet-Administrator eingetragen."
+
+msgid "Number of articles"
+msgstr "Anzahl an Artikeln"
+
+msgid "Older articles can be found in the archive"
+msgstr "Ältere Artikel finden sich im Archiv"
+
+msgid "Older ↓"
+msgstr "Älter ↓"
 
 msgid "Permanent link"
 msgstr "Permalink"
@@ -117,6 +134,9 @@ msgstr "Planet - Ganzer Artikel"
 
 msgid "Planet - Teaser"
 msgstr "Planet - Nur Einleitung"
+
+msgid "Planet archive"
+msgstr "Planeten Archiv"
 
 msgid "Please be patient. It could take a while, until we approve your suggestion."
 msgstr "Bitte habe ein wenig Geduld mit der Bearbeitung. Es kann etwas dauern, bis der Blog von uns geprüft wurde."
@@ -160,6 +180,9 @@ msgstr "URL des Feeds"
 msgid "User"
 msgstr "Benutzer"
 
+msgid "Week"
+msgstr "Woche"
+
 msgid "With this form you can suggest a new blog for the planet."
 msgstr "Hier kannst du einen Blog für den Planeten vorschlagen."
 
@@ -167,6 +190,12 @@ msgstr "Hier kannst du einen Blog für den Planeten vorschlagen."
 msgid "| Hidden by: <a href=\"%(link)s\">%(name)s</a>"
 msgstr "| Verborgen von: <a href=\"%(link)s\">%(name)s</a>"
 
-msgid "« Previous"
-msgstr "« Zurück"
+msgid "« Previous:"
+msgstr "« Zurück:"
+
+msgid "» Next:"
+msgstr "» Weiter:"
+
+msgid "↑ Newer"
+msgstr "↑ Neuer"
 

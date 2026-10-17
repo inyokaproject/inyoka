@@ -1,0 +1,56 @@
+{#
+    planet/archive_week.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all articles of one calender week.
+
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'planet/index.html' %}
+
+{% set BREADCRUMBS = [
+  (' '.join((_('Archive'), week.strftime('%G'), _('Week'), week.strftime('%V'))), '.')
+] + BREADCRUMBS|d([]) %}
+
+{% block planet_content %}
+  <h1>
+    {% trans year=week.strftime('%G'), week=week.strftime('%V') -%}
+      {{ year }} Week {{ week }}
+    {%- endtrans %}
+  </h1>
+
+  <ul>
+    {% for article in object_list %}
+      <li>
+        <a href="#article_{{ article.pk }}">
+          {{ article.pub_date|naturalday }}: {{ article.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <div class="pagination">
+    {%- if previous_week -%}
+      {{ render_week_archive_link(previous_week, class='prev', label_prefix=_('« Previous:')) }}
+    {%- else -%}
+      <span class="disabled prev">{% trans %}« Previous:{% endtrans %}</span>
+    {%- endif -%}
+
+    {%- if next_week -%}
+      {{ render_week_archive_link(next_week, class='next', label_prefix=_('» Next:')) }}
+    {%- else -%}
+      <span class="disabled next">{% trans %}» Next:{% endtrans %} »</span>
+    {%- endif -%}
+  </div>
+
+  {% for date, articles in view.grouped_items() %}
+    <h2>{{ date|naturalday }}</h2>
+    {% set outer_loop = loop %}
+
+    {% for a in articles %}
+      {{ render_article(a, first_entry=(outer_loop.last and loop.last), last_entry=(outer_loop.first and loop.first)) }}
+    {% endfor %}
+  {% endfor %}
+
+{% endblock %}
