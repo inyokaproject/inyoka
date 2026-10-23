@@ -13,6 +13,8 @@
 {% set rendered_pagination = render_pagination(pagination) %}
 {% set BREADCRUMBS = [(_('Tickets'), href('portal', 'tickets', 'list'))] + BREADCRUMBS|d([]) %}
 
+{% set body_class = '-menu-medium-width-on-top' %}
+
 {% block sidebar %}
   <div class="container">
     <h3>
@@ -25,6 +27,9 @@
 {% endblock %}
 
 {% block content %}
+
+  <link rel="stylesheet"  href="{{ href('static', 'style', 'portal_tickets.css', v=INYOKA_VERSION) }}">
+
 <p class="linklist">
   {% trans %}Filter{% endtrans %}:
   {%- for s in state_filters %}
@@ -45,19 +50,29 @@
 
 <form method="post">
   {{ csrf_input }}
-  <table>
-    <thead>
+  <table class="portal-tickets">
+    <tbody>
       <tr>
         <th>{% trans %}#{% endtrans %}</th>
         <th>{% trans %}Object{% endtrans %}</th>
-        <th>{% trans %}Report{% endtrans %}</th>
+        <th>{% trans 'subject' %}Report{% endtrans %}</th>
         <th>{% trans %}Resolution{% endtrans %}</th>
       </tr>
-    </thead>
-    <tbody>
+
+
       {%- for ticket in tickets %}
       <tr>
-        <td>
+
+        {% set _rowspan = 1 %}
+        {% if ticket.reporter_comment %}
+          {% set _rowspan = _rowspan + 1 %}
+        {% endif %}
+        {% set is_owner = (ticket.owning_user == request.user and not ticket.is_closed) %}
+        {% if ticket.owner_comment or is_owner %}
+          {% set _rowspan = _rowspan + 1 %}
+        {% endif %}
+
+        <td rowspan="{{ _rowspan }}">
           {%- if not ticket.is_closed %}
           <input type="checkbox" name="selected" value="{{ ticket.id }}">
           {% endif %}
@@ -95,33 +110,26 @@
         </td>
         <td>
           <dl>
-            {%- if ticket.reporting_user %}
-              <dt>{% trans %}Reported by{% endtrans %}</dt>
-              <dd>
-              <a href="{{ ticket.reporting_user|url }}">{{ ticket.reporting_user.username }}</a>
-              </dd>
-            {%- endif %}
-            <dd>
-            {{ ticket.reporting_time|datetime }}
-            </dd>
-
             <dt>{% trans %}Reason{% endtrans %}</dt>
             <dd>{{ ticket.reason }}</dd>
-            <dd>
-            {%- if ticket.reporter_comment %}
-              {{ ticket.reporter_comment_rendered }}
-            {%- endif %}
-            </dd>
           </dl>
+
+          <p>
+            {%- if ticket.reporting_user %}
+              <a href="{{ ticket.reporting_user|url }}">{{ ticket.reporting_user.username }}</a>
+              <br>
+            {%- endif %}
+            {{ ticket.reporting_time|datetime }}
+          </p>
         </td>
         <td>
           <dl>
           {%- if ticket.owning_user %}
-            <dt>{% trans %}Owned by{% endtrans %}</dt>
+            <dt>{% trans %}Owner{% endtrans %}</dt>
             <dd>
               <a href="{{ ticket.owning_user|url }}">{{ ticket.owning_user.username }}</a>
               {% if ticket.owning_user == request.user and not ticket.is_closed %}
-                | <button type="submit" form="dis-own-form" formaction="{{ href('portal', 'tickets', ticket.id, 'disown') }}">{% trans %}Release{% endtrans %}</button>
+                &numsp; <button type="submit" form="dis-own-form" formaction="{{ href('portal', 'tickets', ticket.id, 'disown') }}">{% trans %}Release{% endtrans %}</button>
               {% endif %}
             </dd>
 
@@ -140,20 +148,37 @@
             </dd>
           {%- endif %}
 
-          {%- if ticket.owner_comment %}
-            <dt>{% trans %}Comment{% endtrans %}</dt>
-            <dd>{{ ticket.owner_comment_rendered }}</dd>
-          {%- endif %}
-          {% if ticket.owning_user == request.user and not ticket.is_closed %}
-            <dd>
-              <p>
-                <a href="{{ href('portal', 'tickets', ticket.id, 'edit') }}">{% trans %}Edit Comment{% endtrans %}</a>
-              </p>
-            </dd>
-          {% endif %}
           </dl>
         </td>
       </tr>
+      {%- if ticket.reporter_comment %}
+      <tr>
+        <td colspan="4">
+          <dl>
+            <dt>{% trans %}Reporter comment{% endtrans %}</dt>
+            <dd>{{ ticket.reporter_comment_rendered }}</dd>
+          </dl>
+        </td>
+      </tr>
+      {%- endif %}
+
+      {%- if ticket.owner_comment or is_owner %}
+      <tr>
+        <td colspan="4">
+          <dl>
+            <dt>{% trans %}Owner Comment{% endtrans %}</dt>
+            <dd>{{ ticket.owner_comment_rendered }}</dd>
+          </dl>
+
+          {% if is_owner %}
+            <p>
+              <a href="{{ href('portal', 'tickets', ticket.id, 'edit') }}">{% trans %}Edit Comment{% endtrans %}</a>
+            </p>
+          {% endif %}
+        </td>
+      </tr>
+      {%- endif %}
+
       {%- else %}
       <tr>
         <td colspan="7">{% trans %}Currently there are no open tickets.{% endtrans %}</td>

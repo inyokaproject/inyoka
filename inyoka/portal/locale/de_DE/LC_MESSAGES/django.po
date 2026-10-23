@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-16 22:49+0200\n"
+"POT-Creation-Date: 2026-10-24 16:01+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -231,9 +231,6 @@ msgstr "Ausgewählte Meldungen schließen"
 
 msgid "Closed"
 msgstr "Geschlossen"
-
-msgid "Comment"
-msgstr "Kommentar"
 
 msgid "Compose mail"
 msgstr "E-Mail verfassen"
@@ -762,8 +759,11 @@ msgstr "Offen"
 msgid "Overview"
 msgstr "Übersicht"
 
-msgid "Owned by"
-msgstr "Bearbeitet von"
+msgid "Owner"
+msgstr "Bearbeiter"
+
+msgid "Owner Comment"
+msgstr "Bearbeiterkommentar"
 
 msgid "Owner comment"
 msgstr "Bearbeiterkommentar"
@@ -864,11 +864,9 @@ msgstr "Antworten"
 msgid "Reply to all"
 msgstr "An alle antworten"
 
+msgctxt "subject"
 msgid "Report"
 msgstr "Meldung"
-
-msgid "Reported by"
-msgstr "Gemeldet von"
 
 msgid "Reporter comment"
 msgstr "Meldekommentar"
@@ -883,7 +881,7 @@ msgid "Residence"
 msgstr "Wohnort"
 
 msgid "Resolution"
-msgstr "Lösung"
+msgstr "Bearbeitung"
 
 msgid "Restore"
 msgstr "Wiederherstellen"

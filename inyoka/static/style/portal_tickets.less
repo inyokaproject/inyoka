@@ -1,0 +1,19 @@
+/**
+ * style.portal.tickets
+ * ~~~~~~~~~~~~~~~~~~~~
+ *
+ * The styles for the ticket table of the portal.
+ *
+ * :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+ * :license: BSD, see LICENSE for more details.
+ */
+
+table.portal-tickets {
+  p {
+    text-align: left; /* overwrite default justification for text, width in table is too small. Especially on mobiles */
+  }
+
+  td:not([rowspan]) {
+    vertical-align: text-top; /* overwrite default middle align */
+  }
+}
