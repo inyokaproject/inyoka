@@ -578,9 +578,9 @@ django-debug-toolbar==8.0.0 \
     --hash=sha256:329dfd6e1c26d9b4501a5cc69294c8bb734206ccb1bd36e96afc4d14128b630a \
     --hash=sha256:cae32d3e441e608f39f3f1ca6b3f028c38d5d04d74c98d8ab96d46022dee3163
     # via inyoka (pyproject.toml)
-django-guardian==3.5.0 \
-    --hash=sha256:926eb17caf4991d467fd75d412a3040857bc4e111fc70bfe42e1c021826727e4 \
-    --hash=sha256:d80b8ab86c28f92adef816996f4341fbea6790aa1f09006c5afc1ef0ea394871
+django-guardian==3.5.2 \
+    --hash=sha256:545ea01d528830d936c129a125dc2f1aba581da4c3f3daa5d4d1e31654e276a8 \
+    --hash=sha256:ca14b7c9cc37bc852f3749f8a998a76cfd0ebbd66ac85726ef331289a712d389
     # via inyoka (pyproject.toml)
 django-hosts==7.0.0 \
     --hash=sha256:08006bc09f5af69638721ced0657f24044835a22a608732ee1004adc9c95fb7c \
