@@ -25,6 +25,21 @@ Inyoka Changelog
    -----------
 
 
+1.52.13 (2026-10-23)
+====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+
+🔒 Security
+-----------
+
+* Update requirements (``pillow`` and ``certifi`` contain security fixes)
+
+
 1.52.12 (2026-10-10)
 ====================
 
