@@ -10,7 +10,8 @@
 {%- extends 'planet/index.html' %}
 
 {% set BREADCRUMBS = [
-  (' '.join((_('Archive'), week.strftime('%G'), _('Week'), week.strftime('%V'))), '.')
+  (_('Archive'), href('planet', 'archive')),
+  (' '.join((week.strftime('%G'), _('Week'), week.strftime('%V'))), '.'),
 ] + BREADCRUMBS|d([]) %}
 
 {% block planet_content %}
