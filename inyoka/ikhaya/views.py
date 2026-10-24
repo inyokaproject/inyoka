@@ -123,7 +123,7 @@ def _get_article_by_date_and_slug(request, year: int, month: int, day: int, slug
 
     try:
         article = Article.objects.get_by_date_and_slug(year, month, day, slug)
-    except Article.DoesNotExist:
+    except (Article.DoesNotExist, ValueError):
         raise Http404()
 
     if article.hidden:
