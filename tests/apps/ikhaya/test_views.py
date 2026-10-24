@@ -426,6 +426,10 @@ class TestArticleDetail(TestCase):
         response = self.client.get(f'/{self.article.stamp}/{self.article.slug}/')
         self.assertEqual(response.status_code, 200)
 
+    def test_too_big_year(self):
+        response = self.client.get(f'/11000/1/1/{self.article.slug}/')
+        self.assertEqual(response.status_code, 404)
+
     def test_not_existing_article_status_code(self):
         response = self.client.get('/1785/5/8/goo/')
         self.assertEqual(response.status_code, 404)
