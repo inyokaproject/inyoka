@@ -25,6 +25,41 @@ Inyoka Changelog
    -----------
 
 
+1.52.14 (2026-MM-DD)
+====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+---------------
+
+* Planet archive
+
+  - The simple page numbering has been replaced by an archive. The index displays the most recent 25 blog posts. Everything else is grouped by calendar week in the archive. This ensures stable URLs.
+  - Posts older than 5 years, or from deactivated blogs are not shown anymore.
+
+🏗 Changes
+----------
+
+ * On file upload file extensions are enforced.
+
+   - For ``*.avif``, ``*.gif``, ``*.jpg``, ``*.jpeg``, ``*.pdf``, ``*.png``, ``*.txt`` and ``*.webp`` a simple validity check is done by Inyoka.
+   - The webserver should only send for those file extension an appropiate MIME type.
+     For all other extensions a download should be enforced (the caddy in our Inyoka docker setup does this).
+   - Other files like ``.exe`` or ``.bat`` can be still uploaded.
+     Besides the already implemented clamav scan nothing else is checked on those files.
+
+* Rework layout of ticket table for admins
+
+🔒 Security
+-----------
+
+* Update requirements
+
+
 1.52.13 (2026-10-23)
 ====================
 
