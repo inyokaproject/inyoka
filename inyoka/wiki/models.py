@@ -71,13 +71,13 @@
     :license: BSD, see LICENSE for more details.
 """
 import locale
+import mimetypes
 import random
 import time
 from collections import defaultdict
 from functools import partial
 from hashlib import sha1
 
-import magic
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -1200,15 +1200,14 @@ class Attachment(models.Model):
     @cached_property
     def mimetype(self):
         """The mimetype of the attachment."""
-        return magic.from_file(self.file.path, mime=True) or \
-            'application/octet-stream'
+        return mimetypes.guess_type(self.filename)[0] or 'application/octet-stream'
 
     @property
     def contents(self):
         """
         The raw contents of the file.  This is usually unsafe because
         it can cause the memory limit to be reached if the file is too
-        big.  However this limitation currently affects the whole django
+        big.  However, this limitation currently affects the whole django
         system which handles uploads in the memory.
         """
         f = self.open()
@@ -1222,18 +1221,17 @@ class Attachment(models.Model):
         """
         This method returns a `HTML` representation of the attachment for the
         `show_action` page.  If this method does not know about an internal
-        representation for the object the return value will be an download
+        representation for the object the return value will be a download
         link to the raw attachment.
         """
         url = escape(self.get_absolute_url())
         if self.mimetype.startswith('image/'):
-            return '<a href="%s"><img class="attachment" src="%s" ' \
-                   'alt="%s"></a>' % (url, url, url)
+            return format_html('<a href="{url}"><img class="attachment" src="{url}" alt="{url}"></a>', url=url)
         else:
             code = ''
             if self.mimetype.startswith('text/'):
                 code = highlight_code(self.contents, filename=self.filename)
-            return '%s<a href="%s">%s</a>' % (code, url, _('Download attachment'))
+            return format_html('{formatted_code}<a href="{url}">{text}</a>', formatted_code=code, url=url, text=_('Download attachment'))
 
     def open(self, mode='rb'):
         """

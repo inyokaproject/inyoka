@@ -1,0 +1,40 @@
+{#
+    planet/archvie_index.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all calender weeks with articles and a link to the week URL.
+
+    :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'planet/index.html' %}
+
+{% set BREADCRUMBS = [(_('Archive'), '.')] + BREADCRUMBS|d([]) %}
+
+{% block planet_content %}
+  <h1>{% trans %}Planet archive{% endtrans %}</h1>
+
+  {% for year, weeks in object_list %}
+    <h3>{{ year }}</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>{% trans %}Week{% endtrans %}</th>
+          <th>{% trans %}Number of articles{% endtrans %}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {%- for week in weeks %}
+        <tr>
+          <td>{{ render_week_archive_link(week.week) }}</td>
+          <td>{{ week.count }}</td>
+        </tr>
+      {%- endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    {{ no_posts() }}
+  {% endfor %}
+{% endblock %}

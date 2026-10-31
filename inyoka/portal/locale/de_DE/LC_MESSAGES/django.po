@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-15 23:04+0200\n"
+"POT-Creation-Date: 2026-10-24 16:01+0200\n"
 "PO-Revision-Date: 2023-11-12 16:29+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -232,9 +232,6 @@ msgstr "Ausgewählte Meldungen schließen"
 msgid "Closed"
 msgstr "Geschlossen"
 
-msgid "Comment"
-msgstr "Kommentar"
-
 msgid "Compose mail"
 msgstr "E-Mail verfassen"
 
@@ -389,6 +386,9 @@ msgstr "E-Mail"
 
 msgid "Edit"
 msgstr "Bearbeiten"
+
+msgid "Edit Comment"
+msgstr "Kommentar bearbeiten"
 
 msgid "Edit comment"
 msgstr "Kommentar bearbeiten"
@@ -759,8 +759,11 @@ msgstr "Offen"
 msgid "Overview"
 msgstr "Übersicht"
 
-msgid "Owned by"
-msgstr "Bearbeitet von"
+msgid "Owner"
+msgstr "Bearbeiter"
+
+msgid "Owner Comment"
+msgstr "Bearbeiterkommentar"
 
 msgid "Owner comment"
 msgstr "Bearbeiterkommentar"
@@ -861,8 +864,9 @@ msgstr "Antworten"
 msgid "Reply to all"
 msgstr "An alle antworten"
 
-msgid "Reported by"
-msgstr "Gemeldet von"
+msgctxt "subject"
+msgid "Report"
+msgstr "Meldung"
 
 msgid "Reporter comment"
 msgstr "Meldekommentar"
@@ -875,6 +879,9 @@ msgstr "Aktivierungsmail erneut zusenden"
 
 msgid "Residence"
 msgstr "Wohnort"
+
+msgid "Resolution"
+msgstr "Bearbeitung"
 
 msgid "Restore"
 msgstr "Wiederherstellen"
@@ -1320,6 +1327,9 @@ msgstr "Du kannst hier dein Konto „%(name)s“ deaktivieren. Wenn du das tust,
 msgid "You can login here if you are already <a href=\"%(register)s\">registered</a>. If you lost your password, you can <a href=\"%(lost_password)s\">request a new one</a>."
 msgstr "Du kannst dich hier anmelden, wenn du bereits <a href=\"%(register)s\">registriert bist</a>. Falls du dein Passwort vergessen hast, kannst du dir <a href=\"%(lost_password)s\">ein neues zusenden lassen</a>."
 
+msgid "You can only edit owned tickets."
+msgstr "Du kannst nur dir zugeordnete Tickets bearbeiten."
+
 #, python-format
 msgid "You can reactivate your user account “%(name)s” up to one month with the link sent to you via e-mail. After this period you will never be able to gain access to your account again."
 msgstr "Du kannst dein Benutzerkonto „%(name)s“ bis zu einem Monat lang mit einem dir zugesandten Link wieder aktivieren. Danach wirst du nicht mehr in der Lage sein, Zugriff auf dein Benutzerkonto zu erlangen."
@@ -1328,10 +1338,13 @@ msgid "You can reset your email address here if you changed it accidentally."
 msgstr "Du kannst hier deine E-Mail-Adresse zurücksetzen, falls du sie aus Versehen geändert hast."
 
 msgid "You can restore your account here if you deleted it. Please note that this is only possible one month after the deletion."
-msgstr "Du kannst hier dein Konto wiedeherstellen, falls du es gelöscht hast. Bitte beachte, dass dies maximal einen Monat nach der Löschung möglich ist."
+msgstr "Du kannst hier dein Konto wiederherstellen, falls du es gelöscht hast. Bitte beachte, dass dies maximal einen Monat nach der Löschung möglich ist."
 
 msgid "You can set a new password for your account here."
 msgstr "Du kannst hier ein neues Passwort für dein Konto setzen."
+
+msgid "You cannot edit a closed ticket."
+msgstr "Du kannst keine geschlossenen Tickets bearbeiten."
 
 msgid "You cannot enter an activation key when you are logged in."
 msgstr "Du kannst keinen Aktivierungsschlüssel eingeben, wenn du angemeldet bist."

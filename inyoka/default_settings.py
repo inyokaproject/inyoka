@@ -136,10 +136,9 @@ EMAIL_SUBJECT_PREFIX = '%s: ' % BASE_DOMAIN_NAME
 
 # forum settings
 FORUM_LIMIT_UNREAD = 100
-FORUM_THUMBNAIL_SIZE = (64, 64)
 # time in seconds after posting a user is allowed to edit/delete his own posts,
 # for posts (without, with) replies. -1 for infinitely, 0 for never
-FORUM_OWNPOST_EDIT_LIMIT = (-1, 1800)
+FORUM_OWNPOST_EDIT_LIMIT = (900, 300)
 FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
 
 FORUM_SURGE_PROTECTION_TIMEOUT = 90  # seconds

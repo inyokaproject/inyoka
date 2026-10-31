@@ -216,7 +216,7 @@ class Article(models.Model, LockableObject):
     @property
     def is_updated(self) -> bool:
         """
-        Returns whether this article has an update (f.e. a addition was made or a big mistake fixed)
+        Returns whether this article has an update (f.e. an addition was made or a big mistake fixed)
         """
         if not self.updated:
             return False

@@ -60,7 +60,10 @@
 
     {% endblock %}
   </head>
-  <body>
+
+  {% set _body_class = body_class %}
+  <body {% if _body_class %}class="{{ _body_class }}"{% endif %}>
+
   <nav class="navi_global">
     <a href="#main" class="skip-link">{% trans %}Skip to main content{% endtrans %}</a>
     <a href="#sidebar" class="skip-link">{% trans %}Skip to sidebar{% endtrans %}</a>

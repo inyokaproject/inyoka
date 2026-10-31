@@ -1,3 +1,5 @@
+import datetime
+
 from behave import given, step
 from django.conf import settings
 from django.core.cache import cache
@@ -68,12 +70,16 @@ def create_item(context, item, caption):
         from inyoka.planet.models import Entry as BlogPost
 
         blog = create_item(context, 'blog', 'test_blog')
-        context.test_item = BlogPost.objects.create(title=caption,
-                                                    author=default_user.username,
-                                                    blog=blog,
-                                                    text="TEST",
-                                                    pub_date='2020-02-20T14:42:00Z',
-                                                    updated='2020-02-21T13:37:42Z')
+        post = BlogPost(id=BlogPost.objects.count(), # the id is used for the HTML ids, it should be always as low as possible
+                        title=caption,
+                        author=default_user.username,
+                        blog=blog,
+                        text="TEST",
+                        pub_date=datetime.datetime.now(datetime.UTC),
+                        updated=datetime.datetime.now(datetime.UTC))
+        post.save()
+        cache.clear()  # in the planet the index view is cached for anonymous users
+        context.test_item = post
     else:
         raise ValueError("Unsupported item type")
 

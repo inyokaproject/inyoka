@@ -36,7 +36,9 @@ def migrate_old_reported_topics(apps, schema_editor):
                                  settings.AUTH_USER_MODEL.split('.')[1]
                                  ).objects.filter(username='ubuntuusers').first()
 
-    for topic in Topic.objects.filter(reporter__isnull=False).select_related('reporter', 'report_claimed_by'):
+    for topic in Topic.objects.all():
+        if not getattr(topic, "reporter", None):
+            continue
         first_post = Post.objects.filter(topic=topic).order_by('pub_date').first()
         if first_post is None:
             continue

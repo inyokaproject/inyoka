@@ -441,22 +441,18 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             author=self.user,
             forum=self.forum2,
             hidden=True,
-            reported='spam',
-            reporter=self.system_user,
         )
         post = Post.objects.create(
             text='Post 1', author=self.user, topic=topic, position=0, hidden=False
         )
         self.make_valid_key()
         self.make_mark_ham()
+
         response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 302)
         post = Post.objects.select_related('topic').get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertFalse(post.topic.hidden)
-        # Don't remove the reported marker
-        self.assertIn('spam', post.topic.reported)
-        self.assertEqual(post.topic.reporter, self.system_user)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -474,14 +470,12 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         )
         self.make_valid_key()
         self.make_mark_spam()
+
         response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 302)
         post = Post.objects.select_related('topic').get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertTrue(post.topic.hidden)
-        # Don't mark the topic as reported
-        self.assertIsNone(post.topic.reported)
-        self.assertIsNone(post.topic.reporter)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -494,21 +488,18 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             author=self.user,
             forum=self.forum2,
             hidden=True,
-            reported='spam',
-            reporter=self.system_user,
         )
         post = Post.objects.create(
             text='Post 1', author=self.user, topic=topic, position=0
         )
         self.make_valid_key()
         self.make_mark_ham()
+
         response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 403)
-        post = Post.objects.select_related('topic__reporter').get(pk=post.pk)
+        post = Post.objects.get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertTrue(post.topic.hidden)
-        self.assertIn('spam', post.topic.reported)
-        self.assertEqual(post.topic.reporter, self.system_user)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -526,13 +517,12 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         )
         self.make_valid_key()
         self.make_mark_spam()
+
         response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
         self.assertEqual(response.status_code, 403)
         post = Post.objects.select_related('topic').get(pk=post.pk)
         self.assertFalse(post.hidden)
         self.assertFalse(post.topic.hidden)
-        self.assertIsNone(post.topic.reported)
-        self.assertIsNone(post.topic.reporter)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -1022,10 +1012,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             '<div class="text"><p>newpost text</p></div>', content, count=1
         )
         att = Attachment.objects.get()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         self.assertInHTML(
-            pattern
-            % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name},
+            f'<li><a href="{att.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
@@ -1096,25 +1084,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             count=1,
         )
         att1, att2 = Attachment.objects.all()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         content = response.content.decode()
         self.assertInHTML(
-            pattern
-            % {
-                'url': att1.get_absolute_url(),
-                'comment': att1.comment,
-                'name': att1.name,
-            },
+            f'<li><a href="{att1.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
         self.assertInHTML(
-            pattern
-            % {
-                'url': att2.get_absolute_url(),
-                'comment': att2.comment,
-                'name': att2.name,
-            },
+            f'<li><a href="{att2.get_absolute_url()}" type="image/png">newpost_second_file.png (276 Bytes) <br> newpost comment for file 2</a></li>',
             content,
             count=1,
         )
@@ -1532,10 +1509,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             '<div class="text"><p>newpost text</p></div>', content, count=1
         )
         att = Attachment.objects.get()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         self.assertInHTML(
-            pattern
-            % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name},
+            f'<li><a href="{att.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
@@ -1604,25 +1579,14 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             count=1,
         )
         att1, att2 = Attachment.objects.all()
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         content = response.content.decode()
         self.assertInHTML(
-            pattern
-            % {
-                'url': att1.get_absolute_url(),
-                'comment': att1.comment,
-                'name': att1.name,
-            },
+            f'<li><a href="{att1.get_absolute_url()}" type="image/png">newpost_file_name.png (273 Bytes) <br> newpost file comment </a></li>',
             content,
             count=1,
         )
         self.assertInHTML(
-            pattern
-            % {
-                'url': att2.get_absolute_url(),
-                'comment': att2.comment,
-                'name': att2.name,
-            },
+            f'<li><a href="{att2.get_absolute_url()}" type="image/png">newpost_second_file.png (276 Bytes) <br> newpost comment for file 2</a></li>',
             content,
             count=1,
         )
