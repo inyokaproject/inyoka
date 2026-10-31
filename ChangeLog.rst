@@ -25,7 +25,7 @@ Inyoka Changelog
    -----------
 
 
-1.52.14 (2026-MM-DD)
+1.52.14 (2026-10-31)
 ====================
 
 Deployment notes
@@ -47,7 +47,7 @@ Deployment notes
  * On file upload file extensions are enforced.
 
    - For ``*.avif``, ``*.gif``, ``*.jpg``, ``*.jpeg``, ``*.pdf``, ``*.png``, ``*.txt`` and ``*.webp`` a simple validity check is done by Inyoka.
-   - The webserver should only send for those file extension an appropiate MIME type.
+   - The webserver should only send for those file extensions an appropiate MIME type.
      For all other extensions a download should be enforced (the caddy in our Inyoka docker setup does this).
    - Other files like ``.exe`` or ``.bat`` can be still uploaded.
      Besides the already implemented clamav scan nothing else is checked on those files.
