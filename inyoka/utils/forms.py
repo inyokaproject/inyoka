@@ -466,9 +466,9 @@ def validate_file_extension(file: FieldFile | UploadedFile) -> None:
       - fits to the mime send in the HTTP request
 
     It only checks the extension for
-       - PDF,
-       - a subset of images supported by pillow which are commonly used, and
-       - text file
+      - PDF,
+      - a subset of images supported by pillow which are commonly used, and
+      - text file
 
     All other file extensions must be considered as unknown by the webserver.
     Good mitigations are f.e. to add no sniff in the header and
@@ -476,10 +476,10 @@ def validate_file_extension(file: FieldFile | UploadedFile) -> None:
 
     This method can be used in a django form field.
     Simple example usage:
-    - inside a form
-      ``upload_file = forms.FileField(validators=[validate_file_extension])``
-    - inside a model
-      ``document = models.FileField(validators=[validate_file_extension])``
+      - inside a form
+        ``upload_file = forms.FileField(validators=[validate_file_extension])``
+      - inside a model
+        ``document = models.FileField(validators=[validate_file_extension])``
     """
     ext = os.path.splitext(file.name)[1]
     ext = ext.lower()

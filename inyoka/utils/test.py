@@ -7,7 +7,6 @@
     :copyright: (c) 2007-2026 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import gc
 import xml
 from importlib import import_module
 
@@ -26,37 +25,6 @@ from inyoka.utils.spam import (
     get_mark_spam_url,
     get_verify_key_url,
 )
-
-
-def profile_memory(func):
-    # run the test 50 times.  if length of gc.get_objects()
-    # keeps growing, assert false
-
-    def profile(*args):
-        gc.collect()
-        samples = [0 for x in range(0, 50)]
-        for x in range(0, 50):
-            func(*args)
-            gc.collect()
-            samples[x] = len(gc.get_objects())
-
-        for x in samples[-4:]:
-            if x != samples[-5]:
-                flatline = False
-                break
-        else:
-            flatline = True
-
-        # object count is bigger than when it started
-        if not flatline and samples[-1] > samples[0]:
-            for x in samples[1:-2]:
-                # see if a spike bigger than the endpoint exists
-                if x > samples[-1]:
-                    break
-            else:
-                assert False, repr(samples) + " " + repr(flatline)
-
-    return profile
 
 
 class InyokaClient(Client):

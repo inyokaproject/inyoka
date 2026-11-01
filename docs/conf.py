@@ -96,7 +96,7 @@ pygments_style = 'sphinx'
 
 intersphinx_mapping = {
     'django': ('https://docs.djangoproject.com/en/5.2',
-               'https://docs.djangoproject.com/en/5.2/_objects/'),
+               'https://docs.djangoproject.com/en/5.2/objects.inv'),
     'python': ('https://docs.python.org/3', None),
     'sphinx': ('https://www.sphinx-doc.org', None),
 }
