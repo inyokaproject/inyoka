@@ -54,9 +54,7 @@ class TestClamAV(TestCase):
 
     def test_invalid_address(self) -> None:
         s = Clamav(host='notexisting.test')
-        with self.assertRaisesMessage(
-            ClamdConnectionError, '[Errno -2]'
-        ):
+        with self.assertRaisesMessage(ClamdConnectionError, '[Errno -2]'):
             s.__enter__()
         s.__exit__(None, None, None)
 
@@ -73,7 +71,9 @@ class TestClamAV(TestCase):
             scan_all_media_files()
 
             self.assertTrue(
-                cm.output[0].startswith('ERROR:inyoka:Clamav seems to be unavailable [Errno -2]'),
+                cm.output[0].startswith(
+                    'ERROR:inyoka:Clamav seems to be unavailable [Errno -2]'
+                ),
             )
 
     @override_settings(MEDIA_ROOT='/tmp/not-existing-path')
