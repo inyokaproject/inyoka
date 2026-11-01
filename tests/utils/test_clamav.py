@@ -9,7 +9,6 @@ tests.utils.test_clamav
 import base64
 import io
 from typing import IO, Final
-from unittest import skip
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
@@ -135,7 +134,3 @@ class TestClamAV(TestCase):
             scan_all_media_files()
 
             self.assertEqual(cm.output, ['INFO:inyoka:Clamav disabled'])
-
-    @skip
-    def test_reject_file_uploads_starting_with_a_dot(self) -> None:
-        self.assertTrue(False)
