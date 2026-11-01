@@ -59,7 +59,7 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
         filter.update({'notified': False})
 
     # Filter subscriptions
-    # It is important to use two exludes,
+    # It is important to use two excludes,
     # as a singe exclude statement excludes only the subscriptions
     # which fulfill all criteria
     subscriptions = Subscription.objects.filter(**filter)
