@@ -377,9 +377,9 @@ click-repl==0.4.1 \
     --hash=sha256:5cb10881d4c5ebaa8695eceb69911af3062ee78342812b713564b17aad333eb5 \
     --hash=sha256:c32a1cf6f95e5bd6e92076f81ce24eafd33f2f0ffb0135887e335b8e446d1c0b
     # via celery
-django==5.2.18 \
-    --hash=sha256:461c5dd06d2ea16bd5ca37d3f46e4def1d6b0fe7588c6f4e2119517bb0af8b2d \
-    --hash=sha256:92ed81d500be6408ecd704d7bd1366c534f30427bffcc63c5fefb129561aec7c
+django==5.2.19 \
+    --hash=sha256:5965d974a5218a2b68a11dd1276434707f23886525c23f0598eccedaf4f4ca00 \
+    --hash=sha256:ad03d8abc51dbff95ebf34b27123cf0c26a3b62db7ba0cd520783686362533d1
     # via
     #   inyoka (pyproject.toml)
     #   django-guardian
