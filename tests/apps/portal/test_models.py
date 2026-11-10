@@ -19,17 +19,21 @@ from os import path
 import responses
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils import timezone as dj_timezone
 from freezegun import freeze_time
+from guardian.shortcuts import assign_perm
 
+from inyoka.forum.models import Forum, Topic
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
     Linkmap,
     PrivateMessage,
     PrivateMessageEntry,
     SpamEmailAddress,
+    Ticket,
 )
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
@@ -441,3 +445,41 @@ class TestSpamEmailAddress(TestCase):
         self.assertEqual(SpamEmailAddress.objects.count(), 1)
         with self.assertRaises(SpamEmailAddress.DoesNotExist):
             old.refresh_from_db()
+
+
+class TestTicket(TestCase):
+    def test_can_moderate_ticket_with_deleted_topic(self):
+        content_type = ContentType.objects.get(app_label='forum', model='topic')
+        user = User.objects.create_user('test', 'test@local.test', 'test')
+
+        forum = Forum.objects.create(name='Forum 1')
+        topic = Topic.objects.create(title='A test Topic', author=user, forum=forum)
+
+        group = Group.objects.create(name='admins')
+        group.user_set.add(user)
+        assign_perm('forum.manage_tickets_forum', group)
+
+        ticket = Ticket.objects.create(
+            content_type=content_type,
+            content_object=topic,
+            reporting_time=dj_timezone.now(),
+            reporting_user=User.objects.get_anonymous_user(),
+        )
+
+        topic.delete()
+        ticket.refresh_from_db()
+
+        self.assertTrue(ticket.can_moderate(user))
+
+    def test_can_moderate_without_content_object(self):
+        content_type = ContentType.objects.get(app_label='forum', model='topic')
+        user = User.objects.create_user('test', 'test@local.test', 'test')
+
+        ticket = Ticket.objects.create(
+            content_type=content_type,
+            content_object=None,
+            reporting_time=dj_timezone.now(),
+            reporting_user=User.objects.get_anonymous_user(),
+        )
+
+        self.assertFalse(ticket.can_moderate(user))

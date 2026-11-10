@@ -690,7 +690,11 @@ class Ticket(models.Model):
             forum = obj.topic.forum
         elif isinstance(obj, Topic):
             forum = obj.forum
+        elif self.content_type and 'forum' == self.content_type.app_label:
+            # fall back to global permission in case f.e. all posts of a topic
+            # were attached to an existing thread
+            return user.has_perm('forum.manage_tickets_forum')
         else:
-            return False # always bound to object
+            return False
 
         return user.has_perm('forum.moderate_forum', forum)
