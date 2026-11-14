@@ -25,6 +25,31 @@ Inyoka Changelog
    -----------
 
 
+unreleased 1.52.15 (2026-11-xx)
+====================
+
+Deployment notes
+----------------
+
+#. Update requirements
+
+✨ New features
+---------------
+
+🏗 Changes
+----------
+   
+🐛 Fixes
+--------
+
+* Ticket: Allow to assign & close a ticket with a deleted object
+
+🔒 Security
+-----------
+
+* Update requirements (at least ``django`` and ``soupsieve`` include known vulnerabilites)
+
+
 1.52.14 (2026-10-31)
 ====================
 
@@ -122,7 +147,7 @@ Deployment notes
 
 
 1.52.10 (2026-07-22)
-===================
+====================
 
 Deployment notes
 ----------------
