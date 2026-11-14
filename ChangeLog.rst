@@ -25,20 +25,14 @@ Inyoka Changelog
    -----------
 
 
-unreleased 1.52.15 (2026-11-xx)
+1.52.15 (2026-11-14)
 ====================
 
 Deployment notes
 ----------------
 
 #. Update requirements
-
-✨ New features
----------------
-
-🏗 Changes
-----------
-   
+ 
 🐛 Fixes
 --------
 
